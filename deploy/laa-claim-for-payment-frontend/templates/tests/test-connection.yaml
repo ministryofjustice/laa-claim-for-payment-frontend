@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "laa-claim-for-payment-frontend.fullname" . }}-test-connection"
+  labels:
+    {{- include "laa-claim-for-payment-frontend.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "laa-claim-for-payment-frontend.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
