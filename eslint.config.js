@@ -39,7 +39,6 @@ export default [
     },
     plugins: {
       jsdoc: jsdocPlugin,
-      '@typescript-eslint': tseslint,
     },
     rules: {
       'indent': 'off', // Prettier is handling this
