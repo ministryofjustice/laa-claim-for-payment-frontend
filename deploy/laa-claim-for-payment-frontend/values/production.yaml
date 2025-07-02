@@ -63,12 +63,12 @@ env:
 ingress:
   enabled: true
   hosts:
-    - host: your-name.cloud-platform.service.justice.gov.uk
+    - host: laa-claim-for-payment-frontend.cloud-platform.service.justice.gov.uk
       paths:
         - path: /
           pathType: Prefix
   annotations:
-    external-dns.alpha.kubernetes.io/set-identifier: "ingress-name-laa-claim-for-payment-frontend-laa-claim-for-payment-frontend-production-green"
+    external-dns.alpha.kubernetes.io/set-identifier: "productioningress-laa-claim-for-payment-frontend-production-green"
     external-dns.alpha.kubernetes.io/aws-weight: "100"
 
 service:

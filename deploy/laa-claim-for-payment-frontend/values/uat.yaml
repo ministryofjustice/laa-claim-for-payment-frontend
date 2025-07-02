@@ -48,12 +48,12 @@ service:
 ingress:
   enabled: true
   hosts:
-    - host: your-name-uat.cloud-platform.service.justice.gov.uk
+    - host: laa-claim-for-payment-frontend-uat.cloud-platform.service.justice.gov.uk
       paths:
         - path: /
           pathType: Prefix
   annotations:
-    external-dns.alpha.kubernetes.io/set-identifier: "ingress-name-laa-claim-for-payment-frontend-laa-claim-for-payment-frontend-uat-green"
+    external-dns.alpha.kubernetes.io/set-identifier: "uatingress-laa-claim-for-payment-frontend-uat-green"
     external-dns.alpha.kubernetes.io/aws-weight: "100"
 
 resources:
