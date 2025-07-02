@@ -20,7 +20,7 @@ serviceAccount:
   create: false
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: "laa-claim-for-payment-frontend-github-action-service-account"
+  name: "laa-claim-for-payment-sa"
 
 podAnnotations: {}
 podLabels: {}
