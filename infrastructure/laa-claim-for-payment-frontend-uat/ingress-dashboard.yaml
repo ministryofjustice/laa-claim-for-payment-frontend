@@ -749,8 +749,8 @@ data:
         ]
       },
       "timezone": "browser",
-      "title": "laa-claim-for-payment-frontend Ingress",
+      "title": "LAA Claim for Payment frontend - Ingress",
       "uid": null,
-      "version": 3,
+      "version": 1,
       "weekStart": ""
     }
