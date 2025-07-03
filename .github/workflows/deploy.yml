@@ -152,70 +152,70 @@ jobs:
           ratelimit_max: ${{ vars.RATE_LIMIT_MAX }}
           ratewindow_ms: ${{ vars.RATE_WINDOW_MS }}
   
-  deploy-staging:
-    environment: staging
-    runs-on: ubuntu-latest
-    needs: deploy-uat
-    if: github.ref_name == 'main'
+  # deploy-staging:
+  #   environment: staging
+  #   runs-on: ubuntu-latest
+  #   needs: deploy-uat
+  #   if: github.ref_name == 'main'
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Deploy to staging
-        uses: ./.github/actions/deploy
-        with:
-          ecr-repository: ${{ vars.ECR_REPOSITORY }}
-          ecr-registry_url: ${{ secrets.ECR_REGISTRY_URL }}
-          kube-cert: ${{ secrets.KUBE_CERT }}
-          kube-token: ${{ secrets.KUBE_TOKEN }}
-          kube-cluster: ${{ secrets.KUBE_CLUSTER }}
-          kube-namespace: ${{ secrets.KUBE_NAMESPACE }}
-          app-environment: staging
-          session_secret: ${{ secrets.SESSION_SECRET }}
-          service_name: ${{ vars.SERVICE_NAME }}
-          service_phase: ${{ vars.SERVICE_PHASE }}
-          department_name: ${{ vars.DEPARTMENT_NAME }}
-          department_url: ${{ vars.DEPARTMENT_URL }}
-          contact_email: ${{ vars.CONTACT_EMAIL }}
-          service_url: ${{ vars.SERVICE_URL }}
-          session_name: ${{ vars.SESSION_NAME}}
-          ratelimit_headers_enabled: ${{ vars.RATELIMIT_HEADERS_ENABLED }}
-          ratelimit_storage_uri: ${{ vars.RATELIMIT_STORAGE_URI }}
-          ratelimit_max: ${{ vars.RATE_LIMIT_MAX }}
-          ratewindow_ms: ${{ vars.RATE_WINDOW_MS }}
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+  #     - name: Deploy to staging
+  #       uses: ./.github/actions/deploy
+  #       with:
+  #         ecr-repository: ${{ vars.ECR_REPOSITORY }}
+  #         ecr-registry_url: ${{ secrets.ECR_REGISTRY_URL }}
+  #         kube-cert: ${{ secrets.KUBE_CERT }}
+  #         kube-token: ${{ secrets.KUBE_TOKEN }}
+  #         kube-cluster: ${{ secrets.KUBE_CLUSTER }}
+  #         kube-namespace: ${{ secrets.KUBE_NAMESPACE }}
+  #         app-environment: staging
+  #         session_secret: ${{ secrets.SESSION_SECRET }}
+  #         service_name: ${{ vars.SERVICE_NAME }}
+  #         service_phase: ${{ vars.SERVICE_PHASE }}
+  #         department_name: ${{ vars.DEPARTMENT_NAME }}
+  #         department_url: ${{ vars.DEPARTMENT_URL }}
+  #         contact_email: ${{ vars.CONTACT_EMAIL }}
+  #         service_url: ${{ vars.SERVICE_URL }}
+  #         session_name: ${{ vars.SESSION_NAME}}
+  #         ratelimit_headers_enabled: ${{ vars.RATELIMIT_HEADERS_ENABLED }}
+  #         ratelimit_storage_uri: ${{ vars.RATELIMIT_STORAGE_URI }}
+  #         ratelimit_max: ${{ vars.RATE_LIMIT_MAX }}
+  #         ratewindow_ms: ${{ vars.RATE_WINDOW_MS }}
+  #         slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-  deploy-production:
-    environment: production
-    runs-on: ubuntu-latest
-    needs: deploy-staging
-    if: github.ref_name == 'main'
+  # deploy-production:
+  #   environment: production
+  #   runs-on: ubuntu-latest
+  #   needs: deploy-staging
+  #   if: github.ref_name == 'main'
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Deploy to production
-        uses: ./.github/actions/deploy
-        with:
-          ecr-repository: ${{ vars.ECR_REPOSITORY }}
-          ecr-registry_url: ${{ secrets.ECR_REGISTRY_URL }}
-          kube-cert: ${{ secrets.KUBE_CERT }}
-          kube-token: ${{ secrets.KUBE_TOKEN }}
-          kube-cluster: ${{ secrets.KUBE_CLUSTER }}
-          kube-namespace: ${{ secrets.KUBE_NAMESPACE }}
-          app-environment: production
-          session_secret: ${{ secrets.SESSION_SECRET }}
-          service_name: ${{ vars.SERVICE_NAME }}
-          service_phase: ${{ vars.SERVICE_PHASE }}
-          department_name: ${{ vars.DEPARTMENT_NAME }}
-          department_url: ${{ vars.DEPARTMENT_URL }}
-          contact_email: ${{ vars.CONTACT_EMAIL }}
-          service_url: ${{ vars.SERVICE_URL }}
-          session_name: ${{ vars.SESSION_NAME}}
-          ratelimit_headers_enabled: ${{ vars.RATELIMIT_HEADERS_ENABLED }}
-          ratelimit_storage_uri: ${{ vars.RATELIMIT_STORAGE_URI }}
-          ratelimit_max: ${{ vars.RATE_LIMIT_MAX }}
-          ratewindow_ms: ${{ vars.RATE_WINDOW_MS }}
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+  #     - name: Deploy to production
+  #       uses: ./.github/actions/deploy
+  #       with:
+  #         ecr-repository: ${{ vars.ECR_REPOSITORY }}
+  #         ecr-registry_url: ${{ secrets.ECR_REGISTRY_URL }}
+  #         kube-cert: ${{ secrets.KUBE_CERT }}
+  #         kube-token: ${{ secrets.KUBE_TOKEN }}
+  #         kube-cluster: ${{ secrets.KUBE_CLUSTER }}
+  #         kube-namespace: ${{ secrets.KUBE_NAMESPACE }}
+  #         app-environment: production
+  #         session_secret: ${{ secrets.SESSION_SECRET }}
+  #         service_name: ${{ vars.SERVICE_NAME }}
+  #         service_phase: ${{ vars.SERVICE_PHASE }}
+  #         department_name: ${{ vars.DEPARTMENT_NAME }}
+  #         department_url: ${{ vars.DEPARTMENT_URL }}
+  #         contact_email: ${{ vars.CONTACT_EMAIL }}
+  #         service_url: ${{ vars.SERVICE_URL }}
+  #         session_name: ${{ vars.SESSION_NAME}}
+  #         ratelimit_headers_enabled: ${{ vars.RATELIMIT_HEADERS_ENABLED }}
+  #         ratelimit_storage_uri: ${{ vars.RATELIMIT_STORAGE_URI }}
+  #         ratelimit_max: ${{ vars.RATE_LIMIT_MAX }}
+  #         ratewindow_ms: ${{ vars.RATE_WINDOW_MS }}
+  #         slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
