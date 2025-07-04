@@ -77,9 +77,9 @@ runs:
     - name: Set environment variables
       shell: bash
       run: |
-        echo "SERVICE_NAME=${{ inputs.service_name || 'Claim for Legal Aid payment' }}" >> $GITHUB_ENV
+        echo "SERVICE_NAME=${{ inputs.service_name || 'Claim for Controlled Work' }}" >> $GITHUB_ENV
         echo "SERVICE_PHASE=${{ inputs.service_phase || 'Alpha' }}" >> $GITHUB_ENV
-        echo "DEPARTMENT_NAME=${{ inputs.department_name || 'LAA Digital' }}" >> $GITHUB_ENV
+        echo "DEPARTMENT_NAME=${{ inputs.department_name || 'Legal Aid Agency' }}" >> $GITHUB_ENV
         echo "DEPARTMENT_URL=${{ inputs.department_url || 'https://www.gov.uk/government/organisations/legal-aid-agency' }}" >> $GITHUB_ENV
         echo "CONTACT_EMAIL=${{ inputs.contact_email || 'your-team@digital.justice.gov.uk' }}" >> $GITHUB_ENV
         echo "CONTACT_PHONE=${{ inputs.contact_email || '' }}" >> $GITHUB_ENV
