@@ -1,5 +1,7 @@
 {% extends "govuk/template.njk" %}
 {% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
+{% from "moj/components/header/macro.njk" import mojHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 
 {% set govukRebrand = true %}
 
@@ -19,11 +21,45 @@
 {% endblock %}
 
 {% block header %}
-  {{ govukHeader({
-    homepageUrl: "#",
+{{ mojHeader({
+    organisationLabel: {
+      text: config.DEPARTMENT_NAME,
+      href: "#"
+    },
+    serviceLabel: {
+      text: config.SERVICE_NAME,
+      href: "#"
+    },
+    navigation: {
+      label: "Account navigation",
+      items: [{
+        text: "Account name",
+        href: "#",
+        active: true
+      }, {
+        text: "Sign out",
+        href: "#"
+      }]
+    }
+  }) }}
+   {{ govukServiceNavigation({
     serviceName: config.SERVICE_NAME,
     serviceUrl: "#",
-    rebrand: govukRebrand
+    navigation: [
+      {
+        href: "#",
+        text: "Your submissions",
+        active: true
+      },
+      {
+        href: "#",
+        text: "Matter starts"
+      },
+      {
+        href: "#",
+        text: "Search"
+      }
+    ]
   }) }}
 {% endblock %}
 
