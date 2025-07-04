@@ -65,13 +65,14 @@ runs:
             kube-cluster: ${{ inputs.kube-cluster }}
             kube-namespace: ${{ inputs.kube-namespace }}
  
-    - name: Deploy infrastructure to UAT
-      shell: bash
-      run: |
-        if [ ${{ inputs.app-environment }} == 'uat' ]
-        then
-          kubectl apply --record=false -f ./infrastructure/laa-claim-for-payment-frontend-uat/
-        fi
+    # NOTE THIS KEEPS FAILING WITH SERVICE ACCOUNT ISSUE
+    # - name: Deploy infrastructure to UAT
+    #   shell: bash
+    #   run: |
+    #     if [ ${{ inputs.app-environment }} == 'uat' ]
+    #     then
+    #       kubectl apply --record=false -f ./infrastructure/laa-claim-for-payment-frontend-uat/
+    #     fi
 
     - name: Set environment variables
       shell: bash
