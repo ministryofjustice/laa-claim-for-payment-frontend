@@ -58,6 +58,8 @@ jobs:
       snyk_token: ${{ secrets.SNYK_TOKEN }}
 
   build-image:
+    if: ${{ github.actor != 'dependabot[bot]' }} 
+    # dependabot can't build as it has no access to secrets
     name: Build Docker Image
     runs-on: ubuntu-latest
     permissions:
@@ -123,7 +125,7 @@ jobs:
       - build-image
       - mocha-unit-tests
       - playwright
-    if: github.ref_name == 'main'
+    
 
     steps:
       - name: Checkout
