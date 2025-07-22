@@ -1,4 +1,4 @@
-[Jira ticket (if applicable)](https://dsdmoj.atlassian.net/browse/EL-XXX)
+[Jira ticket (if applicable)](https://dsdmoj.atlassian.net/browse/CLAIM-XXX)
 
 ## What changed and Why?
 
