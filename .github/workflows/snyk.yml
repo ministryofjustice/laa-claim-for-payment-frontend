@@ -49,6 +49,16 @@ jobs:
         args: --file=Dockerfile
         sarif: false
 
+    - name: List SARIF files in workspace
+      run: |
+        echo "Found SARIF files:"
+        find . -name "*.sarif" -exec ls -lh {} \;
+        echo "SARIF file contents:"
+        for f in $(find . -name "*.sarif"); do
+        echo "--- $f ---"
+        jq '.runs | map(.tool.driver.name)' "$f"
+        done
+
     - name: Replace security-severity "null" for license-related findings 
       run: |
         sed -i 's/"security-severity": "null"/"security-severity": "0"/g' snyk.sarif
