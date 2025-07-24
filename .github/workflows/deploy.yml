@@ -54,7 +54,7 @@ jobs:
 
   snyk:
     name: Snyk Security Scan
-    uses: ministryofjustice/laa-reusable-github-actions/.github/workflows/snyk.yml@73a98b3336f71a21c46e6b588cd3afaaab052649
+    uses: ./.github/workflows/snyk.yml
     with:
       tag: "laa-claim-for-payment-frontend"
     secrets:
