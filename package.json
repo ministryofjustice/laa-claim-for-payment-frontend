@@ -88,7 +88,6 @@
     "middleware-axios": "^3.0.0",
     "mocha": "^11.7.1",
     "nodemon": "^3.1.9",
-    "nyc": "^17.1.0",
     "prettier": "^3.6.2",
     "rimraf": "^6.0.1",
     "sass": "^1.86.3",
@@ -97,9 +96,6 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3"
-  },
-  "overrides": {
-    "chokidar": "4.0.3"
   },
   "husky": {
     "hooks": {
