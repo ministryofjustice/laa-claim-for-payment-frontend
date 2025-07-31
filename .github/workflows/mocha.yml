@@ -28,4 +28,4 @@ jobs:
         run: yarn install --immutable
 
       - name: Run Mocha unit tests
-        run: yarn test:unit
+        run: yarn coverage
