@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
-    "@playwright/test": "^1.52.0",
+    "@playwright/test": "^1.54.2",
     "@types/chai": "^5.2.2",
     "@types/compression": "^1.7.5",
     "@types/connect-livereload": "^0.6.3",
