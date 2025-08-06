@@ -1,6 +1,3 @@
-
-
-
 import { getSubmissionsEndpoint } from "#src/api/apiEndpointConstants.js"
 import { isRecord, safeString } from "#src/helpers/dataTransformers.js";
 import { formatDate } from "#src/helpers/dateFormatter.js";
@@ -95,7 +92,6 @@ class SubmissionService {
 
     /**
    * Extract pagination metadata from response headers
-   * @param {unknown} headers - Response headers from axios
    * @returns {PaginationMeta} Pagination metadata
    */
   private static extractPaginationMeta(): PaginationMeta {
