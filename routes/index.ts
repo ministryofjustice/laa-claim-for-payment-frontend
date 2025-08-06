@@ -1,3 +1,4 @@
+import {  submissionsService } from '#src/services/submissionsService.js';
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 
@@ -5,9 +6,15 @@ import type { Request, Response, NextFunction } from 'express';
 const router = express.Router();
 const SUCCESSFUL_REQUEST = 200;
 const UNSUCCESSFUL_REQUEST = 500;
-
+// TODO: remove the additions here
 /* GET home page. */
-router.get('/', function (req: Request, res: Response): void {
+router.get('/', async function (req: Request, res: Response): Promise<void> {
+	 // Use API service with axios middleware
+  const response = await submissionsService.getSubmissions(req.axiosMiddleware);
+
+  console.log(response)
+
+
 	res.render('main/index');
 });
 

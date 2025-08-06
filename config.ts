@@ -47,6 +47,10 @@ const config: Config = {
   paths: {
     static: 'public',  // Path for serving static files
     views: 'src/views',  // Path for Nunjucks views
+  },
+  api: {
+    //TODO: setup to run in local - change to point to UAT
+    baseUrl: process.env.API_URL ?? 'http://localhost:8080/',
   }
 };
 
