@@ -1,4 +1,5 @@
 import { Submission } from "#types/Submission.js";
+import { isRecord } from "./dataTransformers.js";
 
 /**
  * Type Check Helper
@@ -10,17 +11,14 @@ import { Submission } from "#types/Submission.js";
  * @returns {boolean} depending on success/fail of checks
  * 
  */
-
 export function isSubmission(obj: unknown): obj is Submission {
-  if (typeof obj !== 'object' || obj === null ) return false;
-
-  const object = obj as Record<string, unknown>;
+  if(!isRecord(obj)) return false
 
   for (const key of checkedFields) {
-    if (typeof object[key] !== 'string') return false
+    if (typeof obj[key] !== 'string') return false
   }
 
-  if (!Array.isArray(object.claims)) return false
+  if (!Array.isArray(obj.claims)) return false
 
   return true
 }
