@@ -15,8 +15,8 @@ export interface CsrfConfig {
 }
 
 export interface SessionConfig {
-	secret?: string;
-	name?: string;
+	secret: string;
+	name: string;
 	resave: boolean;
 	saveUninitialized: boolean;
 }
