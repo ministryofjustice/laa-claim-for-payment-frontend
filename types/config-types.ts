@@ -44,7 +44,7 @@ export interface Config {
 	SERVICE_URL: string | undefined;
 	app: AppConfig;
 	csrf: CsrfConfig;
-	session: SessionConfig;
+	session?: SessionConfig;
 	paths: PathsConfig;
 	api: ApiConfig;
 }
