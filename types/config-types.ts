@@ -15,8 +15,8 @@ export interface CsrfConfig {
 }
 
 export interface SessionConfig {
-	secret: string;
-	name: string;
+	secret?: string;
+	name?: string;
 	resave: boolean;
 	saveUninitialized: boolean;
 }
@@ -44,7 +44,7 @@ export interface Config {
 	SERVICE_URL: string | undefined;
 	app: AppConfig;
 	csrf: CsrfConfig;
-	session?: SessionConfig;
+	session: SessionConfig;
 	paths: PathsConfig;
 	api: ApiConfig;
 }

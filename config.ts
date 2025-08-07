@@ -27,12 +27,12 @@ const config: Config = {
   SERVICE_NAME: process.env.SERVICE_NAME,
   SERVICE_PHASE: process.env.SERVICE_PHASE,
   SERVICE_URL: process.env.SERVICE_URL,
-  // session: {
-  //   secret: process.env.SESSION_SECRET,
-  //   name: process.env.SESSION_NAME,
-  //   resave: false,
-  //   saveUninitialized: false
-  // },
+  session: {
+    secret: process.env.SESSION_SECRET,
+    name: process.env.SESSION_NAME,
+    resave: false,
+    saveUninitialized: false
+  },
   app: {
     port: Number(process.env.PORT ?? DEFAULT_PORT),
     environment: process.env.NODE_ENV ?? 'development',
