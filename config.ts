@@ -50,7 +50,7 @@ const config: Config = {
   },
   api: {
     //TODO: setup to run in local - change to point to UAT
-    baseUrl: process.env.API_URL ?? 'http://localhost:8080/',
+    baseUrl: process.env.API_URL ?? '',
   }
 };
 
