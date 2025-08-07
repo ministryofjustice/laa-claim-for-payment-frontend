@@ -26,6 +26,10 @@ export interface PathsConfig {
 	views: string;
 }
 
+export interface ApiConfig {
+  baseUrl: string;
+}
+
 export interface Config {
 	CONTACT_EMAIL: string | undefined;
 	CONTACT_PHONE: string | undefined;
@@ -42,4 +46,5 @@ export interface Config {
 	csrf: CsrfConfig;
 	session: SessionConfig;
 	paths: PathsConfig;
+	api: ApiConfig;
 }

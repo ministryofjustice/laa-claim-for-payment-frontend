@@ -95,6 +95,7 @@ env:
   RATE_LIMIT_MAX: ""
   RATE_WINDOW_MS: ""
   NODE_ENV: ""
+  API_URL: "http://laa-claim-for-payment.laa-claim-for-payment-uat:8080"
 
 autoscaling:
   enabled: false

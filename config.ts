@@ -8,10 +8,10 @@ const MILLISECONDS_IN_A_MINUTE = 60000;
 const DEFAULT_PORT = 3000;
 
 // Validate required session env vars
-if (process.env.SESSION_SECRET == null || process.env.SESSION_SECRET === '' ||
-    process.env.SESSION_NAME == null || process.env.SESSION_NAME === '') {
-  throw new Error('SESSION_SECRET and SESSION_NAME must be defined in environment variables.');
-}
+// if (process.env.SESSION_SECRET == null || process.env.SESSION_SECRET === '' ||
+//     process.env.SESSION_NAME == null || process.env.SESSION_NAME === '') {
+//   throw new Error('SESSION_SECRET and SESSION_NAME must be defined in environment variables.');
+// }
 
 // Get environment variables
 const config: Config = {
@@ -28,8 +28,8 @@ const config: Config = {
   SERVICE_PHASE: process.env.SERVICE_PHASE,
   SERVICE_URL: process.env.SERVICE_URL,
   session: {
-    secret: process.env.SESSION_SECRET,
-    name: process.env.SESSION_NAME,
+    secret: process.env.SESSION_SECRET ?? "",
+    name: process.env.SESSION_NAME?? "",
     resave: false,
     saveUninitialized: false
   },
@@ -47,6 +47,9 @@ const config: Config = {
   paths: {
     static: 'public',  // Path for serving static files
     views: 'src/views',  // Path for Nunjucks views
+  },
+  api: {
+    baseUrl: process.env.API_URL ?? '',
   }
 };
 

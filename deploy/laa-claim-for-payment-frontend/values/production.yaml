@@ -59,6 +59,7 @@ env:
   RATE_LIMIT_MAX: ""
   RATE_WINDOW_MS: ""
   NODE_ENV: ""
+  API_URL: ""
 
 ingress:
   enabled: true
