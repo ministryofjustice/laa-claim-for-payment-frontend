@@ -11,6 +11,12 @@ export default [
     ...love,
     files: ['**/*.js', '**/*.ts'],
   },
+    // Ignore helper file so TS project service doesn't try to parse it
+  {
+    ignores: [
+      'tests/support/nunjucks-govuk.js'
+    ],
+  },
   // JS/Default config (no parser override)
   {
     languageOptions: {
