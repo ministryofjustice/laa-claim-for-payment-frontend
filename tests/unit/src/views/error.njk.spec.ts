@@ -32,7 +32,7 @@ describe('views/main/error.njk', () => {
 
   it('renders the error message paragraph', () => {
     const p = $('.govuk-grid-row .govuk-grid-column-two-thirds p.govuk-body').text().trim();
-    expect(p).to.equal('Please try again later dudes.');
+    expect(p).to.equal('Please try again later.');
   });
 
   // Optional: if base.njk uses `mainClasses`, verify the class is present

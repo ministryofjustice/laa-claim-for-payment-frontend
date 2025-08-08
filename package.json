@@ -53,7 +53,6 @@
     "@eslint/js": "^9.32.0",
     "@playwright/test": "^1.54.2",
     "@types/chai": "^5.2.2",
-    "@types/cheerio": "^1.0.0",
     "@types/compression": "^1.7.5",
     "@types/connect-livereload": "^0.6.3",
     "@types/cookie-parser": "^1.4.8",
