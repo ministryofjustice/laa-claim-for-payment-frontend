@@ -1,9 +1,9 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import getSubmissionTestData from '../testAssets/submissionTestData.js';
 import { submissionsService, transformSubmission } from '#src/services/submissionsService.js';
 import { isSubmission } from '#src/helpers/typeChecks.js';
-import { AxiosInstanceWrapper } from "#types/axios-instance-wrapper.js";
+import { AxiosInstance } from '#node_modules/axios/index.js';
+import { getSubmissionsEndpoint } from '#src/api/apiEndpointConstants.js';
 
 describe("submissionsService:", () => {
 
@@ -58,71 +58,56 @@ describe("submissionsService:", () => {
 
     // Act - call transformer with the mock data
     // Assert - check it is thrown
-
     expect(() => transformSubmission(mockDataInput)).to.throw('Invalid submissions item: expected object'); 
     })
   })
 
   describe("getSubmissions", () => {
-    let submissionsServiceStub: sinon.SinonStub;
-    let logSpy: sinon.SinonSpy;
-    let errorSpy: sinon.SinonSpy;
-
-    let middleware: AxiosInstanceWrapper;
-
-    let req: Partial<Request>;
+    let axiosStub: sinon.SinonStubbedInstance<AxiosInstance>;
+    let configureAxiosStub: sinon.SinonStub
 
     beforeEach(() => {
     // Reset the stub before each test
 
-    submissionsServiceStub = sinon.stub(submissionsService, "getSubmissions");
-    logSpy = sinon.spy(console, 'log')
-    errorSpy = sinon.spy(console, 'error')
-
-    // Assign a mock or dummy value to middleware
-    middleware = {} as AxiosInstanceWrapper;
+    axiosStub = { get: sinon.stub() } as any;
+    configureAxiosStub = sinon.stub(submissionsService as any, 'configureAxiosInstance').returns(axiosStub)
     });
 
     afterEach(() => { 
     // Restore the stubs after each test
-    submissionsServiceStub.restore();
-    logSpy.restore();
-    errorSpy.restore();
+    sinon.restore();
     });
 
-    it("should make a GET request correctly", async () => {
-    // Mocking resolved value of the API call
-    submissionsServiceStub.resolves(getSubmissionTestData)
+    it("should call axios with the submissions endpoint", async () => {
+    // Arrange - Mocking resolved value of the API call
+    axiosStub.get.resolves( {data: []})
     
-    // faked API call
-    const response = await submissionsService.getSubmissions(middleware);
+    // Act - faked API call
+    await submissionsService.getSubmissions({} as any);
 
-    // manually call the transform method
-    const responseTyped = transformSubmission(response);
-
+    
     // Assertions
-    expect(response).to.deep.equal(getSubmissionTestData);
-    expect(isSubmission(responseTyped)).to.be.true;
-    expect(isSubmission(response)).to.be.false;
+    sinon.assert.calledWith(axiosStub.get, getSubmissionsEndpoint)
+    sinon.assert.calledWith(configureAxiosStub, {})
     })
 
-    it("should throw an error when the API call fails", async () => {
-    submissionsServiceStub.rejects(new Error("API error"));
+    it("should return empty data and an error when axios fails", async () => {
+    const error = new Error('Network error');
 
-    try {
-        await submissionsService.getSubmissions(middleware);
-        throw new Error("should throw")
-    } catch (err ) {
-        if (err instanceof Error) {
-            expect(err.message).to.equal('API error');
-        } else {
-            throw err;
-        }
-    }
+    // Arrange - reject the promise with an error, stub error method
+    axiosStub.get.rejects(error);
+    const errorMessage = 'An unexpected error occurred. Please try again.';
+
+    // Act - call the method.
+    const result = await submissionsService.getSubmissions({} as any);
+
+    // Assert - error and data is as expected.
+    expect(result).to.include({
+      message: errorMessage
+    })
+
+    expect(result.data).to.be.an('array').that.is.empty;
     })
   })
 
 })
-
-
-
