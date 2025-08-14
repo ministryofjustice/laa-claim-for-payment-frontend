@@ -61,19 +61,31 @@ There is a lot of valuable detail in this README that all developers on the team
 
 - Installations (in order):
   - Install NVM - required to install a specific Node version.
-  - Install Node 24.2.0;
+  - Install Node 24.2.0.
 
     ```shell
       nvm install 24.2.0
       nvm use
     ```
 
-  - Install dependencies;
+  - Install dependencies
 
     ```shell
       corepack enable
       yarn install
     ```
+
+  - Install relevant extensions:
+    - Prettier - Code Formatter (recommended for project consistency)
+
+- Configuring Prettier
+  - Create a .prettierignore file.
+  - Add:
+    _.yaml
+    _.yml
+  - Set Prettier as your default formatter
+  - Enable 'Format on Save'
+  - Set 'Print Width' to 100.
 
 - Set environment variables:
 
