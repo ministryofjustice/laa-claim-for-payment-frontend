@@ -298,6 +298,7 @@ yarn test:unit
 - We use [Playwright](https://playwright.dev/) for end-to-end testing. Playwright provides reliable end-to-end testing for modern web apps.
 
 - E2E tests run from the `tests/e2e/` directory
+  - Run E2E tests with `yarn test:e2e`
   - The naming convention for test files is is `*.spec.ts`.
 
 #### Running Tests Locally
