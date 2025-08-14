@@ -271,7 +271,7 @@ A route is a section of Express code that associates an HTTP verb (`GET`, `POST`
 - Unit tests run from the `tests/unit/` directory.
   - The naming convention for test files is is `*.spec.ts`.
 
-**To run tests locally**
+### Running All Tests
 
 - To run both unit and end-to-end tests with a single command:
 
