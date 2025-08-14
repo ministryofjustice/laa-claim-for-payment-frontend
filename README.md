@@ -55,7 +55,7 @@ The frontend component of the LAA Claim for Payment application. The correspondi
 
 ## Quick Start Guide
 
-There is a lot of valuable detail in this README that all developers on the team should take time to digest thoroughly. However, this section comprises a one-stop shop TL:DR of key points to get up and running as fast as possible.
+There is a lot of valuable detail in this README that all developers on the team should take time to digest thoroughly. However, this section comprises a high level summary of key points to get up and running as fast as possible.
 
 1. **Setting up the project:**
 
