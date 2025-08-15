@@ -26,3 +26,6 @@ public/
 
 #c8
 /coverage
+
+# Prettier Ignore
+.prettierignore
