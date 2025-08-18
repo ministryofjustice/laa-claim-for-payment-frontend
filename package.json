@@ -86,7 +86,7 @@
     "globals": "^16.3.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.5",
-    "livereload": "^0.9.3",
+    "livereload": "^0.10.3",
     "middleware-axios": "^3.0.0",
     "mocha": "^11.7.1",
     "nodemon": "^3.1.9",
