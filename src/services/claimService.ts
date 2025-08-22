@@ -1,4 +1,4 @@
-import { getSubmissionsEndpoint } from "#src/api/apiEndpointConstants.js";
+import { getClaimsEndpoint } from "#src/api/apiEndpointConstants.js";
 import { isRecord, safeString } from "#src/helpers/dataTransformers.js";
 import { formatDate } from "#src/helpers/dateFormatter.js";
 import { extractAndLogError } from "#src/helpers/index.js";
@@ -9,27 +9,23 @@ import { Submission } from "#types/Submission.js";
 import config from "../../config.js";
 
 /**
- * Transform raw submission item to display format
+ * Transform raw claim item to display format
  * @param {unknown} item Raw submission item
- * @returns {Submission} Transformed submission item
+ * @returns {Claim} Transformed claim item
  */
-export function transformSubmission(item: unknown): Submission {
-  const arrayOfClaims: Claim[] = [];
+export function transformClaim(item: unknown): Claim {
   if (!isRecord(item)) {
-    throw new Error("Invalid submissions item: expected object");
+    throw new Error("Invalid claim item: expected object");
   }
 
   return {
     id: safeString(item.id),
-    friendlyId: safeString(item.friendlyId),
-    providerUserId: safeString(item.providerUserId),
-    providerOfficeId: safeString(item.providerOfficeId),
-    submissionTypeCode: safeString(item.submissionTypeCode),
-    submissionDate: formatDate(safeString(item.submissionDate)),
-    submissionPeriodStartDate: formatDate(safeString(item.submissionPeriodStartDate)),
-    submissionPeriodEndDate: formatDate(safeString(item.submissionPeriodEndDate)),
-    scheduleId: formatDate(safeString(item.scheduleId)),
-    claims: arrayOfClaims,
+    client: safeString(item.client),
+    category: safeString(item.category),
+    concluded: formatDate(safeString(item.concluded)),
+    feeType: safeString(item.feeType),
+    claimed: safeString(item.claimed),
+    submissionId: safeString(item.submissionId),
   };
 }
 
@@ -39,37 +35,35 @@ const DEFAULT_LIMIT = parseInt(process.env.PAGINATION_LIMIT ?? "20", 10); // Con
 const JSON_INDENT = 2;
 const EMPTY_TOTAL = 0;
 
-class SubmissionService {
+class ClaimService {
   /**
    * Get submissions from API using axios middleware
    * @param {AxiosInstanceWrapper} axiosMiddleware - Axios middleware from request
    * @returns {Promise<ApiResponse<Submission>>} API response with submission data and pagination
    */
-  static async getSubmissions(
-    axiosMiddleware: AxiosInstanceWrapper
-  ): Promise<ApiResponse<Submission>> {
+  static async getClaims(axiosMiddleware: AxiosInstanceWrapper): Promise<ApiResponse<Submission>> {
     const page = DEFAULT_PAGE;
     const limit = DEFAULT_LIMIT;
 
     try {
-      const configuredAxios = SubmissionService.configureAxiosInstance(axiosMiddleware);
-      console.log(`API: GET ${getSubmissionsEndpoint}`);
+      const configuredAxios = ClaimService.configureAxiosInstance(axiosMiddleware);
+      console.log(`API: GET ${getClaimsEndpoint}`);
 
       // Call API endpoint
-      const response = await configuredAxios.get(getSubmissionsEndpoint);
+      const response = await configuredAxios.get(getClaimsEndpoint);
+
+      //console.log(response);
 
       // Transform the response data if needed
-      const transformedData = Array.isArray(response.data)
-        ? response.data.map(transformSubmission)
-        : [];
+      const transformedData = Array.isArray(response.data) ? response.data.map(transformClaim) : [];
 
       // Debug: Log response headers to help troubleshoot pagination issues
       console.log(`API: Response headers: ${JSON.stringify(response.headers, null, JSON_INDENT)}`);
 
       // TODO: Pagination not currently implemented
-      const paginationMeta = SubmissionService.extractPaginationMeta();
+      const paginationMeta = ClaimService.extractPaginationMeta();
 
-      console.log(`API: Returning ${transformedData.length} submissions`);
+      console.log(`API: Returning ${transformedData.length} claims`);
 
       return {
         data: transformedData,
@@ -133,4 +127,4 @@ class SubmissionService {
 }
 
 // Export the service
-export const submissionsService = SubmissionService;
+export const claimService = ClaimService;
