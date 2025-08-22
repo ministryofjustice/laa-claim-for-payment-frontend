@@ -1,4 +1,3 @@
-import { claimService } from "#src/services/claimService.js";
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
 
@@ -8,7 +7,7 @@ const SUCCESSFUL_REQUEST = 200;
 const UNSUCCESSFUL_REQUEST = 500;
 
 /* GET home page. */
-router.get("/", async function (req: Request, res: Response): Promise<void> {
+router.get("/", function (req: Request, res: Response): void {
   res.render("main/index");
 });
 
