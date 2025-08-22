@@ -9,8 +9,6 @@ const UNSUCCESSFUL_REQUEST = 500;
 
 /* GET home page. */
 router.get("/", async function (req: Request, res: Response): Promise<void> {
-  const response = await claimService.getClaims(req.axiosMiddleware);
-
   res.render("main/index");
 });
 
