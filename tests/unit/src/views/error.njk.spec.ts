@@ -1,5 +1,6 @@
 import { expect, config as chaiConfig } from 'chai';
-import { load, CheerioAPI } from 'cheerio';
+import { load } from 'cheerio';
+import type { CheerioAPI } from 'cheerio';
 
 // Show full strings in diffs if something fails
 chaiConfig.truncateThreshold = 0;

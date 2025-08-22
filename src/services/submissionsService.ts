@@ -2,10 +2,10 @@ import { getSubmissionsEndpoint } from "#src/api/apiEndpointConstants.js";
 import { isRecord, safeString } from "#src/helpers/dataTransformers.js";
 import { formatDate } from "#src/helpers/dateFormatter.js";
 import { extractAndLogError } from "#src/helpers/index.js";
-import { ApiResponse, PaginationMeta } from "#types/api-types.js";
-import { AxiosInstanceWrapper } from "#types/axios-instance-wrapper.js";
-import { Claim } from "#types/Claim.js";
-import { Submission } from "#types/Submission.js";
+import type { ApiResponse, PaginationMeta } from "#types/api-types.js";
+import type { AxiosInstanceWrapper } from "#types/axios-instance-wrapper.js";
+import type { Claim } from "#types/Claim.js";
+import type { Submission } from "#types/Submission.js";
 import config from "../../config.js";
 
 /**
@@ -39,6 +39,9 @@ const DEFAULT_LIMIT = parseInt(process.env.PAGINATION_LIMIT ?? "20", 10); // Con
 const JSON_INDENT = 2;
 const EMPTY_TOTAL = 0;
 
+/**
+ * Service for handling submission-related API calls and transformations.
+ */
 class SubmissionService {
   /**
    * Get submissions from API using axios middleware

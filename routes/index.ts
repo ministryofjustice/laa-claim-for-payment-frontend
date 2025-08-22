@@ -1,5 +1,8 @@
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
+import authPkg from "express-openid-connect";
+
+const { auth, requiresAuth } = authPkg;
 
 // Create a new router
 const router = express.Router();
@@ -7,8 +10,13 @@ const SUCCESSFUL_REQUEST = 200;
 const UNSUCCESSFUL_REQUEST = 500;
 
 /* GET home page. */
-router.get('/', function (req: Request, res: Response): void {
+router.get('/', requiresAuth(), function (req: Request, res: Response): void {
 	res.render('main/index');
+});
+
+/* TEST show user properties */
+router.get('/user', requiresAuth(), function (req: Request, res: Response): void {
+	res.render('main/user', { user: req.oidc.user });
 });
 
 // Make an API call with `Axios` and `middleware-axios`

@@ -2,7 +2,7 @@ import sinon from "sinon";
 import { expect } from "chai";
 import { submissionsService, transformSubmission } from "#src/services/submissionsService.js";
 import { isSubmission } from "#src/helpers/typeChecks.js";
-import { AxiosInstance } from "#node_modules/axios/index.js";
+import type { AxiosInstance } from "#node_modules/axios/index.js";
 import { getSubmissionsEndpoint } from "#src/api/apiEndpointConstants.js";
 import { data } from "#node_modules/cheerio/dist/esm/api/attributes.js";
 

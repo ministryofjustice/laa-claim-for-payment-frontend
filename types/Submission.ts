@@ -1,4 +1,4 @@
-import { Claim } from "./Claim.js";
+import type { Claim } from "./Claim.js";
 
 // Submission Interface
 

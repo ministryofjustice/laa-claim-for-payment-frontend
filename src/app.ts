@@ -1,14 +1,33 @@
+import path from 'path';
 import type { Request, Response } from 'express';
 import express from 'express';
 import chalk from 'chalk';
 import morgan from 'morgan';
 import compression from 'compression';
-import { setupCsrf, setupMiddlewares, setupConfig } from '#middleware/index.js';
+import { setupCsrf, setupMiddlewares, setupConfig } from '../middleware/index.js';
 import session from 'express-session';
-import { nunjucksSetup, rateLimitSetUp, helmetSetup, axiosMiddleware, displayAsciiBanner } from '#utils/index.js';
-import config from '#config.js';
-import indexRouter from '#routes/index.js';
+import { nunjucksSetup, rateLimitSetUp, helmetSetup, axiosMiddleware, displayAsciiBanner } from '../utils/index.js';
+import config from '../config.js';
+import indexRouter from '../routes/index.js';
 import livereload from 'connect-livereload';
+
+import { auth } from 'express-openid-connect';
+
+const oidcConfig = {
+  authRequired: false,
+  auth0Logout: true,
+  issuerBaseURL: process.env.ISSUER_BASE_URL!,
+  baseURL: process.env.BASE_URL!,
+  clientID: process.env.CLIENT_ID!,
+  secret: process.env.SESSION_SECRET!,
+  clientSecret: process.env.OIDC_CLIENT_SECRET!,
+  authorizationParams: {
+	response_type: 'code',
+	scope: 'openid profile email'
+  },
+
+};
+
 
 const TRUST_FIRST_PROXY = 1;
 
@@ -74,6 +93,9 @@ const createApp = (): express.Application => {
 		// Use dev format for development (colored, more readable)
 		app.use(morgan('dev'));
 	}
+
+	app.use(auth(oidcConfig));
+
 
 	// Register the main router
 	app.use('/', indexRouter);

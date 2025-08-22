@@ -1,7 +1,7 @@
 import sinon from "sinon";
 import { expect } from "chai";
 import { submissionsService } from "#src/services/submissionsService.js";
-import { AxiosInstance } from "#node_modules/axios/index.js";
+import type { AxiosInstance } from "#node_modules/axios/index.js";
 import config from "#config.js";
 
 describe("configureAxios:", () => {

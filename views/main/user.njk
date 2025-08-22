@@ -1,0 +1,21 @@
+{% extends "base.njk" %}
+
+{% block content %}
+    <h1 class="govuk-heading-xl">Who am I?</h1>
+
+
+    {%- from "govuk/components/table/macro.njk" import govukTable -%}
+    {% from "govuk/components/tabs/macro.njk" import govukTabs %}
+    {% from "govuk/components/button/macro.njk" import govukButton %}
+    {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+<h1>Welcome, {{ user.name }}</h1>
+<p><strong>Username:</strong> {{ user.preferred_username }}</p>
+<p><strong>Email:</strong> {{ user.email }}</p>
+
+<h2>All claims</h2>
+<ul>
+  {% for key, value in user %}
+    <li><strong>{{ key }}</strong>: {{ value }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -18,7 +18,8 @@
 		"baseUrl": ".",
 		"paths": {
 			"#*": ["./*"]
-		}
+		},
+		"verbatimModuleSyntax": true
 	},
 	"include": [
 		"src/**/*",

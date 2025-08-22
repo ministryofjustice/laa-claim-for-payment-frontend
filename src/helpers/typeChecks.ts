@@ -1,4 +1,4 @@
-import { Submission } from "#types/Submission.js";
+import type { Submission } from "#types/Submission.js";
 import { isRecord } from "./dataTransformers.js";
 
 /**
