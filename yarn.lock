@@ -1828,7 +1828,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:4.0.3, chokidar@npm:^4.0.0, chokidar@npm:^4.0.1":
+"chokidar@npm:4.0.3, chokidar@npm:^4.0.0, chokidar@npm:^4.0.1, chokidar@npm:^4.0.3":
   version: 4.0.3
   resolution: "chokidar@npm:4.0.3"
   dependencies:
@@ -1837,7 +1837,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:^3.5.0, chokidar@npm:^3.5.2, chokidar@npm:^3.5.3":
+"chokidar@npm:^3.5.2, chokidar@npm:^3.5.3":
   version: 3.6.0
   resolution: "chokidar@npm:3.6.0"
   dependencies:
@@ -4307,24 +4307,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"livereload-js@npm:^3.3.1":
-  version: 3.4.1
-  resolution: "livereload-js@npm:3.4.1"
-  checksum: 10c0/d1353824eb50ae2291d6c92c419f0fc147c2b661837b078aded61f75c42d69dd50e6f6ca8b1990b19f522007fef88e5240ee528ace910ca9e2922bda4784bbc2
+"livereload-js@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "livereload-js@npm:4.0.2"
+  checksum: 10c0/e79f1c87e92874b7d6a3992143f856d74bfae77abcc761357078e38b0247ddb773f3e2515b5342229ded8d0cd26b2d687cb04c1a7b93c3e8b390152844adb353
   languageName: node
   linkType: hard
 
-"livereload@npm:^0.9.3":
-  version: 0.9.3
-  resolution: "livereload@npm:0.9.3"
+"livereload@npm:^0.10.3":
+  version: 0.10.3
+  resolution: "livereload@npm:0.10.3"
   dependencies:
-    chokidar: "npm:^3.5.0"
-    livereload-js: "npm:^3.3.1"
-    opts: "npm:>= 1.2.0"
-    ws: "npm:^7.4.3"
+    chokidar: "npm:^4.0.3"
+    livereload-js: "npm:^4.0.2"
+    opts: "npm:^2.0.2"
+    ws: "npm:^8.4.3"
   bin:
     livereload: bin/livereload.js
-  checksum: 10c0/ad17eb1af3bcd1f687050c1e3ffb0b750533e17e529537b2a7715b01eaa6f727eec34384246cd4ec25d0d45e92ec4112fa07eae0d46e806796bbec66b6ad511d
+  checksum: 10c0/4e39d6c9b6a321d51f0e787b7b54b36b5778383da81a91d382d0a4863fb3518075a2b2b98f8fa93921df5ebedcb4373b60987308486a4d1be0dbe08ab1f9a7dd
   languageName: node
   linkType: hard
 
@@ -4724,7 +4724,7 @@ __metadata:
     http-errors: "npm:~2.0.0"
     husky: "npm:^9.1.7"
     lint-staged: "npm:^16.1.5"
-    livereload: "npm:^0.9.3"
+    livereload: "npm:^0.10.3"
     middleware-axios: "npm:^3.0.0"
     mocha: "npm:^11.7.1"
     moment: "npm:^2.30.1"
@@ -5020,7 +5020,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"opts@npm:>= 1.2.0":
+"opts@npm:^2.0.2":
   version: 2.0.2
   resolution: "opts@npm:2.0.2"
   checksum: 10c0/c6056d5c959f8f3e221c16cf5cf16eae0ed6cc36c6944d3bd0e8affa1dd7c8c9da47343a62bb1a98cfe3b3dce3c088f9cbb90d97b6b0286372a5c7c2281c8ebb
@@ -6922,18 +6922,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^7.4.3":
-  version: 7.5.10
-  resolution: "ws@npm:7.5.10"
+"ws@npm:^8.4.3":
+  version: 8.18.3
+  resolution: "ws@npm:8.18.3"
   peerDependencies:
     bufferutil: ^4.0.1
-    utf-8-validate: ^5.0.2
+    utf-8-validate: ">=5.0.2"
   peerDependenciesMeta:
     bufferutil:
       optional: true
     utf-8-validate:
       optional: true
-  checksum: 10c0/bd7d5f4aaf04fae7960c23dcb6c6375d525e00f795dd20b9385902bd008c40a94d3db3ce97d878acc7573df852056ca546328b27b39f47609f80fb22a0a9b61d
+  checksum: 10c0/eac918213de265ef7cb3d4ca348b891a51a520d839aa51cdb8ca93d4fa7ff9f6ccb339ccee89e4075324097f0a55157c89fa3f7147bde9d8d7e90335dc087b53
   languageName: node
   linkType: hard
 
