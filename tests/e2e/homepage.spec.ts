@@ -1,6 +1,15 @@
+import { getClaimsResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { test, expect } from "@playwright/test";
 
 test("homepage should have the correct title", async ({ page }) => {
+  await page.route("**/claims", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(getClaimsResponseData),
+    });
+  });
+
   // Navigate to the homepage
   await page.goto("/");
 
@@ -9,6 +18,13 @@ test("homepage should have the correct title", async ({ page }) => {
 });
 
 test("homepage should display LAA header", async ({ page }) => {
+  await page.route("**/claims", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(getClaimsResponseData),
+    });
+  });
   await page.goto("/");
 
   // Check for the header with LAA branding
