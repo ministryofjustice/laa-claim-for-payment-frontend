@@ -44,6 +44,7 @@ class ClaimService {
     const page = DEFAULT_PAGE;
     const limit = DEFAULT_LIMIT;
 
+    // TODO: remove when Playwright job spins up BE
     if (process.env.NODE_ENV === "test") {
       const transformedData = Array.isArray(getClaimsResponseData.data)
         ? getClaimsResponseData.data.map(transformClaim)
