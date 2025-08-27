@@ -8,7 +8,6 @@ const NOT_FOUND = 404;
  * @param {Request} req Express request object
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
- * @param {string} activeTab The active tab of the primary navigation
  * @returns {Promise<void>} Page to be returned
  */
 export async function handleYourClaimsPage(
@@ -20,7 +19,7 @@ export async function handleYourClaimsPage(
     // Fetch client details from API
     const response = await claimService.getClaims(req.axiosMiddleware);
 
-    if (response.status === "success" && response.data !== null) {
+    if (response.status === "success" && response.data.length > 0) {
       const rows = response.data.map((claim) => [
         { text: claim.id },
         { text: claim.client },

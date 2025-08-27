@@ -1,3 +1,7 @@
+const paginationTotal = 1;
+const paginationPage = 1;
+const paginationLimit = 20;
+
 export const getClaimsResponseData = {
   data: [
     {
@@ -100,6 +104,11 @@ export const getClaimsResponseData = {
       submissionId: "550e8400-e29b-41d4-a716-446655440000",
     },
   ],
-  pagination: { total: 1, page: 1, limit: 20, totalPages: undefined },
+  pagination: {
+    total: paginationTotal,
+    page: paginationPage,
+    limit: paginationLimit,
+    totalPages: undefined,
+  },
   status: "success",
 };
