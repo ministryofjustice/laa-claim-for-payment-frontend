@@ -45,17 +45,15 @@ class ClaimService {
     const limit = DEFAULT_LIMIT;
 
     if (process.env.NODE_ENV === "test") {
-      const transformedData = Array.isArray(getClaimsResponseData)
-        ? getClaimsResponseData.map(transformClaim)
+      const transformedData = Array.isArray(getClaimsResponseData.data)
+        ? getClaimsResponseData.data.map(transformClaim)
         : [];
-
       return {
         data: transformedData,
         pagination: getClaimsResponseData.pagination,
         status: "success",
       };
     }
-
     try {
       const configuredAxios = ClaimService.configureAxiosInstance(axiosMiddleware);
       console.log(`API: GET ${getClaimsEndpoint}`);
