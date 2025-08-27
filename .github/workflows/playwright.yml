@@ -56,7 +56,6 @@ jobs:
           DEPARTMENT_URL: "https://www.gov.uk/government/organisations/legal-aid-agency"
           CONTACT_EMAIL: "your-team@digital.justice.gov.uk"
           SERVICE_URL: "https://www.gov.uk/legal-aid"
-          API_URL: "http://laa-claim-for-payment.laa-claim-for-payment-uat:8080"
           RATELIMIT_HEADERS_ENABLED: "true"
           RATE_LIMIT_MAX: "100"
           RATE_WINDOW_MS: "900000"
