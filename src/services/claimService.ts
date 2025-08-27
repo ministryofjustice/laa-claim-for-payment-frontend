@@ -31,7 +31,6 @@ export function transformClaim(item: unknown): Claim {
 // Constants
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = parseInt(process.env.PAGINATION_LIMIT ?? "20", 10); // Configurable via env
-const JSON_INDENT = 2;
 const EMPTY_TOTAL = 0;
 
 class ClaimService {
