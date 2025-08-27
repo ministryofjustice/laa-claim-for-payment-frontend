@@ -51,13 +51,8 @@ class ClaimService {
       // Call API endpoint
       const response = await configuredAxios.get(getClaimsEndpoint);
 
-      //console.log(response);
-
       // Transform the response data if needed
       const transformedData = Array.isArray(response.data) ? response.data.map(transformClaim) : [];
-
-      // Debug: Log response headers to help troubleshoot pagination issues
-      console.log(`API: Response headers: ${JSON.stringify(response.headers, null, JSON_INDENT)}`);
 
       // TODO: Pagination not currently implemented
       const paginationMeta = ClaimService.extractPaginationMeta();
