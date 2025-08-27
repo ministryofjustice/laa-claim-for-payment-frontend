@@ -5,7 +5,6 @@ import { extractAndLogError } from "#src/helpers/index.js";
 import { ApiResponse, PaginationMeta } from "#types/api-types.js";
 import { AxiosInstanceWrapper } from "#types/axios-instance-wrapper.js";
 import { Claim } from "#types/Claim.js";
-import { Submission } from "#types/Submission.js";
 import config from "../../config.js";
 
 /**
@@ -39,9 +38,9 @@ class ClaimService {
   /**
    * Get submissions from API using axios middleware
    * @param {AxiosInstanceWrapper} axiosMiddleware - Axios middleware from request
-   * @returns {Promise<ApiResponse<Submission>>} API response with submission data and pagination
+   * @returns {Promise<ApiResponse<Claim>>} API response with submission data and pagination
    */
-  static async getClaims(axiosMiddleware: AxiosInstanceWrapper): Promise<ApiResponse<Submission>> {
+  static async getClaims(axiosMiddleware: AxiosInstanceWrapper): Promise<ApiResponse<Claim>> {
     const page = DEFAULT_PAGE;
     const limit = DEFAULT_LIMIT;
 

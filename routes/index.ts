@@ -1,3 +1,4 @@
+import { handleYourClaimsPage } from "#src/controllers/claimServiceController.js";
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
 
@@ -7,8 +8,8 @@ const SUCCESSFUL_REQUEST = 200;
 const UNSUCCESSFUL_REQUEST = 500;
 
 /* GET home page. */
-router.get("/", function (req: Request, res: Response): void {
-  res.render("main/index");
+router.get("/", async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+  await handleYourClaimsPage(req, res, next);
 });
 
 // Make an API call with `Axios` and `middleware-axios`

@@ -1,7 +1,7 @@
 {% extends "base.njk" %}
 
 {% block content %}
-    <h1 class="govuk-heading-xl">Your submissions</h1>
+    <h1 class="govuk-heading-xl">Your Claims</h1>
 
 
     {%- from "govuk/components/table/macro.njk" import govukTable -%}
@@ -11,10 +11,10 @@
 
     <div class="govuk-button-group">
         {{ govukButton({
-            text: "Import submission"
+            text: "Import claim"
         }) }}
         {{ govukButton({
-        text: "Create a new submission",
+        text: "Create a new claim",
         classes: "govuk-button--secondary"
         }) }}
     </div>
@@ -35,31 +35,8 @@
         attributes: {
             "data-module": "moj-sortable-table"
         },
-        head: [
-            { text: "LAA reference", attributes: { "aria-sort": "ascending" } },
-            { text: "Account", attributes: { "aria-sort": "none" } },
-            { text: "Submission type", attributes: { "aria-sort": "none" } },
-            { text: "Submitted", attributes: { "aria-sort": "none" } },
-            { text: "Claimed", attributes: { "aria-sort": "none" } },
-            { text: "Paid", attributes: { "aria-sort": "none" } },
-            { text: "Status", attributes: { "aria-sort": "none" } }
-        ],
-        rows: [
-            [ { text: "LAA-834562" }, { text: "C1B1C1" }, { text: "Legal help" }, { text: "31/4/2025" }, { text: "£5432.22" }, { text: "" }, { text: "Submitted" } ],
-            [ { text: "LAA-746783" }, { text: "A1B1C1" }, { text: "Legal help" }, { text: "3/3/2025" }, { text: "£4533.67" }, { text: "" }, { text: "Resubmitted" } ],
-            [ { text: "LAA-458343" }, { text: "C1B1C1" }, { text: "Legal help" }, { text: "14/2/2025" }, { text: "£746.12" }, { text: "£512.45" }, { text: "Part paid" } ],
-            [ { text: "LAA-376574" }, { text: "A1B1C1" }, { text: "Legal help" }, { text: "14/2/2025" }, { text: "£746.57" }, { text: "£512.01" }, { text: "Part paid" } ],
-            [ { text: "LAA-456845" }, { text: "A1B1C1" }, { text: "Legal help" }, { text: "31/1/2025" }, { text: "£746.57" }, { text: "£1447.13" }, { text: "Paid" } ],
-            [ { text: "LAA-476565" }, { text: "2M407Z" }, { text: "Crime lower" }, { text: "1/1/2025" }, { text: "£12.32" }, { text: "£12.32" }, { text: "Paid" } ],
-            [ { text: "LAA-374586" }, { text: "A1B1C1" }, { text: "Legal help" }, { text: "12/12/2024" }, { text: "£678.33" }, { text: "£678.33" }, { text: "Paid" } ],
-            [ { text: "LAA-374563" }, { text: "A1B1C1" }, { text: "Legal help" }, { text: "5/10/2024" }, { text: "£252.25" }, { text: "£252.25" }, { text: "Paid" } ],
-            [ { text: "LAA-926546" }, { text: "2M407Z" }, { text: "Crime lower" }, { text: "3/9/2024" }, { text: "£4566.11" }, { text: "£4566.11" }, { text: "Paid" } ],
-            [ { text: "LAA-123456" }, { text: "A1B1C1" }, { text: "Legal help" }, { text: "19/7/2024" }, { text: "£567.21" }, { text: "£761.38" }, { text: "Paid" } ],
-            [ { text: "LAA-475673" }, { text: "2M407Z" }, { text: "Crime lower" }, { text: "1/6/2024" }, { text: "£993.22" }, { text: "£993.22" }, { text: "Paid" } ],
-            [ { text: "LAA-495674" }, { text: "2M407Z" }, { text: "Crime lower" }, { text: "3/3/2024" }, { text: "£876.11" }, { text: "£876.11" }, { text: "Paid" } ],
-            [ { text: "LAA-356789" }, { text: "A1B1C1" }, { text: "Legal help" }, { text: "12/2/2024" }, { text: "£456.78" }, { text: "£456.78" }, { text: "Paid" } ],
-            [ { text: "LAA-345678" }, { text: "A1B1C1" }, { text: "Legal help" }, { text: "12/2/2024" }, { text: "£5673.11" }, { text: "£5673.11" }, { text: "Paid" } ]
-        ]
+        head: head,
+        rows: rows
         }) }}
 
 {% endblock %}
