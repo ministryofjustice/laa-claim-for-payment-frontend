@@ -13,6 +13,9 @@ test("homepage should have the correct title", async ({ page }) => {
     }
   );
 
+  page.on("request", (req) => console.log("REQUEST", req.url));
+  page.on("response", (res) => console.log("RESPONSE", res.url));
+
   // Navigate to the homepage
   await page.goto("/");
 
