@@ -18,8 +18,9 @@ export async function handleYourClaimsPage(
   try {
     // Fetch client details from API
     const response = await claimService.getClaims(req.axiosMiddleware);
+    const minimumApiReponseLength = 0;
 
-    if (response.status === "success" && response.data.length > 0) {
+    if (response.status === "success" && response.data.length > minimumApiReponseLength) {
       const rows = response.data.map((claim) => [
         { text: claim.id },
         { text: claim.client },
