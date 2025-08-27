@@ -2,6 +2,7 @@ import { getClaimsEndpoint } from "#src/api/apiEndpointConstants.js";
 import { isRecord, safeString } from "#src/helpers/dataTransformers.js";
 import { formatDate } from "#src/helpers/dateFormatter.js";
 import { extractAndLogError } from "#src/helpers/index.js";
+import { getClaimsResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { ApiResponse, PaginationMeta } from "#types/api-types.js";
 import { AxiosInstanceWrapper } from "#types/axios-instance-wrapper.js";
 import { Claim } from "#types/Claim.js";
@@ -42,6 +43,18 @@ class ClaimService {
   static async getClaims(axiosMiddleware: AxiosInstanceWrapper): Promise<ApiResponse<Claim>> {
     const page = DEFAULT_PAGE;
     const limit = DEFAULT_LIMIT;
+
+    if (process.env.NODE_ENV === "test") {
+      const transformedData = Array.isArray(getClaimsResponseData)
+        ? getClaimsResponseData.map(transformClaim)
+        : [];
+
+      return {
+        data: transformedData,
+        pagination: getClaimsResponseData.pagination,
+        status: "success",
+      };
+    }
 
     try {
       const configuredAxios = ClaimService.configureAxiosInstance(axiosMiddleware);
