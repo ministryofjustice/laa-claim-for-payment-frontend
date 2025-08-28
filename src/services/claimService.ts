@@ -2,10 +2,10 @@ import { getClaimsEndpoint } from "#src/api/apiEndpointConstants.js";
 import { isRecord, safeString } from "#src/helpers/dataTransformers.js";
 import { formatDate } from "#src/helpers/dateFormatter.js";
 import { extractAndLogError } from "#src/helpers/index.js";
+import { getClaimsResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { ApiResponse, PaginationMeta } from "#types/api-types.js";
 import { AxiosInstanceWrapper } from "#types/axios-instance-wrapper.js";
 import { Claim } from "#types/Claim.js";
-import { Submission } from "#types/Submission.js";
 import config from "../../config.js";
 
 /**
@@ -32,19 +32,29 @@ export function transformClaim(item: unknown): Claim {
 // Constants
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = parseInt(process.env.PAGINATION_LIMIT ?? "20", 10); // Configurable via env
-const JSON_INDENT = 2;
 const EMPTY_TOTAL = 0;
 
 class ClaimService {
   /**
    * Get submissions from API using axios middleware
    * @param {AxiosInstanceWrapper} axiosMiddleware - Axios middleware from request
-   * @returns {Promise<ApiResponse<Submission>>} API response with submission data and pagination
+   * @returns {Promise<ApiResponse<Claim>>} API response with submission data and pagination
    */
-  static async getClaims(axiosMiddleware: AxiosInstanceWrapper): Promise<ApiResponse<Submission>> {
+  static async getClaims(axiosMiddleware: AxiosInstanceWrapper): Promise<ApiResponse<Claim>> {
     const page = DEFAULT_PAGE;
     const limit = DEFAULT_LIMIT;
 
+    // TODO: remove when Playwright job spins up BE
+    if (process.env.NODE_ENV === "test") {
+      const transformedData = Array.isArray(getClaimsResponseData.data)
+        ? getClaimsResponseData.data.map(transformClaim)
+        : [];
+      return {
+        data: transformedData,
+        pagination: getClaimsResponseData.pagination,
+        status: "success",
+      };
+    }
     try {
       const configuredAxios = ClaimService.configureAxiosInstance(axiosMiddleware);
       console.log(`API: GET ${getClaimsEndpoint}`);
@@ -52,13 +62,8 @@ class ClaimService {
       // Call API endpoint
       const response = await configuredAxios.get(getClaimsEndpoint);
 
-      //console.log(response);
-
       // Transform the response data if needed
       const transformedData = Array.isArray(response.data) ? response.data.map(transformClaim) : [];
-
-      // Debug: Log response headers to help troubleshoot pagination issues
-      console.log(`API: Response headers: ${JSON.stringify(response.headers, null, JSON_INDENT)}`);
 
       // TODO: Pagination not currently implemented
       const paginationMeta = ClaimService.extractPaginationMeta();
