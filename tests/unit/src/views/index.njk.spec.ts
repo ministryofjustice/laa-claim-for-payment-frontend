@@ -1,4 +1,4 @@
-import { getClaimsResponseData } from "#tests/assets/getClaimsResponseData.js";
+import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { expect, config as chaiConfig } from "chai";
 import { load, CheerioAPI } from "cheerio";
 
@@ -15,7 +15,7 @@ describe("views/main/index.njk", () => {
         { text: "In progress", href: "#2" },
       ],
     },
-    data: { getClaimsResponseData },
+    data: { getClaimsResponseData: getClaimsSuccessResponseData },
   };
 
   beforeEach(async () => {

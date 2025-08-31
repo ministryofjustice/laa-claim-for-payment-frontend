@@ -22,7 +22,7 @@ import "#utils/axiosSetup.js";
 import { claimService } from "#src/services/claimService.js";
 import { handleYourClaimsPage } from "#src/controllers/claimServiceController.js";
 // Import mock claims response data for testing
-import { getClaimsResponseData } from "#tests/assets/getClaimsResponseData.js";
+import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 
 describe("Claim Service Controller", () => {
   let req: Partial<Request>;
@@ -58,7 +58,7 @@ describe("Claim Service Controller", () => {
   describe("Claims controller test", () => {
     it("should render home your claim page with data and correct template", async () => {
       // Arrange
-      const mockApiResponse = getClaimsResponseData;
+      const mockApiResponse = getClaimsSuccessResponseData;
 
       claimServiceStub.resolves(mockApiResponse);
 
