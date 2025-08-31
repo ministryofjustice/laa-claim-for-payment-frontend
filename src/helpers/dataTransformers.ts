@@ -103,7 +103,7 @@ export function transformClaim(item: unknown): Claim {
  * @param {string} claimId raw ID item
  * @returns {string} Transformed claim id
  */
-export function formatClaimId(claimId: string) {
+export function formatClaimId(claimId: string): string {
   const maxPaddingLength = 3;
   return `LAA-${claimId.padStart(maxPaddingLength, "0")}`;
 }
@@ -111,9 +111,9 @@ export function formatClaimId(claimId: string) {
 /**
  * Transform raw value for claimed to display format
  * @param {string} claimedValue raw value
- * @returns {Intl.NumberFormat} Transformed currency value
+ * @returns {string} Transformed currency value
  */
-export function formatClaimed(claimedValue: string) {
+export function formatClaimed(claimedValue: string): string {
   let formattedValue = parseFloat(claimedValue);
 
   if (isNaN(formattedValue)) throw new Error(`${formattedValue} + " is not a number."`);
