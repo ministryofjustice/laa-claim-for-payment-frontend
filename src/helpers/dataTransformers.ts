@@ -98,10 +98,21 @@ export function transformClaim(item: unknown): Claim {
   };
 }
 
+/**
+ * Transform raw claim ID to display format
+ * @param {string} claimId raw ID item
+ * @returns {string} Transformed claim id
+ */
 export function formatClaimId(claimId: string) {
-  return `LAA-${claimId.padStart(3, "0")}`;
+  const maxPaddingLength = 3;
+  return `LAA-${claimId.padStart(maxPaddingLength, "0")}`;
 }
 
+/**
+ * Transform raw value for claimed to display format
+ * @param {string} claimedValue raw value
+ * @returns {Intl.NumberFormat} Transformed currency value
+ */
 export function formatClaimed(claimedValue: string) {
   let formattedValue = parseFloat(claimedValue);
 

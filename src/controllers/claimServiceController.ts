@@ -1,4 +1,4 @@
-import { formatClaimed, formatClaimId } from "#src/helpers/dataTransformers.js";
+import { formatClaimed, formatClaimId, safeString } from "#src/helpers/dataTransformers.js";
 import { createProcessedError } from "#src/helpers/errorHandler.js";
 import { claimService } from "#src/services/claimService.js";
 import type { Request, Response, NextFunction } from "express";
@@ -24,12 +24,12 @@ export async function handleYourClaimsPage(
 
     if (response.status === "success" && response.data.length > minimumApiReponseLength) {
       const rows = response.data.map((claim) => [
-        { text: formatClaimId(claim.id!) },
+        { text: formatClaimId(safeString(claim.id)) },
         { text: claim.client },
         { text: claim.category },
         { text: claim.concluded },
         { text: claim.feeType },
-        { text: formatClaimed(claim.claimed!) },
+        { text: formatClaimed(safeString(claim.claimed)) },
       ]);
 
       res.render("main/index.njk", {
