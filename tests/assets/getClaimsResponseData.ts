@@ -2,7 +2,7 @@ const paginationTotal = 1;
 const paginationPage = 1;
 const paginationLimit = 20;
 
-export const getClaimsResponseData = {
+export const getClaimsSuccessResponseData = {
   data: [
     {
       id: "1",

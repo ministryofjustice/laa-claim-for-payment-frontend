@@ -1,33 +1,11 @@
 import { getClaimsEndpoint } from "#src/api/apiEndpointConstants.js";
-import { isRecord, safeString } from "#src/helpers/dataTransformers.js";
-import { formatDate } from "#src/helpers/dateFormatter.js";
+import { transformClaim } from "#src/helpers/dataTransformers.js";
 import { extractAndLogError } from "#src/helpers/index.js";
-import { getClaimsResponseData } from "#tests/assets/getClaimsResponseData.js";
+import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { ApiResponse, PaginationMeta } from "#types/api-types.js";
 import { AxiosInstanceWrapper } from "#types/axios-instance-wrapper.js";
 import { Claim } from "#types/Claim.js";
 import config from "../../config.js";
-
-/**
- * Transform raw claim item to display format
- * @param {unknown} item Raw submission item
- * @returns {Claim} Transformed claim item
- */
-export function transformClaim(item: unknown): Claim {
-  if (!isRecord(item)) {
-    throw new Error("Invalid claim item: expected object");
-  }
-
-  return {
-    id: safeString(item.id),
-    client: safeString(item.client),
-    category: safeString(item.category),
-    concluded: formatDate(safeString(item.concluded)),
-    feeType: safeString(item.feeType),
-    claimed: safeString(item.claimed),
-    submissionId: safeString(item.submissionId),
-  };
-}
 
 // Constants
 const DEFAULT_PAGE = 1;
@@ -46,12 +24,12 @@ class ClaimService {
 
     // TODO: remove when Playwright job spins up BE
     if (process.env.NODE_ENV === "test") {
-      const transformedData = Array.isArray(getClaimsResponseData.data)
-        ? getClaimsResponseData.data.map(transformClaim)
+      const transformedData = Array.isArray(getClaimsSuccessResponseData.data)
+        ? getClaimsSuccessResponseData.data.map(transformClaim)
         : [];
       return {
         data: transformedData,
-        pagination: getClaimsResponseData.pagination,
+        pagination: getClaimsSuccessResponseData.pagination,
         status: "success",
       };
     }

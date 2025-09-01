@@ -1,3 +1,6 @@
+import { Claim } from "#types/Claim.js";
+import { formatDate } from "./dateFormatter.js";
+
 /**
  * Data Transformation Helpers
  *
@@ -11,15 +14,15 @@
  */
 export function safeString(value: unknown): string {
   if (value === null || value === undefined) {
-    return '';
+    return "";
   }
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     return value;
   }
-  if (typeof value === 'number' || typeof value === 'boolean') {
+  if (typeof value === "number" || typeof value === "boolean") {
     return String(value);
   }
-  return '';
+  return "";
 }
 
 /**
@@ -31,10 +34,10 @@ export function safeOptionalString(value: unknown): string | undefined {
   if (value === null || value === undefined) {
     return undefined;
   }
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     return value;
   }
-  if (typeof value === 'number' || typeof value === 'boolean') {
+  if (typeof value === "number" || typeof value === "boolean") {
     return String(value);
   }
   return undefined;
@@ -46,7 +49,7 @@ export function safeOptionalString(value: unknown): string | undefined {
  * @returns {boolean} True if value is a record object
  */
 export function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 /**
@@ -61,7 +64,7 @@ export function safeStringFromRecord(obj: unknown, key: string): string | null {
   }
 
   const { [key]: value } = obj;
-  return typeof value === 'string' && value.trim() !== '' ? value : null;
+  return typeof value === "string" && value.trim() !== "" ? value : null;
 }
 
 /**
@@ -72,4 +75,51 @@ export function safeStringFromRecord(obj: unknown, key: string): string | null {
  */
 export function hasProperty(obj: unknown, key: string): obj is Record<string, unknown> {
   return isRecord(obj) && key in obj;
+}
+
+/**
+ * Transform raw claim item to display format
+ * @param {unknown} item Raw submission item
+ * @returns {Claim} Transformed claim item
+ */
+export function transformClaim(item: unknown): Claim {
+  if (!isRecord(item)) {
+    throw new Error("Invalid claim item: expected object");
+  }
+
+  return {
+    id: safeString(item.id),
+    client: safeString(item.client),
+    category: safeString(item.category),
+    concluded: formatDate(safeString(item.concluded)),
+    feeType: safeString(item.feeType),
+    claimed: safeString(item.claimed),
+    submissionId: safeString(item.submissionId),
+  };
+}
+
+/**
+ * Transform raw claim ID to display format
+ * @param {string} claimId raw ID item
+ * @returns {string} Transformed claim id
+ */
+export function formatClaimId(claimId: string): string {
+  const maxPaddingLength = 3;
+  return `LAA-${claimId.padStart(maxPaddingLength, "0")}`;
+}
+
+/**
+ * Transform raw value for claimed to display format
+ * @param {string} claimedValue raw value
+ * @returns {string} Transformed currency value
+ */
+export function formatClaimed(claimedValue: string): string {
+  let formattedValue = parseFloat(claimedValue);
+
+  if (isNaN(formattedValue)) throw new Error(`${formattedValue} + " is not a number."`);
+
+  return new Intl.NumberFormat("en-GB", {
+    style: "currency",
+    currency: "GBP",
+  }).format(formattedValue);
 }
