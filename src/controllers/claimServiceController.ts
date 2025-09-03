@@ -22,6 +22,8 @@ export async function handleYourClaimsPage(
     const response = await claimService.getClaims(req.axiosMiddleware);
     const minimumApiReponseLength = 0;
 
+    console.log(response.data);
+
     if (response.status === "success" && response.data.length > minimumApiReponseLength) {
       const rows = response.data.map((claim) => [
         { text: formatClaimId(safeString(claim.id)) },
@@ -29,7 +31,10 @@ export async function handleYourClaimsPage(
         { text: claim.category },
         { text: claim.concluded },
         { text: claim.feeType },
-        { text: formatClaimed(safeString(claim.claimed)) },
+        {
+          text: formatClaimed(safeString(claim.claimed)),
+          attributes: { "data-sort-value": claim.claimed },
+        },
       ]);
 
       res.render("main/index.njk", {
