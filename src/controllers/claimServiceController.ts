@@ -32,6 +32,7 @@ export async function handleYourClaimsPage(
         {
           text: formatClaimed(safeString(claim.claimed)),
           attributes: { "data-sort-value": claim.claimed },
+          classes: "govuk-table__cell--numeric",
         },
       ]);
 
@@ -43,7 +44,11 @@ export async function handleYourClaimsPage(
           { text: "Category", attributes: { "aria-sort": "none" } },
           { text: "Concluded", attributes: { "aria-sort": "none" } },
           { text: "Fee Type", attributes: { "aria-sort": "none" } },
-          { text: "Claimed", attributes: { "aria-sort": "none" } },
+          {
+            text: "Claimed",
+            attributes: { "aria-sort": "none" },
+            classes: "govuk-table__header--numeric",
+          },
         ],
       });
     } else {
