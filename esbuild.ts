@@ -89,6 +89,7 @@ const buildScss = async (watch = false): Promise<esbuild.BuildContext | undefine
 					path.resolve('.'), // Current directory
 					path.resolve('node_modules') // Node modules directory
 				],
+				quietDeps: true,
 				/**
 				 * Transforms SCSS content to update asset paths.
 				 * @param {string} source - Original SCSS source content.
