@@ -16,9 +16,15 @@ export function formatDate(dateString: string): string {
     return dateString;
   }
 
-  const day = date.toLocaleString('en-GB', { day: '2-digit' });;
-  const month = date.toLocaleString('en-GB', { month: '2-digit' });
+  const day = date.toLocaleString("en-GB", { day: "2-digit" });
+  const month = date.toLocaleString("en-GB", { month: "2-digit" });
   const year = date.getFullYear();
 
   return `${day}/${month}/${year}`;
+}
+
+export function parseDateString(string: string): Date {
+  const [day, month, year] = string.split("/").map(Number);
+
+  return new Date(year, month - 1, day);
 }
