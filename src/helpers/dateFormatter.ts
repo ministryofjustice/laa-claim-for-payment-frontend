@@ -9,11 +9,9 @@
  * @param {string} dateString ISO date string
  * @returns {string} Formatted date in DD/MM/YYYY format (e.g., "6 Jan 1986")
  */
-export function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-
-  if (isNaN(date.getTime())) {
-    return dateString;
+export function formatDate(date?: Date): string {
+  if (!date) {
+    return "";
   }
 
   const day = date.toLocaleString('en-GB', { day: '2-digit' });;

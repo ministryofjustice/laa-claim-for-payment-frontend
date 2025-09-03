@@ -25,6 +25,16 @@ export function safeString(value: unknown): string {
   return "";
 }
 
+export function optionalDate(value: unknown): Date | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  const date = new Date(safeString(value));
+
+  return isNaN(date.getTime()) ? undefined : date;
+}
+
 /**
  * Safely get optional string value from unknown data
  * @param {unknown} value Value to convert
@@ -91,7 +101,7 @@ export function transformClaim(item: unknown): Claim {
     id: safeString(item.id),
     client: safeString(item.client),
     category: safeString(item.category),
-    concluded: formatDate(safeString(item.concluded)),
+    concluded: optionalDate(item.concluded),
     feeType: safeString(item.feeType),
     claimed: safeString(item.claimed),
     submissionId: safeString(item.submissionId),

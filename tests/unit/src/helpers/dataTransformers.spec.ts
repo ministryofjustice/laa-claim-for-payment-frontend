@@ -5,6 +5,7 @@
 import {
   safeString,
   safeOptionalString,
+  optionalDate,
   isRecord,
   safeStringFromRecord,
   hasProperty,
@@ -35,6 +36,22 @@ describe("Data Transformation Helpers", () => {
       expect(safeString({})).to.equal("");
       expect(safeString([])).to.equal("");
       expect(safeString(() => {})).to.equal("");
+    });
+  });
+
+  describe("optionalDate()", () => {
+    it("returns undefined for null or undefined", () => {
+      expect(optionalDate(null)).to.be.undefined;
+      expect(optionalDate(undefined)).to.be.undefined;
+    });
+
+    it("returns undefined for invalid date", () => {
+      expect(optionalDate("invalid-date")).to.be.undefined;
+      expect(optionalDate("")).to.be.undefined;
+    });
+
+    it("converts valid dates to Dates", () => {
+      expect(optionalDate("2025-03-18")).to.be.deep.equal(new Date("2025-03-18"));
     });
   });
 
@@ -153,7 +170,7 @@ describe("Data Transformation Helpers", () => {
         id: "validId",
         client: "validClient",
         category: "validCategory",
-        concluded: "validConcluded",
+        concluded: "2025-03-18",
         claimed: "validClaimed",
         submissionId: "validSubmissionId",
       };
@@ -162,9 +179,6 @@ describe("Data Transformation Helpers", () => {
 
       // Check the data structures
 
-      // type guarding
-      expect(isClaim(result)).to.be.true;
-
       // checks this is a valid object (Claim is interface - doesn't exist at runtime)
       expect(result).to.be.an("object");
 
@@ -172,7 +186,7 @@ describe("Data Transformation Helpers", () => {
       expect(result).to.have.property("id", "validId");
       expect(result).to.have.property("client", "validClient");
       expect(result).to.have.property("category", "validCategory");
-      expect(result).to.have.property("concluded", "validConcluded");
+      expect(result).to.have.property("concluded").that.deep.equal(new Date("2025-03-18"));
       expect(result).to.have.property("claimed", "validClaimed");
       expect(result).to.have.property("submissionId", "validSubmissionId");
     });

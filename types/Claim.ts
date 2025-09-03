@@ -5,7 +5,7 @@ export interface Claim {
   providerUserId?: string;
   client?: string;
   category?: string;
-  concluded?: string; // TODO: BE is a LocalDate ?
+  concluded?: Date;
   feeType?: string;
   claimed?: string; // Double in BE
   submissionId?: string; // UUID - TS handles UUID as a string -> using crypto node library breaks code (ES module)
