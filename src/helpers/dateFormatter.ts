@@ -6,11 +6,11 @@
 
 /**
  * Format date for display in table cells and UI components
- * @param {string} dateString ISO date string
+ * @param {Date | null} date Date value
  * @returns {string} Formatted date in DD/MM/YYYY format (e.g., "6 Jan 1986")
  */
-export function formatDate(date?: Date): string {
-  if (!date) {
+export function formatDate(date?: Date | null): string {
+  if (date === null || date === undefined) {
     return "";
   }
 

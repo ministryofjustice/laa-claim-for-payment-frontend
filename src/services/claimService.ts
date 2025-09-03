@@ -2,9 +2,9 @@ import { getClaimsEndpoint } from "#src/api/apiEndpointConstants.js";
 import { transformClaim } from "#src/helpers/dataTransformers.js";
 import { extractAndLogError } from "#src/helpers/index.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
-import { ApiResponse, PaginationMeta } from "#types/api-types.js";
-import { AxiosInstanceWrapper } from "#types/axios-instance-wrapper.js";
-import { Claim } from "#types/Claim.js";
+import type { ApiResponse, PaginationMeta } from "#types/api-types.js";
+import type { AxiosInstanceWrapper } from "#types/axios-instance-wrapper.js";
+import type { Claim } from "#types/Claim.js";
 import config from "../../config.js";
 
 // Constants
@@ -12,6 +12,9 @@ const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = parseInt(process.env.PAGINATION_LIMIT ?? "20", 10); // Configurable via env
 const EMPTY_TOTAL = 0;
 
+/**
+ *
+ */
 class ClaimService {
   /**
    * Get submissions from API using axios middleware
@@ -76,8 +79,8 @@ class ClaimService {
 
     return {
       total,
-      page: page,
-      limit: limit,
+      page,
+      limit,
       totalPages: undefined,
     };
   }

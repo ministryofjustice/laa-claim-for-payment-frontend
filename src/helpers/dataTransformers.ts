@@ -1,5 +1,4 @@
-import { Claim } from "#types/Claim.js";
-import { formatDate } from "./dateFormatter.js";
+import type { Claim } from "#types/Claim.js";
 
 /**
  * Data Transformation Helpers
@@ -25,8 +24,13 @@ export function safeString(value: unknown): string {
   return "";
 }
 
+/**
+ * Safely parse date string
+ * @param {unknown} value Value to parse
+ * @returns {Date | undefined} Date value or undefined
+ */
 export function optionalDate(value: unknown): Date | undefined {
-  if (!value) {
+  if (value === null || value === undefined) {
     return undefined;
   }
 
@@ -124,7 +128,7 @@ export function formatClaimId(claimId: string): string {
  * @returns {string} Transformed currency value
  */
 export function formatClaimed(claimedValue: string): string {
-  let formattedValue = parseFloat(claimedValue);
+  const formattedValue = parseFloat(claimedValue);
 
   if (isNaN(formattedValue)) throw new Error(`${formattedValue} + " is not a number."`);
 
