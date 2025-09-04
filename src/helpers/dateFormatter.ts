@@ -11,9 +11,9 @@
  */
 export function formatDate(date: Date | undefined): string {
   if (date === undefined) {
-    return ""
+    return "";
   } else {
-    const day = date.toLocaleString('en-GB', { day: '2-digit' });;
+    const day = date.toLocaleString('en-GB', { day: '2-digit' });
     const month = date.toLocaleString('en-GB', { month: '2-digit' });
     const year = date.getFullYear();
 

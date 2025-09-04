@@ -1,4 +1,3 @@
- 
 import type { ApiResponse } from "#types/api-types.js";
 import type { Claim } from "#types/Claim.js";
 
@@ -116,4 +115,3 @@ export const getClaimsSuccessResponseData: ApiResponse<Claim> = {
   },
   status: "success",
 };
- 
