@@ -1,6 +1,3 @@
-import { Claim } from "#types/Claim.js";
-import { formatDate } from "./dateFormatter.js";
-
 /**
  * Data Transformation Helpers
  *
@@ -78,34 +75,13 @@ export function hasProperty(obj: unknown, key: string): obj is Record<string, un
 }
 
 /**
- * Transform raw claim item to display format
- * @param {unknown} item Raw submission item
- * @returns {Claim} Transformed claim item
- */
-export function transformClaim(item: unknown): Claim {
-  if (!isRecord(item)) {
-    throw new Error("Invalid claim item: expected object");
-  }
-
-  return {
-    id: safeString(item.id),
-    client: safeString(item.client),
-    category: safeString(item.category),
-    concluded: formatDate(safeString(item.concluded)),
-    feeType: safeString(item.feeType),
-    claimed: safeString(item.claimed),
-    submissionId: safeString(item.submissionId),
-  };
-}
-
-/**
  * Transform raw claim ID to display format
  * @param {string} claimId raw ID item
  * @returns {string} Transformed claim id
  */
-export function formatClaimId(claimId: string): string {
+export function formatClaimId(claimId: number): string {
   const maxPaddingLength = 3;
-  return `LAA-${claimId.padStart(maxPaddingLength, "0")}`;
+  return `LAA-${claimId.toString().padStart(maxPaddingLength, "0")}`;
 }
 
 /**

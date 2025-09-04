@@ -1,11 +1,11 @@
 import { getClaimsEndpoint } from "#src/api/apiEndpointConstants.js";
-import { transformClaim } from "#src/helpers/dataTransformers.js";
 import { extractAndLogError } from "#src/helpers/index.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { ApiResponse, PaginationMeta } from "#types/api-types.js";
 import { AxiosInstanceWrapper } from "#types/axios-instance-wrapper.js";
-import { Claim } from "#types/Claim.js";
+import { Claim, ClaimSchema } from "#types/Claim.js";
 import config from "../../config.js";
+import { z } from "zod";
 
 // Constants
 const DEFAULT_PAGE = 1;
@@ -24,11 +24,9 @@ class ClaimService {
 
     // TODO: remove when Playwright job spins up BE
     if (process.env.NODE_ENV === "test") {
-      const transformedData = Array.isArray(getClaimsSuccessResponseData.data)
-        ? getClaimsSuccessResponseData.data.map(transformClaim)
-        : [];
+      const data = z.array(ClaimSchema).parse(getClaimsSuccessResponseData.data);
       return {
-        data: transformedData,
+        data: data,
         pagination: getClaimsSuccessResponseData.pagination,
         status: "success",
       };
@@ -40,16 +38,16 @@ class ClaimService {
       // Call API endpoint
       const response = await configuredAxios.get(getClaimsEndpoint);
 
-      // Transform the response data if needed
-      const transformedData = Array.isArray(response.data) ? response.data.map(transformClaim) : [];
+      // Validate and transform the data against the schema
+      const data = z.array(ClaimSchema).parse(response.data);
 
       // TODO: Pagination not currently implemented
       const paginationMeta = ClaimService.extractPaginationMeta();
 
-      console.log(`API: Returning ${transformedData.length} claims`);
+      console.log(`API: Returning ${data.length} claims`);
 
       return {
-        data: transformedData,
+        data: data,
         pagination: paginationMeta,
         status: "success",
       };

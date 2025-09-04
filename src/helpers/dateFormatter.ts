@@ -6,19 +6,17 @@
 
 /**
  * Format date for display in table cells and UI components
- * @param {string} dateString ISO date string
+ * @param {Date} date Date object
  * @returns {string} Formatted date in DD/MM/YYYY format (e.g., "6 Jan 1986")
  */
-export function formatDate(dateString: string): string {
-  const date = new Date(dateString);
+export function formatDate(date: Date | undefined): string {
+  if (date === undefined) {
+    return ""
+  } else {
+    const day = date.toLocaleString('en-GB', { day: '2-digit' });;
+    const month = date.toLocaleString('en-GB', { month: '2-digit' });
+    const year = date.getFullYear();
 
-  if (isNaN(date.getTime())) {
-    return dateString;
+    return `${day}/${month}/${year}`;
   }
-
-  const day = date.toLocaleString('en-GB', { day: '2-digit' });;
-  const month = date.toLocaleString('en-GB', { month: '2-digit' });
-  const year = date.getFullYear();
-
-  return `${day}/${month}/${year}`;
 }

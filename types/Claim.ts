@@ -1,12 +1,15 @@
-// Claim Interface
-export interface Claim {
-  id?: string; // Long in BE
-  ufn?: string;
-  providerUserId?: string;
-  client?: string;
-  category?: string;
-  concluded?: string; // TODO: BE is a LocalDate ?
-  feeType?: string;
-  claimed?: string; // Double in BE
-  submissionId?: string; // UUID - TS handles UUID as a string -> using crypto node library breaks code (ES module)
-}
+import { z } from "zod";
+
+export const ClaimSchema = z.object({
+  id: z.number(),
+  ufn: z.string().optional(),
+  providerUserId: z.string().optional(),
+  client: z.string().optional(),
+  category: z.string().optional(),
+  concluded: z.string().optional().transform(val => (val ? new Date(val) : undefined)),
+  feeType: z.string().optional(),
+  claimed: z.number().optional(),
+  submissionId: z.string().optional()
+});
+
+export type Claim = z.infer<typeof ClaimSchema>;

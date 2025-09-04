@@ -9,8 +9,7 @@ import {
   safeStringFromRecord,
   hasProperty,
   formatClaimed,
-  formatClaimId,
-  transformClaim,
+  formatClaimId
 } from "#src/helpers/dataTransformers.js";
 import { isClaim } from "#src/helpers/typeChecks.js";
 import { expect } from "chai";
@@ -101,15 +100,15 @@ describe("Data Transformation Helpers", () => {
 
   describe("formatClaimed", () => {
     it("should format 1 -> LAA-001", async () => {
-      expect(formatClaimId("1")).to.equal("LAA-001");
+      expect(formatClaimId(1)).to.equal("LAA-001");
     });
 
     it("should format 12 -> LAA-012", async () => {
-      expect(formatClaimId("12")).to.equal("LAA-012");
+      expect(formatClaimId(12)).to.equal("LAA-012");
     });
 
     it("should format 123 -> LAA-123", async () => {
-      expect(formatClaimId("123")).to.equal("LAA-123");
+      expect(formatClaimId(123)).to.equal("LAA-123");
     });
   });
 
@@ -144,43 +143,6 @@ describe("Data Transformation Helpers", () => {
 
     it("should throw an error on symbol input", async () => {
       expect(() => formatClaimed("£$£")).to.throw();
-    });
-  });
-
-  describe("transformClaim", () => {
-    it("should transform a valid object into a submission type", () => {
-      const mockDataInput = {
-        id: "validId",
-        client: "validClient",
-        category: "validCategory",
-        concluded: "validConcluded",
-        claimed: "validClaimed",
-        submissionId: "validSubmissionId",
-      };
-
-      const result = transformClaim(mockDataInput);
-
-      // Check the data structures
-
-      // type guarding
-      expect(isClaim(result)).to.be.true;
-
-      // checks this is a valid object (Claim is interface - doesn't exist at runtime)
-      expect(result).to.be.an("object");
-
-      // checks the data conforms to the right structure
-      expect(result).to.have.property("id", "validId");
-      expect(result).to.have.property("client", "validClient");
-      expect(result).to.have.property("category", "validCategory");
-      expect(result).to.have.property("concluded", "validConcluded");
-      expect(result).to.have.property("claimed", "validClaimed");
-      expect(result).to.have.property("submissionId", "validSubmissionId");
-    });
-
-    it("should throw an error when the transformer is used on null", () => {
-      const mockDataInput = null;
-
-      expect(() => transformClaim(mockDataInput)).to.throw("Invalid claim item: expected object");
     });
   });
 });
