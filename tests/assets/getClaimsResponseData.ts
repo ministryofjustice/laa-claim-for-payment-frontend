@@ -1,5 +1,6 @@
-import { ApiResponse } from "#types/api-types.js";
-import { Claim } from "#types/Claim.js";
+ 
+import type { ApiResponse } from "#types/api-types.js";
+import type { Claim } from "#types/Claim.js";
 
 const paginationTotal = 1;
 const paginationPage = 1;
@@ -115,3 +116,4 @@ export const getClaimsSuccessResponseData: ApiResponse<Claim> = {
   },
   status: "success",
 };
+ 

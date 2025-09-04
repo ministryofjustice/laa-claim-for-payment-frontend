@@ -93,6 +93,13 @@ export default [
       '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
+  // Add a separate config for test files
+  {
+    files: ['tests/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-magic-numbers': 'off',
+    },
+  },
   // Add a separate config for declaration files
   {
     files: ['**/*.d.ts'],

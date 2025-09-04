@@ -90,7 +90,7 @@ export function formatClaimId(claimId: number): string {
  * @returns {string} Transformed currency value
  */
 export function formatClaimed(claimedValue: string): string {
-  let formattedValue = parseFloat(claimedValue);
+  const formattedValue = parseFloat(claimedValue);
 
   if (isNaN(formattedValue)) throw new Error(`${formattedValue} + " is not a number."`);
 
