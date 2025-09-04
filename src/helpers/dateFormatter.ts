@@ -4,6 +4,9 @@
  * Utility functions for formatting dates in a consistent way across the application.
  */
 
+// Linter requires 'no magic numbers'
+const alignToZeroIndex = 1;
+
 /**
  * Format date for display in table cells and UI components
  * @param {string} dateString ISO date string
@@ -16,9 +19,20 @@ export function formatDate(dateString: string): string {
     return dateString;
   }
 
-  const day = date.toLocaleString('en-GB', { day: '2-digit' });;
-  const month = date.toLocaleString('en-GB', { month: '2-digit' });
+  const day = date.toLocaleString("en-GB", { day: "2-digit" });
+  const month = date.toLocaleString("en-GB", { month: "2-digit" });
   const year = date.getFullYear();
 
   return `${day}/${month}/${year}`;
+}
+
+/**
+ * Format date for display in table cells and UI components
+ * @param {string} string ISO date string
+ * @returns {Date} A date type object to allow complex use case
+ */
+export function parseDateString(string: string): Date {
+  const [day, month, year] = string.split("/").map(Number);
+
+  return new Date(year, month - alignToZeroIndex, day);
 }

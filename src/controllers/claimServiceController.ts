@@ -1,4 +1,5 @@
 import { formatClaimed, formatClaimId, safeString } from "#src/helpers/dataTransformers.js";
+import { parseDateString } from "#src/helpers/dateFormatter.js";
 import { createProcessedError } from "#src/helpers/errorHandler.js";
 import { claimService } from "#src/services/claimService.js";
 import type { Request, Response, NextFunction } from "express";
@@ -27,7 +28,10 @@ export async function handleYourClaimsPage(
         { text: formatClaimId(safeString(claim.id)) },
         { text: claim.client },
         { text: claim.category },
-        { text: claim.concluded },
+        {
+          text: claim.concluded,
+          attributes: { "data-sort-value": parseDateString(safeString(claim.concluded)).valueOf() },
+        },
         { text: claim.feeType },
         {
           text: formatClaimed(safeString(claim.claimed)),
