@@ -3,10 +3,10 @@
 This directory contains reusable utility functions and helpers for the application. All helpers are designed to be type-safe, well-tested, and f2. **Use TypeScript path aliases**
    ```typescript
    // ✅ Use alias with index
-   import { safeString } from '#src/scripts/helpers/index.js';
+   import { formatDate } from '#src/scripts/helpers/index.js';
    
    // ❌ Avoid relative paths
-   import { safeString } from '../../helpers/dataTransformers.js';
+   import { formatDate } from '../../helpers/dataTransformers.js';
    ```
 
 3. **Prefer specific imports**
@@ -24,11 +24,10 @@ All helpers are available through a central index file, allowing for clean impor
 
 ```typescript
 // Import multiple helpers from the index
-import { devLog, safeString, formatDate } from '#src/scripts/helpers/index.js';
+import { devLog, formatDate } from '#src/scripts/helpers/index.js';
 
 // Instead of importing from individual files
 import { devLog } from '#src/scripts/helpers/devLogger.js';
-import { safeString } from '#src/scripts/helpers/dataTransformers.js';
 import { formatDate } from '#src/scripts/helpers/dateFormatter.js';
 ```
 
@@ -41,14 +40,10 @@ import { formatDate } from '#src/scripts/helpers/dateFormatter.js';
       - [Functions](#functions)
       - [Usage](#usage)
       - [Environment Detection](#environment-detection)
-    - [🔧 Data Transformers (`dataTransformers.ts`)](#-data-transformers-datatransformersts)
+    - [🔧 Data Formatters (`dataFormatters.ts`)](#-data-formatters-dataformatters)
       - [Functions](#functions-1)
       - [Usage](#usage-1)
       - [Type Safety](#type-safety)
-    - [📅 Date Formatter (`dateFormatter.ts`)](#-date-formatter-dateformatterts)
-      - [Functions](#functions-2)
-      - [Usage](#usage-2)
-      - [Format](#format)
     - [⚠️ Error Handler (`errorHandler.ts`)](#️-error-handler-errorhandlerts)
       - [Functions](#functions-3)
       - [Usage](#usage-3)
@@ -108,56 +103,15 @@ Logs are suppressed when:
 
 ---
 
-### 🔧 Data Transformers (`dataTransformers.ts`)
+### 🔧 Data Formatters (`dataFormatters.ts`)
 
-Type-safe utilities for transforming and validating data from JSON fixtures and API responses.
-
-#### Functions
-
-- `safeString(value: unknown): string` - Safely convert unknown value to string
-- `safeOptionalString(value: unknown): string | undefined` - Safely convert to optional string
-- `isRecord(value: unknown): value is Record<string, unknown>` - Type guard for object records
-- `safeStringFromRecord(obj: unknown, key: string): string | null` - Safely extract string from record
-- `hasProperty(obj: unknown, key: string): obj is Record<string, unknown>` - Check if object has property
-
-#### Usage
-
-```typescript
-import { 
-  safeString, 
-  safeOptionalString, 
-  isRecord,
-  safeStringFromRecord,
-  hasProperty
-} from '#src/scripts/helpers/index.js';
-
-// Transform API data safely
-function transformCaseData(rawData: unknown) {
-  if (!isRecord(rawData)) {
-    throw new Error('Invalid data format');
-  }
-
-  return {
-    name: safeString(rawData.name),
-    description: safeOptionalString(rawData.description),
-    dateOfBirth: safeString(rawData.dateOfBirth)
-  };
-}
-```
-
-#### Type Safety
-
-All functions handle `null`, `undefined`, and unexpected types gracefully, returning sensible defaults or typed guards.
-
----
-
-### 📅 Date Formatter (`dateFormatter.ts`)
-
-Consistent date formatting utilities for UI components and tables.
+Consistent data formatting utilities for UI components and tables.
 
 #### Functions
 
-- `formatDate(dateString: string): string` - Format ISO date string to "DD MMM YYYY" format
+- `formatClaimed(value: number | undefined): string` - Format claimed amount as a currency (GBP)
+- `formatClaimId(value: number): string` - Format claim ID with `LAA-` prefix
+- `formatDate(value: Date | undefined): string` - Format date in "DD MMM YYYY" format
 
 #### Usage
 
@@ -165,19 +119,12 @@ Consistent date formatting utilities for UI components and tables.
 import { formatDate } from '#src/scripts/helpers/index.js';
 
 // Format dates for display
-const displayDate = formatDate('2023-01-06T00:00:00.000Z');
-// Returns: "06 Jan 2023"
+const displayDate = formatDate(new Date('2023-01-06T00:00:00.000Z'));
+// Returns: "06/01/2023"
 
 // Use in Nunjucks templates via filter
 // {{ dateReceived | formatDate }}
 ```
-
-#### Format
-
-- Input: ISO date string (`"2023-01-06T00:00:00.000Z"`)
-- Output: Human-readable format (`"06 Jan 2023"`)
-- Locale: British English (`en-GB`)
-- Fallback: Returns original string if parsing fails
 
 ---
 
@@ -337,20 +284,20 @@ function displayError(error: unknown) {
 1. **Use the centralized index import**
    ```typescript
    // ✅ Correct - Import from index
-   import { devLog, safeString, formatDate } from '#src/scripts/helpers/index.js';
+   import { devLog, formatDate } from '#src/scripts/helpers/index.js';
    
    // ❌ Avoid individual file imports
    import { devLog } from '#src/scripts/helpers/devLogger.js';
-   import { safeString } from '#src/scripts/helpers/dataTransformers.js';
+   import { formatDate } from '#src/scripts/helpers/dataFormatters.js';
    ```
 
 2. **Use TypeScript path aliases**
    ```typescript
    // ✅ Use alias
-   import { safeString } from '#src/scripts/helpers/index.js';
+   import { formatDate } from '#src/scripts/helpers/index.js';
    
    // ❌ Avoid relative paths
-   import { safeString } from '../../helpers/dataTransformers.js';
+   import { formatDate } from '../../helpers/dataFormatters.js';
    ```
 
 3. **Prefer specific imports**
@@ -380,26 +327,6 @@ import { devLog, devWarn, devError } from '#src/scripts/helpers/index.js';
 devLog('Debug message');
 devWarn('Warning message');
 devError('Error message');
-```
-
-#### Data Validation
-
-When working with API responses or JSON data:
-
-```typescript
-import { isRecord, safeString } from '#src/scripts/helpers/index.js';
-
-function processApiResponse(data: unknown) {
-  if (!isRecord(data)) {
-    throw new Error('Invalid response format');
-  }
-
-  return {
-    id: safeString(data.id),
-    name: safeString(data.name),
-    // ... other fields
-  };
-}
 ```
 
 #### Error Handling
@@ -497,8 +424,7 @@ export function helperFunction(param: Type): ReturnType {
 | Helper | Purpose | Key Functions |
 |--------|---------|---------------|
 | `devLogger` | Development logging | `devLog`, `devWarn`, `devError` |
-| `dataTransformers` | Data validation/transformation | `safeString`, `isRecord`, `safeStringFromRecord` |
-| `dateFormatter` | Date formatting | `formatDate` |
+| `dataFormatterss` | Data formatting | `formatClaimed`, `formatClaimId`, `formatDate` |
 | `errorHandler` | Error handling/user-friendly messages | `extractErrorMessage`, `createProcessedError`, `extractAndLogError`, `isAuthError`, `isServerError` |
 
 Import any helper with:

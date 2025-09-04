@@ -1,5 +1,4 @@
-import { formatClaimed, formatClaimId, safeString } from "#src/helpers/dataTransformers.js";
-import { parseDateString } from "#src/helpers/dateFormatter.js";
+import { formatClaimed, formatClaimId, formatDate } from '#src/helpers/index.js';
 import { createProcessedError } from "#src/helpers/errorHandler.js";
 import { claimService } from "#src/services/claimService.js";
 import type { Request, Response, NextFunction } from "express";
@@ -25,17 +24,17 @@ export async function handleYourClaimsPage(
 
     if (response.status === "success" && response.data.length > minimumApiReponseLength) {
       const rows = response.data.map((claim) => [
-        { text: formatClaimId(safeString(claim.id)) },
+        { text: formatClaimId(claim.id) },
         { text: claim.client },
         { text: claim.category },
         {
-          text: claim.concluded,
-          attributes: { "data-sort-value": parseDateString(safeString(claim.concluded)).valueOf() },
+          text: formatDate(claim.concluded),
+          attributes: claim.concluded != null ? { "data-sort-value": claim.concluded.getTime() } : {}
         },
         { text: claim.feeType },
         {
-          text: formatClaimed(safeString(claim.claimed)),
-          attributes: { "data-sort-value": claim.claimed },
+          text: formatClaimed(claim.claimed),
+          attributes: claim.claimed != null ? { "data-sort-value": claim.claimed } : {},
           classes: "govuk-table__cell--numeric",
         },
       ]);
