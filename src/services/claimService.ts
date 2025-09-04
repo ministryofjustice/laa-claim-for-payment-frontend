@@ -24,9 +24,8 @@ class ClaimService {
 
     // TODO: remove when Playwright job spins up BE
     if (process.env.NODE_ENV === "test") {
-      const data = z.array(ClaimSchema).parse(getClaimsSuccessResponseData.data);
       return {
-        data: data,
+        data: getClaimsSuccessResponseData.data,
         pagination: getClaimsSuccessResponseData.pagination,
         status: "success",
       };
