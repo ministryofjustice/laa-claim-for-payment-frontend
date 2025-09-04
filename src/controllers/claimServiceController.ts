@@ -29,7 +29,7 @@ export async function handleYourClaimsPage(
         { text: claim.category },
         {
           text: formatDate(claim.concluded),
-          attributes: claim.concluded != null ? { "data-sort-value": claim.concluded.valueOf() } : {}
+          attributes: claim.concluded != null ? { "data-sort-value": claim.concluded.getTime() } : {}
         },
         { text: claim.feeType },
         {

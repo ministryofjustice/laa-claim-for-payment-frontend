@@ -1,12 +1,28 @@
 /**
- * @description Tests for the utility functions in dataTransformers work as expected
+ * @description Tests for the utility functions in dataFormatters work as expected
  */
 
-import {
-  formatClaimed,
-  formatClaimId
-} from "#src/helpers/dataTransformers.js";
-import { expect } from "chai";
+import { formatClaimed, formatClaimId, formatDate } from '#src/helpers/dataFormatters.js';
+import { expect } from 'chai';
+
+
+describe('formatDate()', () => {
+  it('formats a valid ISO date string correctly', () => {
+    expect(formatDate(new Date('1986-01-06T00:00:00Z'))).to.equal('06/01/1986');
+    expect(formatDate(new Date('2023-07-28'))).to.equal('28/07/2023');
+    expect(formatDate(new Date('2023/07/28'))).to.equal('28/07/2023');
+
+  });
+
+  it('formats dates with single-digit days with a leading zero', () => {
+    expect(formatDate(new Date('2023-2-5'))).to.equal('05/02/2023');
+    expect(formatDate(new Date('2023/2/5'))).to.equal('05/02/2023')
+  });
+
+    it('handles undefined date strings by returning an empty string', () => {
+    expect(formatDate(undefined)).to.equal('');
+  });
+});
 
 describe("Data Transformation Helpers", () => {
   describe("formatClaimed", () => {

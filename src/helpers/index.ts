@@ -5,7 +5,7 @@
  * This allows for cleaner imports throughout the application.
  *
  * Usage:
- * import { devLog, safeString, formatDate } from '#src/helpers/index.js';
+ * import { devLog, formatDate } from '#src/helpers/index.js';
  */
 
 // Development logging utilities
@@ -17,11 +17,12 @@ export {
   isDevelopment
 } from './devLogger.js';
 
-// Data transformation utilities
-export * from './dataTransformers.js';
-
-// Date formatting utilities
-export * from './dateFormatter.js';
+// Data formatting utilities
+export {
+  formatClaimed,
+  formatClaimId,
+  formatDate
+} from './dataFormatters.js';
 
 // Error handling utilities
 export {
