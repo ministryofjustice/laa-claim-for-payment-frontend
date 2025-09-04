@@ -6,7 +6,7 @@
 
 /**
  * Transform raw claim ID to display format
- * @param {string} value raw ID item
+ * @param {number} value claim id
  * @returns {string} Transformed claim id
  */
 export function formatClaimId(value: number): string {
@@ -16,7 +16,7 @@ export function formatClaimId(value: number): string {
 
 /**
  * Transform raw value for claimed to display format
- * @param {string} value raw value
+ * @param {number | undefined} value optional value representing the claimed amount
  * @returns {string} Transformed currency value
  */
 export function formatClaimed(value: number | undefined): string {
