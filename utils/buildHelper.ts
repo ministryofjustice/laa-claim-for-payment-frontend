@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import fs from 'fs';
 
 const RANDOM_NUMBER_UPPER_BOUND = 10000;
 const FIRST_IN_ARRAY = 0;

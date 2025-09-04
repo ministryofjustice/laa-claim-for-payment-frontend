@@ -4,9 +4,9 @@
  * @param {import('express').Application} app - The Express application instance.
  */
 import helmet from 'helmet';
-import crypto from 'node:crypto';
+import crypto from 'crypto';
 import type { Request, Response, NextFunction, Application } from 'express';
-import type { IncomingMessage, ServerResponse } from 'node:http';
+import type { IncomingMessage, ServerResponse } from 'http';
 
 const RANDOMBYTES = 16;
 

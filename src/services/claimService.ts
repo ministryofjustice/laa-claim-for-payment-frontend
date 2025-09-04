@@ -1,9 +1,9 @@
 import { getClaimsEndpoint } from "#src/api/apiEndpointConstants.js";
 import { extractAndLogError } from "#src/helpers/index.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
-import type { ApiResponse, PaginationMeta } from "#types/api-types.js";
-import type { AxiosInstanceWrapper } from "#types/axios-instance-wrapper.js";
-import { type Claim, ClaimSchema } from "#types/Claim.js";
+import { ApiResponse, PaginationMeta } from "#types/api-types.js";
+import { AxiosInstanceWrapper } from "#types/axios-instance-wrapper.js";
+import { Claim, ClaimSchema } from "#types/Claim.js";
 import config from "../../config.js";
 import { z } from "zod";
 
@@ -12,9 +12,6 @@ const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = parseInt(process.env.PAGINATION_LIMIT ?? "20", 10); // Configurable via env
 const EMPTY_TOTAL = 0;
 
-/**
- *
- */
 class ClaimService {
   /**
    * Get submissions from API using axios middleware
@@ -49,7 +46,7 @@ class ClaimService {
       console.log(`API: Returning ${data.length} claims`);
 
       return {
-        data,
+        data: data,
         pagination: paginationMeta,
         status: "success",
       };
@@ -75,9 +72,9 @@ class ClaimService {
     const total = 1;
 
     return {
-      total,
-      page,
-      limit,
+      total: total,
+      page: page,
+      limit: limit,
       totalPages: undefined,
     };
   }

@@ -1,4 +1,4 @@
-import type { Claim } from "#types/Claim.js";
+import { Claim } from "#types/Claim.js";
 import { isRecord } from "./dataTransformers.js";
 
 /**

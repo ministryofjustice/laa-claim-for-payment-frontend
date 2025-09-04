@@ -4,9 +4,6 @@
  * Utility functions for formatting dates in a consistent way across the application.
  */
 
-// Linter requires 'no magic numbers'
-const alignToZeroIndex = 1;
-
 /**
  * Format date for display in table cells and UI components
  * @param {Date} date Date object
