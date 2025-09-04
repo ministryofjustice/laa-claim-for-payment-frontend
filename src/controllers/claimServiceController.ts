@@ -30,12 +30,12 @@ export async function handleYourClaimsPage(
         { text: claim.category },
         {
           text: formatDate(claim.concluded),
-          attributes: { "data-sort-value": claim.concluded?.valueOf() }
+          attributes: claim.concluded ? { "data-sort-value": claim.concluded.valueOf() } : {}
         },
         { text: claim.feeType },
         {
           text: formatClaimed(safeString(claim.claimed)),
-          attributes: { "data-sort-value": claim.claimed },
+          attributes: claim.claimed ? { "data-sort-value": claim.claimed } : {},
           classes: "govuk-table__cell--numeric",
         },
       ]);
