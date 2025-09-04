@@ -3,8 +3,6 @@ import { expect } from "chai";
 import { claimService } from "#src/services/claimService.js";
 import { AxiosInstance } from "#node_modules/axios/index.js";
 import { getClaimsEndpoint } from "#src/api/apiEndpointConstants.js";
-import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
-import { isClaim } from "#src/helpers/typeChecks.js";
 
 describe("Claim Service:", () => {
   describe("getClaims", () => {

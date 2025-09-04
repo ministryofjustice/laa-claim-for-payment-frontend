@@ -1,4 +1,4 @@
-import { formatClaimed, formatClaimId, safeString } from "#src/helpers/dataTransformers.js";
+import { formatClaimed, formatClaimId } from "#src/helpers/dataTransformers.js";
 import { formatDate } from "#src/helpers/dateFormatter.js";
 import { createProcessedError } from "#src/helpers/errorHandler.js";
 import { claimService } from "#src/services/claimService.js";
@@ -34,7 +34,7 @@ export async function handleYourClaimsPage(
         },
         { text: claim.feeType },
         {
-          text: formatClaimed(safeString(claim.claimed)),
+          text: formatClaimed(claim.claimed),
           attributes: claim.claimed != null ? { "data-sort-value": claim.claimed } : {},
           classes: "govuk-table__cell--numeric",
         },
