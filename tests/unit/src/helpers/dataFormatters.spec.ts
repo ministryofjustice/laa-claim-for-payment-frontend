@@ -2,7 +2,7 @@
  * @description Tests for the utility functions in dataFormatters work as expected
  */
 
-import { formatClaimed, formatClaimId, formatDate } from '#src/helpers/dataFormatters.js';
+import { formatClaimed, formatClaimId, formatDate, formatOptionalString } from '#src/helpers/dataFormatters.js';
 import { expect } from 'chai';
 
 
@@ -58,6 +58,16 @@ describe("Data Transformation Helpers", () => {
 
     it("should return empty string on undefined input", async () => {
       expect(formatClaimed(undefined)).to.equal("");
+    });
+  });
+
+  describe("formatOptionalString", () => {
+    it("should format undefined string as empty string", async () => {
+      expect(formatOptionalString(undefined)).to.equal("");
+    });
+
+    it("should format defined string as itself", async () => {
+      expect(formatOptionalString("foo")).to.equal("foo");
     });
   });
 });

@@ -46,3 +46,16 @@ export function formatClaimed(value: number | undefined): string {
     currency: "GBP",
   }).format(value);
 }
+
+/**
+ * Safely get optional string value from unknown data
+ * @param {string | undefined} value Optional string to format
+ * @returns {string} String value or empty if undefined
+ */
+export function formatOptionalString(value: string | undefined): string {
+  if (value === undefined) {
+    return "";
+  }
+
+  return value;
+}
