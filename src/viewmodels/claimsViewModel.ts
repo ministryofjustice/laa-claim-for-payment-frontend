@@ -6,17 +6,10 @@ import {
   formatOptionalString
 } from "#src/helpers/index.js";
 
-/**
- *
- */
 export class ClaimsTableViewModel {
   head: TableHeader[];
   rows: TableCell[][];
 
-  /**
-   *
-   * @param claims Array of claims
-   */
   constructor(claims: Claim[]) {
     this.head = [
       { text: "ID", attributes: { "aria-sort": "ascending" } },
