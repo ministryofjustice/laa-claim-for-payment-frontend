@@ -48,7 +48,7 @@ export function formatClaimed(value: number | undefined): string {
 }
 
 /**
- * Safely get optional string value from unknown data
+ * Format optional string as a string
  * @param {string | undefined} value Optional string to format
  * @returns {string} String value or empty if undefined
  */
