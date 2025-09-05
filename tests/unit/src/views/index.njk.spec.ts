@@ -1,3 +1,4 @@
+import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { expect, config as chaiConfig } from "chai";
 import { load, CheerioAPI } from "cheerio";
@@ -8,14 +9,11 @@ chaiConfig.truncateThreshold = 0;
 describe("views/main/index.njk", () => {
   let $: CheerioAPI;
 
+  const viewModel = new ClaimsTableViewModel(getClaimsSuccessResponseData.data);
+
   const context = {
-    subNavigation: {
-      items: [
-        { text: "Submitted", href: "#1", active: true },
-        { text: "In progress", href: "#2" },
-      ],
-    },
-    data: { getClaimsResponseData: getClaimsSuccessResponseData },
+    head: viewModel.head,
+    rows: viewModel.rows
   };
 
   beforeEach(async () => {
@@ -45,5 +43,23 @@ describe("views/main/index.njk", () => {
 
     expect(subNav).to.exist;
     expect(subNav).to.have.include;
+  });
+
+  it("renders the table", () => {
+    const table = $(".govuk-table");
+
+    expect(table).to.exist;
+  });
+
+  it("renders the headers", () => {
+    const headers = $(".govuk-table__header");
+
+    expect(headers.length).to.equal(6);
+  });
+
+  it("renders a row for each claim", () => {
+    const rows = $(".govuk-table__body > .govuk-table__row");
+
+    expect(rows.length).to.equal(11);
   });
 });
