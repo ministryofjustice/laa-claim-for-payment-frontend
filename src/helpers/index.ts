@@ -21,7 +21,8 @@ export {
 export {
   formatClaimed,
   formatClaimId,
-  formatDate
+  formatDate,
+  formatOptionalString
 } from './dataFormatters.js';
 
 // Error handling utilities
