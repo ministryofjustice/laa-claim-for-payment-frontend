@@ -23,11 +23,11 @@ export async function handleYourClaimsPage(
     const minimumApiReponseLength = 0;
 
     if (response.status === "success" && response.data.length > minimumApiReponseLength) {
-      const viewModel: ClaimsTableViewModel = new ClaimsTableViewModel(response.data);
+      const claimsTableViewModel: ClaimsTableViewModel = new ClaimsTableViewModel(response.data);
 
       res.render("main/index.njk", {
-        rows: viewModel.rows,
-        head: viewModel.head
+        rows: claimsTableViewModel.rows,
+        head: claimsTableViewModel.head
       });
     } else {
       res.status(NOT_FOUND).render("main/error.njk", {

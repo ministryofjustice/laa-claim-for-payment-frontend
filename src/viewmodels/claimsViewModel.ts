@@ -1,4 +1,5 @@
 import type { Claim } from "#types/Claim.js";
+import { TableCell, TableHeader } from "#src/viewmodels/components/index.js";
 import {
   formatClaimed,
   formatClaimId,
@@ -51,14 +52,4 @@ export class ClaimsTableViewModel {
       },
     ]);
   }
-}
-
-export interface TableCell {
-  text: string;
-  attributes?: Record<string, string | number | undefined>;
-  classes?: string;
-}
-
-export interface TableHeader extends TableCell {
-  attributes: { "aria-sort": "ascending" | "none" | "descending" };
 }

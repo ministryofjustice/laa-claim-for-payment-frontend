@@ -2,7 +2,7 @@
  * @description Tests for the claims table view model
  */
 
-import { ClaimsTableViewModel, TableHeader, TableCell } from '#src/viewmodels/claimsViewModel.js';
+import { ClaimsTableViewModel } from '#src/viewmodels/claimsViewModel.js';
 import { Claim } from "#types/Claim.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { expect } from 'chai';
