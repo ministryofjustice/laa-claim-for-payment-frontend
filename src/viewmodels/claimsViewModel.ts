@@ -10,6 +10,11 @@ export class ClaimsTableViewModel {
   head: TableHeader[];
   rows: TableCell[][];
 
+  /**
+   * Creates a view model containing the table header and rows derived from the claims data
+   * @param {Claim[]} claims Array of claims
+   * @returns {ClaimsTableViewModel} a view model containing the table header and rows
+   */
   constructor(claims: Claim[]) {
     this.head = [
       { text: "ID", attributes: { "aria-sort": "ascending" } },
