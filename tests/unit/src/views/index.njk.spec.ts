@@ -13,7 +13,7 @@ describe("views/main/index.njk", () => {
 
   const context = {
     head: viewModel.head,
-    rows: viewModel.rows
+    rows: viewModel.rows,
   };
 
   beforeEach(async () => {

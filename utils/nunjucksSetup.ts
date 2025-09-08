@@ -1,7 +1,7 @@
-import nunjucks from 'nunjucks';
-import path from 'path';
-import type { Application } from 'express';
-import { getLatestBuildFile } from './buildHelper.js';
+import nunjucks from "nunjucks";
+import path from "path";
+import type { Application } from "express";
+import { getLatestBuildFile } from "./buildHelper.js";
 
 /**
  * Sets up Nunjucks as the template engine for the given Express application.
@@ -13,11 +13,11 @@ import { getLatestBuildFile } from './buildHelper.js';
  */
 export const nunjucksSetup = (app: Application): void => {
   const appInstance = app;
-  appInstance.set('view engine', 'njk');
+  appInstance.set("view engine", "njk");
 
   // Set asset path in locals
   const locals = appInstance.locals as Record<string, unknown>;
-  locals.asset_path = '/assets/';
+  locals.asset_path = "/assets/";
 
   /**
    * Retrieves the latest build file for the given prefix and extension.
@@ -27,17 +27,17 @@ export const nunjucksSetup = (app: Application): void => {
    * @returns {string} The path to the latest build file.
    */
   locals.getAsset = (prefix: string, ext: string): string => {
-    const directory = ext === 'js' || ext === 'min.js' ? 'public/js' : 'public/css';
+    const directory = ext === "js" || ext === "min.js" ? "public/js" : "public/css";
     return getLatestBuildFile(directory, prefix, ext);
   };
 
   // Tell Nunjucks where to look for njk files
   nunjucks.configure(
     [
-      path.join(path.resolve(), 'views'), // Main views directory
-      'node_modules/govuk-frontend/dist', // GOV.UK Frontend templates
-      'node_modules/govuk-frontend/dist/components/', // GOV.UK components
-      'node_modules/@ministryofjustice/frontend', // MoJ Design System components
+      path.join(path.resolve(), "src/views"), // Main views directory
+      "node_modules/govuk-frontend/dist", // GOV.UK Frontend templates
+      "node_modules/govuk-frontend/dist/components/", // GOV.UK components
+      "node_modules/@ministryofjustice/frontend", // MoJ Design System components
     ],
     {
       autoescape: true, // Enable auto escaping to prevent XSS attacks

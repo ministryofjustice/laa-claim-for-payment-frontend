@@ -1,10 +1,10 @@
-import type { Claim } from "#types/Claim.js";
+import type { Claim } from "#src/types/Claim.js";
 import { TableCell, TableHeader } from "#src/viewmodels/components/index.js";
 import {
   formatClaimed,
   formatClaimId,
   formatDate,
-  formatOptionalString
+  formatOptionalString,
 } from "#src/helpers/index.js";
 
 export class ClaimsTableViewModel {
@@ -37,17 +37,12 @@ export class ClaimsTableViewModel {
       {
         text: formatDate(claim.concluded),
         attributes:
-          claim.concluded != null
-            ? { "data-sort-value": claim.concluded.getTime() }
-            : undefined,
+          claim.concluded != null ? { "data-sort-value": claim.concluded.getTime() } : undefined,
       },
       { text: formatOptionalString(claim.feeType) },
       {
         text: formatClaimed(claim.claimed),
-        attributes:
-          claim.claimed != null
-            ? { "data-sort-value": claim.claimed }
-            : undefined,
+        attributes: claim.claimed != null ? { "data-sort-value": claim.claimed } : undefined,
         classes: "govuk-table__cell--numeric",
       },
     ]);

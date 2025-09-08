@@ -1,9 +1,9 @@
 import { getClaimsEndpoint } from "#src/api/apiEndpointConstants.js";
 import { extractAndLogError } from "#src/helpers/index.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
-import { ApiResponse, PaginationMeta } from "#types/api-types.js";
-import { AxiosInstanceWrapper } from "#types/axios-instance-wrapper.js";
-import { Claim, ClaimSchema } from "#types/Claim.js";
+import { ApiResponse, PaginationMeta } from "#src/types/api-types.js";
+import { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
+import { Claim, ClaimSchema } from "#src/types/Claim.js";
 import config from "../../config.js";
 import { z } from "zod";
 

@@ -1,7 +1,7 @@
 import { createProcessedError } from "#src/helpers/errorHandler.js";
 import { claimService } from "#src/services/claimService.js";
 import type { Request, Response, NextFunction } from "express";
-import { ClaimsTableViewModel } from '#src/viewmodels/claimsViewModel.js';
+import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
 
 const NOT_FOUND = 404;
 
@@ -27,7 +27,7 @@ export async function handleYourClaimsPage(
 
       res.render("main/index.njk", {
         rows: claimsTableViewModel.rows,
-        head: claimsTableViewModel.head
+        head: claimsTableViewModel.head,
       });
     } else {
       res.status(NOT_FOUND).render("main/error.njk", {
