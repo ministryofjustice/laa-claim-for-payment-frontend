@@ -20,9 +20,9 @@ export async function handleYourClaimsPage(
   try {
     // Fetch client details from API
     const response = await claimService.getClaims(req.axiosMiddleware);
-    const minimumApiReponseLength = 0;
+    //const minimumApiReponseLength = 0;
 
-    if (response.status === "success" && response.data.length > minimumApiReponseLength) {
+    if (response.status === "success") {
       const claimsTableViewModel: ClaimsTableViewModel = new ClaimsTableViewModel(response.data);
 
       res.render("main/index.njk", {

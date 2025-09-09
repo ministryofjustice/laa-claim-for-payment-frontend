@@ -33,6 +33,8 @@ const createApp = (): express.Application => {
   // Set up common middleware for handling cookies, body parsing, etc.
   setupMiddlewares(app);
 
+  app.use(session(config.session));
+
   app.use(axiosMiddleware);
 
   // Response compression setup
@@ -63,7 +65,7 @@ const createApp = (): express.Application => {
 
   // Set up cookie security for sessions
   app.set("trust proxy", TRUST_FIRST_PROXY);
-  app.use(session(config.session));
+  
 
   // Set up Cross-Site Request Forgery (CSRF) protection
   setupCsrf(app);

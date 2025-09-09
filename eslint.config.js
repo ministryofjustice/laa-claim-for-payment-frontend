@@ -47,6 +47,7 @@ export default [
       jsdoc: jsdocPlugin,
     },
     rules: {
+      'complexity': ['error', { max: 15 }], // Set McCabe complexity threshold
       'indent': 'off', // Prettier is handling this
       'linebreak-style': 'off', // Prettier is handling this
       'quotes': 'off', // Prettier is handling this
@@ -70,6 +71,7 @@ export default [
             ArrowFunctionExpression: true,
             FunctionExpression: true,
           },
+          publicOnly: true
         },
       ],
       'jsdoc/require-param': 'error',

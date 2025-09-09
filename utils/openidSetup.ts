@@ -1,6 +1,7 @@
 // utils/oidc.ts
 import type { Application, Request, Response, RequestHandler, NextFunction } from 'express';
 import * as oidc from 'openid-client';
+import { constants as Http } from 'node:http2';
 
 const issuer = new URL(process.env.ISSUER_BASE_URL!);
 
@@ -27,25 +28,27 @@ declare module 'express-session' {
 
 /**
  * Retrieves the value of an environment variable by name, throwing an error if it is missing.
- * @param name - The name of the environment variable.
- * @returns The value of the environment variable.
+ * @param {string} name - The name of the environment variable.
+ * @returns {string} The value of the environment variable.
  * @throws If the environment variable is not set.
  */
 function env(name: string): string {
-  const v = process.env[name];
-  if (!v) throw new Error(`Missing required env var: ${name}`);
+  const { env } = process;
+  // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- can't use des
+  const v= env[name];
+  if (v == null) throw new Error(`Missing required env var: ${name}`);
   return v;
 }
 
 
-let discoveredConfig: Promise<oidc.Configuration> | undefined;
+let discoveredConfig: Promise<oidc.Configuration> | undefined = undefined;
 
 /**
  * Retrieves and caches the OIDC configuration using discovery.
- * @returns A promise resolving to the OIDC configuration.
+ * @returns {Function} A promise resolving to the OIDC configuration.
  */
-async function getConfig(): Promise<oidc.Configuration> {
-  if (!discoveredConfig) {
+export async function getConfig(): Promise<oidc.Configuration> {
+  if (discoveredConfig === undefined) {
     const clientId = env('CLIENT_ID');
     const clientSecret = env('OIDC_CLIENT_SECRET');
     const clientAuth = oidc.ClientSecretPost(clientSecret);
@@ -57,18 +60,16 @@ async function getConfig(): Promise<oidc.Configuration> {
 /**
  * Optionally call the UserInfo endpoint to get profile claims.
  * (Safer than decoding id_token yourself; works across OPs.)
- * @param config - The OIDC configuration object.
- * @param accessToken - The access token to use for the UserInfo request.
- * @returns A promise resolving to user info claims as an object, or null if not available.
+ * @param {oidc.Configuration} config - The OIDC configuration object.
+ * @param {string} accessToken - The access token to use for the UserInfo request.
+ * @returns {Promise<Record<string, unknown>} A promise resolving to user info claims as an object, or null if not available.
  */
 async function fetchUserInfo(
   config: oidc.Configuration,
-  accessToken?: string,
+  accessToken: string,
 ): Promise<Record<string, unknown> | null> {
-  if (!accessToken) return null;
   const meta = config.serverMetadata();
-  const ep = meta.userinfo_endpoint;
-  if (!ep) return null;
+  const { userinfo_endpoint : ep = ''} = meta;
   const res = await oidc.fetchProtectedResource(
     config,
     accessToken,
@@ -79,30 +80,37 @@ async function fetchUserInfo(
   return res.json() as Promise<Record<string, unknown>>;
 }
 
-export function requiresAuth(opts?: {
-  loginPath?: string;          // where to send browsers
-  enabled?: boolean;           // feature-flag (default true)
-  api?: boolean;               // if true, return 401 JSON instead of redirect
-}): RequestHandler {
-  const loginPath = opts?.loginPath ?? process.env.OIDC_LOGIN_PATH ?? '/login';
-  const enabled = opts?.enabled ?? (process.env.AUTH_ENABLED ?? 'true') !== 'false';
-  const asApi = opts?.api ?? false;
 
-  return (req: Request, res: Response, next: NextFunction) => {
-    if (!enabled) return next();
+function isAuthed(req: Request): boolean {
+  return Boolean(req.session.oidc?.userinfo) ||
+         Boolean(req.session.oidc?.tokens?.access_token);
+}
 
-    const authed =
-      Boolean(req.session?.oidc?.userinfo) ||
-      Boolean(req.session?.oidc?.tokens?.access_token);
+function isJsonRequest(req: Request): boolean {
+  return (req.xhr || req.get("accept")?.includes("application/json")) ?? false;
+}
 
-    if (authed) return next();
+/**
+ * Middleware to require authentication on routes.
+ * If not authenticated, redirects to login or returns 401 for API requests.
+ * @returns {Function} An Express middleware function.
+ */
+export function requiresAuth() {
+  const loginPath = env("OIDC_LOGIN_PATH");
+  const enabled = env("AUTH_ENABLED") === "true"; // ensure boolean
 
-    if (asApi || req.xhr || req.get('accept')?.includes('application/json')) {
-      return res.status(401).json({ error: 'unauthenticated' });
+  return (req: Request, res: Response, next: NextFunction): void => {
+    if (isAuthed(req) || !enabled) {
+      next();
+      return;
     }
 
-    // For HTML requests, bounce to login
-    return res.redirect(loginPath);
+    if (isJsonRequest(req)) {
+      res.status(Http.HTTP_STATUS_UNAUTHORIZED).json({ error: "unauthenticated" });
+      return;
+    }
+
+    res.redirect(loginPath);
   };
 }
 
@@ -111,11 +119,11 @@ export function requiresAuth(opts?: {
  * @param app - The Express application instance.
  */
 export const oidcSetup = (app: Application): void => {
-  const BASE_URL = env('BASE_URL'); // e.g. https://app.example.com
-  const SCOPE = process.env.OIDC_SCOPE ?? 'openid profile email';
-  const CALLBACK_PATH = process.env.OIDC_CALLBACK_PATH ?? '/callback';
-  const LOGIN_PATH = process.env.OIDC_LOGIN_PATH ?? '/login';
-  const LOGOUT_PATH = process.env.OIDC_LOGOUT_PATH ?? '/logout';
+  const BASE_URL = env('BASE_URL'); 
+  const SCOPE = env('OIDC_SCOPE');
+  const CALLBACK_PATH = env('OIDC_CALLBACK_PATH');
+  const LOGIN_PATH = env('OIDC_LOGIN_PATH');
+  const LOGOUT_PATH = env('OIDC_LOGOUT_PATH');
 
   // GET /login -> redirect to OP
   app.get(LOGIN_PATH, async (req: Request, res: Response) => {
@@ -134,18 +142,6 @@ export const oidcSetup = (app: Application): void => {
       redirect_uri: redirectUri,
     };
 
-const cfg = await getConfig();
-const authz = cfg.serverMetadata().authorization_endpoint;
-const base = process.env.BASE_URL ?? 'http://localhost:3000';
-const cb   = new URL(process.env.OIDC_CALLBACK_PATH ?? '/callback', base).toString();
-
-console.log('issuer            :', issuer.href);
-console.log('authorization_ep  :', authz);
-console.log('redirect_uri (Node):', cb);
-
-const aurl = oidc.buildAuthorizationUrl(cfg, { /* … */ });
-console.log('built auth URL    :', aurl.href);
-
     const url = oidc.buildAuthorizationUrl(config, {
       scope: SCOPE,
       redirect_uri: redirectUri,
@@ -160,9 +156,10 @@ console.log('built auth URL    :', aurl.href);
   // GET /callback -> exchange code for tokens, fetch userinfo, store in session
   app.get(CALLBACK_PATH, async (req: Request, res: Response, next) => {
     try {
-      const sess = req.session.oidc;
-      if (!sess?.code_verifier || !sess?.state || !sess?.redirect_uri) {
-        return res.status(400).send('Login session not found or expired.');
+      const {session: {oidc : sess}} = req;
+      
+      if (sess?.code_verifier == null || sess.state == null || sess.redirect_uri == null) {
+        return res.status(Http.HTTP_STATUS_BAD_REQUEST).send('Login session not found or expired.');
       }
 
       const config = await getConfig();
@@ -171,8 +168,8 @@ console.log('built auth URL    :', aurl.href);
       const currentUrl = new URL(`${BASE_URL}${req.originalUrl}`);
 
       const tokens = await oidc.authorizationCodeGrant(config, currentUrl, {
-        pkceCodeVerifier: sess.code_verifier,
-        expectedState: sess.state,
+        pkceCodeVerifier: sess?.code_verifier,
+        expectedState: sess?.state,
       });
 
       // Optional: call UserInfo for stable user claims
@@ -192,18 +189,27 @@ console.log('built auth URL    :', aurl.href);
   });
 
   // GET /logout -> clear session, optionally call OP logout if available
-  app.get(LOGOUT_PATH, async (req: Request, res: Response) => {
-    const endSession = (await getConfig()).serverMetadata().end_session_endpoint;
-    req.session.destroy(() => {
-      if (endSession) {
-        // Some OPs accept post_logout_redirect_uri; others vary
-        const url = new URL(endSession);
-        const postLogout = process.env.OIDC_POST_LOGOUT_REDIRECT_URI ?? `${BASE_URL}/`;
-        url.searchParams.set('post_logout_redirect_uri', postLogout);
-        res.redirect(url.href);
-      } else {
-        res.redirect('/');
-      }
-    });
-  });
+app.get(LOGOUT_PATH, async (req: Request, res: Response) => {
+  const { session } = req;
+  const idToken = session?.oidc?.tokens?.id_token; // read-only; do not mutate
+
+  const endSession = (await getConfig()).serverMetadata().end_session_endpoint;
+
+  // Build the redirect first (so we can include id_token_hint), then destroy the session
+  let redirectTo = '/';
+  if (endSession) {
+    const url = new URL(endSession);
+    const postLogout =
+      env('BASE_URL');
+    url.searchParams.set('post_logout_redirect_uri', postLogout);
+
+    // Many OPs require id_token_hint
+    if (idToken) url.searchParams.set('id_token_hint', idToken);
+
+    redirectTo = url.href;
+  }
+
+  req.session.destroy(() => res.redirect(redirectTo));
+});
+
 }
