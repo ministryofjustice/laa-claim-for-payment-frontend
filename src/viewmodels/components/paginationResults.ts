@@ -23,10 +23,14 @@ export class PaginationResults {
     } else {
       const from: number = (currentPage - 1) * numberOfResultsPerPage + 1;
 
-      const numberOfResultsOnThisPage =
-        currentPage < totalNumberOfPages
-          ? numberOfResultsPerPage
-          : totalNumberOfResults % numberOfResultsPerPage || numberOfResultsPerPage; // if the remainder is 0 (falsy) then the page is full i.e. there are `numberOfResultsPerPage` results on the page
+      const numberOfResultsOnThisPage: number = (() => {
+        if (currentPage < totalNumberOfPages) {
+          return numberOfResultsPerPage;
+        } else {
+          const remainder = totalNumberOfResults % numberOfResultsPerPage;
+          return remainder === 0 ? numberOfResultsPerPage : remainder;
+        }
+      })();
 
       this.from = from;
       this.to = from + numberOfResultsOnThisPage - 1;

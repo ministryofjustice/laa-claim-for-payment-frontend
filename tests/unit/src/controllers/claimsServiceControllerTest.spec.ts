@@ -35,6 +35,9 @@ describe("Claim Service Controller", () => {
   beforeEach(() => {
     req = {
       axiosMiddleware: {} as any,
+      query: {
+        page: "1",
+      },
     };
 
     renderStub = sinon.stub();
