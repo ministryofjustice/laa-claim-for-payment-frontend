@@ -1,5 +1,5 @@
 import type { Claim } from "#src/types/Claim.js";
-import { TableCell, TableHeader } from "#src/viewmodels/components/index.js";
+import type { TableCell, TableHeader } from "#src/viewmodels/components/index.js";
 import {
   formatClaimed,
   formatClaimId,
@@ -14,7 +14,6 @@ export class ClaimsTableViewModel {
   /**
    * Creates a view model containing the table header and rows derived from the claims data
    * @param {Claim[]} claims Array of claims
-   * @returns {ClaimsTableViewModel} a view model containing the table header and rows
    */
   constructor(claims: Claim[]) {
     this.head = [
