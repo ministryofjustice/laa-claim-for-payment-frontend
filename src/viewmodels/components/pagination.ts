@@ -1,6 +1,4 @@
-import type { PaginationItem } from "./paginationItem.js";
-import type { PaginationLink } from "./paginationLink.js";
-import { PaginationResults } from "./paginationResults.js";
+import { PaginationResults, type PaginationItem, type PaginationLink } from "./index.js";
 
 export class Pagination {
   items: PaginationItem[];
