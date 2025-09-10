@@ -2,6 +2,7 @@ import { createProcessedError } from "#src/helpers/errorHandler.js";
 import { claimService } from "#src/services/claimService.js";
 import type { Request, Response, NextFunction } from "express";
 import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
+import { parseNumberQueryParam } from "#src/helpers/index.js";
 
 const NOT_FOUND = 404;
 
@@ -23,11 +24,15 @@ export async function handleYourClaimsPage(
     const minimumApiReponseLength = 0;
 
     if (response.status === "success" && response.data.length > minimumApiReponseLength) {
-      const claimsTableViewModel: ClaimsTableViewModel = new ClaimsTableViewModel(response.data);
+      const claimsTableViewModel: ClaimsTableViewModel = new ClaimsTableViewModel(
+        response.data,
+        parseNumberQueryParam(req.query?.page, 1)
+      );
 
       res.render("main/index.njk", {
         rows: claimsTableViewModel.rows,
         head: claimsTableViewModel.head,
+        pagination: claimsTableViewModel.pagination,
       });
     } else {
       res.status(NOT_FOUND).render("main/error.njk", {

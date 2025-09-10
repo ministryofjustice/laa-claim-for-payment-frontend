@@ -9,7 +9,7 @@ import { expect } from "chai";
 
 describe("constructor()", () => {
   it("creates a series of headers", () => {
-    const viewModel = new ClaimsTableViewModel(getClaimsSuccessResponseData.data);
+    const viewModel = new ClaimsTableViewModel(getClaimsSuccessResponseData.data, 1);
 
     expect(viewModel.head[0].text).to.equal("ID");
     expect(viewModel.head[0].attributes["aria-sort"]).to.equal("ascending");
@@ -58,7 +58,7 @@ describe("constructor()", () => {
       },
     ];
 
-    const viewModel = new ClaimsTableViewModel(claims);
+    const viewModel = new ClaimsTableViewModel(claims, 1);
 
     // First row
     expect(viewModel.rows[0][0].text).to.equal("LAA-001");

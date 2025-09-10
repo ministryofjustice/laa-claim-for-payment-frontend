@@ -89,19 +89,6 @@ export default [
       ],
       "@typescript-eslint/no-var-requires": "error",
       "@typescript-eslint/no-explicit-any": "warn",
-    },
-  },
-  // Ignore magic number errors in viewmodel components
-  {
-    files: ["**/viewmodels/components/*.ts"],
-    rules: {
-      "@typescript-eslint/no-magic-numbers": "off",
-    },
-  },
-  // Add a separate config for test files
-  {
-    files: ["tests/**/*.ts"],
-    rules: {
       "@typescript-eslint/no-magic-numbers": "off",
     },
   },

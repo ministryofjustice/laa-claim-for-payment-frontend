@@ -6,16 +6,19 @@ import {
   formatDate,
   formatOptionalString,
 } from "#src/helpers/index.js";
+import { Pagination } from "./components/pagination.js";
 
 export class ClaimsTableViewModel {
   head: TableHeader[];
   rows: TableCell[][];
+  pagination: Pagination;
 
   /**
    * Creates a view model containing the table header and rows derived from the claims data
    * @param {Claim[]} claims Array of claims
+   * @param {number} currentPage The current page (default is 1)
    */
-  constructor(claims: Claim[]) {
+  constructor(claims: Claim[], currentPage: number) {
     this.head = [
       { text: "ID", attributes: { "aria-sort": "ascending" } },
       { text: "Client", attributes: { "aria-sort": "none" } },
@@ -45,5 +48,7 @@ export class ClaimsTableViewModel {
         classes: "govuk-table__cell--numeric",
       },
     ]);
+
+    this.pagination = new Pagination(claims.length, 20, currentPage, "/");
   }
 }

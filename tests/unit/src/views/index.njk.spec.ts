@@ -9,7 +9,7 @@ chaiConfig.truncateThreshold = 0;
 describe("views/main/index.njk", () => {
   let $: CheerioAPI;
 
-  const viewModel = new ClaimsTableViewModel(getClaimsSuccessResponseData.data);
+  const viewModel = new ClaimsTableViewModel(getClaimsSuccessResponseData.data, 1);
 
   const context = {
     head: viewModel.head,
@@ -61,5 +61,11 @@ describe("views/main/index.njk", () => {
     const rows = $(".govuk-table__body > .govuk-table__row");
 
     expect(rows.length).to.equal(11);
+  });
+
+  it("renders the pagination", () => {
+    const pagination = $(".moj-pagination");
+
+    expect(pagination).to.exist;
   });
 });
