@@ -27,9 +27,8 @@ export class Pagination {
       this.items = [];
     } else {
       const paginationItems = [];
-      let page = 1;
       let isLastItemEllipsis = false;
-      while (page <= totalNumberOfPages) {
+      for (let page = 1; page <= totalNumberOfPages; page++) {
         if (page === 1 || Math.abs(page - currentPage) <= 1 || page === totalNumberOfPages) {
           const paginationItem: PaginationItem = {
             text: page.toString(),
@@ -46,7 +45,6 @@ export class Pagination {
           paginationItems.push(paginationItem);
           isLastItemEllipsis = true;
         }
-        page++;
       }
 
       this.items = paginationItems;
