@@ -19,12 +19,13 @@ class ClaimService {
   /**
    * Get submissions from API using axios middleware
    * @param {AxiosInstanceWrapper} axiosMiddleware - Axios middleware from request
+   * @param {number} page - The current page
    * @returns {Promise<ApiResponse<Claim>>} API response with submission data and pagination
    */
-  static async getClaims(axiosMiddleware: AxiosInstanceWrapper): Promise<ApiResponse<Claim>> {
-    const page = DEFAULT_PAGE;
-    const limit = DEFAULT_LIMIT;
-
+  static async getClaims(
+    axiosMiddleware: AxiosInstanceWrapper,
+    page: number
+  ): Promise<ApiResponse<Claim>> {
     // TODO: remove when Playwright job spins up BE
     if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "local") {
       return {
@@ -43,8 +44,8 @@ class ClaimService {
       // Validate and transform the data against the schema
       const data = z.array(ClaimSchema).parse(response.data);
 
-      // TODO: Pagination not currently implemented
-      const paginationMeta = ClaimService.extractPaginationMeta();
+      // TODO: Pagination not currently implemented. Update `data.length` when API response body includes the pagination data.
+      const paginationMeta = ClaimService.extractPaginationMeta(data.length, page);
 
       console.log(`API: Returning ${data.length} claims`);
 
@@ -58,7 +59,11 @@ class ClaimService {
 
       return {
         data: [],
-        pagination: { total: EMPTY_TOTAL, page, limit },
+        pagination: {
+          total: 0,
+          page,
+          limit: config.pagination.numberOfClaimsPerPage,
+        },
         status: "error",
         message: errorMessage,
       };
@@ -66,19 +71,16 @@ class ClaimService {
   }
 
   /**
-   * Extract pagination metadata from response headers
+   * Extract pagination metadata from response body
+   * @param {number} total - The total number of unpaginated results
+   * @param {number} page - The current page
    * @returns {PaginationMeta} Pagination metadata
    */
-  private static extractPaginationMeta(): PaginationMeta {
-    const page = DEFAULT_PAGE;
-    const limit = DEFAULT_LIMIT;
-    const total = 1;
-
+  private static extractPaginationMeta(total: number, page: number): PaginationMeta {
     return {
       total,
       page,
-      limit,
-      totalPages: undefined,
+      limit: config.pagination.numberOfClaimsPerPage,
     };
   }
 

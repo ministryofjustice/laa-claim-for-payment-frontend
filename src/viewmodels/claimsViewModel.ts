@@ -6,6 +6,8 @@ import {
   formatDate,
   formatOptionalString,
 } from "#src/helpers/index.js";
+import { Pagination } from "./components/pagination.js";
+import { PaginationMeta } from "#src/types/api-types.js";
 
 /**
  *
@@ -13,13 +15,15 @@ import {
 export class ClaimsTableViewModel {
   head: TableHeader[];
   rows: TableCell[][];
+  pagination: Pagination;
 
   /**
    * Creates a view model containing the table header and rows derived from the claims data
    * @param {Claim[]} claims Array of claims
-   * @returns {ClaimsTableViewModel} a view model containing the table header and rows
+   * @param {PaginationMeta} paginationMeta The pagination metadata
+   * @param {string} href The href of the page
    */
-  constructor(claims: Claim[]) {
+  constructor(claims: Claim[], paginationMeta: PaginationMeta, href: string) {
     this.head = [
       { text: "ID", attributes: { "aria-sort": "ascending" } },
       { text: "Client", attributes: { "aria-sort": "none" } },
@@ -49,5 +53,12 @@ export class ClaimsTableViewModel {
         classes: "govuk-table__cell--numeric",
       },
     ]);
+
+    this.pagination = new Pagination(
+      paginationMeta.total,
+      paginationMeta.limit,
+      paginationMeta.page,
+      href
+    );
   }
 }

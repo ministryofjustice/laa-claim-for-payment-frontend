@@ -35,6 +35,10 @@ describe("Claim Service Controller", () => {
   beforeEach(() => {
     req = {
       axiosMiddleware: {} as any,
+      query: {
+        page: "1",
+      },
+      path: "/",
     };
 
     renderStub = sinon.stub();
@@ -43,6 +47,7 @@ describe("Claim Service Controller", () => {
     res = {
       render: renderStub,
       status: statusStub,
+      redirect: sinon.spy(),
     };
 
     next = sinon.stub();
@@ -69,6 +74,31 @@ describe("Claim Service Controller", () => {
       expect(claimServiceStub.calledOnce).to.be.true;
       expect(claimServiceStub.calledWith(req.axiosMiddleware)).to.be.true;
       expect(renderStub.calledWith("main/index.njk")).to.be.true;
+    });
+
+    it("should redirect to appropriate page when invalid page in query param", async () => {
+      // Arrange
+      const invalidPage = 5;
+
+      req.query!.page = invalidPage.toString();
+
+      const mockApiResponse = {
+        data: getClaimsSuccessResponseData.data,
+        pagination: {
+          total: 11,
+          page: invalidPage,
+          limit: 20,
+        },
+        status: "success",
+      };
+
+      claimServiceStub.resolves(mockApiResponse);
+
+      // Act
+      await handleYourClaimsPage(req as Request, res as Response, next);
+
+      // Assert
+      expect(res.redirect.calledWith("/?page=1")).to.be.true;
     });
 
     it("should render the error page with when 404 status", async () => {
