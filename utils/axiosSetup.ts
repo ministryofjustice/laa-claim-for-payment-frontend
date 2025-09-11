@@ -1,13 +1,16 @@
 // middleware/axios.ts
 import { create } from 'middleware-axios';
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import type { Request, Response, NextFunction } from 'express';
 import * as oidc from 'openid-client';
+import { constants as Http } from 'node:http2';
 import { getConfig } from './openidSetup.js';
-import { decodeJwt } from 'jose';
+import { getRequiredEnv } from '#utils/envHelper.js';
+
 
 const DEFAULT_TIMEOUT = 5000;
-const { env: {API_URL: API_BASE}} = process;
-const SKEW_SECONDS = 30;
+
+const API_URL = getRequiredEnv('API_URL');
 
 declare global {
   namespace Express {
@@ -17,81 +20,109 @@ declare global {
   }
 }
 
-async function getValidAccessToken(
-  req: Request,
-  cfg: oidc.Configuration
-): Promise<string> {
-  const { session } = req;
-  if (session?.oidc == null) throw new Error('No session available');
 
-  const { oidc: sess } = session;
-  const { tokens } = sess;
-  if (!tokens?.access_token) throw new Error('No access token in session');
-
-  const now = Math.floor(Date.now() / 1000);
-
-  // Compute an ephemeral expiry without writing to the token object
-  const expiresAtFromToken = (tokens as Record<string, unknown>)['expires_at'];
-  const jwtExp = safeDecodeExp(tokens.access_token);
-  const computedExpiresAt =
-    (typeof expiresAtFromToken === 'number' ? expiresAtFromToken : undefined) ??
-    jwtExp;
-
-  // If we can determine expiry and it's near/over, refresh and REPLACE tokens
-  if (typeof computedExpiresAt === 'number' && computedExpiresAt <= now + SKEW_SECONDS) {
-    const { refresh_token: rt } = tokens;
-    if (!rt) throw new Error('No refresh_token available');
-
-    const refreshed = await oidc.refreshTokenGrant(cfg, rt);
-    // Replace the whole tokens object; do not mutate its fields
-    sess.tokens = { ...tokens, ...refreshed };
-
-    return sess.tokens.access_token!;
-  }
-
-  // Otherwise assume current token is fine
-  return tokens.access_token;
-}
-
-function safeDecodeExp(accessToken: string): number | undefined {
-  try {
-    const { exp } = decodeJwt(accessToken);
-    return typeof exp === 'number' ? exp : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
+/**
+ * Middleware to attach an Axios instance to the request object.
+ * The Axios instance automatically includes the current access token
+ * in the Authorization header and handles token refresh on 401 responses.
+ *  @param {import('express').Request} req - The Express request object
+ *  @param {import('express').Response} _res - The Express response object
+ *  @param {import('express').NextFunction} next - The next middleware function
+ */
 export const axiosMiddleware = (req: Request, _res: Response, next: NextFunction): void => {
+
+  // Primary client (has interceptor)
   const client = create({
-    baseURL: API_BASE,
+    baseURL: API_URL,
     timeout: DEFAULT_TIMEOUT,
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
   });
 
-  // IMPORTANT: reach the raw axios instance
-  const axios = (client as any).axiosInstance ?? (client as any); // fall back if wrapper proxies it
+  const retryClient = create({
+    baseURL: API_URL,
+    timeout: DEFAULT_TIMEOUT,
+  });
 
-  axios.interceptors.request.use(async (config: any) => {
-    const authEnabled = (process.env.AUTH_ENABLED ?? 'true') !== 'false';
-    if (!authEnabled) return config;
+  const { axiosInstance: axiosInstanceMain } = client;
+   const { axiosInstance: axiosRetryInstance } = retryClient;
 
-    const cfg = await getConfig();
-    const token = await getValidAccessToken(req, cfg);
-    config.headers = { ...(config.headers || {}), Authorization: `Bearer ${token}` };
+  // Attach current access token to every request
+  const attachToken = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+    const access = req.session.oidc?.tokens?.access_token;
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- ffs
+    if (typeof access === 'string' && access.length > 0) {
+      const headers = axios.AxiosHeaders.from(config.headers);
+      headers.set('Authorization', `Bearer ${access}`);
+      config.headers = headers;
+    }
     return config;
-  });
+  };
 
-  axios.interceptors.response.use(
-    (resp: any) => resp,
-    (err: any) => {
-      if (err?.response?.status === 401 && req.session?.oidc?.tokens) {
-        (req.session.oidc.tokens as any).expires_at = 0; // force refresh on next try
+  axiosInstanceMain.interceptors.request.use(attachToken);
+  axiosRetryInstance.interceptors.request.use(attachToken);
+
+  // Single-flight refresh gate per incoming HTTP request
+  let refreshing: Promise<void> | null = null;
+
+  
+
+// Helper to strip methods like claims() / expiresIn()
+function toPlainTokens(tokens: oidc.TokenEndpointResponse): oidc.TokenEndpointResponse {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ffs
+  return Object.fromEntries(
+    Object.entries(tokens).filter(([, v]) => typeof v !== 'function')
+  ) as oidc.TokenEndpointResponse;
+}
+
+  axiosInstanceMain.interceptors.response.use(
+    r => r,
+
+    async (error: AxiosError) => {
+      const { response, config } = error;
+
+      if ((getRequiredEnv('AUTH_ENABLED') !== 'true') || response == null || response.status !== Http.HTTP_STATUS_UNAUTHORIZED || config == null) {
+        return await Promise.reject(error);
       }
-      return Promise.reject(err);
-    },
+
+      const rt = req.session.oidc?.tokens?.refresh_token;
+      if (rt == null) return await Promise.reject(error); // nothing to do
+
+      // Run exactly one refresh; concurrent 401s await the same promise
+
+      refreshing ??= (async () => {
+        const cfg = await getConfig();
+        
+        const refreshed = await oidc.refreshTokenGrant(cfg, rt);
+        const prev = req.session.oidc?.tokens;
+        req.session.oidc = {
+          ...(req.session.oidc ?? {}),
+           tokens: {
+    ...(prev !== undefined ? toPlainTokens(prev) : {}),
+    ...toPlainTokens(refreshed),
+  } ,
+        };
+      })().finally(() => {
+        refreshing = null;
+      });
+
+
+      try {
+        await refreshing;
+      } catch {
+        return await Promise.reject(error); // refresh failed
+      }
+
+      // Retry the original request ONCE using the bare client (no interceptor loop)
+      const newAccess = req.session.oidc?.tokens?.access_token;
+      const headers = axios.AxiosHeaders.from(config.headers);
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- ffs2
+      if (typeof newAccess === 'string' && newAccess.length > 0) {
+        headers.set('Authorization', `Bearer ${newAccess}`);
+      }
+      return await retryClient.request({ ...config, headers });
+    }
   );
 
-  req.axiosMiddleware = client;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-type-assertion -- ffs
+  (req as any).axiosMiddleware = client;
   next();
 };

@@ -79,8 +79,11 @@ const createApp = (): express.Application => {
   // Set up application-specific configurations
   setupConfig(app);
 
+  if (process.env.AUTH_ENABLED === 'true') {
   // Set up the OIDC authentication
-  oidcSetup(app);
+    oidcSetup(app);
+
+  }
 
   // Set up request logging based on environment
   if (process.env.NODE_ENV === 'production') {

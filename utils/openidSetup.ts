@@ -1,13 +1,26 @@
 // utils/oidc.ts
-import type { Application, Request, Response, RequestHandler, NextFunction } from 'express';
+import type { Application, Request, Response, NextFunction } from 'express';
 import * as oidc from 'openid-client';
 import { constants as Http } from 'node:http2';
+import { getRequiredEnv } from '#utils/envHelper.js';
+import { z } from 'zod';
 
-const issuer = new URL(process.env.ISSUER_BASE_URL!);
+const ISSUER = new URL(getRequiredEnv('ISSUER_BASE_URL'));
+const BASE_URL = getRequiredEnv('BASE_URL');
+const SCOPE = getRequiredEnv('OIDC_SCOPE');
+const CALLBACK_PATH = getRequiredEnv('OIDC_CALLBACK_PATH');
+const LOGIN_PATH = getRequiredEnv('OIDC_LOGIN_PATH');
+const LOGOUT_PATH = getRequiredEnv('OIDC_LOGOUT_PATH');
+const CLIENT_ID = getRequiredEnv('CLIENT_ID');
+const CLIENT_SECRET = getRequiredEnv('OIDC_CLIENT_SECRET');
+
+let discoveredConfig: Promise<oidc.Configuration> | undefined = undefined;
+const UserInfoSchema = z.record(z.string(), z.unknown());
+type UserInfo = z.infer<typeof UserInfoSchema>;
 
 // Only relax HTTPS when (a) it’s http:// and (b) not production
 const options =
-  issuer.protocol === 'http:' && process.env.NODE_ENV !== 'production'
+  ISSUER.protocol === 'http:' && process.env.NODE_ENV !== 'production'
     ? { execute: [oidc.allowInsecureRequests] }
     : undefined;
 
@@ -26,22 +39,6 @@ declare module 'express-session' {
   }
 }
 
-/**
- * Retrieves the value of an environment variable by name, throwing an error if it is missing.
- * @param {string} name - The name of the environment variable.
- * @returns {string} The value of the environment variable.
- * @throws If the environment variable is not set.
- */
-function env(name: string): string {
-  const { env } = process;
-  // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- can't use des
-  const v= env[name];
-  if (v == null) throw new Error(`Missing required env var: ${name}`);
-  return v;
-}
-
-
-let discoveredConfig: Promise<oidc.Configuration> | undefined = undefined;
 
 /**
  * Retrieves and caches the OIDC configuration using discovery.
@@ -49,27 +46,21 @@ let discoveredConfig: Promise<oidc.Configuration> | undefined = undefined;
  */
 export async function getConfig(): Promise<oidc.Configuration> {
   if (discoveredConfig === undefined) {
-    const clientId = env('CLIENT_ID');
-    const clientSecret = env('OIDC_CLIENT_SECRET');
-    const clientAuth = oidc.ClientSecretPost(clientSecret);
-    discoveredConfig = oidc.discovery(issuer, clientId, clientSecret, clientAuth, options);
+
+    const clientAuth = oidc.ClientSecretPost(CLIENT_SECRET);
+    discoveredConfig = oidc.discovery(ISSUER, CLIENT_ID, CLIENT_SECRET, clientAuth, options);
   }
-  return discoveredConfig;
+  return await discoveredConfig;
 }
 
-/**
- * Optionally call the UserInfo endpoint to get profile claims.
- * (Safer than decoding id_token yourself; works across OPs.)
- * @param {oidc.Configuration} config - The OIDC configuration object.
- * @param {string} accessToken - The access token to use for the UserInfo request.
- * @returns {Promise<Record<string, unknown>} A promise resolving to user info claims as an object, or null if not available.
- */
+
 async function fetchUserInfo(
   config: oidc.Configuration,
   accessToken: string,
-): Promise<Record<string, unknown> | null> {
+): Promise<UserInfo | null> {
+
   const meta = config.serverMetadata();
-  const { userinfo_endpoint : ep = ''} = meta;
+  const { userinfo_endpoint: ep = '' } = meta;
   const res = await oidc.fetchProtectedResource(
     config,
     accessToken,
@@ -77,13 +68,22 @@ async function fetchUserInfo(
     'GET',
   );
   if (!res.ok) return null;
-  return res.json() as Promise<Record<string, unknown>>;
+
+  const parsed = UserInfoSchema.safeParse(await res.json());
+
+  if (!parsed.success) {
+    console.warn('Invalid user info response:', parsed.error);
+    return null;
+  }
+
+  return parsed.data;
+
 }
 
 
 function isAuthed(req: Request): boolean {
   return Boolean(req.session.oidc?.userinfo) ||
-         Boolean(req.session.oidc?.tokens?.access_token);
+    Boolean(req.session.oidc?.tokens?.access_token);
 }
 
 function isJsonRequest(req: Request): boolean {
@@ -96,11 +96,11 @@ function isJsonRequest(req: Request): boolean {
  * @returns {Function} An Express middleware function.
  */
 export function requiresAuth() {
-  const loginPath = env("OIDC_LOGIN_PATH");
-  const enabled = env("AUTH_ENABLED") === "true"; // ensure boolean
+  const loginPath = getRequiredEnv("OIDC_LOGIN_PATH");
+  // ensure boolean
 
   return (req: Request, res: Response, next: NextFunction): void => {
-    if (isAuthed(req) || !enabled) {
+    if (isAuthed(req) || getRequiredEnv("AUTH_ENABLED") !== 'true') {
       next();
       return;
     }
@@ -116,14 +116,9 @@ export function requiresAuth() {
 
 /**
  * Sets up OIDC authentication routes on the provided Express application.
- * @param app - The Express application instance.
+ * @param {Application} app - The Express application instance.
  */
 export const oidcSetup = (app: Application): void => {
-  const BASE_URL = env('BASE_URL'); 
-  const SCOPE = env('OIDC_SCOPE');
-  const CALLBACK_PATH = env('OIDC_CALLBACK_PATH');
-  const LOGIN_PATH = env('OIDC_LOGIN_PATH');
-  const LOGOUT_PATH = env('OIDC_LOGOUT_PATH');
 
   // GET /login -> redirect to OP
   app.get(LOGIN_PATH, async (req: Request, res: Response) => {
@@ -156,8 +151,8 @@ export const oidcSetup = (app: Application): void => {
   // GET /callback -> exchange code for tokens, fetch userinfo, store in session
   app.get(CALLBACK_PATH, async (req: Request, res: Response, next) => {
     try {
-      const {session: {oidc : sess}} = req;
-      
+      const { session: { oidc: sess } } = req;
+
       if (sess?.code_verifier == null || sess.state == null || sess.redirect_uri == null) {
         return res.status(Http.HTTP_STATUS_BAD_REQUEST).send('Login session not found or expired.');
       }
@@ -168,11 +163,11 @@ export const oidcSetup = (app: Application): void => {
       const currentUrl = new URL(`${BASE_URL}${req.originalUrl}`);
 
       const tokens = await oidc.authorizationCodeGrant(config, currentUrl, {
-        pkceCodeVerifier: sess?.code_verifier,
-        expectedState: sess?.state,
+        pkceCodeVerifier: sess.code_verifier,
+        expectedState: sess.state,
       });
 
-      // Optional: call UserInfo for stable user claims
+      // call UserInfo for stable user claims
       const userinfo = await fetchUserInfo(config, tokens.access_token);
 
       req.session.oidc = {
@@ -181,7 +176,7 @@ export const oidcSetup = (app: Application): void => {
         userinfo: userinfo ?? null,
       };
 
-      // redirect to wherever makes sense post-login
+      // redirect to home page
       res.redirect('/');
     } catch (err) {
       next(err);
@@ -189,27 +184,27 @@ export const oidcSetup = (app: Application): void => {
   });
 
   // GET /logout -> clear session, optionally call OP logout if available
-app.get(LOGOUT_PATH, async (req: Request, res: Response) => {
-  const { session } = req;
-  const idToken = session?.oidc?.tokens?.id_token; // read-only; do not mutate
+  app.get(LOGOUT_PATH, async (req: Request, res: Response) => {
+    const { session } = req;
+    const idToken = session.oidc?.tokens?.id_token; // read-only; do not mutate
+    const config = await getConfig();
+    const { end_session_endpoint: endSession } = config.serverMetadata();
 
-  const endSession = (await getConfig()).serverMetadata().end_session_endpoint;
+    // Build the redirect first (so we can include id_token_hint), then destroy the session
+    let redirectTo = '/';
+    if (endSession != null) {
+      const url = new URL(endSession);
+      const postLogout =
+        getRequiredEnv('BASE_URL');
+      url.searchParams.set('post_logout_redirect_uri', postLogout);
 
-  // Build the redirect first (so we can include id_token_hint), then destroy the session
-  let redirectTo = '/';
-  if (endSession) {
-    const url = new URL(endSession);
-    const postLogout =
-      env('BASE_URL');
-    url.searchParams.set('post_logout_redirect_uri', postLogout);
+      // Many OPs require id_token_hint
+      if (idToken != null) url.searchParams.set('id_token_hint', idToken);
 
-    // Many OPs require id_token_hint
-    if (idToken) url.searchParams.set('id_token_hint', idToken);
+      ({ href: redirectTo } = url);
+    }
 
-    redirectTo = url.href;
-  }
-
-  req.session.destroy(() => res.redirect(redirectTo));
-});
+    req.session.destroy(() => { res.redirect(redirectTo); });
+  });
 
 }

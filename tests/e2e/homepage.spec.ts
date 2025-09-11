@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 
+
 test("homepage should have the correct title", async ({ page }) => {
   // Navigate to the homepage
   await page.goto("/");

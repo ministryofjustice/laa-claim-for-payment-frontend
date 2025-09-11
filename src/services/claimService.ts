@@ -1,9 +1,9 @@
 import { getClaimsEndpoint } from "#src/api/apiEndpointConstants.js";
 import { extractAndLogError } from "#src/helpers/index.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
-import { ApiResponse, PaginationMeta } from "#src/types/api-types.js";
-import { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
-import { Claim, ClaimSchema } from "#src/types/Claim.js";
+import type { ApiResponse, PaginationMeta } from "#src/types/api-types.js";
+import type { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
+import { type Claim, ClaimSchema } from "#src/types/Claim.js";
 import config from "../../config.js";
 import { z } from "zod";
 
@@ -12,6 +12,9 @@ const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = parseInt(process.env.PAGINATION_LIMIT ?? "20", 10); // Configurable via env
 const EMPTY_TOTAL = 0;
 
+/**
+ *
+ */
 class ClaimService {
   /**
    * Get submissions from API using axios middleware
@@ -23,7 +26,7 @@ class ClaimService {
     const limit = DEFAULT_LIMIT;
 
     // TODO: remove when Playwright job spins up BE
-    if (process.env.NODE_ENV === "test") {
+    if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "local") {
       return {
         data: getClaimsSuccessResponseData.data,
         pagination: getClaimsSuccessResponseData.pagination,
@@ -46,7 +49,7 @@ class ClaimService {
       console.log(`API: Returning ${data.length} claims`);
 
       return {
-        data: data,
+        data,
         pagination: paginationMeta,
         status: "success",
       };
@@ -72,9 +75,9 @@ class ClaimService {
     const total = 1;
 
     return {
-      total: total,
-      page: page,
-      limit: limit,
+      total,
+      page,
+      limit,
       totalPages: undefined,
     };
   }

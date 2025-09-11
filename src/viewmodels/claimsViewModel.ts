@@ -1,5 +1,5 @@
 import type { Claim } from "#src/types/Claim.js";
-import { TableCell, TableHeader } from "#src/viewmodels/components/index.js";
+import type { TableCell, TableHeader } from "#src/viewmodels/components/index.js";
 import {
   formatClaimed,
   formatClaimId,
@@ -7,6 +7,9 @@ import {
   formatOptionalString,
 } from "#src/helpers/index.js";
 
+/**
+ *
+ */
 export class ClaimsTableViewModel {
   head: TableHeader[];
   rows: TableCell[][];

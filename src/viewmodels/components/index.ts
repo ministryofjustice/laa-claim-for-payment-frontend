@@ -1,2 +1,2 @@
-export { TableCell } from "#src/viewmodels/components/tableCell.js";
-export { TableHeader } from "#src/viewmodels/components/tableHeader.js";
+export type { TableCell } from "#src/viewmodels/components/tableCell.js";
+export type { TableHeader } from "#src/viewmodels/components/tableHeader.js";

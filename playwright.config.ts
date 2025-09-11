@@ -38,8 +38,13 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'yarn start',
-    url: 'http://127.0.0.1:3000',
-    reuseExistingServer: process.env.CI !== 'true',
+  command: 'yarn start',
+  url: 'http://127.0.0.1:3000',
+  reuseExistingServer: process.env.CI !== 'true',
+  env: {
+    ...process.env,
+    //TODO: for now disable auth for e2e tests
+    AUTH_ENABLED: 'false',
   },
+},
 });
