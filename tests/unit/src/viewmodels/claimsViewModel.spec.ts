@@ -18,7 +18,7 @@ describe("constructor()", () => {
       limit: 20,
     };
 
-    const viewModel = new ClaimsTableViewModel(claims, paginationMeta);
+    const viewModel = new ClaimsTableViewModel(claims, paginationMeta, "/foo");
 
     expect(viewModel.head[0].text).to.equal("ID");
     expect(viewModel.head[0].attributes["aria-sort"]).to.equal("ascending");
@@ -73,7 +73,7 @@ describe("constructor()", () => {
       limit: 20,
     };
 
-    const viewModel = new ClaimsTableViewModel(claims, paginationMeta);
+    const viewModel = new ClaimsTableViewModel(claims, paginationMeta, "/foo");
 
     // First row
     expect(viewModel.rows[0][0].text).to.equal("LAA-001");
@@ -145,7 +145,7 @@ describe("constructor()", () => {
       limit: 20,
     };
 
-    const viewModel = new ClaimsTableViewModel(claims, paginationMeta);
+    const viewModel = new ClaimsTableViewModel(claims, paginationMeta, "/foo");
 
     expect(viewModel.pagination.results.count).to.equal(100);
     expect(viewModel.pagination.results.from).to.equal(41);
@@ -153,9 +153,9 @@ describe("constructor()", () => {
     expect(viewModel.pagination.results.text).to.equal("results");
 
     expect(viewModel.pagination.previous?.text).to.equal("Previous");
-    expect(viewModel.pagination.previous?.href).to.equal("/?page=2");
+    expect(viewModel.pagination.previous?.href).to.equal("/foo?page=2");
 
     expect(viewModel.pagination.next?.text).to.equal("Next");
-    expect(viewModel.pagination.next?.href).to.equal("/?page=4");
+    expect(viewModel.pagination.next?.href).to.equal("/foo?page=4");
   });
 });

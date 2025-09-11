@@ -18,8 +18,9 @@ export class ClaimsTableViewModel {
    * Creates a view model containing the table header and rows derived from the claims data
    * @param {Claim[]} claims Array of claims
    * @param {PaginationMeta} paginationMeta The pagination metadata
+   * @param {string} href The href of the page
    */
-  constructor(claims: Claim[], paginationMeta: PaginationMeta) {
+  constructor(claims: Claim[], paginationMeta: PaginationMeta, href: string) {
     this.head = [
       { text: "ID", attributes: { "aria-sort": "ascending" } },
       { text: "Client", attributes: { "aria-sort": "none" } },
@@ -54,7 +55,7 @@ export class ClaimsTableViewModel {
       paginationMeta.total,
       paginationMeta.limit,
       paginationMeta.page,
-      "/"
+      href
     );
   }
 }

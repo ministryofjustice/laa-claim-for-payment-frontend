@@ -28,7 +28,8 @@ export async function handleYourClaimsPage(
     if (response.status === "success" && response.data.length > minimumApiReponseLength) {
       const claimsTableViewModel: ClaimsTableViewModel = new ClaimsTableViewModel(
         response.data,
-        response.pagination
+        response.pagination,
+        req.path
       );
 
       res.render("main/index.njk", {

@@ -19,7 +19,7 @@ describe("views/main/index.njk", () => {
     limit: 20,
   };
 
-  const viewModel = new ClaimsTableViewModel(claims, paginationMeta);
+  const viewModel = new ClaimsTableViewModel(claims, paginationMeta, "/foo");
 
   const context = {
     head: viewModel.head,
