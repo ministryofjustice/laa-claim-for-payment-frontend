@@ -9,21 +9,15 @@
  */
 
 // Development logging utilities
-export {
-  devLog,
-  devWarn,
-  devError,
-  devDebug,
-  isDevelopment
-} from './devLogger.js';
+export { devLog, devWarn, devError, devDebug, isDevelopment } from "./devLogger.js";
 
 // Data formatting utilities
 export {
   formatClaimed,
   formatClaimId,
   formatDate,
-  formatOptionalString
-} from './dataFormatters.js';
+  formatOptionalString,
+} from "./dataFormatters.js";
 
 // Error handling utilities
 export {
@@ -35,4 +29,6 @@ export {
   isServerError,
   createProcessedError,
   extractAndLogError,
-} from './errorHandler.js';
+} from "./errorHandler.js";
+
+export { parseNumberQueryParam } from "./queryParsers.js";

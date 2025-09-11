@@ -1,10 +1,6 @@
 import type { ApiResponse } from "#src/types/api-types.js";
 import type { Claim } from "#src/types/Claim.js";
 
-const paginationTotal = 1;
-const paginationPage = 1;
-const paginationLimit = 20;
-
 export const getClaimsSuccessResponseData: ApiResponse<Claim> = {
   data: [
     {
@@ -108,9 +104,9 @@ export const getClaimsSuccessResponseData: ApiResponse<Claim> = {
     },
   ],
   pagination: {
-    total: paginationTotal,
-    page: paginationPage,
-    limit: paginationLimit,
+    total: 1,
+    page: 1,
+    limit: 20,
     totalPages: undefined,
   },
   status: "success",

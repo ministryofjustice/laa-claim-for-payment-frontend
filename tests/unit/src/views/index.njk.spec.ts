@@ -1,3 +1,5 @@
+import { PaginationMeta } from "#src/types/api-types.js";
+import { Claim } from "#src/types/Claim.js";
 import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { expect, config as chaiConfig } from "chai";
@@ -9,7 +11,15 @@ chaiConfig.truncateThreshold = 0;
 describe("views/main/index.njk", () => {
   let $: CheerioAPI;
 
-  const viewModel = new ClaimsTableViewModel(getClaimsSuccessResponseData.data);
+  const claims: Claim[] = getClaimsSuccessResponseData.data;
+
+  const paginationMeta: PaginationMeta = {
+    total: 11,
+    page: 1,
+    limit: 20,
+  };
+
+  const viewModel = new ClaimsTableViewModel(claims, paginationMeta, "/foo");
 
   const context = {
     head: viewModel.head,
@@ -61,5 +71,11 @@ describe("views/main/index.njk", () => {
     const rows = $(".govuk-table__body > .govuk-table__row");
 
     expect(rows.length).to.equal(11);
+  });
+
+  it("renders the pagination", () => {
+    const pagination = $(".moj-pagination");
+
+    expect(pagination).to.exist;
   });
 });

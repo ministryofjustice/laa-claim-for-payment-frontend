@@ -6,10 +6,19 @@ import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
 import { Claim } from "#src/types/Claim.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { expect } from "chai";
+import { PaginationMeta } from "#src/types/api-types.js";
 
 describe("constructor()", () => {
   it("creates a series of headers", () => {
-    const viewModel = new ClaimsTableViewModel(getClaimsSuccessResponseData.data);
+    const claims: Claim[] = getClaimsSuccessResponseData.data;
+
+    const paginationMeta: PaginationMeta = {
+      total: 11,
+      page: 1,
+      limit: 20,
+    };
+
+    const viewModel = new ClaimsTableViewModel(claims, paginationMeta, "/foo");
 
     expect(viewModel.head[0].text).to.equal("ID");
     expect(viewModel.head[0].attributes["aria-sort"]).to.equal("ascending");
@@ -58,7 +67,13 @@ describe("constructor()", () => {
       },
     ];
 
-    const viewModel = new ClaimsTableViewModel(claims);
+    const paginationMeta: PaginationMeta = {
+      total: 2,
+      page: 1,
+      limit: 20,
+    };
+
+    const viewModel = new ClaimsTableViewModel(claims, paginationMeta, "/foo");
 
     // First row
     expect(viewModel.rows[0][0].text).to.equal("LAA-001");
@@ -109,5 +124,38 @@ describe("constructor()", () => {
     expect(viewModel.rows[1][5].text).to.equal("");
     expect(viewModel.rows[1][5].attributes).to.equal(undefined);
     expect(viewModel.rows[1][5].classes).to.equal("govuk-table__cell--numeric");
+  });
+
+  it("paginates the data", () => {
+    const claim: Claim = {
+      id: 1,
+      client: "Giordano",
+      category: "Family",
+      concluded: new Date("2025-03-18"),
+      feeType: "Escape",
+      claimed: 234.56,
+      submissionId: "550e8400-e29b-41d4-a716-446655440000",
+    };
+
+    const claims: Claim[] = new Array(100).fill(claim);
+
+    const paginationMeta: PaginationMeta = {
+      total: 100,
+      page: 3,
+      limit: 20,
+    };
+
+    const viewModel = new ClaimsTableViewModel(claims, paginationMeta, "/foo");
+
+    expect(viewModel.pagination.results.count).to.equal(100);
+    expect(viewModel.pagination.results.from).to.equal(41);
+    expect(viewModel.pagination.results.to).to.equal(60);
+    expect(viewModel.pagination.results.text).to.equal("results");
+
+    expect(viewModel.pagination.previous?.text).to.equal("Previous");
+    expect(viewModel.pagination.previous?.href).to.equal("/foo?page=2");
+
+    expect(viewModel.pagination.next?.text).to.equal("Next");
+    expect(viewModel.pagination.next?.href).to.equal("/foo?page=4");
   });
 });
