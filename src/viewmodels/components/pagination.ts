@@ -21,6 +21,10 @@ export class Pagination {
   ) {
     const totalNumberOfPages = Math.ceil(totalNumberOfResults / numberOfResultsPerPage);
 
+    if (currentPage > totalNumberOfPages) {
+      currentPage = totalNumberOfPages;
+    }
+
     if (totalNumberOfPages <= 1) {
       this.items = [];
     } else {

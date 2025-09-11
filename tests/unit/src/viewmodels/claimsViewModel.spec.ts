@@ -110,4 +110,31 @@ describe("constructor()", () => {
     expect(viewModel.rows[1][5].attributes).to.equal(undefined);
     expect(viewModel.rows[1][5].classes).to.equal("govuk-table__cell--numeric");
   });
+
+  it("paginates the data", () => {
+    const claim: Claim = {
+      id: 1,
+      client: "Giordano",
+      category: "Family",
+      concluded: new Date("2025-03-18"),
+      feeType: "Escape",
+      claimed: 234.56,
+      submissionId: "550e8400-e29b-41d4-a716-446655440000",
+    };
+
+    const claims: Claim[] = new Array(100).fill(claim);
+
+    const viewModel = new ClaimsTableViewModel(claims, 3);
+
+    expect(viewModel.pagination.results.count).to.equal(100);
+    expect(viewModel.pagination.results.from).to.equal(41);
+    expect(viewModel.pagination.results.to).to.equal(60);
+    expect(viewModel.pagination.results.text).to.equal("results");
+
+    expect(viewModel.pagination.previous?.text).to.equal("Previous");
+    expect(viewModel.pagination.previous?.href).to.equal("/?page=2");
+
+    expect(viewModel.pagination.next?.text).to.equal("Next");
+    expect(viewModel.pagination.next?.href).to.equal("/?page=4");
+  });
 });

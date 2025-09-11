@@ -1,5 +1,6 @@
 import type { Claim } from "#src/types/Claim.js";
 import type { TableCell, TableHeader } from "#src/viewmodels/components/index.js";
+import config from "#config.js";
 import {
   formatClaimed,
   formatClaimId,
@@ -49,6 +50,11 @@ export class ClaimsTableViewModel {
       },
     ]);
 
-    this.pagination = new Pagination(claims.length, 20, currentPage, "/");
+    this.pagination = new Pagination(
+      claims.length, // TODO - update claims.length when API response includes the total number of results
+      config.pagination.numberOfClaimsPerPage,
+      currentPage,
+      "/"
+    );
   }
 }

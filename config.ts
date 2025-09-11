@@ -6,6 +6,7 @@ const DEFAULT_RATE_LIMIT_MAX = 100;
 const DEFAULT_RATE_WINDOW_MS_MINUTE = 15;
 const MILLISECONDS_IN_A_MINUTE = 60000;
 const DEFAULT_PORT = 3000;
+const DEFAULT_NUMBER_OF_CLAIMS_PER_PAGE = 20;
 
 // Validate required session env vars
 // if (process.env.SESSION_SECRET == null || process.env.SESSION_SECRET === '' ||
@@ -52,6 +53,11 @@ const config: Config = {
   },
   api: {
     baseUrl: process.env.API_URL ?? "",
+  },
+  pagination: {
+    numberOfClaimsPerPage: Number(
+      process.env.NUMBER_OF_CLAIMS_PER_PAGE ?? DEFAULT_NUMBER_OF_CLAIMS_PER_PAGE
+    ),
   },
 };
 
