@@ -20,35 +20,34 @@ export class Pagination {
     currentPage: number,
     href: string
   ) {
-    const totalNumberOfPages = Math.ceil(totalNumberOfResults / numberOfResultsPerPage);
+    const totalNumberOfPages = Math.max(
+      1,
+      Math.ceil(totalNumberOfResults / numberOfResultsPerPage)
+    );
 
-    if (totalNumberOfResults === 0 && currentPage === 1) {
-      this.items = [];
-    } else {
-      if (currentPage > totalNumberOfPages) {
-        throw new InvalidPageError(currentPage, totalNumberOfPages === 0 ? 1 : totalNumberOfPages);
-      }
-
-      if (currentPage < 1) {
-        throw new InvalidPageError(currentPage, 1);
-      }
-
-      if (currentPage > 1) {
-        this.previous = {
-          text: "Previous",
-          href: `${href}?page=${currentPage - 1}`,
-        };
-      }
-
-      if (currentPage < totalNumberOfPages) {
-        this.next = {
-          text: "Next",
-          href: `${href}?page=${currentPage + 1}`,
-        };
-      }
-
-      this.items = Pagination.buildPaginationItems(currentPage, totalNumberOfPages, href);
+    if (currentPage > totalNumberOfPages) {
+      throw new InvalidPageError(currentPage, totalNumberOfPages);
     }
+
+    if (currentPage < 1) {
+      throw new InvalidPageError(currentPage, 1);
+    }
+
+    if (currentPage > 1) {
+      this.previous = {
+        text: "Previous",
+        href: `${href}?page=${currentPage - 1}`,
+      };
+    }
+
+    if (currentPage < totalNumberOfPages) {
+      this.next = {
+        text: "Next",
+        href: `${href}?page=${currentPage + 1}`,
+      };
+    }
+
+    this.items = Pagination.buildPaginationItems(currentPage, totalNumberOfPages, href);
 
     this.results = new PaginationResults(
       totalNumberOfResults,
