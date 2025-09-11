@@ -58,7 +58,7 @@ export class Pagination {
   }
 
   /**
-   *
+   * Build array of pagination items
    * @param {number} currentPage The current page
    * @param {number} totalNumberOfPages The total number of pages
    * @param {string} href The href of the page
