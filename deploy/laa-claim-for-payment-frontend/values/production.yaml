@@ -60,6 +60,16 @@ env:
   RATE_WINDOW_MS: ""
   NODE_ENV: ""
   API_URL: ""
+  OIDC_SCOPE: "openid profile email api.read"
+  OIDC_LOGIN_PATH: "/login"
+  OIDC_CLIENT_SECRET: ""
+  OIDC_CALLBACK_PATH: "/callback"
+  OIDC_LOGOUT_PATH: "/logout"
+  AUTH_ENABLED: true
+  BASE_URL: ""
+  CLIENT_ID: ""
+  USE_SSL: false
+  ISSUER_BASE_URL: ""
 
 ingress:
   enabled: true

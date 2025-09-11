@@ -48,7 +48,7 @@ export const axiosMiddleware = (req: Request, _res: Response, next: NextFunction
   // Attach current access token to every request
   const attachToken = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     const access = req.session.oidc?.tokens?.access_token;
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- ffs
+     
     if (typeof access === 'string' && access.length > 0) {
       const headers = axios.AxiosHeaders.from(config.headers);
       headers.set('Authorization', `Bearer ${access}`);
@@ -114,7 +114,7 @@ function toPlainTokens(tokens: oidc.TokenEndpointResponse): oidc.TokenEndpointRe
       // Retry the original request ONCE using the bare client (no interceptor loop)
       const newAccess = req.session.oidc?.tokens?.access_token;
       const headers = axios.AxiosHeaders.from(config.headers);
-      // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- ffs2
+       
       if (typeof newAccess === 'string' && newAccess.length > 0) {
         headers.set('Authorization', `Bearer ${newAccess}`);
       }

@@ -7,13 +7,8 @@ import { type Claim, ClaimSchema } from "#src/types/Claim.js";
 import config from "../../config.js";
 import { z } from "zod";
 
-// Constants
-const DEFAULT_PAGE = 1;
-const DEFAULT_LIMIT = parseInt(process.env.PAGINATION_LIMIT ?? "20", 10); // Configurable via env
-const EMPTY_TOTAL = 0;
-
 /**
- *
+ * Service to interact with the Claims API.
  */
 class ClaimService {
   /**

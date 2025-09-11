@@ -32,7 +32,17 @@ deploy_branch() {
                 --set env.RATELIMIT_STORAGE_URI="$RATELIMIT_STORAGE_URI" \
                 --set env.RATE_LIMIT_MAX="$RATE_LIMIT_MAX" \
                 --set env.RATE_WINDOW_MS="$RATE_WINDOW_MS" \
-                --set env.NODE_ENV="$NODE_ENV"
+                --set env.NODE_ENV="$NODE_ENV"\
+                --set env.OIDC_SCOPE="$OIDC_SCOPE" \
+                --set env.OIDC_LOGIN_PATH="$OIDC_LOGIN_PATH" \
+                --set env.OIDC_CLIENT_SECRET="$OIDC_CLIENT_SECRET" \
+                --set env.OIDC_CALLBACK_PATH="$OIDC_CALLBACK_PATH" \
+                --set env.OIDC_LOGOUT_PATH="$OIDC_LOGOUT_PATH" \
+                --set env.AUTH_ENABLED="$AUTH_ENABLED" \
+                --set env.BASE_URL="$BASE_URL" \
+                --set env.CLIENT_ID="$CLIENT_ID" \
+                --set env.USE_SSL="$USE_SSL" \
+                --set env.ISSUER_BASE_URL="$ISSUER_BASE_URL"
 }
 
 deploy_main() {  
@@ -55,7 +65,17 @@ deploy_main() {
                           --set env.RATELIMIT_STORAGE_URI="$RATELIMIT_STORAGE_URI" \
                           --set env.RATE_LIMIT_MAX="$RATE_LIMIT_MAX" \
                           --set env.RATE_WINDOW_MS="$RATE_WINDOW_MS" \
-                          --set env.NODE_ENV="$NODE_ENV"
+                          --set env.NODE_ENV="$NODE_ENV"\
+                          --set env.OIDC_SCOPE="$OIDC_SCOPE" \
+                          --set env.OIDC_LOGIN_PATH="$OIDC_LOGIN_PATH" \
+                          --set env.OIDC_CLIENT_SECRET="$OIDC_CLIENT_SECRET" \
+                          --set env.OIDC_CALLBACK_PATH="$OIDC_CALLBACK_PATH" \
+                          --set env.OIDC_LOGOUT_PATH="$OIDC_LOGOUT_PATH" \
+                          --set env.AUTH_ENABLED="$AUTH_ENABLED" \
+                          --set env.BASE_URL="$BASE_URL" \
+                          --set env.CLIENT_ID="$CLIENT_ID" \
+                          --set env.USE_SSL="$USE_SSL" \
+                          --set env.ISSUER_BASE_URL="$ISSUER_BASE_URL"
 }
 
 if [[ "$GITHUB_REF_NAME" == "main" ]]; then
