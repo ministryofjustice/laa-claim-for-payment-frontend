@@ -65,7 +65,7 @@ env:
   OIDC_CLIENT_SECRET: ""
   OIDC_CALLBACK_PATH: "/callback"
   OIDC_LOGOUT_PATH: "/logout"
-  AUTH_ENABLED: true
+  AUTH_ENABLED: false
   BASE_URL: ""
   CLIENT_ID: ""
   USE_SSL: false
