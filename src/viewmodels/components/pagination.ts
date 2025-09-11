@@ -25,6 +25,10 @@ export class Pagination {
       currentPage = totalNumberOfPages;
     }
 
+    if (currentPage < 1) {
+      currentPage = 1;
+    }
+
     if (totalNumberOfPages <= 1) {
       this.items = [];
     } else {

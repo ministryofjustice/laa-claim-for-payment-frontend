@@ -219,4 +219,25 @@ describe("constructor()", () => {
     expect(viewModel.items[2].selected).to.equal(true);
     expect(viewModel.items[2].type).to.equal(undefined);
   });
+
+  it("creates a pagination model when current page is less than 1", () => {
+    const viewModel = new Pagination(56, 20, 0, href);
+
+    expect(viewModel.items).to.have.length(3);
+
+    expect(viewModel.items[0].text).to.equal("1");
+    expect(viewModel.items[0].href).to.equal("/foo?page=1");
+    expect(viewModel.items[0].selected).to.equal(true);
+    expect(viewModel.items[0].type).to.equal(undefined);
+
+    expect(viewModel.items[1].text).to.equal("2");
+    expect(viewModel.items[1].href).to.equal("/foo?page=2");
+    expect(viewModel.items[1].selected).to.equal(false);
+    expect(viewModel.items[1].type).to.equal(undefined);
+
+    expect(viewModel.items[2].text).to.equal("3");
+    expect(viewModel.items[2].href).to.equal("/foo?page=3");
+    expect(viewModel.items[2].selected).to.equal(false);
+    expect(viewModel.items[2].type).to.equal(undefined);
+  });
 });
