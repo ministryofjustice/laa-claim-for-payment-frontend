@@ -3,7 +3,7 @@ import { claimService } from "#src/services/claimService.js";
 import type { Request, Response, NextFunction } from "express";
 import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
 import { parseNumberQueryParam } from "#src/helpers/index.js";
-import { InvalidPageError } from "#src/types/api-types.js";
+import { InvalidPageError } from "#src/types/errors.js";
 
 const NOT_FOUND = 404;
 

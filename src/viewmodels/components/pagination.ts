@@ -1,4 +1,4 @@
-import { InvalidPageError } from "#src/types/api-types.js";
+import { InvalidPageError } from "#src/types/errors.js";
 import { PaginationResults, type PaginationItem, type PaginationLink } from "./index.js";
 
 export class Pagination {

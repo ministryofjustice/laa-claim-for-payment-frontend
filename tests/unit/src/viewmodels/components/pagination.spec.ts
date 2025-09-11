@@ -4,7 +4,7 @@
 
 import { expect } from "chai";
 import { Pagination } from "#src/viewmodels/components/pagination.js";
-import { InvalidPageError } from "#src/types/api-types.js";
+import { InvalidPageError } from "#src/types/errors.js";
 
 describe("constructor()", () => {
   const href = "/foo";
