@@ -7,21 +7,17 @@ import { Claim, ClaimSchema } from "#src/types/Claim.js";
 import config from "../../config.js";
 import { z } from "zod";
 
-// Constants
-const DEFAULT_PAGE = 1;
-const DEFAULT_LIMIT = parseInt(process.env.PAGINATION_LIMIT ?? "20", 10); // Configurable via env
-const EMPTY_TOTAL = 0;
-
 class ClaimService {
   /**
    * Get submissions from API using axios middleware
    * @param {AxiosInstanceWrapper} axiosMiddleware - Axios middleware from request
+   * @param {number} page - The current page
    * @returns {Promise<ApiResponse<Claim>>} API response with submission data and pagination
    */
-  static async getClaims(axiosMiddleware: AxiosInstanceWrapper): Promise<ApiResponse<Claim>> {
-    const page = DEFAULT_PAGE;
-    const limit = DEFAULT_LIMIT;
-
+  static async getClaims(
+    axiosMiddleware: AxiosInstanceWrapper,
+    page: number
+  ): Promise<ApiResponse<Claim>> {
     // TODO: remove when Playwright job spins up BE
     if (process.env.NODE_ENV === "test") {
       return {
@@ -40,13 +36,13 @@ class ClaimService {
       // Validate and transform the data against the schema
       const data = z.array(ClaimSchema).parse(response.data);
 
-      // TODO: Pagination not currently implemented
-      const paginationMeta = ClaimService.extractPaginationMeta();
+      // TODO: Pagination not currently implemented. Update `data.length` when API response body includes the pagination data.
+      const paginationMeta = ClaimService.extractPaginationMeta(data.length, page);
 
       console.log(`API: Returning ${data.length} claims`);
 
       return {
-        data: data,
+        data,
         pagination: paginationMeta,
         status: "success",
       };
@@ -55,7 +51,11 @@ class ClaimService {
 
       return {
         data: [],
-        pagination: { total: EMPTY_TOTAL, page, limit },
+        pagination: {
+          total: 0,
+          page,
+          limit: config.pagination.numberOfClaimsPerPage,
+        },
         status: "error",
         message: errorMessage,
       };
@@ -63,19 +63,16 @@ class ClaimService {
   }
 
   /**
-   * Extract pagination metadata from response headers
+   * Extract pagination metadata from response body
+   * @param {number} total - The total number of unpaginated results
+   * @param {number} page - The current page
    * @returns {PaginationMeta} Pagination metadata
    */
-  private static extractPaginationMeta(): PaginationMeta {
-    const page = DEFAULT_PAGE;
-    const limit = DEFAULT_LIMIT;
-    const total = 1;
-
+  private static extractPaginationMeta(total: number, page: number): PaginationMeta {
     return {
-      total: total,
-      page: page,
-      limit: limit,
-      totalPages: undefined,
+      total,
+      page,
+      limit: config.pagination.numberOfClaimsPerPage,
     };
   }
 

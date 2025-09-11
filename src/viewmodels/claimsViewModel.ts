@@ -1,6 +1,5 @@
 import type { Claim } from "#src/types/Claim.js";
 import type { TableCell, TableHeader } from "#src/viewmodels/components/index.js";
-import config from "#config.js";
 import {
   formatClaimed,
   formatClaimId,
@@ -8,6 +7,7 @@ import {
   formatOptionalString,
 } from "#src/helpers/index.js";
 import { Pagination } from "./components/pagination.js";
+import { PaginationMeta } from "#src/types/api-types.js";
 
 export class ClaimsTableViewModel {
   head: TableHeader[];
@@ -17,9 +17,9 @@ export class ClaimsTableViewModel {
   /**
    * Creates a view model containing the table header and rows derived from the claims data
    * @param {Claim[]} claims Array of claims
-   * @param {number} currentPage The current page (default is 1)
+   * @param {PaginationMeta} paginationMeta The pagination metadata
    */
-  constructor(claims: Claim[], currentPage: number) {
+  constructor(claims: Claim[], paginationMeta: PaginationMeta) {
     this.head = [
       { text: "ID", attributes: { "aria-sort": "ascending" } },
       { text: "Client", attributes: { "aria-sort": "none" } },
@@ -51,9 +51,9 @@ export class ClaimsTableViewModel {
     ]);
 
     this.pagination = new Pagination(
-      claims.length, // TODO - update claims.length when API response includes the total number of results
-      config.pagination.numberOfClaimsPerPage,
-      currentPage,
+      paginationMeta.total,
+      paginationMeta.limit,
+      paginationMeta.page,
       "/"
     );
   }

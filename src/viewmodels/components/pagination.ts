@@ -36,7 +36,6 @@ export class Pagination {
             text: page.toString(),
             href: `${href}?page=${page}`,
             selected: page === currentPage,
-            type: undefined,
           };
           paginationItems.push(paginationItem);
           isLastItemEllipsis = false;

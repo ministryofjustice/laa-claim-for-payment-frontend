@@ -6,10 +6,19 @@ import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
 import { Claim } from "#src/types/Claim.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { expect } from "chai";
+import { PaginationMeta } from "#src/types/api-types.js";
 
 describe("constructor()", () => {
   it("creates a series of headers", () => {
-    const viewModel = new ClaimsTableViewModel(getClaimsSuccessResponseData.data, 1);
+    const claims: Claim[] = getClaimsSuccessResponseData.data;
+
+    const paginationMeta: PaginationMeta = {
+      total: 11,
+      page: 1,
+      limit: 20,
+    };
+
+    const viewModel = new ClaimsTableViewModel(claims, paginationMeta);
 
     expect(viewModel.head[0].text).to.equal("ID");
     expect(viewModel.head[0].attributes["aria-sort"]).to.equal("ascending");
@@ -58,7 +67,13 @@ describe("constructor()", () => {
       },
     ];
 
-    const viewModel = new ClaimsTableViewModel(claims, 1);
+    const paginationMeta: PaginationMeta = {
+      total: 2,
+      page: 1,
+      limit: 20,
+    };
+
+    const viewModel = new ClaimsTableViewModel(claims, paginationMeta);
 
     // First row
     expect(viewModel.rows[0][0].text).to.equal("LAA-001");
@@ -124,7 +139,13 @@ describe("constructor()", () => {
 
     const claims: Claim[] = new Array(100).fill(claim);
 
-    const viewModel = new ClaimsTableViewModel(claims, 3);
+    const paginationMeta: PaginationMeta = {
+      total: 100,
+      page: 3,
+      limit: 20,
+    };
+
+    const viewModel = new ClaimsTableViewModel(claims, paginationMeta);
 
     expect(viewModel.pagination.results.count).to.equal(100);
     expect(viewModel.pagination.results.from).to.equal(41);

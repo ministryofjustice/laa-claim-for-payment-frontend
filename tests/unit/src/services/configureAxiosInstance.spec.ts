@@ -13,6 +13,7 @@ describe("configureAxios:", () => {
     use?: sinon.SinonStub;
   };
   let configStub: sinon.SinonStub;
+  let page: number;
 
   beforeEach(() => {
     // Reset the stubs before each test
@@ -38,6 +39,8 @@ describe("configureAxios:", () => {
       axiosInstance: axiosInstanceStub,
       use: sinon.stub(),
     };
+
+    page = 1;
   });
 
   afterEach(() => {
@@ -46,7 +49,7 @@ describe("configureAxios:", () => {
 
   it("should configure axios instance in flow", async () => {
     // Act - call the submissions service with stubbed config
-    await claimService.getClaims(axiosMiddlewareStub as any);
+    await claimService.getClaims(axiosMiddlewareStub as any, page);
 
     expect(axiosInstanceStub.defaults.headers.common["Content-Type"]).to.equal("application/json");
     expect(axiosInstanceStub.defaults.baseURL).to.equal(baseUrlStub);

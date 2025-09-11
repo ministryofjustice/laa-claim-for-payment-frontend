@@ -26,7 +26,7 @@ describe("Claim Service:", () => {
       const mockEmptyData = { data: [] };
       axiosStub.get.resolves(mockEmptyData);
 
-      await claimService.getClaims({} as any);
+      await claimService.getClaims({} as any, {} as any);
 
       sinon.assert.calledWith(axiosStub.get, getClaimsEndpoint);
       sinon.assert.calledWith(configureAxiosStub, {});
@@ -36,7 +36,7 @@ describe("Claim Service:", () => {
       const mockData = { data: "just a string" };
       axiosStub.get.resolves(mockData);
 
-      const result = await claimService.getClaims({} as any);
+      const result = await claimService.getClaims({} as any, {} as any);
 
       sinon.assert.calledWith(axiosStub.get, getClaimsEndpoint);
       sinon.assert.calledWith(configureAxiosStub, {});
@@ -48,7 +48,7 @@ describe("Claim Service:", () => {
       axiosStub.get.rejects(error);
       const errorMessage = "An unexpected error occurred. Please try again.";
 
-      const result = await claimService.getClaims({} as any);
+      const result = await claimService.getClaims({} as any, {} as any);
 
       expect(result).to.include({
         message: errorMessage,
