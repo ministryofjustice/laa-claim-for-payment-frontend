@@ -24,3 +24,15 @@ export interface ApiResponse<T> {
   status: "success" | "error";
   message?: string;
 }
+
+export class InvalidPageError extends Error {
+  invalidPage: number;
+  pageToRedirectTo: number;
+
+  constructor(invalidPage: number, pageToRedirectTo: number) {
+    super(`Invalid page number: ${invalidPage}`);
+    this.name = "InvalidPageError";
+    this.invalidPage = invalidPage;
+    this.pageToRedirectTo = pageToRedirectTo;
+  }
+}

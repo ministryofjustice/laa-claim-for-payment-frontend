@@ -4,6 +4,7 @@
 
 import { expect } from "chai";
 import { Pagination } from "#src/viewmodels/components/pagination.js";
+import { InvalidPageError } from "#src/types/api-types.js";
 
 describe("constructor()", () => {
   const href = "/foo";
@@ -199,45 +200,51 @@ describe("constructor()", () => {
     expect(viewModel.next?.href).to.equal("/foo?page=6");
   });
 
-  it("creates a pagination model when current page exceeds total number of pages", () => {
-    const viewModel = new Pagination(56, 20, 4, href);
+  it("throws when current page exceeds total number of pages", () => {
+    const viewModel = () => new Pagination(56, 20, 4, href);
 
-    expect(viewModel.items).to.have.length(3);
-
-    expect(viewModel.items[0].text).to.equal("1");
-    expect(viewModel.items[0].href).to.equal("/foo?page=1");
-    expect(viewModel.items[0].selected).to.equal(false);
-    expect(viewModel.items[0].type).to.equal(undefined);
-
-    expect(viewModel.items[1].text).to.equal("2");
-    expect(viewModel.items[1].href).to.equal("/foo?page=2");
-    expect(viewModel.items[1].selected).to.equal(false);
-    expect(viewModel.items[1].type).to.equal(undefined);
-
-    expect(viewModel.items[2].text).to.equal("3");
-    expect(viewModel.items[2].href).to.equal("/foo?page=3");
-    expect(viewModel.items[2].selected).to.equal(true);
-    expect(viewModel.items[2].type).to.equal(undefined);
+    try {
+      viewModel();
+    } catch (err) {
+      const error = err as InvalidPageError;
+      expect(error.invalidPage).to.equal(4);
+      expect(error.pageToRedirectTo).to.equal(3);
+    }
   });
 
-  it("creates a pagination model when current page is less than 1", () => {
-    const viewModel = new Pagination(56, 20, 0, href);
+  it("throws when current page is less than 1", () => {
+    const viewModel = () => new Pagination(56, 20, 0, href);
 
-    expect(viewModel.items).to.have.length(3);
+    try {
+      viewModel();
+    } catch (err) {
+      const error = err as InvalidPageError;
+      expect(error.invalidPage).to.equal(0);
+      expect(error.pageToRedirectTo).to.equal(1);
+    }
+  });
 
-    expect(viewModel.items[0].text).to.equal("1");
-    expect(viewModel.items[0].href).to.equal("/foo?page=1");
-    expect(viewModel.items[0].selected).to.equal(true);
-    expect(viewModel.items[0].type).to.equal(undefined);
+  it("throws when one page and current page is more than 1", () => {
+    const viewModel = () => new Pagination(1, 20, 2, href);
 
-    expect(viewModel.items[1].text).to.equal("2");
-    expect(viewModel.items[1].href).to.equal("/foo?page=2");
-    expect(viewModel.items[1].selected).to.equal(false);
-    expect(viewModel.items[1].type).to.equal(undefined);
+    try {
+      viewModel();
+    } catch (err) {
+      const error = err as InvalidPageError;
+      expect(error.invalidPage).to.equal(2);
+      expect(error.pageToRedirectTo).to.equal(1);
+    }
+  });
 
-    expect(viewModel.items[2].text).to.equal("3");
-    expect(viewModel.items[2].href).to.equal("/foo?page=3");
-    expect(viewModel.items[2].selected).to.equal(false);
-    expect(viewModel.items[2].type).to.equal(undefined);
+  it("throws when no results and page is more than 1", () => {
+    const viewModel = () => new Pagination(0, 20, 2, href);
+
+    try {
+      viewModel();
+    } catch (err) {
+      const error = err as InvalidPageError;
+      expect(error.invalidPage).to.equal(2);
+      expect(error.pageToRedirectTo).to.equal(1);
+    }
   });
 });

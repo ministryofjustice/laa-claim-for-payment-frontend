@@ -3,6 +3,7 @@ import { claimService } from "#src/services/claimService.js";
 import type { Request, Response, NextFunction } from "express";
 import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
 import { parseNumberQueryParam } from "#src/helpers/index.js";
+import { InvalidPageError } from "#src/types/api-types.js";
 
 const NOT_FOUND = 404;
 
@@ -25,16 +26,23 @@ export async function handleYourClaimsPage(
     const minimumApiReponseLength = 0;
 
     if (response.status === "success" && response.data.length > minimumApiReponseLength) {
-      const claimsTableViewModel: ClaimsTableViewModel = new ClaimsTableViewModel(
-        response.data,
-        response.pagination
-      );
+      try {
+        const claimsTableViewModel: ClaimsTableViewModel = new ClaimsTableViewModel(
+          response.data,
+          response.pagination
+        );
 
-      res.render("main/index.njk", {
-        rows: claimsTableViewModel.rows,
-        head: claimsTableViewModel.head,
-        pagination: claimsTableViewModel.pagination,
-      });
+        res.render("main/index.njk", {
+          rows: claimsTableViewModel.rows,
+          head: claimsTableViewModel.head,
+          pagination: claimsTableViewModel.pagination,
+        });
+      } catch (err) {
+        if (err instanceof InvalidPageError) {
+          console.info(err.message);
+          res.redirect(`${req.path}?page=${err.pageToRedirectTo}`);
+        }
+      }
     } else {
       res.status(NOT_FOUND).render("main/error.njk", {
         status: "404",
