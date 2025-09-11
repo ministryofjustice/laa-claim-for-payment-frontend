@@ -26,23 +26,16 @@ export async function handleYourClaimsPage(
     const minimumApiReponseLength = 0;
 
     if (response.status === "success" && response.data.length > minimumApiReponseLength) {
-      try {
-        const claimsTableViewModel: ClaimsTableViewModel = new ClaimsTableViewModel(
-          response.data,
-          response.pagination
-        );
+      const claimsTableViewModel: ClaimsTableViewModel = new ClaimsTableViewModel(
+        response.data,
+        response.pagination
+      );
 
-        res.render("main/index.njk", {
-          rows: claimsTableViewModel.rows,
-          head: claimsTableViewModel.head,
-          pagination: claimsTableViewModel.pagination,
-        });
-      } catch (err) {
-        if (err instanceof InvalidPageError) {
-          console.info(err.message);
-          res.redirect(`${req.path}?page=${err.pageToRedirectTo}`);
-        }
-      }
+      res.render("main/index.njk", {
+        rows: claimsTableViewModel.rows,
+        head: claimsTableViewModel.head,
+        pagination: claimsTableViewModel.pagination,
+      });
     } else {
       res.status(NOT_FOUND).render("main/error.njk", {
         status: "404",
@@ -50,10 +43,15 @@ export async function handleYourClaimsPage(
       });
     }
   } catch (error) {
-    // Use the error processing utility
-    const processedError = createProcessedError(error, `fetching claims details for user`);
+    if (error instanceof InvalidPageError) {
+      console.info(error.message);
+      res.redirect(`${req.path}?page=${error.pageToRedirectTo}`);
+    } else {
+      // Use the error processing utility
+      const processedError = createProcessedError(error, `fetching claims details for user`);
 
-    // Pass the processed error to the global error handler
-    next(processedError);
+      // Pass the processed error to the global error handler
+      next(processedError);
+    }
   }
 }
