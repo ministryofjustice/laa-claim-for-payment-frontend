@@ -57,6 +57,13 @@ export class Pagination {
     );
   }
 
+  /**
+   *
+   * @param {number} currentPage The current page
+   * @param {number} totalNumberOfPages The total number of pages
+   * @param {string} href The href of the page
+   * @returns {PaginationItem[]} An array of pagination items
+   */
   private static buildPaginationItems(
     currentPage: number,
     totalNumberOfPages: number,
