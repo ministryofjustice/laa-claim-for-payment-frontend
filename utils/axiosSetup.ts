@@ -69,7 +69,7 @@ export const axiosMiddleware = (req: Request, _res: Response, next: NextFunction
 
 // Helper to strip methods like claims() / expiresIn()
 function toPlainTokens(tokens: oidc.TokenEndpointResponse): oidc.TokenEndpointResponse {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ffs
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- to fix
   return Object.fromEntries(
     Object.entries(tokens).filter(([, v]) => typeof v !== 'function')
   ) as oidc.TokenEndpointResponse;
@@ -124,7 +124,7 @@ function toPlainTokens(tokens: oidc.TokenEndpointResponse): oidc.TokenEndpointRe
     }
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-type-assertion -- ffs
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-type-assertion -- to fix
   (req as any).axiosMiddleware = client;
   next();
 };
