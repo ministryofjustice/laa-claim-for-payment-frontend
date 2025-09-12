@@ -10,8 +10,6 @@ import { getRequiredEnv } from '#utils/envHelper.js';
 
 const DEFAULT_TIMEOUT = 5000;
 
-const API_URL = getRequiredEnv('API_URL');
-
 declare global {
   namespace Express {
     interface Request {
@@ -30,7 +28,7 @@ declare global {
  *  @param {import('express').NextFunction} next - The next middleware function
  */
 export const axiosMiddleware = (req: Request, _res: Response, next: NextFunction): void => {
-
+  const API_URL = getRequiredEnv('API_URL');
   // Primary client (has interceptor)
   const client = create({
     baseURL: API_URL,
