@@ -28,15 +28,19 @@ declare global {
  *  @param {import('express').NextFunction} next - The next middleware function
  */
 export const axiosMiddleware = (req: Request, _res: Response, next: NextFunction): void => {
-  const API_URL = getRequiredEnv('API_URL');
+
+  const { protocol } = req;
+  const host = req.get("host");
+  const apiURL = `${protocol}://${host}`;
+  console.log(`Axios baseURL set to ${apiURL}`);
   // Primary client (has interceptor)
   const client = create({
-    baseURL: API_URL,
+    baseURL: apiURL,
     timeout: DEFAULT_TIMEOUT,
   });
 
   const retryClient = create({
-    baseURL: API_URL,
+    baseURL: apiURL,
     timeout: DEFAULT_TIMEOUT,
   });
 
