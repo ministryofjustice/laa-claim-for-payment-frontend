@@ -5,24 +5,14 @@ import { constants as Http } from 'node:http2';
 import { getRequiredEnv } from '#utils/envHelper.js';
 import { z } from 'zod';
 
-const ISSUER = new URL(getRequiredEnv('ISSUER_BASE_URL'));
-const BASE_URL = getRequiredEnv('BASE_URL');
-const SCOPE = getRequiredEnv('OIDC_SCOPE');
-const CALLBACK_PATH = getRequiredEnv('OIDC_CALLBACK_PATH');
-const LOGIN_PATH = getRequiredEnv('OIDC_LOGIN_PATH');
-const LOGOUT_PATH = getRequiredEnv('OIDC_LOGOUT_PATH');
-const CLIENT_ID = getRequiredEnv('CLIENT_ID');
-const CLIENT_SECRET = getRequiredEnv('OIDC_CLIENT_SECRET');
+
+
 
 let discoveredConfig: Promise<oidc.Configuration> | undefined = undefined;
 const UserInfoSchema = z.record(z.string(), z.unknown());
 type UserInfo = z.infer<typeof UserInfoSchema>;
 
-// Only relax HTTPS when (a) it’s http:// and (b) not production
-const options =
-  ISSUER.protocol === 'http:' && process.env.NODE_ENV !== 'production'
-    ? { execute: [oidc.allowInsecureRequests] }
-    : undefined;
+
 
 
 export interface SessionOIDC {
@@ -45,6 +35,15 @@ declare module 'express-session' {
  * @returns {Function} A promise resolving to the OIDC configuration.
  */
 export async function getConfig(): Promise<oidc.Configuration> {
+  const ISSUER = new URL(getRequiredEnv('ISSUER_BASE_URL'));
+
+  const CLIENT_ID = getRequiredEnv('CLIENT_ID');
+  const CLIENT_SECRET = getRequiredEnv('OIDC_CLIENT_SECRET');
+  // Only relax HTTPS when (a) it’s http:// and (b) not production
+  const options =
+    ISSUER.protocol === 'http:' && process.env.NODE_ENV !== 'production'
+      ? { execute: [oidc.allowInsecureRequests] }
+      : undefined;
   if (discoveredConfig === undefined) {
 
     const clientAuth = oidc.ClientSecretPost(CLIENT_SECRET);
@@ -119,6 +118,11 @@ export function requiresAuth() {
  * @param {Application} app - The Express application instance.
  */
 export const oidcSetup = (app: Application): void => {
+  const BASE_URL = getRequiredEnv('BASE_URL');
+  const SCOPE = getRequiredEnv('OIDC_SCOPE');
+  const CALLBACK_PATH = getRequiredEnv('OIDC_CALLBACK_PATH');
+  const LOGIN_PATH = getRequiredEnv('OIDC_LOGIN_PATH');
+  const LOGOUT_PATH = getRequiredEnv('OIDC_LOGOUT_PATH');
 
   // GET /login -> redirect to OP
   app.get(LOGIN_PATH, async (req: Request, res: Response) => {
