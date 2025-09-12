@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import express from "express";
 import chalk from "chalk";
 import morgan from "morgan";
@@ -94,9 +94,14 @@ const createApp = (): express.Application => {
   	app.use(morgan('dev'));
   }
 
+  // This middleware copies the OIDC user into res.locals for views
+ function injectUser(req: Request, res: Response, next: NextFunction): void{
+   res.locals.user = req.session.oidc?.userinfo;
+   next();
+  }
 
   // Register the main router
-  app.use('/', requiresAuth(), indexRouter);
+  app.use('/', requiresAuth(), injectUser, indexRouter);
 
   // Enable live-reload middleware in development mode
   if (process.env.NODE_ENV === "development") {
