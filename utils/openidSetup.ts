@@ -95,7 +95,7 @@ function isJsonRequest(req: Request): boolean {
  * @returns {Function} An Express middleware function.
  */
 export function requiresAuth() {
-  const loginPath = getRequiredEnv("OIDC_LOGIN_PATH");
+  
   // ensure boolean
 
   return (req: Request, res: Response, next: NextFunction): void => {
@@ -103,6 +103,8 @@ export function requiresAuth() {
       next();
       return;
     }
+
+    const loginPath = getRequiredEnv("OIDC_LOGIN_PATH");
 
     if (isJsonRequest(req)) {
       res.status(Http.HTTP_STATUS_UNAUTHORIZED).json({ error: "unauthenticated" });
