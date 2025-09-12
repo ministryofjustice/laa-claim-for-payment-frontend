@@ -1,5 +1,5 @@
 // middleware/axios.ts
-import { create } from 'middleware-axios';
+import { type AxiosInstanceWrapper, create } from 'middleware-axios';
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import type { Request, Response, NextFunction } from 'express';
 import * as oidc from 'openid-client';
@@ -13,7 +13,7 @@ const DEFAULT_TIMEOUT = 5000;
 declare global {
   namespace Express {
     interface Request {
-      axiosMiddleware: ReturnType<typeof create>;
+      axiosMiddleware: AxiosInstanceWrapper;
     }
   }
 }
