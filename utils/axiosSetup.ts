@@ -124,7 +124,6 @@ function toPlainTokens(tokens: oidc.TokenEndpointResponse): oidc.TokenEndpointRe
     }
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-type-assertion -- to fix
-  (req as any).axiosMiddleware = client;
+  req.axiosMiddleware = client;
   next();
 };
