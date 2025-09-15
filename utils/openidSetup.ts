@@ -20,7 +20,7 @@ export interface SessionOIDC {
   state?: string;
   redirect_uri?: string;
   tokens?: oidc.TokenEndpointResponse;
-  userinfo?: Record<string, unknown> | null;
+  userinfo?: Record<string, unknown>;
 }
 
 declare module 'express-session' {
@@ -179,7 +179,7 @@ export const oidcSetup = (app: Application): void => {
       req.session.oidc = {
         ...sess,
         tokens,
-        userinfo: userinfo ?? null,
+        userinfo: userinfo ?? undefined,
       };
 
       // redirect to home page
