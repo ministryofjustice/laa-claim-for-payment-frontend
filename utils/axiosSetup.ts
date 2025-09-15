@@ -2,7 +2,7 @@
 import { type AxiosInstanceWrapper, create } from 'middleware-axios';
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import type { Request, Response, NextFunction } from 'express';
-import * as oidc from 'openid-client';
+import {refreshTokenGrant, type TokenEndpointResponse} from 'openid-client';
 import { constants as Http } from 'node:http2';
 import { getConfig } from './openidSetup.js';
 import { getRequiredEnv } from '#utils/envHelper.js';
@@ -45,12 +45,12 @@ export const axiosMiddleware = (req: Request, _res: Response, next: NextFunction
   });
 
   const { axiosInstance: axiosInstanceMain } = client;
-   const { axiosInstance: axiosRetryInstance } = retryClient;
+  const { axiosInstance: axiosRetryInstance } = retryClient;
 
   // Attach current access token to every request
   const attachToken = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     const access = req.session.oidc?.tokens?.access_token;
-     
+
     if (typeof access === 'string' && access.length > 0) {
       const headers = axios.AxiosHeaders.from(config.headers);
       headers.set('Authorization', `Bearer ${access}`);
@@ -65,15 +65,11 @@ export const axiosMiddleware = (req: Request, _res: Response, next: NextFunction
   // Single-flight refresh gate per incoming HTTP request
   let refreshing: Promise<void> | null = null;
 
-  
-
-// Helper to strip methods like claims() / expiresIn()
-function toPlainTokens(tokens: oidc.TokenEndpointResponse): oidc.TokenEndpointResponse {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- to fix
-  return Object.fromEntries(
-    Object.entries(tokens).filter(([, v]) => typeof v !== 'function')
-  ) as oidc.TokenEndpointResponse;
-}
+  async function getTokens(rt: string): Promise<TokenEndpointResponse> {
+    const cfg = await getConfig();
+    const refreshed = await refreshTokenGrant(cfg, rt);
+    return refreshed as TokenEndpointResponse;
+  }
 
   axiosInstanceMain.interceptors.response.use(
     r => r,
@@ -91,16 +87,14 @@ function toPlainTokens(tokens: oidc.TokenEndpointResponse): oidc.TokenEndpointRe
       // Run exactly one refresh; concurrent 401s await the same promise
 
       refreshing ??= (async () => {
-        const cfg = await getConfig();
-        
-        const refreshed = await oidc.refreshTokenGrant(cfg, rt);
+        const refreshed = await getTokens(rt);
         const prev = req.session.oidc?.tokens;
         req.session.oidc = {
           ...(req.session.oidc ?? {}),
-           tokens: {
-    ...(prev !== undefined ? toPlainTokens(prev) : {}),
-    ...toPlainTokens(refreshed),
-  } ,
+          tokens: {
+            ...(prev ?? {}),
+            ...refreshed,
+          },
         };
       })().finally(() => {
         refreshing = null;
@@ -116,7 +110,7 @@ function toPlainTokens(tokens: oidc.TokenEndpointResponse): oidc.TokenEndpointRe
       // Retry the original request ONCE using the bare client (no interceptor loop)
       const newAccess = req.session.oidc?.tokens?.access_token;
       const headers = axios.AxiosHeaders.from(config.headers);
-       
+
       if (typeof newAccess === 'string' && newAccess.length > 0) {
         headers.set('Authorization', `Bearer ${newAccess}`);
       }

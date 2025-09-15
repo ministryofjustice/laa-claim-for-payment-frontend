@@ -1,6 +1,6 @@
 // utils/oidc.ts
 import type { Application, Request, Response, NextFunction } from 'express';
-import * as oidc from 'openid-client';
+import { allowInsecureRequests, authorizationCodeGrant, buildAuthorizationUrl, calculatePKCECodeChallenge, ClientSecretPost, type Configuration, discovery, fetchProtectedResource, randomPKCECodeVerifier, randomState, type TokenEndpointResponse } from 'openid-client';
 import { constants as Http } from 'node:http2';
 import { getRequiredEnv } from '#utils/envHelper.js';
 import { z } from 'zod';
@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 
 
-let discoveredConfig: Promise<oidc.Configuration> | undefined = undefined;
+let discoveredConfig: Promise<Configuration> | undefined = undefined;
 const UserInfoSchema = z.record(z.string(), z.unknown());
 type UserInfo = z.infer<typeof UserInfoSchema>;
 
@@ -19,7 +19,7 @@ export interface SessionOIDC {
   code_verifier?: string;
   state?: string;
   redirect_uri?: string;
-  tokens?: oidc.TokenEndpointResponse;
+  tokens?: TokenEndpointResponse;
   userinfo?: Record<string, unknown>;
 }
 
@@ -34,7 +34,7 @@ declare module 'express-session' {
  * Retrieves and caches the OIDC configuration using discovery.
  * @returns {Function} A promise resolving to the OIDC configuration.
  */
-export async function getConfig(): Promise<oidc.Configuration> {
+export async function getConfig(): Promise<Configuration> {
   const ISSUER = new URL(getRequiredEnv('ISSUER_BASE_URL'));
 
   const CLIENT_ID = getRequiredEnv('CLIENT_ID');
@@ -42,25 +42,25 @@ export async function getConfig(): Promise<oidc.Configuration> {
   // Only relax HTTPS when (a) it’s http:// and (b) not production
   const options =
     ISSUER.protocol === 'http:' && process.env.NODE_ENV !== 'production'
-      ? { execute: [oidc.allowInsecureRequests] }
+      ? { execute: [allowInsecureRequests] }
       : undefined;
   if (discoveredConfig === undefined) {
 
-    const clientAuth = oidc.ClientSecretPost(CLIENT_SECRET);
-    discoveredConfig = oidc.discovery(ISSUER, CLIENT_ID, CLIENT_SECRET, clientAuth, options);
+    const clientAuth = ClientSecretPost(CLIENT_SECRET);
+    discoveredConfig = discovery(ISSUER, CLIENT_ID, CLIENT_SECRET, clientAuth, options);
   }
   return await discoveredConfig;
 }
 
 
 async function fetchUserInfo(
-  config: oidc.Configuration,
+  config: Configuration,
   accessToken: string,
 ): Promise<UserInfo | null> {
 
   const meta = config.serverMetadata();
   const { userinfo_endpoint: ep = '' } = meta;
-  const res = await oidc.fetchProtectedResource(
+  const res = await fetchProtectedResource(
     config,
     accessToken,
     new URL(ep),
@@ -95,7 +95,7 @@ function isJsonRequest(req: Request): boolean {
  * @returns {Function} An Express middleware function.
  */
 export function requiresAuth() {
-  
+
   // ensure boolean
 
   return (req: Request, res: Response, next: NextFunction): void => {
@@ -131,9 +131,9 @@ export const oidcSetup = (app: Application): void => {
     const config = await getConfig();
 
     const redirectUri = `${BASE_URL}${CALLBACK_PATH}`;
-    const codeVerifier = oidc.randomPKCECodeVerifier();
-    const codeChallenge = await oidc.calculatePKCECodeChallenge(codeVerifier);
-    const state = oidc.randomState();
+    const codeVerifier = randomPKCECodeVerifier();
+    const codeChallenge = await calculatePKCECodeChallenge(codeVerifier);
+    const state = randomState();
 
     // Persist flow state in the session
     req.session.oidc = {
@@ -143,7 +143,7 @@ export const oidcSetup = (app: Application): void => {
       redirect_uri: redirectUri,
     };
 
-    const url = oidc.buildAuthorizationUrl(config, {
+    const url = buildAuthorizationUrl(config, {
       scope: SCOPE,
       redirect_uri: redirectUri,
       code_challenge: codeChallenge,
@@ -168,7 +168,7 @@ export const oidcSetup = (app: Application): void => {
       // current URL that received the authorization response (includes code & state)
       const currentUrl = new URL(`${BASE_URL}${req.originalUrl}`);
 
-      const tokens = await oidc.authorizationCodeGrant(config, currentUrl, {
+      const tokens = await authorizationCodeGrant(config, currentUrl, {
         pkceCodeVerifier: sess.code_verifier,
         expectedState: sess.state,
       });

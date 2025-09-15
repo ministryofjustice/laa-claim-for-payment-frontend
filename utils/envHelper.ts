@@ -6,8 +6,7 @@
  */
 export function getRequiredEnv(name: string): string {
   const { env } = process;
-  // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- can't use des
-  const v= env[name];
+  const { [name]:v} = env;
   if (v == null) throw new Error(`Missing required env var: ${name}`);
   return v;
 }
