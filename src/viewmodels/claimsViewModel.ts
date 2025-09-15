@@ -7,8 +7,11 @@ import {
   formatOptionalString,
 } from "#src/helpers/index.js";
 import { Pagination } from "./components/pagination.js";
-import { PaginationMeta } from "#src/types/api-types.js";
+import type { PaginationMeta } from "#src/types/api-types.js";
 
+/**
+ *
+ */
 export class ClaimsTableViewModel {
   head: TableHeader[];
   rows: TableCell[][];

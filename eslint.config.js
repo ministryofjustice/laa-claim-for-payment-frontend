@@ -45,21 +45,22 @@ export default [
       jsdoc: jsdocPlugin,
     },
     rules: {
-      indent: "off", // Prettier is handling this
-      "linebreak-style": "off", // Prettier is handling this
-      quotes: "off", // Prettier is handling this
-      semi: "off", // Prettier is handling this
-      "no-console": "off", // Stops complaining about putting messages in the console
-      "jsdoc/check-alignment": "error",
-      "jsdoc/check-param-names": "error",
-      "jsdoc/check-tag-names": "error",
-      "jsdoc/check-types": "error",
-      "jsdoc/implements-on-classes": "error",
-      "jsdoc/newline-after-description": "off",
-      "jsdoc/no-undefined-types": "error",
-      "jsdoc/require-description": "error",
-      "jsdoc/require-jsdoc": [
-        "error",
+      'complexity': ['error', { max: 15 }], // Set McCabe complexity threshold
+      'indent': 'off', // Prettier is handling this
+      'linebreak-style': 'off', // Prettier is handling this
+      'quotes': 'off', // Prettier is handling this
+      'semi': 'off', // Prettier is handling this
+      'no-console': 'off', // Stops complaining about putting messages in the console
+      'jsdoc/check-alignment': 'error',
+      'jsdoc/check-param-names': 'error',
+      'jsdoc/check-tag-names': 'error',
+      'jsdoc/check-types': 'error',
+      'jsdoc/implements-on-classes': 'error',
+      'jsdoc/newline-after-description': 'off',
+      'jsdoc/no-undefined-types': 'error',
+      'jsdoc/require-description': 'error',
+      'jsdoc/require-jsdoc': [
+        'error',
         {
           require: {
             FunctionDeclaration: true,
@@ -68,6 +69,7 @@ export default [
             ArrowFunctionExpression: true,
             FunctionExpression: true,
           },
+          publicOnly: true
         },
       ],
       "jsdoc/require-param": "error",

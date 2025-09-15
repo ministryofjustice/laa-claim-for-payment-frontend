@@ -1,10 +1,15 @@
-import { create } from "middleware-axios";
-import type { Request, Response, NextFunction } from "express";
-import type { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
+// middleware/axios.ts
+import { type AxiosInstanceWrapper, create } from 'middleware-axios';
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import type { Request, Response, NextFunction } from 'express';
+import {refreshTokenGrant, type TokenEndpointResponse} from 'openid-client';
+import { constants as Http } from 'node:http2';
+import { getConfig } from './openidSetup.js';
+import { getRequiredEnv } from '#utils/envHelper.js';
+
 
 const DEFAULT_TIMEOUT = 5000;
 
-// Extend Express Request to include our axiosMiddleware
 declare global {
   namespace Express {
     interface Request {
@@ -13,29 +18,106 @@ declare global {
   }
 }
 
-// NOTE: This module exports axiosMiddleware
 
 /**
- * Axios middleware to attach Axios instance to request object.
- *
- * @param {Request} req - The Express request object.
- * @param {Response} res - The Express response object.
- * @param {NextFunction} next - The next middleware function in the stack.
- * @returns {void}
+ * Middleware to attach an Axios instance to the request object.
+ * The Axios instance automatically includes the current access token
+ * in the Authorization header and handles token refresh on 401 responses.
+ *  @param {import('express').Request} req - The Express request object
+ *  @param {import('express').Response} _res - The Express response object
+ *  @param {import('express').NextFunction} next - The next middleware function
  */
-export const axiosMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+export const axiosMiddleware = (req: Request, _res: Response, next: NextFunction): void => {
+
   const { protocol } = req;
   const host = req.get("host");
-  const baseURL = `${protocol}://${host}`;
-
-  // Create wrapped instance of axios to use normal axios instance
-  req.axiosMiddleware = create({
-    baseURL,
-    timeout: DEFAULT_TIMEOUT, // Set a timeout value if needed
-    headers: {
-      "Content-Type": "application/json",
-      // You can add other default headers here if needed
-    },
+  const apiURL = `${protocol}://${host}`;
+  console.log(`Axios baseURL set to ${apiURL}`);
+  // Primary client (has interceptor)
+  const client = create({
+    baseURL: apiURL,
+    timeout: DEFAULT_TIMEOUT,
   });
+
+  const retryClient = create({
+    baseURL: apiURL,
+    timeout: DEFAULT_TIMEOUT,
+  });
+
+  const { axiosInstance: axiosInstanceMain } = client;
+  const { axiosInstance: axiosRetryInstance } = retryClient;
+
+  // Attach current access token to every request
+  const attachToken = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+    const access = req.session.oidc?.tokens?.access_token;
+
+    if (typeof access === 'string' && access.length > 0) {
+      const headers = axios.AxiosHeaders.from(config.headers);
+      headers.set('Authorization', `Bearer ${access}`);
+      config.headers = headers;
+    }
+    return config;
+  };
+
+  axiosInstanceMain.interceptors.request.use(attachToken);
+  axiosRetryInstance.interceptors.request.use(attachToken);
+
+  // Single-flight refresh gate per incoming HTTP request
+  let refreshing: Promise<void> | null = null;
+
+  async function getTokens(rt: string): Promise<TokenEndpointResponse> {
+    const cfg = await getConfig();
+    const refreshed = await refreshTokenGrant(cfg, rt);
+    return refreshed as TokenEndpointResponse;
+  }
+
+  axiosInstanceMain.interceptors.response.use(
+    r => r,
+
+    async (error: AxiosError) => {
+      const { response, config } = error;
+
+      if ((getRequiredEnv('AUTH_ENABLED') !== 'true') || response == null || response.status !== Http.HTTP_STATUS_UNAUTHORIZED || config == null) {
+        return await Promise.reject(error);
+      }
+
+      const rt = req.session.oidc?.tokens?.refresh_token;
+      if (rt == null) return await Promise.reject(error); // nothing to do
+
+      // Run exactly one refresh; concurrent 401s await the same promise
+
+      refreshing ??= (async () => {
+        const refreshed = await getTokens(rt);
+        const prev = req.session.oidc?.tokens;
+        req.session.oidc = {
+          ...(req.session.oidc ?? {}),
+          tokens: {
+            ...(prev ?? {}),
+            ...refreshed,
+          },
+        };
+      })().finally(() => {
+        refreshing = null;
+      });
+
+
+      try {
+        await refreshing;
+      } catch {
+        return await Promise.reject(error); // refresh failed
+      }
+
+      // Retry the original request ONCE using the bare client (no interceptor loop)
+      const newAccess = req.session.oidc?.tokens?.access_token;
+      const headers = axios.AxiosHeaders.from(config.headers);
+
+      if (typeof newAccess === 'string' && newAccess.length > 0) {
+        headers.set('Authorization', `Bearer ${newAccess}`);
+      }
+      return await retryClient.request({ ...config, headers });
+    }
+  );
+
+  req.axiosMiddleware = client;
   next();
 };

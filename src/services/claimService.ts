@@ -1,12 +1,15 @@
 import { getClaimsEndpoint } from "#src/api/apiEndpointConstants.js";
 import { extractAndLogError } from "#src/helpers/index.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
-import { ApiResponse, PaginationMeta } from "#src/types/api-types.js";
-import { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
-import { Claim, ClaimSchema } from "#src/types/Claim.js";
+import type { ApiResponse, PaginationMeta } from "#src/types/api-types.js";
+import type { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
+import { type Claim, ClaimSchema } from "#src/types/Claim.js";
 import config from "../../config.js";
 import { z } from "zod";
 
+/**
+ * Service to interact with the Claims API.
+ */
 class ClaimService {
   /**
    * Get submissions from API using axios middleware
@@ -19,7 +22,7 @@ class ClaimService {
     page: number
   ): Promise<ApiResponse<Claim>> {
     // TODO: remove when Playwright job spins up BE
-    if (process.env.NODE_ENV === "test") {
+    if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "local") {
       return {
         data: getClaimsSuccessResponseData.data,
         pagination: getClaimsSuccessResponseData.pagination,

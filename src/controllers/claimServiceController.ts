@@ -21,11 +21,11 @@ export async function handleYourClaimsPage(
 ): Promise<void> {
   try {
     // Fetch client details from API
+
     const currentPage = parseNumberQueryParam(req.query.page, 1);
     const response = await claimService.getClaims(req.axiosMiddleware, currentPage);
-    const minimumApiReponseLength = 0;
 
-    if (response.status === "success" && response.data.length > minimumApiReponseLength) {
+    if (response.status === "success") {
       const claimsTableViewModel: ClaimsTableViewModel = new ClaimsTableViewModel(
         response.data,
         response.pagination,

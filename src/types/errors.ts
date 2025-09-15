@@ -1,3 +1,6 @@
+/**
+ *
+ */
 export class InvalidPageError extends Error {
   invalidPage: number;
   pageToRedirectTo: number;

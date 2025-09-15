@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import express from "express";
 import chalk from "chalk";
 import morgan from "morgan";
@@ -11,10 +11,13 @@ import {
   helmetSetup,
   axiosMiddleware,
   displayAsciiBanner,
+  oidcSetup
 } from "#utils/index.js";
 import config from "#config.js";
 import indexRouter from "#routes/index.js";
 import livereload from "connect-livereload";
+import { requiresAuth } from "#utils/openidSetup.js";
+
 
 const TRUST_FIRST_PROXY = 1;
 
@@ -29,6 +32,8 @@ const createApp = (): express.Application => {
 
   // Set up common middleware for handling cookies, body parsing, etc.
   setupMiddlewares(app);
+
+  app.use(session(config.session));
 
   app.use(axiosMiddleware);
 
@@ -60,7 +65,7 @@ const createApp = (): express.Application => {
 
   // Set up cookie security for sessions
   app.set("trust proxy", TRUST_FIRST_PROXY);
-  app.use(session(config.session));
+  
 
   // Set up Cross-Site Request Forgery (CSRF) protection
   setupCsrf(app);
@@ -74,17 +79,29 @@ const createApp = (): express.Application => {
   // Set up application-specific configurations
   setupConfig(app);
 
+  if (process.env.AUTH_ENABLED === 'true') {
+  // Set up the OIDC authentication
+    oidcSetup(app);
+
+  }
+
   // Set up request logging based on environment
-  if (process.env.NODE_ENV === "production") {
-    // Use combined format for production (more structured, less verbose)
-    app.use(morgan("combined"));
-  } else {
-    // Use dev format for development (colored, more readable)
-    app.use(morgan("dev"));
+  if (process.env.NODE_ENV === 'production') {
+	// Use combined format for production (more structured, less verbose)
+	app.use(morgan('combined'));
+  } else { 
+	  // Use dev format for development (colored, more readable)
+  	app.use(morgan('dev'));
+  }
+
+  // This middleware copies the OIDC user into res.locals for views
+ function injectUser(req: Request, res: Response, next: NextFunction): void{
+   res.locals.user = req.session.oidc?.userinfo;
+   next();
   }
 
   // Register the main router
-  app.use("/", indexRouter);
+  app.use('/', requiresAuth(), injectUser, indexRouter);
 
   // Enable live-reload middleware in development mode
   if (process.env.NODE_ENV === "development") {

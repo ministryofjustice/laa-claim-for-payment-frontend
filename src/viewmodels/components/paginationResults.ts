@@ -1,3 +1,6 @@
+/**
+ *
+ */
 export class PaginationResults {
   count: number;
   from: number;

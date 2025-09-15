@@ -81,6 +81,25 @@ spec:
               value: "{{ .Values.env.API_URL }}"
             - name: NODE_ENV
               value: "{{ .Values.env.NODE_ENV }}"
+            - name: AUTH_ENABLED
+              value: "{{ .Values.env.AUTH_ENABLED }}"
+            - name: ISSUER_BASE_URL
+              value: "{{ .Values.env.ISSUER_BASE_URL }}"
+            - name: CLIENT_ID
+              value: "{{ .Values.env.CLIENT_ID }}"
+            - name: USE_SSL
+              value: "{{ .Values.env.USE_SSL }}"
+            - name: OIDC_SCOPE
+              value: "{{ .Values.env.OIDC_SCOPE }}"
+            - name: OIDC_LOGIN_PATH
+              value: "{{ .Values.env.OIDC_LOGIN_PATH }}"
+            - name: OIDC_CALLBACK_PATH
+              value: "{{ .Values.env.OIDC_CALLBACK_PATH }}"
+            - name: OIDC_LOGOUT_PATH
+              value: "{{ .Values.env.OIDC_LOGOUT_PATH }}"
+            - name: OIDC_CLIENT_SECRET
+              value: "{{ .Values.env.OIDC_CLIENT_SECRET }}"      
+   
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
