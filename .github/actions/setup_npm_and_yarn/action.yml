@@ -1,0 +1,62 @@
+name: 'Setup Node + Yarn (Corepack)'
+description: 'Install Node, enable Corepack, activate Yarn from package.json, and cache Yarn .yarn/cache.'
+inputs:
+  node-version:
+    description: 'Node.js version'
+    required: false
+    default: '24.2.0'
+  working-directory:
+    description: 'Path to the package.json'
+    required: false
+    default: '.'
+  cache:
+    description: 'Cache Yarn Berry artefacts'
+    required: false
+    default: 'true'
+  cache-dependency-path:
+    description: 'Lockfile path/glob for cache key'
+    required: false
+    default: 'yarn.lock'
+outputs:
+  yarn-tool:
+    description: 'Tool parsed from packageManager'
+    value: ${{ steps.pm.outputs.tool }}
+  yarn-version:
+    description: 'Version parsed from packageManager'
+    value: ${{ steps.pm.outputs.ver }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v5
+      with:
+        node-version: ${{ inputs.node-version }}
+        package-manager-cache: false
+
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+
+    - name: Read packageManager
+      id: pm
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        PM=$(node -p "require('./package.json').packageManager || ''")
+        echo "pm=$PM" >> "$GITHUB_OUTPUT"
+        echo "tool=${PM%%@*}" >> "$GITHUB_OUTPUT"
+        echo "ver=${PM#*@}" >> "$GITHUB_OUTPUT"
+
+    - name: Activate Yarn via Corepack
+      if: ${{ steps.pm.outputs.tool == 'yarn' && steps.pm.outputs.ver != '' }}
+      shell: bash
+      run: corepack prepare "${{ steps.pm.outputs.pm }}" --activate
+
+    - name: Cache Yarn Berry cache
+      if: ${{ inputs.cache == 'true' && steps.pm.outputs.tool == 'yarn' }}
+      uses: actions/cache@v4
+      with:
+        path: ${{ inputs.working-directory }}/.yarn/cache
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
