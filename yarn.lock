@@ -4789,7 +4789,7 @@ __metadata:
     morgan: "npm:~1.10.0"
     nodemon: "npm:^3.1.9"
     nunjucks: "npm:^3.2.4"
-    openid-client: "npm:6.7.1"
+    openid-client: "npm:6.8.0"
     prettier: "npm:^3.6.2"
     rimraf: "npm:^6.0.1"
     sass: "npm:^1.91.0"
@@ -4960,7 +4960,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oauth4webapi@npm:^3.8.0":
+"oauth4webapi@npm:^3.8.1":
   version: 3.8.1
   resolution: "oauth4webapi@npm:3.8.1"
   checksum: 10c0/2dad6d39d4830efe68d542e8e131fd5b15d5a864f96ad7189263da9763cad0e22481af72e50d64d58ab62887ba43488bff5d33952426c5d197089cc7c59b2a45
@@ -5073,13 +5073,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openid-client@npm:6.7.1":
-  version: 6.7.1
-  resolution: "openid-client@npm:6.7.1"
+"openid-client@npm:6.8.0":
+  version: 6.8.0
+  resolution: "openid-client@npm:6.8.0"
   dependencies:
     jose: "npm:^6.1.0"
-    oauth4webapi: "npm:^3.8.0"
-  checksum: 10c0/a4a38e1fa8912c697b2e0b353c47a5d4b48c70f6961ed1ee030335cd84d4b05d923aa9bd8a135b5e83c025dad61e3648ea780617d091302d901cbd7babe0e9f0
+    oauth4webapi: "npm:^3.8.1"
+  checksum: 10c0/9b6e09cabbe02eb38716ca94e4db3fa100a0387d4b0bd42a0ae173e86f69588b95ebc27058c72e11ffe223ad1230e425f3f1aa9393fd54f6360980156ef4e594
   languageName: node
   linkType: hard
 
