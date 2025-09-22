@@ -75,7 +75,7 @@
     "chai": "^6.0.1",
     "cheerio": "^1.1.2",
     "chokidar": "4.0.3",
-    "concurrently": "^9.2.0",
+    "concurrently": "^9.2.1",
     "connect-livereload": "^0.6.1",
     "cross-env": "^10.0.0",
     "esbuild": "^0.25.9",
