@@ -20,6 +20,8 @@ import { requiresAuth } from "#utils/openidSetup.js";
 
 
 const TRUST_FIRST_PROXY = 1;
+const SUCCESSFUL_REQUEST = 200;
+const UNSUCCESSFUL_REQUEST = 500;
 
 /**
  * Creates and configures an Express application.
@@ -65,7 +67,7 @@ const createApp = (): express.Application => {
 
   // Set up cookie security for sessions
   app.set("trust proxy", TRUST_FIRST_PROXY);
-  
+
 
   // Set up Cross-Site Request Forgery (CSRF) protection
   setupCsrf(app);
@@ -80,25 +82,42 @@ const createApp = (): express.Application => {
   setupConfig(app);
 
   if (process.env.AUTH_ENABLED === 'true') {
-  // Set up the OIDC authentication
+    // Set up the OIDC authentication
     oidcSetup(app);
 
   }
 
   // Set up request logging based on environment
   if (process.env.NODE_ENV === 'production') {
-	// Use combined format for production (more structured, less verbose)
-	app.use(morgan('combined'));
-  } else { 
-	  // Use dev format for development (colored, more readable)
-  	app.use(morgan('dev'));
+    // Use combined format for production (more structured, less verbose)
+    app.use(morgan('combined'));
+  } else {
+    // Use dev format for development (colored, more readable)
+    app.use(morgan('dev'));
   }
 
   // This middleware copies the OIDC user into res.locals for views
- function injectUser(req: Request, res: Response, next: NextFunction): void{
-   res.locals.user = req.session.oidc?.userinfo;
-   next();
+  function injectUser(req: Request, res: Response, next: NextFunction): void {
+    res.locals.user = req.session.oidc?.userinfo;
+    next();
   }
+
+  // liveness and readiness probes for Helm deployments. Has to happen before the main router
+  app.get("/status", function (req: Request, res: Response): void {
+    res.status(SUCCESSFUL_REQUEST).send("OK");
+  });
+
+  app.get("/health", function (req: Request, res: Response): void {
+    res.status(SUCCESSFUL_REQUEST).send("Healthy");
+  });
+
+  app.get("/error", function (req: Request, res: Response): void {
+    // Simulate an error
+    res
+      .set("X-Error-Tag", "TEST_500_ALERT")
+      .status(UNSUCCESSFUL_REQUEST)
+      .send("Internal Server Error");
+  });
 
   // Register the main router
   app.use('/', requiresAuth(), injectUser, indexRouter);
