@@ -41,7 +41,7 @@ export async function getConfig(): Promise<Configuration> {
   const CLIENT_SECRET = getRequiredEnv('OIDC_CLIENT_SECRET');
   // Only relax HTTPS when (a) it’s http:// and (b) not production
   const options =
-    ISSUER.protocol === 'http:' && process.env.NODE_ENV !== 'production'
+    ISSUER.protocol === 'http:'
       ? { execute: [allowInsecureRequests] }
       : undefined;
   if (discoveredConfig === undefined) {
