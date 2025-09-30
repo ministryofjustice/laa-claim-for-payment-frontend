@@ -97,14 +97,14 @@ env:
   API_URL: "http://laa-claim-for-payment.laa-claim-for-payment-uat:8080"
   OIDC_SCOPE: "openid profile email api.read"
   OIDC_LOGIN_PATH: "/login"
-  OIDC_CLIENT_SECRET: ""
+  OIDC_CLIENT_SECRET: "super-secret-value"
   OIDC_CALLBACK_PATH: "/callback"
   OIDC_LOGOUT_PATH: "/logout"
-  AUTH_ENABLED: false
-  BASE_URL: ""
-  CLIENT_ID: ""
-  USE_SSL: false
-  ISSUER_BASE_URL: ""
+  AUTH_ENABLED: true
+  BASE_URL: "http://localhost:3000"
+  CLIENT_ID: "caa-client"
+  USE_SSL: true
+  ISSUER_BASE_URL: "http://mock-oidc:8081"
 
 autoscaling:
   enabled: false
