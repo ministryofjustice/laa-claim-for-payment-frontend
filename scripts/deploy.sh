@@ -32,7 +32,7 @@ deploy_branch() {
                 --set env.RATELIMIT_STORAGE_URI="$RATELIMIT_STORAGE_URI" \
                 --set env.RATE_LIMIT_MAX="$RATE_LIMIT_MAX" \
                 --set env.RATE_WINDOW_MS="$RATE_WINDOW_MS" \
-                --set env.NODE_ENV="$NODE_ENV"\
+                --set env.NODE_ENV="$NODE_ENV"
 }
 
 deploy_main() {  
@@ -55,7 +55,7 @@ deploy_main() {
                           --set env.RATELIMIT_STORAGE_URI="$RATELIMIT_STORAGE_URI" \
                           --set env.RATE_LIMIT_MAX="$RATE_LIMIT_MAX" \
                           --set env.RATE_WINDOW_MS="$RATE_WINDOW_MS" \
-                          --set env.NODE_ENV="$NODE_ENV"\
+                          --set env.NODE_ENV="$NODE_ENV"
 }
 
 if [[ "$GITHUB_REF_NAME" == "main" ]]; then
