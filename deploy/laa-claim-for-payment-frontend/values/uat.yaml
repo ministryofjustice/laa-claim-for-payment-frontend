@@ -103,8 +103,8 @@ env:
   AUTH_ENABLED: true
   BASE_URL: "https://laa-claim-for-payment-frontend-uat.cloud-platform.service.justice.gov.uk"
   CLIENT_ID: "caa-client"
-  USE_SSL: false
-  ISSUER_BASE_URL: "http://mock-oidc.laa-claim-for-payment-uat:8081"
+  USE_SSL: true
+  ISSUER_BASE_URL: "https://laa-claim-for-payment-mock-oidc-uat.cloud-platform.service.justice.gov.uk"
 
 autoscaling:
   enabled: false
