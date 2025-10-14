@@ -1,7 +1,7 @@
 import { getClaimsEndpoint } from "#src/api/apiEndpointConstants.js";
 import { extractAndLogError } from "#src/helpers/index.js";
-import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
-import type { ApiResponse, PaginationMeta } from "#src/types/api-types.js";
+import { getClaimsSuccessResponseData, getClaimSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
+import type { ApiResponse, Paginated, PaginationMeta } from "#src/types/api-types.js";
 import type { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
 import { type Claim, ClaimSchema } from "#src/types/Claim.js";
 import config from "../../config.js";
@@ -20,17 +20,15 @@ class ClaimService {
   static async getClaims(
     axiosMiddleware: AxiosInstanceWrapper,
     page: number
-  ): Promise<ApiResponse<Claim>> {
-    // TODO: remove when Playwright job spins up BE
-    if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "local") {
-      return {
-        data: getClaimsSuccessResponseData.data,
-        pagination: getClaimsSuccessResponseData.pagination,
-        status: "success",
-      };
-    }
+  ): Promise<ApiResponse<Paginated<Claim[]>>> {
+    // // TODO: remove when Playwright job spins up BE, todo playwright should intercept an mock outbound calls?
+    // if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "local") {
+    //   return {
+    //     ...getClaimsSuccessResponseData
+    //   };
+    // }
     try {
-      const configuredAxios = ClaimService.configureAxiosInstance(axiosMiddleware);
+      const configuredAxios = this.configureAxiosInstance(axiosMiddleware);
       console.log(`API: GET ${getClaimsEndpoint}`);
 
       // Call API endpoint
@@ -45,20 +43,50 @@ class ClaimService {
       console.log(`API: Returning ${data.length} claims`);
 
       return {
-        data,
-        pagination: paginationMeta,
+        body: {
+          data: data,
+          meta: paginationMeta,
+        },
         status: "success",
       };
     } catch (error) {
       const errorMessage = extractAndLogError(error, "API error");
 
       return {
-        data: [],
-        pagination: {
-          total: 0,
-          page,
-          limit: config.pagination.numberOfClaimsPerPage,
-        },
+        status: "error",
+        message: errorMessage,
+      };
+    }
+  }
+
+  static async getClaim(
+    axiosMiddleware: AxiosInstanceWrapper,
+    claimId: number
+  ): Promise<ApiResponse<Claim>> {
+    // // TODO: remove when Playwright job spins up BE
+    // if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "local") {
+    //   return {
+    //     ...getClaimSuccessResponseData
+    //   };
+    // }
+    try {
+      const getClaimEndpoint = `/api/v1/claims/${encodeURIComponent(String(claimId))}`;
+      const configuredAxios = this.configureAxiosInstance(axiosMiddleware);
+      console.log(`API: GET ${getClaimEndpoint}`);
+
+      // Call API endpoint
+      const response = await configuredAxios.get<Claim>(getClaimEndpoint);
+
+      const claim: Claim = response.data
+
+      return {
+        body: claim,
+        status: "success",
+      };
+    } catch (error) {
+      const errorMessage = extractAndLogError(error, "API error");
+
+      return {
         status: "error",
         message: errorMessage,
       };
@@ -71,7 +99,7 @@ class ClaimService {
    * @param {number} page - The current page
    * @returns {PaginationMeta} Pagination metadata
    */
-  private static extractPaginationMeta(total: number, page: number): PaginationMeta {
+  private static extractPaginationMeta(total: number, page: number): PaginationMeta { // todo does this actually do anything?
     return {
       total,
       page,

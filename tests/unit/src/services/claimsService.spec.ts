@@ -10,7 +10,6 @@ describe("Claim Service:", () => {
     let configureAxiosStub: sinon.SinonStub;
 
     beforeEach(() => {
-      // Reset the stub before each test
       axiosStub = { get: sinon.stub() } as any;
       configureAxiosStub = sinon
         .stub(claimService as any, "configureAxiosInstance")
@@ -18,7 +17,6 @@ describe("Claim Service:", () => {
     });
 
     afterEach(() => {
-      // Restore the stubs after each test
       sinon.restore();
     });
 
@@ -40,7 +38,10 @@ describe("Claim Service:", () => {
 
       sinon.assert.calledWith(axiosStub.get, getClaimsEndpoint);
       sinon.assert.calledWith(configureAxiosStub, {});
-      expect(result.data).to.be.an("array").that.is.empty;
+
+      expect(result.status).to.equal("error");
+      expect(result).to.have.property("message").that.is.a("string").and.is.not.empty;
+      expect(result).to.not.have.property("body")
     });
 
     it("should return empty data and an error when axios fails", async () => {
@@ -50,10 +51,69 @@ describe("Claim Service:", () => {
 
       const result = await claimService.getClaims({} as any, {} as any);
 
+      expect(result.status).to.equal("error");
       expect(result).to.include({
         message: errorMessage,
       });
-      expect(result.data).to.be.an("array").that.is.empty;
+      expect(result).to.not.have.property("body")
+    });
+  });
+
+  describe("getClaim", () => {
+    let axiosStub: sinon.SinonStubbedInstance<AxiosInstance>;
+    let configureAxiosStub: sinon.SinonStub;
+
+    beforeEach(() => {
+      axiosStub = { get: sinon.stub() } as any;
+      configureAxiosStub = sinon
+        .stub(claimService as any, "configureAxiosInstance")
+        .returns(axiosStub);
+    });
+
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it("calls axios with the claim endpoint incl. id", async () => {
+      const claimId = 123;
+      axiosStub.get.resolves({ status: 200, data: { id: claimId } });
+
+      await (claimService as any).getClaim({} as any, claimId);
+
+      const expectedUrl = `/api/v1/claims/${encodeURIComponent(String(claimId))}`;
+      sinon.assert.calledWith(axiosStub.get, expectedUrl);
+      sinon.assert.calledWith(configureAxiosStub, {});
+    });
+
+    it("returns success with the claim body", async () => {
+      const claimId = 456;
+      const claim = {
+        id: claimId,
+        client: "Jane Doe",
+        category: "Something",
+        concluded: new Date("2024-01-02T10:00:00Z"),
+        feeType: "Fixed",
+        claimed: 4500,
+        submissionId: "sub-1",
+      };
+      axiosStub.get.resolves({ status: 200, data: claim });
+
+      const result = await (claimService as any).getClaim({} as any, claimId);
+
+      expect(result.status).to.equal("success");
+      expect(result).to.have.property("body");
+      expect(result.body).to.deep.equal(claim);
+    });
+
+    it("returns error when axios fails", async () => {
+      const claimId = 999;
+      axiosStub.get.rejects(new Error("Network error"));
+
+      const result = await (claimService as any).getClaim({} as any, claimId);
+
+      expect(result.status).to.equal("error");
+      expect(result).to.have.property("message").that.is.a("string").and.is.not.empty;
+      expect(result).to.not.have.property("body");
     });
   });
 });

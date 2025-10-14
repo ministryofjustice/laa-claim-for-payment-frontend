@@ -1,5 +1,7 @@
 export interface TableCell {
-  text: string;
+  text?: string;
+  html?: string;
   attributes?: Record<string, string | number | undefined>;
   classes?: string;
 }
+
