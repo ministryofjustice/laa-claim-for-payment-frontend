@@ -27,8 +27,8 @@ export async function handleYourClaimsPage(
 
     if (response.status === "success") {
       const claimsTableViewModel: ClaimsTableViewModel = new ClaimsTableViewModel(
-        response.data,
-        response.pagination,
+        response.body.data,
+        response.body.meta,
         req.path
       );
 

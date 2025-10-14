@@ -5,9 +5,20 @@
  * These types are used across different services and components for consistent API interactions.
  */
 
-/**
- * Pagination metadata interface
- */
+export type ApiSuccess<T> = {
+  status: "success";
+  body: T;
+  message?: never;
+};
+
+export type ApiError<E = string> = {
+  status: "error";
+  message: E;
+  body?: never;
+};
+
+export type ApiResponse<T, E = string> = ApiSuccess<T> | ApiError<E>;
+
 export interface PaginationMeta {
   total: number;
   page: number;
@@ -15,12 +26,8 @@ export interface PaginationMeta {
   totalPages?: number;
 }
 
-/**
- * API response interface with pagination
- */
-export interface ApiResponse<T> {
-  data: T[];
-  pagination: PaginationMeta;
-  status: "success" | "error";
-  message?: string;
-}
+export interface Paginated<Data> {
+  meta: PaginationMeta;
+  data: Data;
+} 
+

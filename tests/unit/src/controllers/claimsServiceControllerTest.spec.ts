@@ -23,6 +23,8 @@ import { claimService } from "#src/services/claimService.js";
 import { handleYourClaimsPage } from "#src/controllers/claimServiceController.js";
 // Import mock claims response data for testing
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
+import { ApiResponse, Paginated } from "#src/types/api-types.js";
+import { Claim } from "#src/types/Claim.js";
 
 describe("Claim Service Controller", () => {
   let req: Partial<Request>;
@@ -82,12 +84,14 @@ describe("Claim Service Controller", () => {
 
       req.query!.page = invalidPage.toString();
 
-      const mockApiResponse = {
-        data: getClaimsSuccessResponseData.data,
-        pagination: {
-          total: 11,
-          page: invalidPage,
-          limit: 20,
+      const mockApiResponse: ApiResponse<Paginated<Claim[]>> = {
+        body:{
+          data: getClaimsSuccessResponseData.body?.data!,
+          meta: {
+            total: 11,
+            page: invalidPage,
+            limit: 20,
+          },
         },
         status: "success",
       };

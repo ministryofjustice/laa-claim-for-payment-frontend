@@ -1,21 +1,21 @@
 import { test, expect } from "@playwright/test";
-import { mockGetClaims, defaultClaim } from "./mocks/claimsApi.js";
+import { mockGetClaim, defaultClaim } from "./mocks/claimsApi.js";
 
 
-test("homepage should have the correct title", async ({ page }) => {
-  await mockGetClaims(page, [defaultClaim]);
+test("view claim page should have the correct title", async ({ page }) => {
+  await mockGetClaim(page, defaultClaim);
 
   // Navigate to the homepage
-  await page.goto("/");
+  await page.goto("/claims/1");
 
   // Check for the title of the application
   await expect(page).toHaveTitle(/Claim for Controlled Work – GOV.UK/);
 });
 
-test("homepage should display LAA header", async ({ page }) => {
-  await mockGetClaims(page, [defaultClaim]);
+test("view claim page should display LAA header", async ({ page }) => {
+  await mockGetClaim(page, defaultClaim);
 
-  await page.goto("/");
+  await page.goto("/claims/1");
 
   // Check for the header with LAA branding
   const header = page.getByRole("banner");
