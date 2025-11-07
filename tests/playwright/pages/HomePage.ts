@@ -68,7 +68,7 @@ export class HomePage {
    * @returns {Promise<string>} The service name text
    */
   async getServiceName(): Promise<string> {
-    return await this.heading.textContent() || '';
+    return await this.heading.textContent() ?? '';
   }
 
 }

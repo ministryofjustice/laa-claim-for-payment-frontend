@@ -77,7 +77,7 @@ export class Pagination {
     } else {
       const paginationItems: PaginationItem[] = [];
       let isLastItemEllipsis = false;
-      for (let page = 1; page <= totalNumberOfPages; page++) {
+      for (let page = 1; page <= totalNumberOfPages; page+=1) {
         if (page === 1 || Math.abs(page - currentPage) <= 1 || page === totalNumberOfPages) {
           const paginationItem: PaginationItem = {
             text: page.toString(),

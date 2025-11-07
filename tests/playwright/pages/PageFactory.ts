@@ -16,10 +16,19 @@ export class PageFactory {
     this.page = page;
   }
 
+  /**
+   * gets the home page for test
+   * @returns { HomePage } the home page
+   */
   get homePage(): HomePage {
     return new HomePage(this.page);
   }
 
+  /**
+   * gets the view claim page for test
+   * @param { number } id the claim id
+   * @returns { ViewClaimPage } the claim page for given id
+   */
   viewClaimPage(id: number): ViewClaimPage {
     return new ViewClaimPage(this.page, id);
   }

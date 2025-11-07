@@ -5,7 +5,7 @@ const TRY_ONCE = 1;
 const TRY_TWICE = 2;
 
 export const PLAYWRIGHT_TEST_ENV = {
-  BASE_URL: process.env.BASE_URL || 'http://localhost:3000',
+  BASE_URL: process.env.BASE_URL ?? 'http://localhost:3000',
   API_URL:'http://localhost:8080/',
   SERVICE_NAME: 'Claim for Controlled Work'
 };

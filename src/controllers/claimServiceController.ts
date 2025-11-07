@@ -40,7 +40,7 @@ export async function handleYourClaimsPage(
     } else {
       res.status(NOT_FOUND).render("main/error.njk", {
         status: "404",
-        error: response.message ?? "Claims not found",
+        error: response.message,
       });
     }
   } catch (error) {

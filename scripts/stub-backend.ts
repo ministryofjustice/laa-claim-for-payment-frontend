@@ -1,11 +1,25 @@
+/* eslint-disable
+  @typescript-eslint/no-explicit-any,
+  @typescript-eslint/no-unsafe-assignment,
+  @typescript-eslint/no-unsafe-call,
+  @typescript-eslint/no-unsafe-member-access,
+  @typescript-eslint/no-unsafe-return,
+  @typescript-eslint/no-unsafe-type-assertion,
+  @typescript-eslint/no-unsafe-argument,
+  @typescript-eslint/explicit-function-return-type,
+  @typescript-eslint/init-declarations,
+  @typescript-eslint/prefer-destructuring -- test helper: dynamic MSW→Express adapter, intentionally loose types
+*/
+
+import { apiHandlers } from '#tests/playwright/factories/handlers/api.js'
 import express from 'express'
-import { apiHandlers } from '../tests/playwright/factories/handlers/api.ts';
 
 const VALID_METHODS = ['get', 'post', 'put', 'patch', 'delete'] as const
 type ValidMethod = (typeof VALID_METHODS)[number]
 
 // Utility to convert MSW handlers into Express routes
 function applyHandlers(app: express.Express, handlers: any[]) {
+   
   for (const handler of handlers) {
     const method = handler.info.method.toLowerCase()
 
@@ -18,12 +32,9 @@ function applyHandlers(app: express.Express, handlers: any[]) {
 
       let body: any
 
-      // New MSW v2 Response format
       if (typeof mswRes.text === 'function') {
-        // it's a Response-like object
         body = await mswRes.json().catch(() => mswRes.text())
       } else {
-        // fallback for older or stub objects
         body = mswRes.body ?? ''
       }
 
@@ -42,4 +53,4 @@ app.use(express.json())
 applyHandlers(app, apiHandlers)
 
 const PORT = 8080
-app.listen(PORT, () => console.log(`🟢 Mock backend running on port ${PORT}`))
+app.listen(PORT, () => { console.log(`🟢 Mock backend running on port ${PORT}`); })

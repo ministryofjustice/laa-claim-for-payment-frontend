@@ -5,17 +5,17 @@
  * These types are used across different services and components for consistent API interactions.
  */
 
-export type ApiSuccess<T> = {
+export interface ApiSuccess<T> {
   status: "success";
   body: T;
   message?: never;
-};
+}
 
-export type ApiError<E = string> = {
+export interface ApiError<E = string> {
   status: "error";
   message: E;
   body?: never;
-};
+}
 
 export type ApiResponse<T, E = string> = ApiSuccess<T> | ApiError<E>;
 

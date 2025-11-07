@@ -1,3 +1,7 @@
+/* eslint-disable
+  @typescript-eslint/no-floating-promises -- utility for ASCII art banner, lint rules not relevant
+*/
+
 /**
  * @file Displays an ASCII Art banner on application startup.
  * Uses `figlet` for ASCII rendering and `chalk` for color formatting.

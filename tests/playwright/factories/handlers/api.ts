@@ -1,6 +1,12 @@
 import { http, HttpResponse } from 'msw';
 
-export function createClaim(id: number, overrides = {}){
+/**
+ * create a stub claim helper method
+ * @param { number } id id of the claim to create
+ * @param { object } overrides any overrides to be 
+ * @returns { object } object for stubbed API response
+ */
+export function createClaim(id: number, overrides = {}): object {
   return {
     id,
     client: "Giordano",

@@ -50,12 +50,12 @@ export class ClaimsTableViewModel {
       {
         text: formatDate(claim.concluded),
         attributes:
-          claim.concluded != null ? { "data-sort-value": claim.concluded.getTime() } : undefined,
+          claim.concluded == null ? undefined : { "data-sort-value": claim.concluded.getTime() },
       },
       { text: formatOptionalString(claim.feeType) },
       {
         text: formatClaimed(claim.claimed),
-        attributes: claim.claimed != null ? { "data-sort-value": claim.claimed } : undefined,
+        attributes: claim.claimed == null ? undefined : { "data-sort-value": claim.claimed } ,
         classes: "govuk-table__cell--numeric",
       },
     ]);

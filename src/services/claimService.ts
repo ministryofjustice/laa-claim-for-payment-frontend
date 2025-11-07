@@ -14,7 +14,7 @@ class ClaimService {
    * Get submissions from API using axios middleware
    * @param {AxiosInstanceWrapper} axiosMiddleware - Axios middleware from request
    * @param {number} page - The current page
-   * @returns {Promise<ApiResponse<Claim>>} API response with submission data and pagination
+   * @returns {Promise<ApiResponse<Paginated<Claim[]>>>} API response with submission data and pagination
    */
   static async getClaims(
     axiosMiddleware: AxiosInstanceWrapper,
@@ -37,7 +37,7 @@ class ClaimService {
 
       return {
         body: {
-          data: data,
+          data,
           meta: paginationMeta,
         },
         status: "success",
@@ -52,6 +52,12 @@ class ClaimService {
     }
   }
 
+  /**
+   * Get submission from API using axios middleware
+   * @param {AxiosInstanceWrapper} axiosMiddleware - Axios middleware from request
+   * @param {number} claimId - The claim id
+   * @returns {Promise<ApiResponse<Claim>>} API response with submission data
+   */
   static async getClaim(
     axiosMiddleware: AxiosInstanceWrapper,
     claimId: number

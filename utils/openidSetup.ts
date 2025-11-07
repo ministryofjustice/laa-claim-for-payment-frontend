@@ -1,3 +1,8 @@
+/* eslint-disable
+  @typescript-eslint/no-deprecated -- local/test OpenID setup, using allowInsecureRequests() intentionally
+*/
+
+
 // utils/oidc.ts
 import type { Application, Request, Response, NextFunction } from 'express';
 import { allowInsecureRequests, authorizationCodeGrant, buildAuthorizationUrl, calculatePKCECodeChallenge, ClientSecretPost, type Configuration, discovery, fetchProtectedResource, randomPKCECodeVerifier, randomState, type TokenEndpointResponse } from 'openid-client';

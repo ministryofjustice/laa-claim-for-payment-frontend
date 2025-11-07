@@ -1,14 +1,26 @@
 import type { Page, Locator } from '@playwright/test';
 
+/**
+ * Page object for the view claim page
+ */
 export class ViewClaimPage {
   private readonly page: Page;
   private readonly url: string;
 
+  /**
+   * Creates a new view claim page object
+   * @param {Page} page - The Playwright page instance
+   * @param {number} id - the claim id
+   */
   constructor(page: Page, id: number) {
     this.page = page;
     this.url = 'http://localhost:3000' + '/claims/' + id;
   }
 
+  /**
+   * Gets the main heading element
+   * @returns {Locator} The main heading locator
+   */
   get heading(): Locator {
     return this.page.locator('h1.govuk-heading-xl');
   }
@@ -27,6 +39,10 @@ export class ViewClaimPage {
     await this.page.waitForLoadState('networkidle');
   }
 
+  /**
+   * get the summary table
+   * @returns {Locator} The summary table locator
+   */
   get summaryTable(): Locator {
     return this.page.locator('.govuk-summary-list');
   }
@@ -36,7 +52,7 @@ export class ViewClaimPage {
    * @returns {Promise<string>} The service name text
    */
   async getServiceName(): Promise<string> {
-    return await this.heading.textContent() || '';
+    return await this.heading.textContent() ?? '';
   }
 
 }

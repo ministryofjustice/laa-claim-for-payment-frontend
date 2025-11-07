@@ -23,14 +23,14 @@ export async function viewClaimsPage(
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {
-      const claim = response.body
+      const { body: claim } = response
       const vm = new ClaimViewModel(claim);
 
       res.render("main/claims/view.njk", {vm});
     } else {
       res.status(NOT_FOUND).render("main/error.njk", {
         status: "404",
-        error: response.message ?? "Claim not found",
+        error: response.message,
       });
     }
   } catch (error) {

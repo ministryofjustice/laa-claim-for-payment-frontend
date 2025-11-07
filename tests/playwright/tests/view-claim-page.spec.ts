@@ -1,22 +1,5 @@
 import { test, expect } from '../fixtures/index.js';
 
-test.beforeEach(async ({ page }) => {
-  // stub ALL /api/* calls so nothing hits your backend
-  await page.route('**/api/**', (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ ok: true }) // change per test if needed
-    })
-  );
-
-  // (optional) log what the app tries to call so you can tailor the stub
-  page.on('request', r => {
-    const u = r.url();
-    if (u.includes('/api/')) console.log('API:', r.method(), u);
-  });
-});
-
 test('homepage should have the correct title', async ({ page }) => {
 	// Navigate to the homepage
 	await page.goto('/claims/1');

@@ -8,15 +8,11 @@
  */
 
 import { http, HttpResponse, passthrough } from 'msw';
+import { apiHandlers } from './api.js';
 
-// Import the actual API handlers
-import { apiHandlers } from './api.ts';
-
-// Add debug handler to log all intercepted requests
-const debugHandler = http.all('*', ({ request }) => {
-  // Return undefined to pass through to actual handlers
-  return passthrough();
-});
+const debugHandler = http.all('*', ({ request }) => 
+  passthrough()
+);
 
 /**
  * Combined handlers array
