@@ -1,6 +1,5 @@
 import { getClaimsEndpoint } from "#src/api/apiEndpointConstants.js";
 import { extractAndLogError } from "#src/helpers/index.js";
-import { getClaimsSuccessResponseData, getClaimSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import type { ApiResponse, Paginated, PaginationMeta } from "#src/types/api-types.js";
 import type { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
 import { type Claim, ClaimSchema } from "#src/types/Claim.js";
@@ -21,12 +20,6 @@ class ClaimService {
     axiosMiddleware: AxiosInstanceWrapper,
     page: number
   ): Promise<ApiResponse<Paginated<Claim[]>>> {
-    // // TODO: remove when Playwright job spins up BE, todo playwright should intercept an mock outbound calls?
-    // if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "local") {
-    //   return {
-    //     ...getClaimsSuccessResponseData
-    //   };
-    // }
     try {
       const configuredAxios = this.configureAxiosInstance(axiosMiddleware);
       console.log(`API: GET ${getClaimsEndpoint}`);
@@ -63,12 +56,6 @@ class ClaimService {
     axiosMiddleware: AxiosInstanceWrapper,
     claimId: number
   ): Promise<ApiResponse<Claim>> {
-    // // TODO: remove when Playwright job spins up BE
-    // if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "local") {
-    //   return {
-    //     ...getClaimSuccessResponseData
-    //   };
-    // }
     try {
       const getClaimEndpoint = `/api/v1/claims/${encodeURIComponent(String(claimId))}`;
       const configuredAxios = this.configureAxiosInstance(axiosMiddleware);
