@@ -28,6 +28,6 @@ export interface PaginationMeta {
 
 export interface Paginated<Data> {
   meta: PaginationMeta;
-  data: Data;
+  data: Data[];
 } 
 

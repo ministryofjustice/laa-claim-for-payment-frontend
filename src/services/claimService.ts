@@ -14,12 +14,12 @@ class ClaimService {
    * Get submissions from API using axios middleware
    * @param {AxiosInstanceWrapper} axiosMiddleware - Axios middleware from request
    * @param {number} page - The current page
-   * @returns {Promise<ApiResponse<Paginated<Claim[]>>>} API response with submission data and pagination
+   * @returns {Promise<ApiResponse<Paginated<Claim>>>} API response with submission data and pagination
    */
   static async getClaims(
     axiosMiddleware: AxiosInstanceWrapper,
     page: number
-  ): Promise<ApiResponse<Paginated<Claim[]>>> {
+  ): Promise<ApiResponse<Paginated<Claim>>> {
     try {
       const configuredAxios = this.configureAxiosInstance(axiosMiddleware);
       console.log(`API: GET ${getClaimsEndpoint}`);

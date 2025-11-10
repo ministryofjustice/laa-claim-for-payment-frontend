@@ -84,7 +84,7 @@ describe("Claim Service Controller", () => {
 
       req.query!.page = invalidPage.toString();
 
-      const mockApiResponse: ApiResponse<Paginated<Claim[]>> = {
+      const mockApiResponse: ApiResponse<Paginated<Claim>> = {
         body:{
           data: getClaimsSuccessResponseData.body?.data!,
           meta: {

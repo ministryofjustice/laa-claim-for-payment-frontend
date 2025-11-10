@@ -14,7 +14,7 @@ export const getClaimSuccessResponseData: ApiResponse<Claim> = {
   status: "success",
 }
 
-export const getClaimsSuccessResponseData: ApiResponse<Paginated<Claim[]>> = {
+export const getClaimsSuccessResponseData: ApiResponse<Paginated<Claim>> = {
   body: {
     meta: {
       total: 1,
