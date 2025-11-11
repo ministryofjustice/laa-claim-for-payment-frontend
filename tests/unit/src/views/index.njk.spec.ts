@@ -11,7 +11,7 @@ chaiConfig.truncateThreshold = 0;
 describe("views/main/index.njk", () => {
   let $: CheerioAPI;
 
-  const claims: Claim[] = getClaimsSuccessResponseData.data;
+  const claims: Claim[] = getClaimsSuccessResponseData.body?.data!;
 
   const paginationMeta: PaginationMeta = {
     total: 11,
@@ -62,9 +62,18 @@ describe("views/main/index.njk", () => {
   });
 
   it("renders the headers", () => {
-    const headers = $(".govuk-table__header");
+    const theadHeaders = $("table.govuk-table thead .govuk-table__header");
+    expect(theadHeaders.length).to.equal(6);
 
-    expect(headers.length).to.equal(6);
+    const texts = theadHeaders.map((_, el) => $(el).text().trim()).get();
+    expect(texts).to.deep.equal([
+      "ID",
+      "Client",
+      "Category",
+      "Concluded",
+      "Fee Type",
+      "Claimed"
+    ]);
   });
 
   it("renders a row for each claim", () => {

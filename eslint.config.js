@@ -45,6 +45,7 @@ export default [
       jsdoc: jsdocPlugin,
     },
     rules: {
+      'no-param-reassign': ['error', { props: false }],
       'complexity': ['error', { max: 15 }], // Set McCabe complexity threshold
       'indent': 'off', // Prettier is handling this
       'linebreak-style': 'off', // Prettier is handling this

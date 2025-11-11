@@ -38,18 +38,24 @@ export class ClaimsTableViewModel {
     ];
 
     this.rows = claims.map((claim) => [
-      { text: formatClaimId(claim.id) },
+      {
+        html: `<a class="govuk-link" href="/claims/${encodeURIComponent(claim.id)}">
+                ${formatClaimId(claim.id)}
+                <span class="govuk-visually-hidden"> – view claim</span>
+              </a>`,
+        attributes: { "data-sort-value": claim.id }
+      },
       { text: formatOptionalString(claim.client) },
       { text: formatOptionalString(claim.category) },
       {
         text: formatDate(claim.concluded),
         attributes:
-          claim.concluded != null ? { "data-sort-value": claim.concluded.getTime() } : undefined,
+          claim.concluded == null ? undefined : { "data-sort-value": claim.concluded.getTime() },
       },
       { text: formatOptionalString(claim.feeType) },
       {
         text: formatClaimed(claim.claimed),
-        attributes: claim.claimed != null ? { "data-sort-value": claim.claimed } : undefined,
+        attributes: claim.claimed == null ? undefined : { "data-sort-value": claim.claimed } ,
         classes: "govuk-table__cell--numeric",
       },
     ]);
@@ -62,3 +68,5 @@ export class ClaimsTableViewModel {
     );
   }
 }
+
+

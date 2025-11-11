@@ -1,9 +1,8 @@
 import { createProcessedError } from "#src/helpers/errorHandler.js";
 import { claimService } from "#src/services/claimService.js";
 import type { Request, Response, NextFunction } from "express";
-import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
-import { parseNumberQueryParam } from "#src/helpers/index.js";
 import { InvalidPageError } from "#src/types/errors.js";
+import { ClaimViewModel } from "#src/viewmodels/claimViewModel.js";
 
 const NOT_FOUND = 404;
 
@@ -14,29 +13,20 @@ const NOT_FOUND = 404;
  * @param {NextFunction} next Express next function
  * @returns {Promise<void>} Page to be returned
  */
-export async function handleYourClaimsPage(
+export async function viewClaimsPage(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
-    // Fetch client details from API
-
-    const currentPage = parseNumberQueryParam(req.query.page, 1);
-    const response = await claimService.getClaims(req.axiosMiddleware, currentPage);
+    const claimId = Number(req.params.claimId);
+    const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {
-      const claimsTableViewModel: ClaimsTableViewModel = new ClaimsTableViewModel(
-        response.body.data,
-        response.body.meta,
-        req.path
-      );
+      const { body: claim } = response
+      const vm = new ClaimViewModel(claim);
 
-      res.render("main/index.njk", {
-        rows: claimsTableViewModel.rows,
-        head: claimsTableViewModel.head,
-        pagination: claimsTableViewModel.pagination,
-      });
+      res.render("main/claims/view.njk", {vm});
     } else {
       res.status(NOT_FOUND).render("main/error.njk", {
         status: "404",
@@ -48,10 +38,7 @@ export async function handleYourClaimsPage(
       console.info(error.message);
       res.redirect(`${req.path}?page=${error.pageToRedirectTo}`);
     } else {
-      // Use the error processing utility
-      const processedError = createProcessedError(error, `fetching claims details for user`);
-
-      // Pass the processed error to the global error handler
+      const processedError = createProcessedError(error, `fetching claim details for user`);
       next(processedError);
     }
   }

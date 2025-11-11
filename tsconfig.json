@@ -21,17 +21,19 @@
     }
   },
   "include": [
-    "src/**/*",
-    "middleware/**/*",
-    "utils/**/*.ts",
-    "routes/**/*",
-    "index.ts",
-    "esbuild.ts",
-    "start-server.ts",
-    "config.ts",
-    "src/types/**/*.ts",
-    "playwright.config.ts",
-    "tests/**/*.spec.ts"
+		"src/**/*",
+		"middleware/**/*",
+		"utils/**/*.ts",
+		"routes/**/*",
+		"scripts/**/*.ts",
+		"index.ts",
+		"esbuild.ts",
+		"start-server.ts",
+		"config.ts",
+		"types/**/*.ts",
+		"playwright.config.ts",
+		"tests/**/*.spec.ts",
+		"tests/**/*.ts"
   ],
   "exclude": ["node_modules", "public", "**/*.js"]
 }
