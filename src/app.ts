@@ -3,7 +3,7 @@ import express from "express";
 import chalk from "chalk";
 import morgan from "morgan";
 import compression from "compression";
-import { setupCsrf, setupMiddlewares, setupConfig } from "#middleware/index.js";
+import { setupCsrf, setupMiddlewares, setupConfig, setupLocaleMiddleware } from "#middleware/index.js";
 import session from "express-session";
 import {
   nunjucksSetup,
@@ -17,6 +17,7 @@ import config from "#config.js";
 import indexRouter from "#routes/index.js";
 import livereload from "connect-livereload";
 import { requiresAuth } from "#utils/openidSetup.js";
+import { initializeI18nextSync } from "./scripts/helpers/i18nLoader.js";
 
 
 const TRUST_FIRST_PROXY = 1;
@@ -30,6 +31,9 @@ const UNSUCCESSFUL_REQUEST = 500;
  * @returns {import('express').Application} The configured Express application
  */
 const createApp = (): express.Application => {
+  // Initialise i18next synchronously before setting up the app
+  initializeI18nextSync();
+
   const app = express();
 
   // Set up common middleware for handling cookies, body parsing, etc.
@@ -38,6 +42,8 @@ const createApp = (): express.Application => {
   app.use(session(config.session));
 
   app.use(axiosMiddleware);
+
+	app.use(setupLocaleMiddleware);
 
   // Response compression setup
   app.use(

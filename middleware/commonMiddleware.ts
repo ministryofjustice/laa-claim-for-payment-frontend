@@ -3,6 +3,8 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import config from '../config.js';
+import { handle } from "i18next-http-middleware";
+import { i18next } from '#src/scripts/helpers/i18nLoader.js';
 
 /**
  * Sets up common middlewares for the given Express application.
@@ -25,4 +27,6 @@ export const setupMiddlewares = (app: Application): void => {
 
   // Parses URL-encoded bodies
   app.use(express.urlencoded({ extended: false }));
+
+  app.use(handle(i18next));
 };
