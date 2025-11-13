@@ -2,6 +2,7 @@ import { PaginationMeta } from "#src/types/api-types.js";
 import { Claim } from "#src/types/Claim.js";
 import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
+import { getEnValue } from "#tests/support/i18n.js";
 import { expect, config as chaiConfig } from "chai";
 import { load, CheerioAPI } from "cheerio";
 
@@ -35,9 +36,12 @@ describe("views/main/index.njk", () => {
     $ = load(html);
   });
 
-  it("renders the status in the main H1", () => {
+  it("renders the H1", () => {
     const h1 = $("h1.govuk-heading-xl").text().trim();
-    expect(h1).to.equal("Your Claims");
+    expect(h1).to.equal("pages.home.title");
+    const enValue = getEnValue(h1);
+    expect(enValue).to.equal("Your Claims");
+    // expect(cyValue).to.equal("eich hawliadau");
   });
 
   it("renders the create claim buttons", () => {
