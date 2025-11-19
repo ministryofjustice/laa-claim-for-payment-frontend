@@ -1,0 +1,61 @@
+{
+  "common": {
+    "back": "Back",
+    "change": "Change",
+    "remove": "Remove",
+    "save": "Save",
+    "cancel": "Cancel",
+    "signOut": "Sign out",
+    "yes": "Yes",
+    "no": "No",
+    "error": "Error",
+    "warning": "Warning",
+    "errorSummaryTitle": "There is a problem"
+  },
+  "navigation": {
+    "mainNav": {},
+    "footer": {
+      "accessibility": "Accessibility",
+      "cookiePolicy": "Cookies",
+      "privacyPolicy": "Privacy"
+    }
+  },
+  "components": {
+    "phaseBanner": {
+      "feedbackText": "This is a new service. Help us improve it and ",
+      "feedbackLinkTextHTML": "<a class='govuk-link' href='#'>give your feedback by email</a>."
+    },
+    "errorSummary": {
+      "title": "There is a problem"
+    }
+
+  },
+  "pages": {
+    "home": {
+      "title": "Your Claims"
+    },
+    "claims" : {
+        "title": "English"
+    },
+    "error": {
+      "pageTitle": "Sorry, there is a problem with the service – {SERVICE_NAME} – GOV.UK"
+    }
+  },
+  "forms": {
+    "name": {
+      "label": "Full name",
+      "title": "Change your name",
+      "pageTitle": "Change your name – {serviceName} – GOV.UK",
+      "validationError": {
+        "notEmpty": "Enter your full name",
+        "notChanged": "Change your full name, or select 'Cancel'"
+      }
+    },
+    "home": {
+      "validationError": {}
+    }
+  },
+  "accessibility": {
+    "visuallyHiddenText": {}
+  }
+}
