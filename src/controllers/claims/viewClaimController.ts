@@ -13,7 +13,7 @@ const NOT_FOUND = 404;
  * @param {NextFunction} next Express next function
  * @returns {Promise<void>} Page to be returned
  */
-export async function viewClaimsPage(
+export async function viewClaimPage(
   req: Request,
   res: Response,
   next: NextFunction,

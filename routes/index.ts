@@ -1,4 +1,4 @@
-import { viewClaimsPage } from "#src/controllers/claims/viewClaimController.js";
+import { viewClaimPage } from "#src/controllers/claims/viewClaimController.js";
 import { handleYourClaimsPage } from "#src/controllers/claimServiceController.js";
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
@@ -13,7 +13,7 @@ router.get("/", async function (req: Request, res: Response, next: NextFunction)
 
 /* GET view claim page. */
 router.get("/claims/:claimId", async function (req: Request, res: Response, next: NextFunction): Promise<void> {
-  await viewClaimsPage(req, res, next);
+  await viewClaimPage(req, res, next);
 });
 
 // Make an API call with `Axios` and `middleware-axios`
