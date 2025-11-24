@@ -1,0 +1,60 @@
+{
+  "common": {
+    "back": "Yn ôl",
+    "change": "Newid",
+    "remove": "Dileu",
+    "save": "Arbed",
+    "cancel": "Canslo",
+    "signOut": "Arwyddo allan",
+    "yes": "Iawn",
+    "no": "Na",
+    "error": "Gwall",
+    "warning": "Rhybudd",
+    "errorSummaryTitle": "Mae yna broblem"
+  },
+  "navigation": {
+    "mainNav": {},
+    "footer": {
+      "accessibility": "Hygyrchedd",
+      "cookiePolicy": "Cwcis",
+      "privacyPolicy": "Preifatrwydd"
+    }
+  },
+  "components": {
+    "phaseBanner": {
+      "feedbackText": "TMae hwn yn wasanaeth newydd. Helpwch ni i'w wella a ",
+      "feedbackLinkTextHTML": "<a class='govuk-link' href='#'>rhowch eich adborth drwy e-bost</a>."
+    },
+    "errorSummary": {
+      "title": "Mae yna broblem"
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "WELSH!"
+    },
+    "claims" : {
+      "title": "welsh"
+    },
+    "error": {
+      "pageTitle": "Sorry, there is a problem with the service – {SERVICE_NAME} – GOV.UK"
+    }
+  },
+  "forms": {
+    "name": {
+      "label": "Full name",
+      "title": "Change your name",
+      "pageTitle": "Change your name – {serviceName} – GOV.UK",
+      "validationError": {
+        "notEmpty": "Enter your full name",
+        "notChanged": "Change your full name, or select 'Cancel'"
+      }
+    },
+    "home": {
+      "validationError": {}
+    }
+  },
+  "accessibility": {
+    "visuallyHiddenText": {}
+  }
+}
