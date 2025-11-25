@@ -60,7 +60,7 @@ jobs:
           AUTH_ENABLED: "false" # Disable auth for testing
       - name: Upload trace artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: playwright-traces
           path: |
