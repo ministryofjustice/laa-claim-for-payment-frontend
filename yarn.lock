@@ -3372,14 +3372,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"figlet@npm:^1.9.3":
-  version: 1.9.3
-  resolution: "figlet@npm:1.9.3"
+"figlet@npm:^1.9.4":
+  version: 1.9.4
+  resolution: "figlet@npm:1.9.4"
   dependencies:
     commander: "npm:^14.0.0"
   bin:
     figlet: bin/index.js
-  checksum: 10c0/fbe02933b86713e56217d0c7d4a77c2950cb5bcfc1e7419daf7b2d3d172a4bc84f4d083c5172d000a82fcf67cba810aee8b96a8387b286cb5227db90b68ab5a0
+  checksum: 10c0/b9023fe4b28d79e7b4d24a67a8f4723d68de4fc210495e7e506f16f57d34c4ada5730fd99f70b90a86fbe39c49d0bfb1321636b6aaf2da278f8b10a415de51eb
   languageName: node
   linkType: hard
 
@@ -5063,7 +5063,7 @@ __metadata:
     express-rate-limit: "npm:^8.1.0"
     express-session: "npm:^1.18.2"
     express-validator: "npm:^7.2.1"
-    figlet: "npm:^1.9.3"
+    figlet: "npm:^1.9.4"
     fs-extra: "npm:^11.3.2"
     globals: "npm:^16.4.0"
     govuk-frontend: "npm:^5.13.0"
