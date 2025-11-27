@@ -1,8 +1,3 @@
-/* eslint-disable
-  @typescript-eslint/no-deprecated -- local/test OpenID setup, using allowInsecureRequests() intentionally
-*/
-
-
 // utils/oidc.ts
 import type { Application, Request, Response, NextFunction } from 'express';
 import { allowInsecureRequests, authorizationCodeGrant, buildAuthorizationUrl, calculatePKCECodeChallenge, ClientSecretPost, type Configuration, discovery, fetchProtectedResource, randomPKCECodeVerifier, randomState, type TokenEndpointResponse } from 'openid-client';
@@ -10,16 +5,7 @@ import { constants as Http } from 'node:http2';
 import { getRequiredEnv } from '#utils/envHelper.js';
 import { z } from 'zod';
 
-
-
-
 let discoveredConfig: Promise<Configuration> | undefined = undefined;
-const UserInfoSchema = z.record(z.string(), z.unknown());
-type UserInfo = z.infer<typeof UserInfoSchema>;
-
-
-
-
 export interface SessionOIDC {
   code_verifier?: string;
   state?: string;
@@ -34,6 +20,23 @@ declare module 'express-session' {
   }
 }
 
+const IdTokenSchema = z.object({
+  oid: z.string(),
+  tid: z.string(),
+  exp: z.number(),
+  iat: z.number(),
+  name: z.string().optional(),
+  preferred_username: z.string().optional(),
+  email: z.string().optional(),
+}).loose();
+
+function decodeIdToken(idToken: string): z.infer<typeof IdTokenSchema> {
+  const [, payload] = idToken.split(".");
+  const jsonString = Buffer.from(payload, "base64").toString("utf8");
+
+  // Safe parse: returns known type or throws a validation error.
+  return IdTokenSchema.parse(JSON.parse(jsonString));
+}
 
 /**
  * Retrieves and caches the OIDC configuration using discovery.
@@ -56,34 +59,6 @@ export async function getConfig(): Promise<Configuration> {
   }
   return await discoveredConfig;
 }
-
-
-async function fetchUserInfo(
-  config: Configuration,
-  accessToken: string,
-): Promise<UserInfo | null> {
-
-  const meta = config.serverMetadata();
-  const { userinfo_endpoint: ep = '' } = meta;
-  const res = await fetchProtectedResource(
-    config,
-    accessToken,
-    new URL(ep),
-    'GET',
-  );
-  if (!res.ok) return null;
-
-  const parsed = UserInfoSchema.safeParse(await res.json());
-
-  if (!parsed.success) {
-    console.warn('Invalid user info response:', parsed.error);
-    return null;
-  }
-
-  return parsed.data;
-
-}
-
 
 function isAuthed(req: Request): boolean {
   return Boolean(req.session.oidc?.userinfo) ||
@@ -137,6 +112,7 @@ export const oidcSetup = (app: Application): void => {
 
     const redirectUri = `${BASE_URL}${CALLBACK_PATH}`;
     const codeVerifier = randomPKCECodeVerifier();
+    console.log('LOGIN code_verifier:', codeVerifier);
     const codeChallenge = await calculatePKCECodeChallenge(codeVerifier);
     const state = randomState();
 
@@ -178,20 +154,26 @@ export const oidcSetup = (app: Application): void => {
         expectedState: sess.state,
       });
 
-      // call UserInfo for stable user claims
-      const userinfo = await fetchUserInfo(config, tokens.access_token);
+      if (tokens.id_token == null) {
+        throw new Error("ID token missing from token response");
+      }
+
+      const idTokenPayload = decodeIdToken(tokens.id_token); // typed, not any
 
       req.session.oidc = {
         ...sess,
         tokens,
-        userinfo: userinfo ?? undefined,
+        userinfo: idTokenPayload, // <- now a strongly-typed value
       };
 
       // redirect to home page
       res.redirect('/');
     } catch (err) {
-      next(err);
-    }
+
+      handleCallbackError(err, req);
+
+  next(err);
+}
   });
 
   // GET /logout -> clear session, optionally call OP logout if available
@@ -219,3 +201,39 @@ export const oidcSetup = (app: Application): void => {
   });
 
 }
+function handleCallbackError(err: unknown, req: Request): void {
+  // Type guards
+  const isErrorWithMessage = (e: unknown): e is { message: string } =>
+    typeof e === 'object' && e !== null && 'message' in e && typeof (e as Record<string, unknown>).message === 'string';
+
+  const isErrorWithStack = (e: unknown): e is { stack?: string } =>
+    typeof e === 'object' && e !== null && 'stack' in e && (typeof (e as Record<string, unknown>).stack === 'string' || typeof (e as Record<string, unknown>).stack === 'undefined');
+
+  const errorMessage = isErrorWithMessage(err) ? err.message : String(err);
+  const errorStack = isErrorWithStack(err) ? err.stack : undefined;
+
+  console.error('[OIDC CALLBACK] Error during callback handling', {
+    error: errorMessage,
+    stack: errorStack,
+    sessionId: req.sessionID,
+    originalUrl: req.originalUrl,
+  });
+
+  // Safely check OAuth response body error shape
+  const isRecord = (v: unknown): v is Record<string, unknown> =>
+    typeof v === 'object' && v !== null;
+
+  if (isRecord(err)) {
+    const rec = err;
+    if (typeof rec.code === 'string' && rec.code === 'OAUTH_RESPONSE_BODY_ERROR') {
+      console.error('[OIDC CALLBACK] Token endpoint OAuth error', {
+        code: rec.code,
+        oauthError: typeof rec.error === 'string' ? rec.error : undefined, // e.g. "invalid_client", "invalid_grant"
+        description: typeof rec.error_description === 'string' ? rec.error_description : undefined, // full AADSTS... message
+        uri: typeof rec.error_uri === 'string' ? rec.error_uri : undefined,
+        status: typeof rec.status === 'number' ? rec.status : undefined,
+      });
+    }
+  }
+}
+

@@ -31,4 +31,9 @@ router.get(
   }
 );
 
+/* TEST show user properties */
+router.get('/user', function (req: Request, res: Response): void {
+	res.render('main/user');
+});
+
 export default router;
