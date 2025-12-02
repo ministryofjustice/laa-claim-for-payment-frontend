@@ -21,10 +21,16 @@ declare module 'express-session' {
 }
 
 const IdTokenSchema = z.object({
-  oid: z.string(),
-  tid: z.string(),
+  sub: z.string(),                       // standard
+  iss: z.string(),                       // standard
+  aud: z.union([z.string(), z.array(z.string())]).optional(),
   exp: z.number(),
   iat: z.number(),
+
+  // Entra-specific – but optional so mock tokens pass
+  oid: z.string().optional(),
+  tid: z.string().optional(),
+
   name: z.string().optional(),
   preferred_username: z.string().optional(),
   email: z.string().optional(),
