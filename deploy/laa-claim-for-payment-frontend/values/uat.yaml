@@ -97,22 +97,22 @@ env:
   API_URL: "http://laa-claim-for-payment.laa-claim-for-payment-uat:8080"
   OIDC_SCOPE: "openid profile email"
   CLAIMS_API_SCOPE: 
-    name: auth-secret-staging
+    name: auth-secret-uat
     key: claims-api-scope
   OIDC_LOGIN_PATH: "/login"
   OIDC_CLIENT_SECRET: 
-    name: auth-secret-staging
+    name: auth-secret-uat
     key: client-secret
   OIDC_CALLBACK_PATH: "/callback"
   OIDC_LOGOUT_PATH: "/logout"
   AUTH_ENABLED: true
   BASE_URL: "https://laa-claim-for-payment-frontend-uat.cloud-platform.service.justice.gov.uk"
   CLIENT_ID: 
-    name: auth-secret-staging
+    name: auth-secret-uat
     key: client-id
   USE_SSL: true
   ISSUER_BASE_URL:
-    name: auth-secret-staging
+    name: auth-secret-uat
     key: issuer-url
 
 autoscaling:
