@@ -1,6 +1,6 @@
 // utils/oidc.ts
 import type { Application, Request, Response, NextFunction } from 'express';
-import { allowInsecureRequests, authorizationCodeGrant, buildAuthorizationUrl, calculatePKCECodeChallenge, ClientSecretPost, type Configuration, discovery, fetchProtectedResource, randomPKCECodeVerifier, randomState, type TokenEndpointResponse } from 'openid-client';
+import { allowInsecureRequests, authorizationCodeGrant, buildAuthorizationUrl, calculatePKCECodeChallenge, ClientSecretPost, type Configuration, discovery, randomPKCECodeVerifier, randomState, type TokenEndpointResponse } from 'openid-client';
 import { constants as Http } from 'node:http2';
 import { getRequiredEnv } from '#utils/envHelper.js';
 import { z } from 'zod';
@@ -107,7 +107,7 @@ export function requiresAuth() {
  */
 export const oidcSetup = (app: Application): void => {
   const BASE_URL = getRequiredEnv('BASE_URL');
-  const SCOPE = getRequiredEnv('OIDC_SCOPE');
+  const SCOPE = getRequiredEnv('OIDC_SCOPE') + " " + getRequiredEnv('CLAIMS_API_SCOPE');
   const CALLBACK_PATH = getRequiredEnv('OIDC_CALLBACK_PATH');
   const LOGIN_PATH = getRequiredEnv('OIDC_LOGIN_PATH');
   const LOGOUT_PATH = getRequiredEnv('OIDC_LOGOUT_PATH');
