@@ -118,7 +118,6 @@ export const oidcSetup = (app: Application): void => {
 
     const redirectUri = `${BASE_URL}${CALLBACK_PATH}`;
     const codeVerifier = randomPKCECodeVerifier();
-    console.log('LOGIN code_verifier:', codeVerifier);
     const codeChallenge = await calculatePKCECodeChallenge(codeVerifier);
     const state = randomState();
 
@@ -164,12 +163,12 @@ export const oidcSetup = (app: Application): void => {
         throw new Error("ID token missing from token response");
       }
 
-      const idTokenPayload = decodeIdToken(tokens.id_token); // typed, not any
+      const idTokenPayload = decodeIdToken(tokens.id_token);
 
       req.session.oidc = {
         ...sess,
         tokens,
-        userinfo: idTokenPayload, // <- now a strongly-typed value
+        userinfo: idTokenPayload, 
       };
 
       // redirect to home page
@@ -197,8 +196,7 @@ export const oidcSetup = (app: Application): void => {
         getRequiredEnv('BASE_URL');
       url.searchParams.set('post_logout_redirect_uri', postLogout);
 
-      // Many OPs require id_token_hint
-      if (idToken != null) url.searchParams.set('id_token_hint', idToken);
+         if (idToken != null) url.searchParams.set('id_token_hint', idToken);
 
       ({ href: redirectTo } = url);
     }
