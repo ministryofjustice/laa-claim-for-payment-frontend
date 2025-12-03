@@ -83,16 +83,25 @@ env:
   RATE_WINDOW_MS: ""
   NODE_ENV: ""
   API_URL: "http://laa-claim-for-payment.laa-claim-for-payment-staging:8080"
-  OIDC_SCOPE: "openid profile email api.read"
+  OIDC_SCOPE: "openid profile email"
+  CLAIMS_API_SCOPE: 
+    name: auth-secret-staging
+    key: claims-api-scope
   OIDC_LOGIN_PATH: "/login"
-  OIDC_CLIENT_SECRET: ""
+  OIDC_CLIENT_SECRET: 
+    name: auth-secret-staging
+    key: client-secret
   OIDC_CALLBACK_PATH: "/callback"
   OIDC_LOGOUT_PATH: "/logout"
-  AUTH_ENABLED: false
-  BASE_URL: ""
-  CLIENT_ID: ""
-  USE_SSL: false
-  ISSUER_BASE_URL: ""
+  AUTH_ENABLED: true
+  BASE_URL: "https://laa-claim-for-payment-frontend-staging.cloud-platform.service.justice.gov.uk"
+  CLIENT_ID: 
+    name: auth-secret-staging
+    key: client-id
+  USE_SSL: true
+  ISSUER_BASE_URL:
+    name: auth-secret-staging
+    key: issuer-url
 
 livenessProbe:
   httpGet:
