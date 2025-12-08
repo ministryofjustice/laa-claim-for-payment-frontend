@@ -65,5 +65,5 @@ export interface Config {
   paths: PathsConfig;
   api: ApiConfig;
   pagination: PaginationConfig;
-  redis: RedisLocalConfig | RedisEnvConfig;
+  redis?: RedisLocalConfig | RedisEnvConfig;
 }

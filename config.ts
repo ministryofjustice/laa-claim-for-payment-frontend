@@ -9,25 +9,21 @@ const MILLISECONDS_IN_A_MINUTE = 60000;
 const DEFAULT_PORT = 3000;
 const DEFAULT_NUMBER_OF_RESULTS_PER_PAGE = 20;
 
-// Validate required session env vars
-// if (process.env.SESSION_SECRET == null || process.env.SESSION_SECRET === '' ||
-//     process.env.SESSION_NAME == null || process.env.SESSION_NAME === '') {
-//   throw new Error('SESSION_SECRET and SESSION_NAME must be defined in environment variables.');
-// }
-
 function getRedisConfig(): RedisLocalConfig | RedisEnvConfig {
   if (process.env.REDIS_URL != null) {
     return {
       local: true,
       url: process.env.REDIS_URL
     }
-  } 
-  return {
-    local: false,
-    token: getRequiredEnv('REDIS_AUTH_TOKEN'),
-    host: process.env.REDIS_HOST ?? "localhost",
-    port: Number(process.env.REDIS_PORT ?? 6379),
-    username: process.env.REDIS_USERNAME ?? "default",
+  }
+  else {
+    return {
+      local: false,
+      token: getRequiredEnv('REDIS_AUTH_TOKEN'),
+      host: process.env.REDIS_HOST ?? "localhost",
+      port: Number(process.env.REDIS_PORT ?? 6379),
+      username: process.env.REDIS_USERNAME ?? "default",
+    }
   }
 }
 
@@ -71,7 +67,9 @@ const config: Config = {
   api: {
     baseUrl: process.env.API_URL ?? "",
   },
-  redis: getRedisConfig(),
+  ...(process.env.DISABLE_REDIS === "false"
+    ? { redis: getRedisConfig() }
+    : {}),
   pagination: {
     numberOfClaimsPerPage: Number(
       process.env.NUMBER_OF_CLAIMS_PER_PAGE ?? DEFAULT_NUMBER_OF_RESULTS_PER_PAGE

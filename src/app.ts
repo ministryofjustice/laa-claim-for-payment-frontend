@@ -44,9 +44,8 @@ const createApp = async (): Promise<express.Application> => {
   // Set up common middleware for handling cookies, body parsing, etc.
   setupMiddlewares(app);
 
-  if (process.env.REDIS_ENABLED === 'true') {
-
-    const redisClient = buildRedisClient();
+  if (config.redis !== undefined) {
+    const redisClient = buildRedisClient(config.redis);
     await initRedis(redisClient);
     setupRedisSession(app, redisClient);
   }
@@ -57,7 +56,7 @@ const createApp = async (): Promise<express.Application> => {
 
   app.use(axiosMiddleware);
 
-	app.use(setupLocaleMiddleware);
+  app.use(setupLocaleMiddleware);
 
   // Response compression setup
   app.use(
