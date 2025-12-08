@@ -20,6 +20,7 @@ import indexRouter from "#routes/index.js";
 import livereload from "connect-livereload";
 import { requiresAuth } from "#utils/openidSetup.js";
 import { initializeI18nextSync } from "./scripts/helpers/i18nLoader.js";
+import { initRedis } from "#utils/redisClient.js";
 
 
 
@@ -34,7 +35,7 @@ const UNSUCCESSFUL_REQUEST = 500;
  *
  * @returns {import('express').Application} The configured Express application
  */
-const createApp = (): express.Application => {
+const createApp = async (): Promise<express.Application> => {
   // Initialise i18next synchronously before setting up the app
   initializeI18nextSync();
 

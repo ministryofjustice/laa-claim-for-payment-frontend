@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
-import type { Config } from "#src/types/config-types.js";
+import type { Config, RedisEnvConfig, RedisLocalConfig } from "#src/types/config-types.js";
+import { getRequiredEnv } from '#utils/envHelper.js';
 dotenv.config();
 
 const DEFAULT_RATE_LIMIT_MAX = 100;
@@ -13,6 +14,22 @@ const DEFAULT_NUMBER_OF_RESULTS_PER_PAGE = 20;
 //     process.env.SESSION_NAME == null || process.env.SESSION_NAME === '') {
 //   throw new Error('SESSION_SECRET and SESSION_NAME must be defined in environment variables.');
 // }
+
+function getRedisConfig(): RedisLocalConfig | RedisEnvConfig {
+  if (process.env.REDIS_URL != null) {
+    return {
+      local: true,
+      url: process.env.REDIS_URL
+    }
+  } 
+  return {
+    local: false,
+    token: getRequiredEnv('REDIS_AUTH_TOKEN'),
+    host: process.env.REDIS_HOST ?? "localhost",
+    port: Number(process.env.REDIS_PORT ?? 6379),
+    username: process.env.REDIS_USERNAME ?? "default",
+  }
+}
 
 // Get environment variables
 const config: Config = {
@@ -54,6 +71,7 @@ const config: Config = {
   api: {
     baseUrl: process.env.API_URL ?? "",
   },
+  redis: getRedisConfig(),
   pagination: {
     numberOfClaimsPerPage: Number(
       process.env.NUMBER_OF_CLAIMS_PER_PAGE ?? DEFAULT_NUMBER_OF_RESULTS_PER_PAGE

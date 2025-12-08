@@ -34,6 +34,19 @@ export interface PaginationConfig {
   numberOfClaimsPerPage: number;
 }
 
+export interface RedisLocalConfig {
+  local: true;
+  url: string;
+}
+
+export interface RedisEnvConfig {
+  local: false;
+  host: string;
+  port: number;
+  username: string;
+  token: string;
+}
+
 export interface Config {
   CONTACT_EMAIL: string | undefined;
   CONTACT_PHONE: string | undefined;
@@ -52,4 +65,5 @@ export interface Config {
   paths: PathsConfig;
   api: ApiConfig;
   pagination: PaginationConfig;
+  redis: RedisLocalConfig | RedisEnvConfig;
 }
