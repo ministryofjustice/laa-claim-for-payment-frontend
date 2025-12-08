@@ -16,14 +16,13 @@ function getRedisConfig(): RedisLocalConfig | RedisEnvConfig {
       url: process.env.REDIS_URL
     }
   }
-  else {
-    return {
-      local: false,
-      token: getRequiredEnv('REDIS_AUTH_TOKEN'),
-      host: process.env.REDIS_HOST ?? "localhost",
-      port: Number(process.env.REDIS_PORT ?? 6379),
-      username: process.env.REDIS_USERNAME ?? "default",
-    }
+
+  return {
+    local: false,
+    token: getRequiredEnv('REDIS_AUTH_TOKEN'),
+    host: process.env.REDIS_HOST ?? "localhost",
+    port: Number(process.env.REDIS_PORT ?? 6379),
+    username: process.env.REDIS_USERNAME ?? "default",
   }
 }
 
