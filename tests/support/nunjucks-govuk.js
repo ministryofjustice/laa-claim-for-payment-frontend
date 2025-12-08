@@ -40,5 +40,8 @@ export function setupNunjucksForGovUk() {
   // Minimal global your base.njk needed
   env.addGlobal("getAsset", (p) => `/assets/${p}`);
 
+  //add t for i18n content rendering
+  env.addGlobal("t", (key) => key);
+
   return env;
 }

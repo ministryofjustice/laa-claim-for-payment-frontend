@@ -7,10 +7,11 @@ import { Claim } from "#src/types/Claim.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { expect } from "chai";
 import { PaginationMeta } from "#src/types/api-types.js";
+import { load } from "cheerio";
 
 describe("constructor()", () => {
   it("creates a series of headers", () => {
-    const claims: Claim[] = getClaimsSuccessResponseData.data;
+    const claims: Claim[] = getClaimsSuccessResponseData.body?.data!;
 
     const paginationMeta: PaginationMeta = {
       total: 11,
@@ -76,54 +77,64 @@ describe("constructor()", () => {
     const viewModel = new ClaimsTableViewModel(claims, paginationMeta, "/foo");
 
     // First row
-    expect(viewModel.rows[0][0].text).to.equal("LAA-001");
-    expect(viewModel.rows[0][0].attributes).to.equal(undefined);
-    expect(viewModel.rows[0][0].classes).to.equal(undefined);
+    const firstRow = viewModel.rows[0]
+    expect(firstRow[0]).to.have.property("html").that.is.a("string");
+    const $a = load(firstRow[0].html as string)("a.govuk-link");
+    expect($a).to.have.length(1);
+    expect($a.attr("href")).to.equal(`/claims/${encodeURIComponent(String(claims[0].id))}`);
+    expect($a.clone().find(".govuk-visually-hidden").remove().end().text().trim()).to.equal("LAA-001");
+    expect(firstRow[0].attributes).to.deep.equal({ 'data-sort-value': 1 });
+    expect(firstRow[0].classes).to.deep.equal(undefined);
 
-    expect(viewModel.rows[0][1].text).to.equal("Giordano");
-    expect(viewModel.rows[0][1].attributes).to.equal(undefined);
-    expect(viewModel.rows[0][1].classes).to.equal(undefined);
+    expect(firstRow[1].text).to.equal("Giordano");
+    expect(firstRow[1].attributes).to.equal(undefined);
+    expect(firstRow[1].classes).to.equal(undefined);
 
-    expect(viewModel.rows[0][2].text).to.equal("Family");
-    expect(viewModel.rows[0][2].attributes).to.equal(undefined);
-    expect(viewModel.rows[0][2].classes).to.equal(undefined);
+    expect(firstRow[2].text).to.equal("Family");
+    expect(firstRow[2].attributes).to.equal(undefined);
+    expect(firstRow[2].classes).to.equal(undefined);
 
-    expect(viewModel.rows[0][3].text).to.equal("18/03/2025");
-    expect(viewModel.rows[0][3].attributes).to.deep.equal({ "data-sort-value": 1742256000000 });
-    expect(viewModel.rows[0][3].classes).to.equal(undefined);
+    expect(firstRow[3].text).to.equal("18/03/2025");
+    expect(firstRow[3].attributes).to.deep.equal({ "data-sort-value": 1742256000000 });
+    expect(firstRow[3].classes).to.equal(undefined);
 
-    expect(viewModel.rows[0][4].text).to.equal("Escape");
-    expect(viewModel.rows[0][4].attributes).to.equal(undefined);
-    expect(viewModel.rows[0][4].classes).to.equal(undefined);
+    expect(firstRow[4].text).to.equal("Escape");
+    expect(firstRow[4].attributes).to.equal(undefined);
+    expect(firstRow[4].classes).to.equal(undefined);
 
-    expect(viewModel.rows[0][5].text).to.equal("£234.56");
-    expect(viewModel.rows[0][5].attributes).to.deep.equal({ "data-sort-value": 234.56 });
-    expect(viewModel.rows[0][5].classes).to.equal("govuk-table__cell--numeric");
+    expect(firstRow[5].text).to.equal("£234.56");
+    expect(firstRow[5].attributes).to.deep.equal({ "data-sort-value": 234.56 });
+    expect(firstRow[5].classes).to.equal("govuk-table__cell--numeric");
 
-    // Second row
-    expect(viewModel.rows[1][0].text).to.equal("LAA-002");
-    expect(viewModel.rows[1][0].attributes).to.equal(undefined);
-    expect(viewModel.rows[1][0].classes).to.equal(undefined);
+    // // Second row
+    const secondRow = viewModel.rows[1]
+    expect(secondRow[0]).to.have.property("html").that.is.a("string");
+    const $a2 = load(secondRow[0].html as string)("a.govuk-link");
+    expect($a2).to.have.length(1);
+    expect($a2.attr("href")).to.equal(`/claims/${encodeURIComponent(String(claims[1].id))}`);
+    expect($a2.clone().find(".govuk-visually-hidden").remove().end().text().trim()).to.equal("LAA-002");
+    expect(secondRow[0].attributes).to.deep.equal({ 'data-sort-value': 2 });
+    expect(secondRow[0].classes).to.equal(undefined);
 
-    expect(viewModel.rows[1][1].text).to.equal("");
-    expect(viewModel.rows[1][1].attributes).to.equal(undefined);
-    expect(viewModel.rows[1][1].classes).to.equal(undefined);
+    expect(secondRow[1].text).to.equal("");
+    expect(secondRow[1].attributes).to.equal(undefined);
+    expect(secondRow[1].classes).to.equal(undefined);
 
-    expect(viewModel.rows[1][2].text).to.equal("");
-    expect(viewModel.rows[1][2].attributes).to.equal(undefined);
-    expect(viewModel.rows[1][2].classes).to.equal(undefined);
+    expect(secondRow[2].text).to.equal("");
+    expect(secondRow[2].attributes).to.equal(undefined);
+    expect(secondRow[2].classes).to.equal(undefined);
 
-    expect(viewModel.rows[1][3].text).to.equal("");
-    expect(viewModel.rows[1][3].attributes).to.equal(undefined);
-    expect(viewModel.rows[1][3].classes).to.equal(undefined);
+    expect(secondRow[3].text).to.equal("");
+    expect(secondRow[3].attributes).to.equal(undefined);
+    expect(secondRow[3].classes).to.equal(undefined);
 
-    expect(viewModel.rows[1][4].text).to.equal("");
-    expect(viewModel.rows[1][4].attributes).to.equal(undefined);
-    expect(viewModel.rows[1][4].classes).to.equal(undefined);
+    expect(secondRow[4].text).to.equal("");
+    expect(secondRow[4].attributes).to.equal(undefined);
+    expect(secondRow[4].classes).to.equal(undefined);
 
-    expect(viewModel.rows[1][5].text).to.equal("");
-    expect(viewModel.rows[1][5].attributes).to.equal(undefined);
-    expect(viewModel.rows[1][5].classes).to.equal("govuk-table__cell--numeric");
+    expect(secondRow[5].text).to.equal("");
+    expect(secondRow[5].attributes).to.equal(undefined);
+    expect(secondRow[5].classes).to.equal("govuk-table__cell--numeric");
   });
 
   it("paginates the data", () => {

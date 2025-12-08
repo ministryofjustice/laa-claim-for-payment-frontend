@@ -7,7 +7,7 @@
 {%- from "moj/components/pagination/macro.njk" import mojPagination -%}
 
 {% block content %}
-  <h1 class="govuk-heading-xl">Your Claims</h1>
+  <h1 class="govuk-heading-xl">{{ t('pages.home.title') }}</h1>
 
   <div class="govuk-button-group">
     {{ govukButton({
@@ -41,6 +41,7 @@
       "data-module": "moj-sortable-table"
     },
     head: head,
+    firstCellIsHeader: true,
     rows: rows
   }) }}
 

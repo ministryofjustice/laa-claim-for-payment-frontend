@@ -2,6 +2,7 @@ import { PaginationMeta } from "#src/types/api-types.js";
 import { Claim } from "#src/types/Claim.js";
 import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
+import { getEnValue } from "#tests/support/i18n.js";
 import { expect, config as chaiConfig } from "chai";
 import { load, CheerioAPI } from "cheerio";
 
@@ -11,7 +12,7 @@ chaiConfig.truncateThreshold = 0;
 describe("views/main/index.njk", () => {
   let $: CheerioAPI;
 
-  const claims: Claim[] = getClaimsSuccessResponseData.data;
+  const claims: Claim[] = getClaimsSuccessResponseData.body?.data!;
 
   const paginationMeta: PaginationMeta = {
     total: 11,
@@ -35,9 +36,12 @@ describe("views/main/index.njk", () => {
     $ = load(html);
   });
 
-  it("renders the status in the main H1", () => {
+  it("renders the H1", () => {
     const h1 = $("h1.govuk-heading-xl").text().trim();
-    expect(h1).to.equal("Your Claims");
+    expect(h1).to.equal("pages.home.title");
+    const enValue = getEnValue(h1);
+    expect(enValue).to.equal("Your Claims");
+    // expect(cyValue).to.equal("eich hawliadau");
   });
 
   it("renders the create claim buttons", () => {
@@ -62,9 +66,18 @@ describe("views/main/index.njk", () => {
   });
 
   it("renders the headers", () => {
-    const headers = $(".govuk-table__header");
+    const theadHeaders = $("table.govuk-table thead .govuk-table__header");
+    expect(theadHeaders.length).to.equal(6);
 
-    expect(headers.length).to.equal(6);
+    const texts = theadHeaders.map((_, el) => $(el).text().trim()).get();
+    expect(texts).to.deep.equal([
+      "ID",
+      "Client",
+      "Category",
+      "Concluded",
+      "Fee Type",
+      "Claimed"
+    ]);
   });
 
   it("renders a row for each claim", () => {

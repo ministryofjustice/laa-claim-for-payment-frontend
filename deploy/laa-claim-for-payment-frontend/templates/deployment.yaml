@@ -83,14 +83,39 @@ spec:
               value: "{{ .Values.env.NODE_ENV }}"
             - name: AUTH_ENABLED
               value: "{{ .Values.env.AUTH_ENABLED }}"
+            - name: BASE_URL
+              value: "{{ .Values.env.BASE_URL }}"
             - name: ISSUER_BASE_URL
+              {{- if kindIs "map" .Values.env.ISSUER_BASE_URL }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.ISSUER_BASE_URL.name }}
+                  key: {{ .Values.env.ISSUER_BASE_URL.key }}
+              {{- else }}
               value: "{{ .Values.env.ISSUER_BASE_URL }}"
+              {{- end }}
             - name: CLIENT_ID
+              {{- if kindIs "map" .Values.env.CLIENT_ID }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.CLIENT_ID.name }}
+                  key: {{ .Values.env.CLIENT_ID.key }}
+              {{- else }}
               value: "{{ .Values.env.CLIENT_ID }}"
+              {{- end }}
             - name: USE_SSL
               value: "{{ .Values.env.USE_SSL }}"
             - name: OIDC_SCOPE
               value: "{{ .Values.env.OIDC_SCOPE }}"
+            - name: CLAIMS_API_SCOPE
+              {{- if kindIs "map" .Values.env.CLAIMS_API_SCOPE }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.CLAIMS_API_SCOPE.name }}
+                  key: {{ .Values.env.CLAIMS_API_SCOPE.key }}
+              {{- else }}
+              value: "{{ .Values.env.CLAIMS_API_SCOPE }}"
+              {{- end }}
             - name: OIDC_LOGIN_PATH
               value: "{{ .Values.env.OIDC_LOGIN_PATH }}"
             - name: OIDC_CALLBACK_PATH
@@ -98,7 +123,14 @@ spec:
             - name: OIDC_LOGOUT_PATH
               value: "{{ .Values.env.OIDC_LOGOUT_PATH }}"
             - name: OIDC_CLIENT_SECRET
-              value: "{{ .Values.env.OIDC_CLIENT_SECRET }}"      
+              {{- if kindIs "map" .Values.env.OIDC_CLIENT_SECRET }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.OIDC_CLIENT_SECRET.name }}
+                  key: {{ .Values.env.OIDC_CLIENT_SECRET.key }}
+              {{- else }}
+              value: "{{ .Values.env.OIDC_CLIENT_SECRET }}"
+              {{- end }}    
    
       {{- with .Values.volumes }}
       volumes:
