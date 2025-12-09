@@ -34,7 +34,6 @@
     "compression": "^1.8.1",
     "connect-redis": "^9.0.0",
     "cookie-parser": "~1.4.6",
-    "crypto": "^1.0.1",
     "csrf-sync": "^4.2.1",
     "debug": "~4.4.3",
     "dotenv": "^17.2.3",
