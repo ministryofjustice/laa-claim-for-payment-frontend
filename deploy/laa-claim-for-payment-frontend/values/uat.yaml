@@ -114,6 +114,12 @@ env:
   ISSUER_BASE_URL:
     name: auth-secret-uat
     key: issuer-url
+  REDIS_HOST:
+    name: claimandassess-claim-redis
+    key: primary_endpoint_address
+  REDIS_AUTH_TOKEN:
+    name: claimandassess-claim-redis
+    key: auth_token
 
 autoscaling:
   enabled: false

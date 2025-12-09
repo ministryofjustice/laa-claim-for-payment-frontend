@@ -43,7 +43,6 @@ export interface RedisEnvConfig {
   local: false;
   host: string;
   port: number;
-  username: string;
   token: string;
 }
 

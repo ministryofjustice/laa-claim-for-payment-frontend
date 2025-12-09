@@ -102,6 +102,12 @@ env:
   ISSUER_BASE_URL:
     name: auth-secret-staging
     key: issuer-url
+  REDIS_HOST:
+    name: claimandassess-claim-redis
+    key: primary_endpoint_address
+  REDIS_AUTH_TOKEN:
+    name: claimandassess-claim-redis
+    key: auth_token
 
 livenessProbe:
   httpGet:
@@ -119,7 +125,7 @@ readinessProbe:
 
 autoscaling:
   enabled: false
-  minReplicas: 1
+  minReplicas: 2
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80

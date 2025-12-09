@@ -10,19 +10,18 @@ const DEFAULT_PORT = 3000;
 const DEFAULT_NUMBER_OF_RESULTS_PER_PAGE = 20;
 
 function getRedisConfig(): RedisLocalConfig | RedisEnvConfig {
-  if (process.env.REDIS_URL != null) {
-    return {
-      local: true,
-      url: process.env.REDIS_URL
-    }
-  }
-  else {
+  if (process.env.REDIS_URL == null) {
     return {
       local: false,
       token: getRequiredEnv('REDIS_AUTH_TOKEN'),
       host: process.env.REDIS_HOST ?? "localhost",
       port: Number(process.env.REDIS_PORT ?? 6379),
-      username: process.env.REDIS_USERNAME ?? "default",
+    }
+  }
+  else {
+    return {
+      local: true,
+      url: process.env.REDIS_URL
     }
   }
 }
