@@ -5,6 +5,8 @@ import { rateLimitSetUp } from './rateLimitSetUp.js';
 import { axiosMiddleware } from './axiosSetup.js';
 import { displayAsciiBanner } from './displayAsciiBanner.js';
 import { oidcSetup } from './openidSetup.js';
+import { setupRedisSession } from './redisSession.js';
+import { buildRedisClient } from './redisClient.js';
 
 export {
     getBuildNumber,
@@ -14,5 +16,7 @@ export {
     rateLimitSetUp,
     axiosMiddleware,
     displayAsciiBanner,
-    oidcSetup
+    oidcSetup,
+    setupRedisSession,
+    buildRedisClient
 };

@@ -69,6 +69,8 @@ const externalModules: string[] = [
   "csrf-sync",
   "http-errors",
   "*.node",
+  "redis",
+  "connect-redis"
 ];
 
 /**

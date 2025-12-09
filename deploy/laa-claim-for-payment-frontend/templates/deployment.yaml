@@ -130,7 +130,19 @@ spec:
                   key: {{ .Values.env.OIDC_CLIENT_SECRET.key }}
               {{- else }}
               value: "{{ .Values.env.OIDC_CLIENT_SECRET }}"
-              {{- end }}    
+              {{- end }} 
+            - name: REDIS_DISABLED
+              value: "{{ .Values.env.REDIS_DISABLED }}" 
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.REDIS_HOST.name }}
+                  key: {{ .Values.env.REDIS_HOST.key }}    
+            - name: REDIS_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.REDIS_AUTH_TOKEN.name }}
+                  key: {{ .Values.env.REDIS_AUTH_TOKEN.key }}      
    
       {{- with .Values.volumes }}
       volumes:

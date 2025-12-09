@@ -11,13 +11,18 @@ import {
   helmetSetup,
   axiosMiddleware,
   displayAsciiBanner,
-  oidcSetup
+  oidcSetup,
+  setupRedisSession,
+  buildRedisClient
 } from "#utils/index.js";
 import config from "#config.js";
 import indexRouter from "#routes/index.js";
 import livereload from "connect-livereload";
 import { requiresAuth } from "#utils/openidSetup.js";
 import { initializeI18nextSync } from "./scripts/helpers/i18nLoader.js";
+import { initRedis } from "#utils/redisClient.js";
+
+
 
 
 const TRUST_FIRST_PROXY = 1;
@@ -30,7 +35,7 @@ const UNSUCCESSFUL_REQUEST = 500;
  *
  * @returns {import('express').Application} The configured Express application
  */
-const createApp = (): express.Application => {
+const createApp = async (): Promise<express.Application> => {
   // Initialise i18next synchronously before setting up the app
   initializeI18nextSync();
 
@@ -39,11 +44,17 @@ const createApp = (): express.Application => {
   // Set up common middleware for handling cookies, body parsing, etc.
   setupMiddlewares(app);
 
-  app.use(session(config.session));
+  if (config.redis === undefined) {
+    app.use(session(config.session));
+  } else {
+    const redisClient = buildRedisClient(config.redis);
+    await initRedis(redisClient);
+    setupRedisSession(app, redisClient);
+  }
 
   app.use(axiosMiddleware);
 
-	app.use(setupLocaleMiddleware);
+  app.use(setupLocaleMiddleware);
 
   // Response compression setup
   app.use(
@@ -145,7 +156,10 @@ const createApp = (): express.Application => {
 };
 
 // Self-execute the app directly to allow app.js to be executed directly
-createApp();
+createApp().catch((err: unknown) => {
+  console.error(err);
+  process.exit(1);
+});
 
 // Export the createApp function for testing/import purposes
 export default createApp;
