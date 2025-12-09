@@ -131,8 +131,8 @@ spec:
               {{- else }}
               value: "{{ .Values.env.OIDC_CLIENT_SECRET }}"
               {{- end }} 
-            - name: REDIS_DISABLED
-              value: "{{ .Values.env.REDIS_DISABLED }}" 
+            - name: DISABLE_REDIS
+              value: "{{ .Values.env.DISABLE_REDIS }}" 
             - name: REDIS_HOST
               valueFrom:
                 secretKeyRef:
