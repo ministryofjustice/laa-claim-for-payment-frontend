@@ -44,14 +44,12 @@ const createApp = async (): Promise<express.Application> => {
   // Set up common middleware for handling cookies, body parsing, etc.
   setupMiddlewares(app);
 
-  if (config.redis !== undefined) {
+  if (config.redis === undefined) {
+    app.use(session(config.session));
+  } else {
     const redisClient = buildRedisClient(config.redis);
     await initRedis(redisClient);
     setupRedisSession(app, redisClient);
-  }
-  else {
-    app.use(
-      session(config.session));
   }
 
   app.use(axiosMiddleware);
@@ -158,7 +156,10 @@ const createApp = async (): Promise<express.Application> => {
 };
 
 // Self-execute the app directly to allow app.js to be executed directly
-createApp();
+createApp().catch((err: unknown) => {
+  console.error(err);
+  process.exit(1);
+});
 
 // Export the createApp function for testing/import purposes
 export default createApp;
