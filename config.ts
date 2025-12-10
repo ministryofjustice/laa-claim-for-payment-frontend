@@ -66,7 +66,7 @@ const config: Config = {
   api: {
     baseUrl: process.env.API_URL ?? "",
   },
-  ...(process.env.DISABLE_REDIS === "true"
+  ...(process.env.REDIS_DISABLED === "true"
     ? {}
     : { redis: getRedisConfig() }),
   pagination: {
