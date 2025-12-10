@@ -42,6 +42,7 @@ export default defineConfig({
       ...PLAYWRIGHT_TEST_ENV,
       //TODO: for now disable auth for e2e tests
       AUTH_ENABLED: 'false',
+      DISABLE_REDIS: 'true',
     },
   },
 });
