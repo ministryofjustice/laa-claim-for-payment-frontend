@@ -12,6 +12,8 @@ jobs:
   mocha-unit-tests:
     name: Mocha Unit Tests
     runs-on: ubuntu-latest
+    env:
+      REDIS_DISABLED: "true" # Disable Redis for testing
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
