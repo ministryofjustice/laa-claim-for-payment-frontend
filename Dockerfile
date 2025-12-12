@@ -1,11 +1,14 @@
 # Use the official Node.js image as the base image
-FROM node:24.9.0-slim
+FROM node:25.2.1-slim
 
 # Set the working directory inside the container
 WORKDIR /app
 
 # Copy package.json and yarn.lock to the working directory
 COPY package*.json yarn.lock .yarnrc.yml ./
+
+# Install Corepack explicitly (no longer bundled in Node 25+)
+RUN npm install -g corepack --force
 
 # Enable Corepack to use the correct Yarn version
 RUN corepack enable
