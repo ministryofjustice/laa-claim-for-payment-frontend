@@ -4,6 +4,9 @@ FROM node:25.2.1-slim
 # Set the working directory inside the container
 WORKDIR /app
 
+# Install Corepack explicitly (no longer bundled in Node 25+)
+RUN npm install -g corepack
+
 # Copy package.json and yarn.lock to the working directory
 COPY package*.json yarn.lock .yarnrc.yml ./
 
