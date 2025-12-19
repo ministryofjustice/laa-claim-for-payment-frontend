@@ -34,7 +34,6 @@ export default [
       parserOptions: {
         ecmaVersion: "latest",
         sourceType: "module",
-        project: ["./tsconfig.json", "./tsconfig.test.json"],
       },
       globals: {
         ...globals.browser,
@@ -108,6 +107,7 @@ export default [
   {
     ignores: [
       "node_modules/*",
+      "coverage/**",
       "public/*",
       "tests/**/*.spec.ts",
       "docs/source/javascripts/application.js", // Parsing error this file was not found by the project service. Consider either including it in the `tsconfig.json` or including it in `allowDefaultProject`
