@@ -16,7 +16,7 @@ jobs:
       REDIS_DISABLED: "true" # Disable Redis for testing
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Node + Yarn
         uses: ./.github/actions/setup_npm_and_yarn
@@ -32,7 +32,7 @@ jobs:
 
       - name: Upload coverage report
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: coverage-report
           path: coverage
