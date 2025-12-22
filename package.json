@@ -60,7 +60,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
     "@eslint/js": "^9.38.0",
-    "@playwright/test": "^1.56.0",
+    "@playwright/test": "^1.57.0",
     "@types/chai": "^5.2.2",
     "@types/compression": "^1.7.5",
     "@types/connect-livereload": "^0.6.3",
