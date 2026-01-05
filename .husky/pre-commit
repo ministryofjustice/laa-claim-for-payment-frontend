@@ -1,0 +1,1 @@
+prek run --hook-stage pre-commit
