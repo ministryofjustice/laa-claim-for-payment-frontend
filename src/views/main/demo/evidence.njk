@@ -19,6 +19,9 @@
     class="demo-pdf-stage"
     data-pdf-url="{{ pdfUrl }}"
     data-page-number="{{ pageNumber }}"
+    {% if highlightBox %}
+    data-highlight='{{ highlightBox | dump | safe }}'
+    {% endif %}
   >
     <div class="govuk-body govuk-!-margin-0">
       PDF will render here (PDF.js).

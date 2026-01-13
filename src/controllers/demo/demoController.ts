@@ -1,5 +1,5 @@
 import { createProcessedError } from "#src/helpers/errorHandler.js";
-import { getAnalysisDoc, getSearchResult } from "#src/services/demo/evidenceService.js";
+import { getAllSearchResults, getAnalysisDoc, getSearchResult } from "#src/services/demo/evidenceService.js";
 import type { Request, Response, NextFunction } from "express";
 
 /**
@@ -15,22 +15,16 @@ export async function lineItemsPage(
   next: NextFunction,
 ): Promise<void> {
   try {
-    res.render("main/demo/line-items.njk");
+    const results = getAllSearchResults();
+
+    res.render("main/demo/line-items.njk", {
+    results,
+    });
   } catch (error) {
     const processedError = createProcessedError(error, `Line items page failed`);
     next(processedError);
   }
 }
-
-const MOCK_EVIDENCE_LOOKUP: Record<
-  string,
-  { documentId: string; pageNumber?: number }
-> = {
-  db60f0989db7ca7bcfaf4681a4290489: {
-    documentId: "mixed_expenses.pdf",
-    pageNumber: 2,
-  },
-};
 
 
 /**
@@ -74,10 +68,55 @@ export async function evidencePage(
     // MVP: served from /public/demo
     const pdfUrl = `/demo/${searchResult._source.document_id}`;
 
+
+    const matchedBlocks = analysisDoc.Blocks.filter(
+    (block) =>
+        blockIds.includes(block.Id) &&
+        block.Geometry?.BoundingBox &&
+        block.Page !== undefined,
+    );
+
+    const boundingBoxes = matchedBlocks.map((block) => ({
+    blockId: block.Id,
+    page: block.Page,
+    boundingBox: block.Geometry!.BoundingBox,
+    }));
+
+    console.log("Bounding boxes for evidence:", boundingBoxes);
+
+    const highlightBox = boundingBoxes[0];
+
+    const mergedBox = (() => {
+        if (boundingBoxes.length === 0) return null;
+
+        const left = Math.min(...boundingBoxes.map(b => b.boundingBox.Left));
+        const top = Math.min(...boundingBoxes.map(b => b.boundingBox.Top));
+
+        const right = Math.max(
+            ...boundingBoxes.map(b => b.boundingBox.Left + b.boundingBox.Width),
+        );
+
+        const bottom = Math.max(
+            ...boundingBoxes.map(b => b.boundingBox.Top + b.boundingBox.Height),
+        );
+
+        return {
+            page: boundingBoxes[0].page,
+            boundingBox: {
+            Left: left,
+            Top: top,
+            Width: right - left,
+            Height: bottom - top,
+            },
+        };
+        })();
+
+
     res.render("main/demo/evidence.njk", {
       evidenceId,
       pdfUrl,
       pageNumber,
+      highlightBox: mergedBox
     });
   } catch (error) {
     const processedError = createProcessedError(error, `Evidence page failed`);

@@ -1,79 +1,68 @@
-{% from "govuk/components/table/macro.njk" import govukTable %}
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
-
 {% extends "base.njk" %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 
 {% block content %}
   <span class="govuk-caption-l">Demo</span>
   <h1 class="govuk-heading-xl">Line items</h1>
 
-  {# --- Line item 1 --- #}
   <h2 class="govuk-heading-m govuk-!-margin-top-6">Line item 1</h2>
 
-  {{ govukSummaryList({
-    rows: [
-      { key: { text: "Date" }, value: { text: "12 Jan 2024" } },
-      { key: { text: "Amount" }, value: { text: "£120.00" } },
-      { key: { text: "Description" }, value: { text: "Hotel stay" } },
-      { key: { text: "Category" }, value: { text: "Accommodation" } }
-    ]
-  }) }}
+  <dl class="govuk-summary-list govuk-!-margin-bottom-4">
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Date</dt>
+      <dd class="govuk-summary-list__value">12 Jan 2024</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Amount</dt>
+      <dd class="govuk-summary-list__value">£120.00</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Description</dt>
+      <dd class="govuk-summary-list__value">Train ticket</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Category</dt>
+      <dd class="govuk-summary-list__value">Travel</dd>
+    </div>
+  </dl>
 
   <h3 class="govuk-heading-s">Potential evidence matches</h3>
 
-  {{ govukTable({
-    head: [
-      { text: "Snippet" },
-      { text: "Confidence" },
-      { text: "Document" },
-      { text: "Action" }
-    ],
-    rows: [
-      [
-        { text: "…2 nights at City Hotel, booking ref 88421…" },
-        { text: "0.86" },
-        { text: "Bank statement (Jan)" },
-        { html: '<a class="govuk-link" href="/demo/evidence?evidenceId=db60f0989db7ca7bcfaf4681a4290489">See evidence</a>' }
-      ],
-      [
-        { text: "…card payment CITY HOTEL LONDON £120.00…" },
-        { text: "0.74" },
-        { text: "Card transactions export" },
-        { html: '<a class="govuk-link" href="/demo/evidence?evidenceId=db60f0989db7ca7bcfaf4681a4290489">See evidence</a>' }
-      ]
-    ]
-  }) }}
-
-  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-
-  {# --- Line item 2 --- #}
-  <h2 class="govuk-heading-m govuk-!-margin-top-6">Line item 2</h2>
-
-  {{ govukSummaryList({
-    rows: [
-      { key: { text: "Date" }, value: { text: "15 Jan 2024" } },
-      { key: { text: "Amount" }, value: { text: "£45.50" } },
-      { key: { text: "Description" }, value: { text: "Train ticket" } },
-      { key: { text: "Category" }, value: { text: "Travel" } }
-    ]
-  }) }}
-
-  <h3 class="govuk-heading-s">Potential evidence matches</h3>
-
-  {{ govukTable({
-    head: [
-      { text: "Snippet" },
-      { text: "Confidence" },
-      { text: "Document" },
-      { text: "Action" }
-    ],
-    rows: [
-      [
-        { text: "…OFF-PEAK DAY RTN LONDON–BRISTOL £45.50…" },
-        { text: "0.81" },
-        { text: "Receipt (PDF)" },
-        { html: '<a class="govuk-link" href="/demo/evidence?evidenceId=db60f0989db7ca7bcfaf4681a4290489">See evidence</a>' }
-      ]
-    ]
-  }) }}
+  <table class="govuk-table">
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th class="govuk-table__header">Snippet</th>
+        <th class="govuk-table__header">Document</th>
+        <th class="govuk-table__header">Page(s)</th>
+        <th class="govuk-table__header">Action</th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      {% for result in results %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">
+            {{ result._source.chunk_text }}
+          </td>
+          <td class="govuk-table__cell">
+            {{ result._source.document_id }}
+          </td>
+          <td class="govuk-table__cell">
+            {% if result._source.pages %}
+              {{ result._source.pages | join(", ") }}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td class="govuk-table__cell">
+            <a
+              class="govuk-link"
+              href="/demo/evidence?evidenceId={{ result._id }}"
+            >
+              See evidence
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}

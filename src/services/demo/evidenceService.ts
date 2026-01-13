@@ -42,3 +42,14 @@ export function getAnalysisDoc(documentFileName: string): AnalysisDoc {
   const raw = fs.readFileSync(filePath, "utf-8");
   return JSON.parse(raw);
 }
+
+export function getAllSearchResults(): SearchResult[] {
+  const files = fs
+    .readdirSync(SEARCH_DATA_DIR)
+    .filter((f) => f.endsWith(".json"));
+
+  return files.map((file) => {
+    const raw = fs.readFileSync(path.join(SEARCH_DATA_DIR, file), "utf-8");
+    return JSON.parse(raw) as SearchResult;
+  });
+}
