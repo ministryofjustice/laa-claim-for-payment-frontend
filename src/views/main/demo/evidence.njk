@@ -1,0 +1,29 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% extends "base.njk" %}
+
+{% block content %}
+  <span class="govuk-caption-l">Demo</span>
+  <h1 class="govuk-heading-xl">Evidence</h1>
+
+  {{ govukSummaryList({
+    rows: [
+      { key: { text: "Evidence ID" }, value: { text: evidenceId or "—" } }
+    ]
+  }) }}
+
+
+  <h2 class="govuk-heading-m">Document preview</h2>
+
+  <div
+    class="demo-pdf-stage"
+    data-pdf-url="{{ pdfUrl }}"
+    data-page-number="{{ pageNumber }}"
+  >
+    <div class="govuk-body govuk-!-margin-0">
+      PDF will render here (PDF.js).
+    </div>
+  </div>
+
+  <script type="module" src="/demo/pdf-viewer.js"></script>
+{% endblock %}

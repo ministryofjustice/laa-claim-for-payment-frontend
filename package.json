@@ -53,6 +53,7 @@
     "morgan": "~1.10.1",
     "nunjucks": "^3.2.4",
     "openid-client": "6.8.1",
+    "pdfjs-dist": "^5.4.530",
     "redis": "^5.8.2",
     "validator": "^13.15.22",
     "zod": "^4.1.13"

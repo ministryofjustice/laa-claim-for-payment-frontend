@@ -1,5 +1,6 @@
 import { viewClaimPage } from "#src/controllers/claims/viewClaimController.js";
 import { handleYourClaimsPage } from "#src/controllers/claimServiceController.js";
+import { lineItemsPage, evidencePage } from "#src/controllers/demo/demoController.js"
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
 
@@ -9,6 +10,16 @@ const router = express.Router();
 /* GET home page. */
 router.get("/", async function (req: Request, res: Response, next: NextFunction): Promise<void> {
   await handleYourClaimsPage(req, res, next);
+});
+
+/* GET line items page. */
+router.get("/demo/line-items", async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+  await lineItemsPage(req, res, next);
+});
+
+/* GET evidence page. */
+router.get("/demo/evidence", async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+  await evidencePage(req, res, next);
 });
 
 /* GET view claim page. */

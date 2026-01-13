@@ -1,0 +1,48 @@
+{
+  "_index": "document-embeddings",
+  "_id": "db60f0989db7ca7bcfaf4681a4290489",
+  "_version": 1,
+  "_score": null,
+  "_source": {
+    "document_id": "mixed_expenses.pdf",
+    "document_name": "mixed_expenses.pdf",
+    "s3_location": "s3://textract-console-eu-west-2-3dfe0fac-fb95-4adf-aec4-32aef4c09434/mixed_expenses.pdf",
+    "chunk_id": "db60f0989db7ca7bcfaf4681a4290489",
+    "chunk_index": 12,
+    "chunking_strategy": "semantic",
+    "chunk_text": "Sorry, your journey is not eligible to be changed. Scroll to More options below for alternatives. Ticket delivery eTickets",
+    "chunk_size": 122,
+    "embedding_vector": [
+      -0.031408924609422684,
+      0.003909185994416475,
+      0.031899917870759964,
+      -0.07536279410123825
+    ],
+    "pages": [
+      2
+    ],
+    "textract_block_ids": [
+      "3d64bc2d-f84b-41bb-b0e0-1e471152cf67",
+      "2242a3fc-fe36-45a2-a628-29b2b7e7e17c",
+      "3c9a7c91-3ccb-417e-a714-3dbda260cd36",
+      "933447d8-0b46-47a8-b17c-89ec8d6e714f"
+    ],
+    "textract_job_id": "12bc57966c08f9be152ae0b69f8514883db7e50c43fb301b0ac43f4f026cc514",
+    "textract_json_key": "mixed_expenses.pdf.textract.json",
+    "model_id": "amazon.titan-embed-text-v2:0",
+    "timestamp": "2026-01-13T15:33:19.678346"
+  },
+  "fields": {
+    "timestamp": [
+      "2026-01-13T15:33:19.678Z"
+    ]
+  },
+  "highlight": {
+    "chunk_text": [
+      "@opensearch-dashboards-highlighted-field@Ticket@/opensearch-dashboards-highlighted-field@ delivery eTickets"
+    ]
+  },
+  "sort": [
+    1768318399678
+  ]
+}
