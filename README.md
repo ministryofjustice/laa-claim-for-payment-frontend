@@ -149,6 +149,8 @@ Branch naming conventions are 'CLAIM-ticketNumber-optionalInfo'. Including the t
 - node stable version [24.2.0](https://nodejs.org/en/blog/release/v24.2.0/)
 - [Yarn 4.9.2](https://yarnpkg.com/) package manager (see installation instructions below)
 - TypeScript 5.8.3
+- npm install -g snyk
+- brew install pre-commit
 
 ### Installing Yarn
 
