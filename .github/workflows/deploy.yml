@@ -12,13 +12,17 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   code-linting:
     name: Code Linting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Node + Yarn
         uses: ./.github/actions/setup_npm_and_yarn
@@ -56,6 +60,8 @@ jobs:
   snyk:
     name: Snyk Security Scan
     uses: ./.github/workflows/snyk.yml
+    permissions:
+      security-events: write
     with:
       tag: "laa-claim-for-payment-frontend"
     secrets:
@@ -74,18 +80,16 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Set up AWS credentials for ECR and Kubernetes
-        uses: aws-actions/configure-aws-credentials@v5.1.1
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.LAA_CLAIM_FOR_PAYMENT_FRONTEND_ECR_ROLE_TO_ASSUME }}
           aws-region: ${{ vars.LAA_CLAIM_FOR_PAYMENT_FRONTEND_ECR_REGION }}
 
-      - uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
+      - uses: aws-actions/amazon-ecr-login@v2
         id: login-ecr
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          install: true
+        uses: docker/setup-buildx-action@v4
 
       - name: Cache Docker layers
         uses: actions/cache@v5
@@ -157,11 +161,35 @@ jobs:
           ratelimit_storage_uri: ${{ vars.RATELIMIT_STORAGE_URI }}
           ratelimit_max: ${{ vars.RATE_LIMIT_MAX }}
           ratewindow_ms: ${{ vars.RATE_WINDOW_MS }}
+
+  run-e2e:
+    needs: deploy-uat
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'main'
+    steps:
+      - name: Generate GitHub App Token
+        id: generate_token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ministryofjustice
+
+      - name: Trigger and Wait for E2E Tests
+        uses: the-actions-org/workflow-dispatch@v4 # No version available that supports Node.js 24
+        with:
+          workflow: qa-ci.yml
+          # Combine owner and repo name here:
+          repo: ministryofjustice/claim-assess-regression-tests
+          token: ${{ steps.generate_token.outputs.token }}
+          ref: main
+          wait-for-completion: true
+          display-workflow-run-url: true
   
   deploy-staging:
     environment: staging
     runs-on: ubuntu-latest
-    needs: deploy-uat
+    needs: run-e2e
     if: github.ref_name == 'main'
 
     steps:
@@ -200,7 +228,7 @@ jobs:
 
   #   steps:
   #     - name: Checkout
-  #       uses: actions/checkout@v5
+  #       uses: actions/checkout@v6
 
   #     - name: Deploy to production
   #       uses: ./.github/actions/deploy
