@@ -20,13 +20,13 @@ import type { Request, Response, NextFunction } from "express";
 // Import to get global type declarations for axiosMiddleware
 import "#utils/axiosSetup.js";
 import { claimService } from "#src/services/claimService.js";
-import { handleYourClaimsPage } from "#src/controllers/claimServiceController.js";
+import { handleYourClaimsPage } from "#src/controllers/viewClaimsController.js";
 // Import mock claims response data for testing
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { ApiResponse, Paginated } from "#src/types/api-types.js";
 import { Claim } from "#src/types/Claim.js";
 
-describe("Claim Service Controller", () => {
+describe("view Claims Controller", () => {
   let req: Partial<Request>;
   let res: any;
   let next: any;
@@ -62,7 +62,7 @@ describe("Claim Service Controller", () => {
     sinon.restore();
   });
 
-  describe("Claims controller test", () => {
+  describe("view Claims controller", () => {
     it("should render home your claim page with data and correct template", async () => {
       // Arrange
       const mockApiResponse = getClaimsSuccessResponseData;

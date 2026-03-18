@@ -63,7 +63,7 @@ export class ClaimsTableViewModel {
     this.pagination = new Pagination(
       paginationMeta.total,
       paginationMeta.limit,
-      paginationMeta.page,
+      paginationMeta.page + 1,
       href
     );
   }

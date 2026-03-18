@@ -59,7 +59,7 @@ describe("View Claim Controller", () => {
       expect(renderStub.calledWith("main/claims/view.njk")).to.be.true;
     });
 
-    it("should redirect to appropriate page when invalid page in query param", async () => {
+    it("should redirect to appropriate page when no claim is returned", async () => {
       const mockApiResponse: ApiResponse<Claim> = {
         status: "error",
         message: "not found"

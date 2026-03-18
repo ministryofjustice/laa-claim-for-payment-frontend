@@ -16,7 +16,7 @@ describe("views/main/index.njk", () => {
 
   const paginationMeta: PaginationMeta = {
     total: 11,
-    page: 1,
+    page: 0,
     limit: 20,
   };
 

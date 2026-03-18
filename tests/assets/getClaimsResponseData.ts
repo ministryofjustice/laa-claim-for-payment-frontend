@@ -18,7 +18,7 @@ export const getClaimsSuccessResponseData: ApiResponse<Paginated<Claim>> = {
   body: {
     meta: {
       total: 1,
-      page: 1,
+      page: 0,
       limit: 20,
       totalPages: undefined,
     },

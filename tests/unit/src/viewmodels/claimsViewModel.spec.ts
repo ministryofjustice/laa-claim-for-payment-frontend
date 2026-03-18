@@ -15,7 +15,7 @@ describe("constructor()", () => {
 
     const paginationMeta: PaginationMeta = {
       total: 11,
-      page: 1,
+      page: 0,
       limit: 20,
     };
 
@@ -70,7 +70,7 @@ describe("constructor()", () => {
 
     const paginationMeta: PaginationMeta = {
       total: 2,
-      page: 1,
+      page: 0,
       limit: 20,
     };
 
@@ -152,7 +152,7 @@ describe("constructor()", () => {
 
     const paginationMeta: PaginationMeta = {
       total: 100,
-      page: 3,
+      page: 2,
       limit: 20,
     };
 

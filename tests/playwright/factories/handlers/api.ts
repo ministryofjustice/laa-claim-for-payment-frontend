@@ -6,7 +6,7 @@ import { http, HttpResponse } from 'msw';
  * @param { object } overrides any overrides to be 
  * @returns { object } object for stubbed API response
  */
-export function createClaim(id: number, overrides = {}): object {
+export function makeFakeClaim(id: number, overrides = {}): object {
   return {
     id,
     client: "Giordano",
@@ -24,15 +24,26 @@ export function createClaim(id: number, overrides = {}): object {
  */
 export const apiHandlers = [
   // match any host or protocol
-  http.get('/api/v1/claims', () => {
+  http.get('/api/v1/claims', ({ request }) => {
+    const url = new URL(request.url, 'http://localhost:8080');
+    const page = Number(url.searchParams.get('page'));
+    const limit = Number(url.searchParams.get('limit'));
+
     console.log('🧩 MSW matched: GET /api/v1/claims');
-    const claims = [createClaim(1)];
-    return HttpResponse.json(claims);
+    const claims = [makeFakeClaim(1), makeFakeClaim(2), makeFakeClaim(3)];
+
+    return HttpResponse.json({
+      claims,
+      page,
+      limit,
+      total: 3,
+      totalPages: 1,
+    });
   }),
 
   http.get('/api/v1/claims/:id', ({ params }) => {
     console.log('🧩 MSW matched: GET /api/v1/claims/:id', params.id);
-    const claim = createClaim(Number(params.id));
+    const claim = makeFakeClaim(Number(params.id));
     return HttpResponse.json(claim);
   }),
 ];
