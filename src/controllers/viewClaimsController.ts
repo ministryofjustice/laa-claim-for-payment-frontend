@@ -20,11 +20,10 @@ export async function handleYourClaimsPage(
   next: NextFunction
 ): Promise<void> {
   try {
-    // Fetch client details from API
-
-    const currentPage = parseNumberQueryParam(req.query.page, 1);
-    const response = await claimService.getClaims(req.axiosMiddleware, currentPage);
-
+    
+    const requestPage = parseNumberQueryParam(req.query.page, 1)-1;
+    const limit = 10; //todo get this from somewhere, probs config
+    const response = await claimService.getClaims(req.axiosMiddleware, requestPage, limit);
     if (response.status === "success") {
       const claimsTableViewModel: ClaimsTableViewModel = new ClaimsTableViewModel(
         response.body.data,

@@ -13,3 +13,11 @@ export const ClaimSchema = z.object({
 });
 
 export type Claim = z.infer<typeof ClaimSchema>;
+
+export const ClaimsResponseSchema = z.object({
+  claims: z.array(ClaimSchema),
+  page: z.number(),
+  limit: z.number(),
+  total: z.number(),
+  totalPages: z.number(),
+});
