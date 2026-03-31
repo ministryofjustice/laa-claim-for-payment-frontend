@@ -1,7 +1,6 @@
 import { createProcessedError } from "#src/helpers/errorHandler.js";
 import { claimService } from "#src/services/claimService.js";
 import type { Request, Response, NextFunction } from "express";
-import { InvalidPageError } from "#src/types/errors.js";
 import { ClaimViewModel } from "#src/viewmodels/claimViewModel.js";
 
 const NOT_FOUND = 404;
@@ -34,12 +33,7 @@ export async function viewClaimPage(
       });
     }
   } catch (error) {
-    if (error instanceof InvalidPageError) {
-      console.info(error.message);
-      res.redirect(`${req.path}?page=${error.pageToRedirectTo}`);
-    } else {
-      const processedError = createProcessedError(error, `fetching claim details for user`);
-      next(processedError);
-    }
+    const processedError = createProcessedError(error, `fetching claim details for user`);
+    next(processedError);
   }
 }

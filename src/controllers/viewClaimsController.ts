@@ -4,6 +4,7 @@ import type { Request, Response, NextFunction } from "express";
 import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
 import { parseNumberQueryParam } from "#src/helpers/index.js";
 import { InvalidPageError } from "#src/types/errors.js";
+import { ROUTES } from "#routes/index.js";
 
 const NOT_FOUND = 404;
 
@@ -45,7 +46,7 @@ export async function handleYourClaimsPage(
   } catch (error) {
     if (error instanceof InvalidPageError) {
       console.info(error.message);
-      res.redirect(`${req.path}?page=${error.pageToRedirectTo}`);
+      res.redirect(`${ROUTES.CLAIMS}?page=${error.pageToRedirectTo}`);
     } else {
       // Use the error processing utility
       const processedError = createProcessedError(error, `fetching claims details for user`);
