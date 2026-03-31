@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
 
       - name: Setup Node + Yarn
         uses: ./.github/actions/setup_npm_and_yarn
@@ -41,10 +41,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f #v6.3.0
         with:
           node-version: '24.2.0'
 
@@ -68,7 +68,7 @@ jobs:
       snyk_token: ${{ secrets.SNYK_TOKEN }}
 
   build-image:
-    if: ${{ github.actor != 'dependabot[bot]' }} 
+    if: ${{ github.actor != 'dependabot[bot]' }}
     # dependabot can't build as it has no access to secrets
     name: Build Docker Image
     runs-on: ubuntu-latest
@@ -77,22 +77,22 @@ jobs:
       contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
 
       - name: Set up AWS credentials for ECR and Kubernetes
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 #v6.0.0
         with:
           role-to-assume: ${{ secrets.LAA_CLAIM_FOR_PAYMENT_FRONTEND_ECR_ROLE_TO_ASSUME }}
           aws-region: ${{ vars.LAA_CLAIM_FOR_PAYMENT_FRONTEND_ECR_REGION }}
 
-      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: aws-actions/amazon-ecr-login@183a1442edf41672e66566b7fc560e297a290896 #v2.1.1
         id: login-ecr
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd #v4.0.0
 
       - name: Cache Docker layers
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 #v5.0.4
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
@@ -122,7 +122,7 @@ jobs:
       - build-image
     # Only run tests when deploying to UAT
     if: success() && github.event_name != 'workflow_dispatch' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'uat' || github.event.inputs.environment == null)
-  
+
   deploy-dev:
     environment: dev
     runs-on: ubuntu-latest
@@ -136,7 +136,7 @@ jobs:
     if: github.ref_name == 'main'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
       - name: Deploy to dev
         uses: ./.github/actions/deploy
         with:
@@ -173,14 +173,14 @@ jobs:
     steps:
       - name: Generate GitHub App Token
         id: generate_token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 #v3.0.0
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           owner: ministryofjustice
 
       - name: Trigger and Wait for E2E Tests
-        uses: the-actions-org/workflow-dispatch@v4 # No version available that supports Node.js 24
+        uses: the-actions-org/workflow-dispatch@3133c5d135c7dbe4be4f9793872b6ef331b53bc7 #v4.0.0
         with:
           workflow: qa-ci.yml
           # Combine owner and repo name here:
@@ -197,7 +197,7 @@ jobs:
       - run-e2e
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
 
       - name: Deploy to UAT
         uses: ./.github/actions/deploy
@@ -220,8 +220,8 @@ jobs:
           ratelimit_headers_enabled: ${{ vars.RATELIMIT_HEADERS_ENABLED }}
           ratelimit_storage_uri: ${{ vars.RATELIMIT_STORAGE_URI }}
           ratelimit_max: ${{ vars.RATE_LIMIT_MAX }}
-          ratewindow_ms: ${{ vars.RATE_WINDOW_MS }}        
-  
+          ratewindow_ms: ${{ vars.RATE_WINDOW_MS }}
+
   deploy-staging:
     environment: staging
     runs-on: ubuntu-latest
@@ -230,7 +230,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
 
       - name: Deploy to staging
         uses: ./.github/actions/deploy
@@ -264,7 +264,7 @@ jobs:
 
   #   steps:
   #     - name: Checkout
-  #       uses: actions/checkout@v6
+  #       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
 
   #     - name: Deploy to production
   #       uses: ./.github/actions/deploy
