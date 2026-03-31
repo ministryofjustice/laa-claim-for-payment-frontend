@@ -1,0 +1,29 @@
+exclude:
+  code:
+    - scripts/stub-backend.ts
+    - tests/**
+ignore:
+  SNYK-JS-LODASH-15053838:
+    - '*':
+        reason: "No direct fix available via current dependency tree"
+        expires: 2026-12-31
+
+  SNYK-JS-PATHTOREGEXP-15789763:
+    - '*':
+        reason: "No direct fix available via current dependency tree"
+        expires: 2026-12-31
+
+  SNYK-JS-PATHTOREGEXP-15789765:
+    - '*':
+        reason: "No direct fix available via current dependency tree"
+        expires: 2026-12-31
+
+  SNYK-JS-QS-14724253:
+    - '*':
+        reason: "No direct fix available via current dependency tree"
+        expires: 2026-12-31
+
+  SNYK-JS-QS-15268416:
+    - '*':
+        reason: "No direct fix available via current dependency tree"
+        expires: 2026-12-31
