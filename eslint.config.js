@@ -112,7 +112,7 @@ export default [
       "tests/**/*.spec.ts",
       "docs/source/javascripts/application.js", // Parsing error this file was not found by the project service. Consider either including it in the `tsconfig.json` or including it in `allowDefaultProject`
       "eslint.config.js", // Parsing error this file was not found by the project service. Consider either including it in the `tsconfig.json` or including it in `allowDefaultProject`
-      "home/runner/work/laa-claim-for-payment-frontend/laa-claim-for-payment-frontend/[0-9a-f]*/**"
+      "[0-9a-f]*/**" // Ignore SHA-named directory
     ],
   },
 ];
