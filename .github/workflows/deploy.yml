@@ -175,52 +175,17 @@ jobs:
       - mocha-unit-tests
       - playwright
     runs-on: ubuntu-latest
-    env:
-      ORG: ministryofjustice
-      REPO: claim-assess-regression-tests
     if: github.ref_name == 'main'
     steps:
-      - name: Generate GitHub App Token
-        id: generate_token
-        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 #v3.0.0
+      - name: Trigger ZAP workflow run
+        uses: ./.github/actions/trigger_workflow
         with:
           app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          owner: ${{ env.ORG }}
-          repositories: ${{ env.REPO }}
-
-      - name: Authenticate GitHub CLI
-        run: |
-          echo "${{ steps.generate_token.outputs.token }}" | gh auth login --with-token
-
-      - name: Trigger E2E workflow run
-        run: |
-          OUTPUT=$(gh workflow run qa-ci.yml --repo "$ORG/$REPO" --ref main)
-          echo "$OUTPUT"
-          URL=$(echo "$OUTPUT" | grep -Eo '/actions/runs/[0-9]+')
-          RUN_ID="${URL##*/}"
-          echo "Run ID: $RUN_ID"
-          echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-
-      - name: Wait for E2E workflow run to finish
-        run: |
-          while true; do
-            OUTPUT=$(gh run view "$RUN_ID" --repo "$ORG/$REPO" --json status,conclusion)
-            STATUS=$(echo "$OUTPUT" | jq -r '.status')
-            CONCLUSION=$(echo "$OUTPUT" | jq -r '.conclusion')
-
-            echo "Status: $STATUS"
-
-            if [ "$STATUS" == "completed" ]; then
-              echo "Conclusion: $CONCLUSION"
-              if [ "$CONCLUSION" != "success" ]; then
-                exit 1
-              fi
-              break
-            fi
-
-            sleep 10
-          done
+          app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          org: ministryofjustice
+          repo: claim-assess-regression-tests
+          workflow: qa-ci.yml
+          ref: main
 
   run-zap:
     needs:
@@ -231,52 +196,18 @@ jobs:
       - mocha-unit-tests
       - playwright
     runs-on: ubuntu-latest
-    env:
-      ORG: ministryofjustice
-      REPO: claim-assess-regression-tests
 #    if: github.ref_name == 'main'
     steps:
-      - name: Generate GitHub App Token
-        id: generate_token
-        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 #v3.0.0
+      - name: Trigger ZAP workflow run
+        uses: ./.github/actions/trigger_workflow
         with:
           app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-          owner: ${{ env.ORG }}
-          repositories: ${{ env.REPO }}
-
-      - name: Authenticate GitHub CLI
-        run: |
-          echo "${{ steps.generate_token.outputs.token }}" | gh auth login --with-token
-
-      - name: Trigger ZAP workflow run
-        run: |
-          OUTPUT=$(gh workflow run zap.yml --repo "$ORG/$REPO" --ref CLAS-266 -f target="http://localhost:3000")
-          echo "$OUTPUT"
-          URL=$(echo "$OUTPUT" | grep -Eo '/actions/runs/[0-9]+')
-          RUN_ID="${URL##*/}"
-          echo "Run ID: $RUN_ID"
-          echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-
-      - name: Wait for ZAP workflow run to finish
-        run: |
-          while true; do
-            OUTPUT=$(gh run view "$RUN_ID" --repo "$ORG/$REPO" --json status,conclusion)
-            STATUS=$(echo "$OUTPUT" | jq -r '.status')
-            CONCLUSION=$(echo "$OUTPUT" | jq -r '.conclusion')
-
-            echo "Status: $STATUS"
-
-            if [ "$STATUS" == "completed" ]; then
-              echo "Conclusion: $CONCLUSION"
-              if [ "$CONCLUSION" != "success" ]; then
-                exit 1
-              fi
-              break
-            fi
-
-            sleep 10
-          done
+          app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          org: ministryofjustice
+          repo: claim-assess-regression-tests
+          workflow: zap.yml
+          ref: main
+          extra-args: '-f target="http://localhost:3000"'
 
   deploy-uat:
     environment: uat
