@@ -41,7 +41,7 @@ runs:
         echo "${{ steps.generate_token.outputs.token }}" | gh auth login --with-token
 
     - name: Get ID of workflow run
-      uses: bash
+      shell: bash
       run: |
         WORKFLOW=$(gh workflow run "${{ inputs.workflow }}" --repo "${{ inputs.org }}/${{ inputs.repo }}" --ref "${{ inputs.ref }}" ${{ inputs.extra-args }})
         echo "$WORKFLOW"
@@ -51,7 +51,7 @@ runs:
         echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
 
     - name: Wait for workflow run to finish
-      uses: bash
+      shell: bash
       run: |
         while true; do
           DETAILS=$(gh run view "$RUN_ID" --repo "${{ inputs.org }}/${{ inputs.repo }}" --json status,conclusion)
