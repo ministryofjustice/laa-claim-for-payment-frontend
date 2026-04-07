@@ -8,6 +8,11 @@ ignore:
         reason: "No direct fix available via current dependency tree"
         expires: 2026-12-31
 
+  SNYK-JS-LODASH-15869625:
+      - '*':
+          reason: "No direct fix available via current dependency tree"
+          expires: 2026-12-31
+
   SNYK-JS-PATHTOREGEXP-15789763:
     - '*':
         reason: "No direct fix available via current dependency tree"
