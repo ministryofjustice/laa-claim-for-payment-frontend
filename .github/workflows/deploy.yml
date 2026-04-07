@@ -208,7 +208,7 @@ jobs:
           org: ministryofjustice
           repo: claim-assess-regression-tests
           workflow: zap.yml
-          ref: main
+          ref: CLAS-266
           extra-args: '-f target="http://localhost:3000"'
 
   deploy-uat:
