@@ -54,3 +54,8 @@ runs:
       shell: bash
       run: |
         gh run watch "$RUN_ID" --repo "${{ inputs.org }}/${{ inputs.repo }}"
+        CONCLUSION=$(gh run view $RUN_ID --json conclusion -q .conclusion)
+        echo "Conclusion: $CONCLUSION" 
+        if [ "$CONCLUSION" != "success" ]; then
+          exit 1
+        fi
