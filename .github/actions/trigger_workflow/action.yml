@@ -53,7 +53,7 @@ runs:
     - name: Wait for workflow run to finish
       shell: bash
       run: |
-        gh run watch "$RUN_ID" --repo "${{ inputs.org }}/${{ inputs.repo }}"
+        gh run watch "$RUN_ID" --repo "${{ inputs.org }}/${{ inputs.repo }}" -i 10
         CONCLUSION=$(gh run view $RUN_ID --json conclusion -q .conclusion)
         echo "Conclusion: $CONCLUSION" 
         if [ "$CONCLUSION" != "success" ]; then
