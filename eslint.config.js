@@ -112,7 +112,9 @@ export default [
       "tests/**/*.spec.ts",
       "docs/source/javascripts/application.js", // Parsing error this file was not found by the project service. Consider either including it in the `tsconfig.json` or including it in `allowDefaultProject`
       "eslint.config.js", // Parsing error this file was not found by the project service. Consider either including it in the `tsconfig.json` or including it in `allowDefaultProject`
-      "[0-9a-f]*/**" // Ignore SHA-named directory
+      "[0-9a-f]*/**", // Ignore SHA-named directory
+      "openapi-ts.config.ts",
+      "src/generated/**"
     ],
   },
 ];

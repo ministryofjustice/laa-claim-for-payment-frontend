@@ -1,190 +1,185 @@
-import sinon from "sinon";
 import { expect } from "chai";
+import sinon from "sinon";
 import { claimService } from "#src/services/claimService.js";
-import { AxiosInstance } from "#node_modules/axios/index.js";
-import { getClaimsEndpoint } from "#src/api/apiEndpointConstants.js";
 
-describe("Claim Service:", () => {
+describe("Claim Service", () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
   describe("getClaims", () => {
-    let axiosStub: sinon.SinonStubbedInstance<AxiosInstance>;
-    let configureAxiosStub: sinon.SinonStub;
-
-    beforeEach(() => {
-      axiosStub = { get: sinon.stub() } as any;
-      configureAxiosStub = sinon
-        .stub(claimService as any, "configureAxiosInstance")
-        .returns(axiosStub);
-    });
-
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it("should call axios with the claim endpoint", async () => {
-      const mockEmptyData = { data: [] };
-      axiosStub.get.resolves(mockEmptyData);
-
-      await claimService.getClaims({} as any, {} as any);
-
-      sinon.assert.calledWith(axiosStub.get, getClaimsEndpoint);
-      sinon.assert.calledWith(configureAxiosStub, {});
-    });
-
-
-    it("should call axios with the claim endpoint with data", async () => {
-      const mockData = { data: {
-        claims: [
-            {
-              id: 0,
-              ufn: "string",
-              providerUserId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-              client: "string",
-              category: "string",
-              concluded: "2026-03-12",
-              feeType: "string",
-              claimed: 0,
-              submissionId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-            }
-          ],
-          page: 1,
-          limit: 0,
-          total: 0,
-          totalPages: 0
-        }
-      }
-
-      const expectedData = {
-              id: 0,
-              ufn: "string",
-              providerUserId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-              client: "string",
-              category: "string",
-              concluded: new Date("2026-03-12"),
-              feeType: "string",
-              claimed: 0,
-              submissionId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-            }
-
-      axiosStub.get.resolves(mockData);
-
-      const result = await claimService.getClaims({} as any, {} as any);
-
-      sinon.assert.calledWith(axiosStub.get, getClaimsEndpoint);
-      sinon.assert.calledWith(configureAxiosStub, {});
-      expect(result.body?.meta).to.include({page: 1, limit: 0, total: 0, totalPages: 0})
-      expect(result.body?.data).to.deep.include(expectedData)
-    });
-
-    it("should call axios with page and limit query params", async () => {
-      const mockData = {
-        data: {
-          claims: [],
-          page: 1,
-          limit: 10,
-          total: 0,
-          totalPages: 0,
-        },
-      };
-
-      axiosStub.get.resolves(mockData);
-
-      await claimService.getClaims({} as any, 2, 10);
-
-      sinon.assert.calledWith(
-        axiosStub.get,
-        getClaimsEndpoint,
-        {
-          params: {
+    it("returns success with paginated claims data", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaims: sinon.stub().resolves({
+          data: {
+            claims: [
+              {
+                id: 1,
+                ufn: "UFN-1",
+                providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
+                client: "Jane Doe",
+                category: "Category A",
+                concluded: "2026-03-12",
+                feeType: "Fixed",
+                claimed: 123.45,
+                submissionId: "3fa85f64-5717-4567-b3fc-2c963f66afa7",
+              },
+            ],
             page: 2,
             limit: 10,
+            total: 1,
+            totalPages: 1,
           },
-        }
+        }),
+        getClaim: sinon.stub(),
+      };
+
+      const result = await claimService.getClaims(
+        { axiosInstance: {} } as any,
+        2,
+        10,
+        deps as any
       );
-    });
 
-    it("returns empty data if the response is not an array", async () => {
-      const mockData = { data: "just a string" };
-      axiosStub.get.resolves(mockData);
-
-      const result = await claimService.getClaims({} as any, {} as any);
-
-      sinon.assert.calledWith(axiosStub.get, getClaimsEndpoint);
-      sinon.assert.calledWith(configureAxiosStub, {});
-
-      expect(result.status).to.equal("error");
-      expect(result).to.have.property("message").that.is.a("string").and.is.not.empty;
-      expect(result).to.not.have.property("body")
-    });
-
-    it("should return empty data and an error when axios fails", async () => {
-      const error = new Error("Network error");
-      axiosStub.get.rejects(error);
-      const errorMessage = "An unexpected error occurred. Please try again.";
-
-      const result = await claimService.getClaims({} as any, {} as any);
-
-      expect(result.status).to.equal("error");
-      expect(result).to.include({
-        message: errorMessage,
+      expect(result.status).to.equal("success");
+      expect(result.body?.meta).to.include({
+        page: 2,
+        limit: 10,
+        total: 1,
+        totalPages: 1,
       });
-      expect(result).to.not.have.property("body")
+      expect(result.body?.data).to.deep.equal([
+        {
+          id: 1,
+          ufn: "UFN-1",
+          providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
+          client: "Jane Doe",
+          category: "Category A",
+          concluded: new Date("2026-03-12"),
+          feeType: "Fixed",
+          claimed: 123.45,
+          submissionId: "3fa85f64-5717-4567-b3fc-2c963f66afa7",
+        },
+      ]);
+    });
+
+    it("returns error shape when the API call fails", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaims: sinon.stub().rejects(new Error("boom")),
+        getClaim: sinon.stub(),
+      };
+
+      const result = await claimService.getClaims(
+        { axiosInstance: {} } as any,
+        1,
+        10,
+        deps as any
+      );
+
+      expect(result.status).to.equal("error");
+      expect(result.message).to.be.a("string").and.not.empty;
+      expect(result).to.not.have.property("body");
+    });
+
+    it("returns error shape when the response shape is invalid", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaims: sinon.stub().resolves({
+          data: { foo: "bar" },
+        }),
+        getClaim: sinon.stub(),
+      };
+
+      const result = await claimService.getClaims(
+        { axiosInstance: {} } as any,
+        1,
+        10,
+        deps as any
+      );
+
+      expect(result.status).to.equal("error");
+      expect(result.message).to.be.a("string").and.not.empty;
+      expect(result).to.not.have.property("body");
     });
   });
 
   describe("getClaim", () => {
-    let axiosStub: sinon.SinonStubbedInstance<AxiosInstance>;
-    let configureAxiosStub: sinon.SinonStub;
+    it("returns success with a claim", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaims: sinon.stub(),
+        getClaim: sinon.stub().resolves({
+          data: {
+            id: 123,
+            ufn: "UFN-123",
+            providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
+            client: "Jane Doe",
+            category: "Something",
+            concluded: "2024-01-02T10:00:00Z",
+            feeType: "Fixed",
+            claimed: 4500,
+            submissionId: "sub-1",
+          },
+        }),
+      };
 
-    beforeEach(() => {
-      axiosStub = { get: sinon.stub() } as any;
-      configureAxiosStub = sinon
-        .stub(claimService as any, "configureAxiosInstance")
-        .returns(axiosStub);
-    });
+      const result = await claimService.getClaim(
+        { axiosInstance: {} } as any,
+        123,
+        deps as any
+      );
 
-    afterEach(() => {
-      sinon.restore();
-    });
-
-    it("calls axios with the claim endpoint incl. id", async () => {
-      const claimId = 123;
-      axiosStub.get.resolves({ status: 200, data: { id: claimId } });
-
-      await (claimService as any).getClaim({} as any, claimId);
-
-      const expectedUrl = `/api/v1/claims/${encodeURIComponent(String(claimId))}`;
-      sinon.assert.calledWith(axiosStub.get, expectedUrl);
-      sinon.assert.calledWith(configureAxiosStub, {});
-    });
-
-    it("returns success with the claim body", async () => {
-      const claimId = 456;
-      const claim = {
-        id: claimId,
+      expect(result.status).to.equal("success");
+      expect(result.body).to.deep.equal({
+        id: 123,
+        ufn: "UFN-123",
+        providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
         client: "Jane Doe",
         category: "Something",
         concluded: new Date("2024-01-02T10:00:00Z"),
         feeType: "Fixed",
         claimed: 4500,
         submissionId: "sub-1",
-      };
-      axiosStub.get.resolves({ status: 200, data: claim });
-
-      const result = await (claimService as any).getClaim({} as any, claimId);
-
-      expect(result.status).to.equal("success");
-      expect(result).to.have.property("body");
-      expect(result.body).to.deep.equal(claim);
+      });
     });
 
-    it("returns error when axios fails", async () => {
-      const claimId = 999;
-      axiosStub.get.rejects(new Error("Network error"));
+    it("returns error shape when the API call fails", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaims: sinon.stub(),
+        getClaim: sinon.stub().rejects(new Error("boom")),
+      };
 
-      const result = await (claimService as any).getClaim({} as any, claimId);
+      const result = await claimService.getClaim(
+        { axiosInstance: {} } as any,
+        999,
+        deps as any
+      );
 
       expect(result.status).to.equal("error");
-      expect(result).to.have.property("message").that.is.a("string").and.is.not.empty;
+      expect(result.message).to.be.a("string").and.not.empty;
+      expect(result).to.not.have.property("body");
+    });
+
+    it("returns error shape when the response shape is invalid", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaims: sinon.stub(),
+        getClaim: sinon.stub().resolves({
+          data: { invalid: true },
+        }),
+      };
+
+      const result = await claimService.getClaim(
+        { axiosInstance: {} } as any,
+        123,
+        deps as any
+      );
+
+      expect(result.status).to.equal("error");
+      expect(result.message).to.be.a("string").and.not.empty;
       expect(result).to.not.have.property("body");
     });
   });
