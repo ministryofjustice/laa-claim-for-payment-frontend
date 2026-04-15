@@ -152,6 +152,10 @@ const createApp = async (): Promise<express.Application> => {
     console.log(chalk.yellow(`Listening on port ${config.app.port}...`));
   });
 
+  app.use((req, res, next) => {
+    res.status(404).send("Page not found")
+  })
+
   return app;
 };
 
