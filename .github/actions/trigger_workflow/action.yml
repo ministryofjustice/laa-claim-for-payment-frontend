@@ -53,9 +53,20 @@ runs:
     - name: Wait for workflow run to finish
       shell: bash
       run: |
-        gh run watch "$RUN_ID" --repo "${{ inputs.org }}/${{ inputs.repo }}" -i 10
-        CONCLUSION=$(gh run view $RUN_ID --json conclusion -q .conclusion)
-        echo "Conclusion: $CONCLUSION" 
-        if [ "$CONCLUSION" != "success" ]; then
-          exit 1
-        fi
+        while true; do
+          DETAILS=$(gh run view "$RUN_ID" --repo "${{ inputs.org }}/${{ inputs.repo }}" --json status,conclusion)
+          STATUS=$(echo "$DETAILS" | jq -r '.status')
+          CONCLUSION=$(echo "$DETAILS" | jq -r '.conclusion')
+
+          echo "Status: $STATUS"
+
+          if [ "$STATUS" == "completed" ]; then
+            echo "Conclusion: $CONCLUSION"
+            if [ "$CONCLUSION" != "success" ]; then
+              exit 1
+            fi
+            break
+          fi
+
+          sleep 10
+        done
