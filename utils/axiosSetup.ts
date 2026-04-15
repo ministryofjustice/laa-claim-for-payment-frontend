@@ -1,6 +1,6 @@
 // middleware/axios.ts
 import { type AxiosInstanceWrapper, create } from 'middleware-axios';
-import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import axios, { type AxiosResponse, type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import type { Request, Response, NextFunction } from 'express';
 import {refreshTokenGrant, type TokenEndpointResponse} from 'openid-client';
 import { constants as Http } from 'node:http2';
@@ -61,6 +61,31 @@ export const axiosMiddleware = (req: Request, _res: Response, next: NextFunction
 
   axiosInstanceMain.interceptors.request.use(attachToken);
   axiosRetryInstance.interceptors.request.use(attachToken);
+
+  axiosInstanceMain.interceptors.request.use((request) => {
+    console.log('REQUEST', {
+      method: request.method,
+      url: request.url,
+    });
+    return request;
+  });
+
+  axiosInstanceMain.interceptors.response.use(
+    (response: AxiosResponse) => {
+      console.log("RESPONSE", {
+        status: response.status,
+        url: response.config.url,
+      });
+      return response;
+    },
+    async (error: AxiosError) => {
+      console.log("RESPONSE ERROR", {
+        status: error.response?.status,
+        url: error.config?.url,
+      });
+      return await Promise.reject(error);
+    }
+  );
 
   // Single-flight refresh gate per incoming HTTP request
   let refreshing: Promise<void> | null = null;

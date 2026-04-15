@@ -29,3 +29,6 @@ public/
 
 # Prettier Ignore
 .prettierignore
+
+# Openapi gen
+src/generated/claim-api
