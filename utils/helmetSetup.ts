@@ -42,18 +42,19 @@ export const helmetSetup = (app: Application): void => {
               // Type guard to check if res has locals property (Express response)
               if ('locals' in res && typeof res.locals === 'object' && res.locals !== null) {
                 const cspNonce = 'cspNonce' in res.locals ? res.locals.cspNonce : undefined;
-                return typeof cspNonce === 'string' ? `'nonce-${cspNonce}'` : "'unsafe-inline'";
+                return typeof cspNonce === 'string' ? `'nonce-${cspNonce}'` : "'self'";
               }
-              return "'unsafe-inline'";
+              return "'self'";
             }
           ],
-          styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles if needed
+          styleSrc: ["'self'"], // Allow inline styles if needed
           fontSrc: ["'self'", "data:"], // Allow data: URIs for fonts
           imgSrc: ["'self'", "data:"], // Allow data: URIs for images
           connectSrc: ["'self'"],
           objectSrc: ["'none'"], // Restrict <object>, <embed>, and <applet> elements
           mediaSrc: ["'self'"], // Restrict media
           frameSrc: ["'none'"], // Restrict frames
+          frameAncestors: ["'none'"], // Restrict frame ancestors
           formAction: ["'self'"], // Restrict form submissions
           baseUri: ["'self'"], // Restrict base URI
           upgradeInsecureRequests: [], // Upgrade HTTP to HTTPS
