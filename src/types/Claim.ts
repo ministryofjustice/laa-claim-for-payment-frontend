@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const ClaimSchema = z.object({
+export const ClaimResponseSchema = z.object({
   id: z.number(),
   ufn: z.string().optional(),
   providerUserId: z.string().optional(),
@@ -12,10 +12,10 @@ export const ClaimSchema = z.object({
   submissionId: z.string().optional()
 });
 
-export type Claim = z.infer<typeof ClaimSchema>;
+export type Claim = z.infer<typeof ClaimResponseSchema>;
 
 export const ClaimsResponseSchema = z.object({
-  claims: z.array(ClaimSchema),
+  claims: z.array(ClaimResponseSchema),
   page: z.number(),
   limit: z.number(),
   total: z.number(),
