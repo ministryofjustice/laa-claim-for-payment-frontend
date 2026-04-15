@@ -24,4 +24,4 @@ jobs:
           repo: claim-assess-regression-tests
           workflow: zap.yml
           ref: main
-          extra-args: '-f target="http://localhost:3000"'
+          extra-args: '-f target="http://localhost:3000" -f application="laa-claim-for-payment-frontend"'
