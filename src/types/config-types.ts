@@ -14,11 +14,18 @@ export interface CsrfConfig {
   httpOnly: boolean;
 }
 
+export interface SessionCookieConfig {
+  secure: boolean;
+  httpOnly: boolean;
+  sameSite: 'lax' | 'strict' | 'none';
+}
+
 export interface SessionConfig {
   secret: string;
   name: string;
   resave: boolean;
   saveUninitialized: boolean;
+  cookie: SessionCookieConfig;
 }
 
 export interface PathsConfig {
