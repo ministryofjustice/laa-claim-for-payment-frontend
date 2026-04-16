@@ -35,7 +35,8 @@ export function initializeI18nextSync(): void {
         lookupQuerystring: 'lng',
         lookupCookie: 'i18next',
         caches: ['cookie'],
-        cookieSecure: false
+        cookieSecure: true,
+        cookieHttpOnly: true
       },
 
       ns: Object.keys(en),
