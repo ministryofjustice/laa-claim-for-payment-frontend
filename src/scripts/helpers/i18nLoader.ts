@@ -28,6 +28,7 @@ export function initializeI18nextSync(): void {
     .use(LanguageDetector)
     .init({
       fallbackLng: 'en',
+      supportedLngs: ['en', 'cy'],
       debug: process.env.NODE_ENV === 'development',
 
       detection: {
