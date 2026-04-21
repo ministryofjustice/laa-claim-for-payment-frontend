@@ -26,19 +26,23 @@ const copyAssets = async (): Promise<void> => {
     // GOV.UK assets
     await fs.copy(
       path.resolve("./node_modules/govuk-frontend/dist/govuk/assets"),
-      path.resolve("./public/assets")
+      path.resolve("./public/assets"),
     );
     // Copy GOVUK rebrand assets for brand refresh
     await fs.copy(
       path.resolve("./node_modules/govuk-frontend/dist/govuk/assets/rebrand"),
-      path.resolve("./public/assets/rebrand")
+      path.resolve("./public/assets/rebrand"),
     );
     // Copy MOJ Frontend assets
     await fs.copy(
-      path.resolve("./node_modules/@ministryofjustice/frontend/moj/assets/images"),
-      path.resolve("./public/assets/images")
+      path.resolve(
+        "./node_modules/@ministryofjustice/frontend/moj/assets/images",
+      ),
+      path.resolve("./public/assets/images"),
     );
-    console.log("✅ GOV.UK assets (including rebrand) & MOJ Frontend assets copied successfully.");
+    console.log(
+      "✅ GOV.UK assets (including rebrand) & MOJ Frontend assets copied successfully.",
+    );
   } catch (error) {
     console.error("❌ Failed to copy assets:", error);
     process.exit(UNCAUGHT_FATAL_EXCEPTION);
@@ -70,7 +74,8 @@ const externalModules: string[] = [
   "http-errors",
   "*.node",
   "redis",
-  "connect-redis"
+  "connect-redis",
+  "express-prom-bundle",
 ];
 
 /**
@@ -79,12 +84,22 @@ const externalModules: string[] = [
  * @param {boolean} watch - Whether to enable watch mode
  * @returns {Promise<esbuild.BuildContext | undefined>} Build context if watching, undefined otherwise
  */
-const buildScss = async (watch = false): Promise<esbuild.BuildContext | undefined> => {
+const buildScss = async (
+  watch = false,
+): Promise<esbuild.BuildContext | undefined> => {
   const options: esbuild.BuildOptions = {
     entryPoints: ["src/scss/main.scss"],
     bundle: true,
     outfile: `public/css/main.${buildNumber}.css`,
-    external: ["*.woff", "*.woff2", "*.svg", "*.png", "*.jpg", "*.jpeg", "*.gif"],
+    external: [
+      "*.woff",
+      "*.woff2",
+      "*.svg",
+      "*.png",
+      "*.jpg",
+      "*.jpeg",
+      "*.gif",
+    ],
     plugins: [
       sassPlugin({
         loadPaths: [
@@ -99,8 +114,14 @@ const buildScss = async (watch = false): Promise<esbuild.BuildContext | undefine
          */
         transform: (source: string): string =>
           source
-            .replace(/url\(["']?\/assets\/fonts\/([^"')]+)["']?\)/g, 'url("/assets/fonts/$1")')
-            .replace(/url\(["']?\/assets\/images\/([^"')]+)["']?\)/g, 'url("/assets/images/$1")'),
+            .replace(
+              /url\(["']?\/assets\/fonts\/([^"')]+)["']?\)/g,
+              'url("/assets/fonts/$1")',
+            )
+            .replace(
+              /url\(["']?\/assets\/images\/([^"')]+)["']?\)/g,
+              'url("/assets/images/$1")',
+            ),
       } satisfies SassPluginOptions),
     ],
     loader: {
@@ -130,7 +151,9 @@ const buildScss = async (watch = false): Promise<esbuild.BuildContext | undefine
  * @param {boolean} watch - Whether to enable watch mode
  * @returns {Promise<esbuild.BuildContext | undefined>} Build context if watching, undefined otherwise
  */
-const buildAppJs = async (watch = false): Promise<esbuild.BuildContext | undefined> => {
+const buildAppJs = async (
+  watch = false,
+): Promise<esbuild.BuildContext | undefined> => {
   const options: esbuild.BuildOptions = {
     entryPoints: ["src/app.ts"],
     bundle: true,
@@ -167,7 +190,9 @@ const buildAppJs = async (watch = false): Promise<esbuild.BuildContext | undefin
  * @param {boolean} watch - Whether to enable watch mode
  * @returns {Promise<esbuild.BuildContext | undefined>} Build context if watching, undefined otherwise
  */
-const buildCustomJs = async (watch = false): Promise<esbuild.BuildContext | undefined> => {
+const buildCustomJs = async (
+  watch = false,
+): Promise<esbuild.BuildContext | undefined> => {
   const options: esbuild.BuildOptions = {
     entryPoints: ["src/scripts/custom.ts"],
     bundle: true,
@@ -198,7 +223,9 @@ const buildCustomJs = async (watch = false): Promise<esbuild.BuildContext | unde
  * @param {boolean} watch - Whether to enable watch mode
  * @returns {Promise<esbuild.BuildContext | undefined>} Build context if watching, undefined otherwise
  */
-const buildFrontendPackages = async (watch = false): Promise<esbuild.BuildContext | undefined> => {
+const buildFrontendPackages = async (
+  watch = false,
+): Promise<esbuild.BuildContext | undefined> => {
   const options: esbuild.BuildOptions = {
     entryPoints: ["src/scripts/frontend-packages-entry.ts"],
     bundle: true,
@@ -217,7 +244,10 @@ const buildFrontendPackages = async (watch = false): Promise<esbuild.BuildContex
     return context;
   } else {
     await esbuild.build(options).catch((error: unknown) => {
-      console.error("❌ GOV.UK frontend and/or MOJ frontend JS build failed:", error);
+      console.error(
+        "❌ GOV.UK frontend and/or MOJ frontend JS build failed:",
+        error,
+      );
       process.exit(UNCAUGHT_FATAL_EXCEPTION);
     });
     return undefined;
@@ -251,7 +281,7 @@ const watchBuild = async (): Promise<void> => {
       {
         ignored: /node_modules\/(?!govuk-frontend|@ministryofjustice)/,
         persistent: true,
-      }
+      },
     );
 
     /**
@@ -266,7 +296,9 @@ const watchBuild = async (): Promise<void> => {
 
     assetWatcher.on("change", handleAssetChange);
 
-    console.log("✅ Watch mode started successfully. Watching for file changes...");
+    console.log(
+      "✅ Watch mode started successfully. Watching for file changes...",
+    );
 
     // Keep the process alive
     /**
@@ -277,10 +309,12 @@ const watchBuild = async (): Promise<void> => {
       console.log("\n🛑 Stopping watch mode...");
       void Promise.all(
         contexts
-          .filter((context): context is esbuild.BuildContext => context !== undefined)
+          .filter(
+            (context): context is esbuild.BuildContext => context !== undefined,
+          )
           .map(async (context) => {
             await context.dispose();
-          })
+          }),
       )
         .then(() => {
           void assetWatcher.close();

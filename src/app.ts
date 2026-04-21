@@ -3,7 +3,12 @@ import express from "express";
 import chalk from "chalk";
 import morgan from "morgan";
 import compression from "compression";
-import { setupCsrf, setupMiddlewares, setupConfig, setupLocaleMiddleware } from "#middleware/index.js";
+import {
+  setupCsrf,
+  setupMiddlewares,
+  setupConfig,
+  setupLocaleMiddleware,
+} from "#middleware/index.js";
 import session from "express-session";
 import {
   nunjucksSetup,
@@ -13,7 +18,8 @@ import {
   displayAsciiBanner,
   oidcSetup,
   setupRedisSession,
-  buildRedisClient
+  buildRedisClient,
+  prometheusSetup,
 } from "#utils/index.js";
 import config from "#config.js";
 import indexRouter from "#routes/index.js";
@@ -21,9 +27,6 @@ import livereload from "connect-livereload";
 import { requiresAuth } from "#utils/openidSetup.js";
 import { initializeI18nextSync } from "./scripts/helpers/i18nLoader.js";
 import { initRedis } from "#utils/redisClient.js";
-
-
-
 
 const TRUST_FIRST_PROXY = 1;
 const SUCCESSFUL_REQUEST = 200;
@@ -73,18 +76,20 @@ const createApp = async (): Promise<express.Application> => {
         }
         return compression.filter(req, res);
       },
-    })
+    }),
   );
 
   // Set up security headers
   helmetSetup(app);
+
+  // Set up metrics
+  prometheusSetup(app);
 
   // Reducing fingerprinting by removing the 'x-powered-by' header
   app.disable("x-powered-by");
 
   // Set up cookie security for sessions
   app.set("trust proxy", TRUST_FIRST_PROXY);
-
 
   // Set up Cross-Site Request Forgery (CSRF) protection
   setupCsrf(app);
@@ -98,19 +103,18 @@ const createApp = async (): Promise<express.Application> => {
   // Set up application-specific configurations
   setupConfig(app);
 
-  if (process.env.AUTH_ENABLED === 'true') {
+  if (process.env.AUTH_ENABLED === "true") {
     // Set up the OIDC authentication
     oidcSetup(app);
-
   }
 
   // Set up request logging based on environment
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     // Use combined format for production (more structured, less verbose)
-    app.use(morgan('combined'));
+    app.use(morgan("combined"));
   } else {
     // Use dev format for development (colored, more readable)
-    app.use(morgan('dev'));
+    app.use(morgan("dev"));
   }
 
   // This middleware copies the OIDC user into res.locals for views
@@ -137,7 +141,7 @@ const createApp = async (): Promise<express.Application> => {
   });
 
   // Register the main router
-  app.use('/', requiresAuth(), injectUser, indexRouter);
+  app.use("/", requiresAuth(), injectUser, indexRouter);
 
   // Enable live-reload middleware in development mode
   if (process.env.NODE_ENV === "development") {
@@ -153,8 +157,8 @@ const createApp = async (): Promise<express.Application> => {
   });
 
   app.use((req, res, next) => {
-    res.status(404).send("Page not found")
-  })
+    res.status(404).send("Page not found");
+  });
 
   return app;
 };
