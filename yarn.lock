@@ -990,6 +990,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@opentelemetry/api@npm:^1.4.0":
+  version: 1.9.1
+  resolution: "@opentelemetry/api@npm:1.9.1"
+  checksum: 10c0/c608485fc8b5a91e1f7e05e843b45b509307456b31cd2ad365933d90813e40ebfedf179f1451c762037e82d7c76aa8500e95d2da3609f640a1206cde5322cd14
+  languageName: node
+  linkType: hard
+
 "@paralleldrive/cuid2@npm:^2.2.2":
   version: 2.3.1
   resolution: "@paralleldrive/cuid2@npm:2.3.1"
@@ -1351,6 +1358,15 @@ __metadata:
   version: 1.0.8
   resolution: "@types/estree@npm:1.0.8"
   checksum: 10c0/39d34d1afaa338ab9763f37ad6066e3f349444f9052b9676a7cc0252ef9485a41c6d81c9c4e0d26e9077993354edf25efc853f3224dd4b447175ef62bdcc86a5
+  languageName: node
+  linkType: hard
+
+"@types/express-prometheus-middleware@npm:^1":
+  version: 1.2.3
+  resolution: "@types/express-prometheus-middleware@npm:1.2.3"
+  dependencies:
+    "@types/express": "npm:*"
+  checksum: 10c0/dc85ada6fe5f84b13102b86d469eacb49413fd20146d6d8bc8fbc8c7c3a436a7553732498cc451434dbeff86c571c6087b39b8132c95627e61c93b632fd6b8bf
   languageName: node
   linkType: hard
 
@@ -2155,6 +2171,13 @@ __metadata:
   version: 2.3.0
   resolution: "binary-extensions@npm:2.3.0"
   checksum: 10c0/75a59cafc10fb12a11d510e77110c6c7ae3f4ca22463d52487709ca7f18f69d886aa387557cc9864fbdb10153d0bdb4caacabf11541f55e89ed6e18d12ece2b5
+  languageName: node
+  linkType: hard
+
+"bintrees@npm:1.0.2":
+  version: 1.0.2
+  resolution: "bintrees@npm:1.0.2"
+  checksum: 10c0/132944b20c93c1a8f97bf8aa25980a76c6eb4291b7f2df2dbcd01cb5b417c287d3ee0847c7260c9f05f3d5a4233aaa03dec95114e97f308abe9cc3f72bed4a44
   languageName: node
   linkType: hard
 
@@ -3846,6 +3869,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"express-prometheus-middleware@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "express-prometheus-middleware@npm:1.2.0"
+  dependencies:
+    prometheus-gc-stats: "npm:^0.6.2"
+    response-time: "npm:^2.3.2"
+    url-value-parser: "npm:^2.0.0"
+  peerDependencies:
+    express: 4.x
+    prom-client: ">= 10.x <= 13.x"
+  dependenciesMeta:
+    prometheus-gc-stats:
+      optional: true
+  checksum: 10c0/8f1df36304c23666943877f57057988529d0a30d7d56e37fe9849fdec806ada63cf0562f8751e73f037ae6546f75b6fcf275a0200087954e333b7dc34aba8878
+  languageName: node
+  linkType: hard
+
 "express-rate-limit@npm:^8.3.1":
   version: 8.3.1
   resolution: "express-rate-limit@npm:8.3.1"
@@ -4241,6 +4281,17 @@ __metadata:
   version: 1.2.3
   resolution: "functions-have-names@npm:1.2.3"
   checksum: 10c0/33e77fd29bddc2d9bb78ab3eb854c165909201f88c75faa8272e35899e2d35a8a642a15e7420ef945e1f64a9670d6aa3ec744106b2aa42be68ca5114025954ca
+  languageName: node
+  linkType: hard
+
+"gc-stats@npm:^1.4.0":
+  version: 1.4.1
+  resolution: "gc-stats@npm:1.4.1"
+  dependencies:
+    nan: "npm:^2.18.0"
+    node-gyp: "npm:latest"
+    node-gyp-build: "npm:^4.8.0"
+  checksum: 10c0/acfbed94479670da04a40baf30a47eaee256ad765464aa3fbd451e164a5a8e0158176777f39f5e8eb54360b92f606e973bdba9633008b4735bd40414fa87edfb
   languageName: node
   linkType: hard
 
@@ -5670,6 +5721,7 @@ __metadata:
     "@types/connect-livereload": "npm:^0.6.3"
     "@types/cookie-parser": "npm:^1.4.8"
     "@types/express": "npm:^5.0.1"
+    "@types/express-prometheus-middleware": "npm:^1"
     "@types/express-session": "npm:^1.18.1"
     "@types/figlet": "npm:^1.7.0"
     "@types/fs-extra": "npm:^11.0.4"
@@ -5709,6 +5761,7 @@ __metadata:
     eslint-config-prettier: "npm:^10.1.8"
     eslint-plugin-jsdoc: "npm:^61.5.0"
     express: "npm:^5.2.1"
+    express-prometheus-middleware: "npm:^1.2.0"
     express-rate-limit: "npm:^8.3.1"
     express-session: "npm:^1.18.2"
     express-validator: "npm:^7.3.1"
@@ -5733,6 +5786,7 @@ __metadata:
     openid-client: "npm:6.8.1"
     playwright-core: "npm:^1.56.0"
     prettier: "npm:^3.7.3"
+    prom-client: "npm:^15.1.3"
     redis: "npm:^5.8.2"
     rimraf: "npm:^6.1.2"
     sass: "npm:^1.93.2"
@@ -5821,6 +5875,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nan@npm:^2.18.0":
+  version: 2.26.2
+  resolution: "nan@npm:2.26.2"
+  dependencies:
+    node-gyp: "npm:latest"
+  checksum: 10c0/ff204c964729279cf3abb8b170c77753ed36092e2235f11bfb0204dfd3e8cc2d5a3bcfdfd3b677f06a0743d7f835d873dce59f23a2dbf6fb671d9351cc655d73
+  languageName: node
+  linkType: hard
+
 "natural-compare@npm:^1.4.0":
   version: 1.4.0
   resolution: "natural-compare@npm:1.4.0"
@@ -5855,6 +5918,17 @@ __metadata:
   version: 1.6.7
   resolution: "node-fetch-native@npm:1.6.7"
   checksum: 10c0/8b748300fb053d21ca4d3db9c3ff52593d5e8f8a2d9fe90cbfad159676e324b954fdaefab46aeca007b5b9edab3d150021c4846444e4e8ab1f4e44cd3807be87
+  languageName: node
+  linkType: hard
+
+"node-gyp-build@npm:^4.8.0":
+  version: 4.8.4
+  resolution: "node-gyp-build@npm:4.8.4"
+  bin:
+    node-gyp-build: bin.js
+    node-gyp-build-optional: optional.js
+    node-gyp-build-test: build-test.js
+  checksum: 10c0/444e189907ece2081fe60e75368784f7782cfddb554b60123743dfb89509df89f1f29c03bbfa16b3a3e0be3f48799a4783f487da6203245fa5bed239ba7407e1
   languageName: node
   linkType: hard
 
@@ -6095,6 +6169,13 @@ __metadata:
     jose: "npm:^6.1.0"
     oauth4webapi: "npm:^3.8.2"
   checksum: 10c0/57a3925478dce27bb81264a3ec93f383893b839fc3c737bfd857edfd653e74caf4f4cbff635ed836e26b06143e24595cf9cf5f0761f95eace4a1b25c1f24eff3
+  languageName: node
+  linkType: hard
+
+"optional@npm:^0.1.3":
+  version: 0.1.4
+  resolution: "optional@npm:0.1.4"
+  checksum: 10c0/45f20eff3c6037ab34cf08cfbb8632854047d092c273520dc530652097993a481e774461cb2c5f7b1e19e56d6834f3dd48773038702226f76a52b1992473ed57
   languageName: node
   linkType: hard
 
@@ -6407,6 +6488,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prom-client@npm:^15.1.3":
+  version: 15.1.3
+  resolution: "prom-client@npm:15.1.3"
+  dependencies:
+    "@opentelemetry/api": "npm:^1.4.0"
+    tdigest: "npm:^0.1.1"
+  checksum: 10c0/816525572e5799a2d1d45af78512fb47d073c842dc899c446e94d17cfc343d04282a1627c488c7ca1bcd47f766446d3e49365ab7249f6d9c22c7664a5bce7021
+  languageName: node
+  linkType: hard
+
+"prometheus-gc-stats@npm:^0.6.2":
+  version: 0.6.5
+  resolution: "prometheus-gc-stats@npm:0.6.5"
+  dependencies:
+    gc-stats: "npm:^1.4.0"
+    optional: "npm:^0.1.3"
+  peerDependencies:
+    prom-client: ">= 10 <= 14"
+  dependenciesMeta:
+    gc-stats:
+      optional: true
+  checksum: 10c0/e5f9ee9b12067cafafb169fe5625aa29971a1de7fdf899c677c2526f6546e8f69d458a4042e726a4c42fa9558fe02cea1915c3c4d98b252302a5a98e7e459b9d
+  languageName: node
+  linkType: hard
+
 "promise-retry@npm:^2.0.1":
   version: 2.0.1
   resolution: "promise-retry@npm:2.0.1"
@@ -6642,6 +6748,16 @@ __metadata:
   bin:
     resolve: bin/resolve
   checksum: 10c0/ee5b182f2e37cb1165465e58c6abc797fec0a80b5ba3231607beb4677db0c9291ac010c47cf092b6daa2b7f518d69a0e21888e7e2b633f68d501a874212a8c63
+  languageName: node
+  linkType: hard
+
+"response-time@npm:^2.3.2":
+  version: 2.3.4
+  resolution: "response-time@npm:2.3.4"
+  dependencies:
+    depd: "npm:~2.0.0"
+    on-headers: "npm:~1.1.0"
+  checksum: 10c0/c593323c1d2512258a7bf2e346d6a340e734d2ba7c75f751d8ac69f98a7f97307a9d19d57f63b4c6a8206c4d76d9f7104049e87102e57ae3c5225872ab48732b
   languageName: node
   linkType: hard
 
@@ -7511,6 +7627,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tdigest@npm:^0.1.1":
+  version: 0.1.2
+  resolution: "tdigest@npm:0.1.2"
+  dependencies:
+    bintrees: "npm:1.0.2"
+  checksum: 10c0/10187b8144b112fcdfd3a5e4e9068efa42c990b1e30cd0d4f35ee8f58f16d1b41bc587e668fa7a6f6ca31308961cbd06cd5d4a4ae1dc388335902ae04f7d57df
+  languageName: node
+  linkType: hard
+
 "test-exclude@npm:^7.0.1":
   version: 7.0.1
   resolution: "test-exclude@npm:7.0.1"
@@ -7928,6 +8053,13 @@ __metadata:
   dependencies:
     punycode: "npm:^2.1.0"
   checksum: 10c0/4ef57b45aa820d7ac6496e9208559986c665e49447cb072744c13b66925a362d96dd5a46c4530a6b8e203e5db5fe849369444440cb22ecfc26c679359e5dfa3c
+  languageName: node
+  linkType: hard
+
+"url-value-parser@npm:^2.0.0":
+  version: 2.2.0
+  resolution: "url-value-parser@npm:2.2.0"
+  checksum: 10c0/774987d219ace10a023af1f361f9ff092d706adc2e2901694e7a23bdb7544a9576ecc98305839c84d4e50e80ce88f6f1703f5240bcd4e7f2fd39a1033100ff8e
   languageName: node
   linkType: hard
 
