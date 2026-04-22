@@ -45,6 +45,10 @@ service:
   type: ClusterIP
   port: 80
 
+managementService:
+  type: ClusterIP
+  port: 2999
+
 ingress:
   enabled: true
   hosts:
@@ -120,6 +124,7 @@ env:
   REDIS_AUTH_TOKEN:
     name: claimandassess-claim-redis
     key: auth_token
+  MANAGEMENT_PORT: 2999
 
 autoscaling:
   enabled: false

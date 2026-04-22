@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "laa-claim-for-payment-frontend.fullname" . }}-management
+  labels:
+    {{- include "laa-claim-for-payment-frontend.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.managementService.port }}
+      targetPort: management
+      protocol: TCP
+      name: management
+  selector:
+    {{- include "laa-claim-for-payment-frontend.selectorLabels" . | nindent 4 }}
