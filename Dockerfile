@@ -36,8 +36,8 @@ USER 1001
 # Set HOME environment variable to fix corepack cache issues
 ENV HOME=/app
 
-# Expose the port the app runs on
-EXPOSE 3000
+# Expose the ports the apps runs on
+EXPOSE 3000 2999
 
 # Define the command to run the application
 CMD ["node", "public/app.js"]
