@@ -2,6 +2,7 @@
 
 export interface AppConfig {
   port: number;
+  managementPort: number;
   environment: string;
   appName: string;
   useHttps: boolean;
