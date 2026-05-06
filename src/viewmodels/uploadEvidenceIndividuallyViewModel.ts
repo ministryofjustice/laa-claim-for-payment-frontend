@@ -13,14 +13,15 @@ export class UploadEvidenceIndividuallyViewModel {
   /** Creates a view model containing the task lists data. */
   constructor() {
     this.billNarrativeTasks =
-      UploadEvidenceIndividuallyViewModel.buildBillNarrativeRows();
+      UploadEvidenceIndividuallyViewModel.buildBillNarrativeTasks();
     this.workItemsTasks =
-      UploadEvidenceIndividuallyViewModel.buildWorkItemsRows();
+      UploadEvidenceIndividuallyViewModel.buildWorkItemsTasks();
     this.disbursementsTasks =
-      UploadEvidenceIndividuallyViewModel.buildDisbursementsRows();
+      UploadEvidenceIndividuallyViewModel.buildDisbursementsTasks();
   }
 
-  private static buildBillNarrativeRows(): EvidenceTask[] {
+  // TODO - only show if a bill narrative is present in the claim
+  private static buildBillNarrativeTasks(): EvidenceTask[] {
     return [
       {
         link: {
@@ -32,7 +33,8 @@ export class UploadEvidenceIndividuallyViewModel {
     ];
   }
 
-  private static buildWorkItemsRows(): EvidenceTask[] {
+  // TODO - use line items to populate the work items tasks
+  private static buildWorkItemsTasks(): EvidenceTask[] {
     return [
       {
         link: {
@@ -58,7 +60,8 @@ export class UploadEvidenceIndividuallyViewModel {
     ];
   }
 
-  private static buildDisbursementsRows(): EvidenceTask[] {
+  // TODO - use line items to populate the disbursements tasks
+  private static buildDisbursementsTasks(): EvidenceTask[] {
     return [
       {
         link: {
