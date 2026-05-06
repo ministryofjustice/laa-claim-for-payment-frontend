@@ -1,0 +1,9 @@
+{% from "components/renderMessage.njk" import renderMessage %}
+
+{% macro renderTextOrMessage(t, value) %}
+  {% if value.key %}
+    {{ renderMessage(t, value) }}
+  {% else %}
+    {{ value }}
+  {% endif %}
+{% endmacro %}

@@ -1,0 +1,39 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/task-list/macro.njk" import govukTaskList %}
+{% from "components/taskList.njk" import taskList %}
+
+{% extends "base.njk" %}
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      {{ govukBackLink({ text: t('common.back'), href: "#" }) }}
+
+      <h1 class="govuk-heading-xl">{{ t('pages.uploadEvidenceIndividually.title') }}</h1>
+
+      <p class="govuk-body">{{ t('pages.uploadEvidenceIndividually.examples') }}</p>
+
+      <h2 class="govuk-heading-m">{{ t('pages.uploadEvidenceIndividually.reusingDocuments.h2') }}</h2>
+      <p class="govuk-body">{{ t('pages.uploadEvidenceIndividually.reusingDocuments.p') }}</p>
+
+      <h2 class="govuk-heading-m">{{ t('pages.uploadEvidenceIndividually.namingFiles.h2') }}</h2>
+      <p class="govuk-body">{{ t('pages.uploadEvidenceIndividually.namingFiles.p1') }}</p>
+      <p class="govuk-body">{{ t('pages.uploadEvidenceIndividually.namingFiles.p2') }}</p>
+
+      <h2 class="govuk-heading-m">{{ t('pages.uploadEvidenceIndividually.billNarrative.h2') }}</h2>
+      {{ taskList(t, vm.billNarrativeTasks, "bill-narrative") }}
+
+      <h2 class="govuk-heading-m">{{ t('pages.uploadEvidenceIndividually.workItems.h2') }}</h2>
+      {{ taskList(t, vm.workItemsTasks, "work-items") }}
+
+      <h2 class="govuk-heading-m">{{ t('pages.uploadEvidenceIndividually.disbursements.h2') }}</h2>
+      {{ taskList(t, vm.disbursementsTasks, "disbursements") }}
+
+      <div class="govuk-button-group">
+        <a class="govuk-button" href="#">{{ t('common.saveAndContinue') }}</a>
+        <a class="govuk-button govuk-button--secondary" href="#">{{ t('common.saveAndComeBackLater') }}</a>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
