@@ -1,4 +1,4 @@
-{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "components/backLink.njk" import backLink %}
 {% from "govuk/components/task-list/macro.njk" import govukTaskList %}
 {% from "components/taskList.njk" import taskList %}
 
@@ -7,7 +7,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      {{ govukBackLink({ text: t('common.back'), href: "#" }) }}
+      {{ backLink(t) }}
 
       <h1 class="govuk-heading-xl">{{ t('pages.uploadEvidenceIndividually.title') }}</h1>
 

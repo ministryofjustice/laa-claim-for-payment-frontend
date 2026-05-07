@@ -1,10 +1,10 @@
-{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "components/backLink.njk" import backLink %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% extends "base.njk" %}
 {% block content %}
 
-  {{ govukBackLink({ text: "Back", href: vm.backLink }) }}
+  {{ backLink(t) }}
 
   <span class="govuk-caption-l">Claim</span>
   <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">{{ vm.title }}</h1>
