@@ -4,6 +4,7 @@
     "change": "Newid",
     "remove": "Dileu",
     "save": "Arbed",
+    "saveAndContinue": "TODO",
     "cancel": "Canslo",
     "signOut": "Arwyddo allan",
     "yes": "Iawn",
@@ -35,6 +36,20 @@
     },
     "claims" : {
       "title": "welsh"
+    },
+    "chooseUpload" : {
+      "title" : "title",
+      "allAtOnce": {
+        "text" : "single",
+        "hint" : "hint single"
+      },
+      "associatedToLineItems" : {
+        "text" : "multi",
+        "hint" : "hint multi"
+      },
+      "error" : {
+        "empty" : "select one"
+      }
     },
     "error": {
       "pageTitle": "Sorry, there is a problem with the service – {SERVICE_NAME} – GOV.UK"
