@@ -1,0 +1,3 @@
+{% macro renderMessage(t, value) %}
+  {{ t(value.key, value.args) }}
+{% endmacro %}
