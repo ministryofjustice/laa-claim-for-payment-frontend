@@ -1,15 +1,23 @@
 export const fileUploadFieldName = "fileUploadChoice" as const;
 
+export const FileUploadChoice = {
+  AllAtOnce: "all-at-once",
+  AssociatedToLineItems: "associated-to-line-items",
+} as const;
+
+export type FileUploadChoice =
+  (typeof FileUploadChoice)[keyof typeof FileUploadChoice];
+
 export const fileUploadChoices = [
   {
-    value: "all-at-once",
+    value: FileUploadChoice.AllAtOnce,
     text: "pages.chooseUpload.allAtOnce.text",
     hint: {
       text: "pages.chooseUpload.allAtOnce.hint",
     },
   },
   {
-    value: "associated-to-line-items",
+    value: FileUploadChoice.AssociatedToLineItems,
     text: "pages.chooseUpload.associatedToLineItems.text",
     hint: {
       text: "pages.chooseUpload.associatedToLineItems.hint",
@@ -53,6 +61,6 @@ export class ChooseUploadViewModel {
  * @param {unknown} value The submitted file upload choice.
  * @returns {boolean} Whether the submitted choice is valid.
  */
-export function isValidFileUploadChoice(value: unknown): boolean {
+export function isValidFileUploadChoice(value: unknown): value is FileUploadChoice {
   return fileUploadChoices.some((choice) => choice.value === value);
 }

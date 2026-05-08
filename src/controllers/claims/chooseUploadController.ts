@@ -1,6 +1,7 @@
 import { createProcessedError } from "#src/helpers/errorHandler.js";
 import {
   ChooseUploadViewModel,
+  FileUploadChoice,
   fileUploadFieldName,
   isValidFileUploadChoice,
 } from "#src/viewmodels/chooseUploadViewModel.js";
@@ -59,14 +60,12 @@ export function submitChooseFileUpload(
       return;
     }
 
-    if (selectedChoice === "all-at-once") {
-      res.redirect("/all-at-once-file-upload"); // todo wire in ROUTES
-      return;
-    }
+    const redirectByFileUploadChoice: Record<FileUploadChoice, string> = {
+      [FileUploadChoice.AllAtOnce]: "/all-at-once-file-upload",
+      [FileUploadChoice.AssociatedToLineItems]: "/multiple-file-upload",
+    };
 
-    if (selectedChoice === "associated-to-line-items") {
-      res.redirect("/multiple-file-upload"); // todo wire in ROUTES
-    }
+    res.redirect(redirectByFileUploadChoice[selectedChoice]);
   } catch (error) {
     const processedError = createProcessedError(
       error,
