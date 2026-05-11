@@ -1,0 +1,60 @@
+{% from "components/backLink.njk" import backLink %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% extends "base.njk" %}
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      
+      {% set radioItems = [] %}
+
+      {% for choice in vm.form.choices %}
+      {% set radioItems = (radioItems.push({
+          value: choice.value,
+          text: t(choice.text),
+          hint: {
+              text: t(choice.hint.text)
+          }
+      }), radioItems) %}
+      {% endfor %}
+
+      {{ backLink(t) }}
+
+      {% if vm.form.error %}
+      {{ govukErrorSummary({
+          titleText: t("common.errorSummaryTitle"),
+          errorList: [
+          {
+              text: t(vm.form.error.text),
+              href: "#" + vm.form.fieldName
+          }
+          ]
+      }) }}
+      {% endif %}
+
+    <form method="post">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+      {{ govukRadios({
+      name: vm.form.fieldName,
+      fieldset: {
+          legend: {
+          text: t("pages.chooseUpload.title"),
+          isPageHeading: true,
+          classes: "govuk-fieldset__legend--xl"
+          }
+      },
+      errorMessage: {text: t(vm.form.error.text)} if vm.form.error ,
+      items: radioItems
+      }) }}
+
+      {{ govukButton({
+          text: t("common.saveAndContinue")
+      }) }}
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

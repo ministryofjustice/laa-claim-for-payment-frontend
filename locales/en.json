@@ -43,6 +43,20 @@
     "claims" : {
       "title": "English"
     },
+    "chooseUpload" : {
+      "title" : "How do you want to upload your evidence screen?",
+      "allAtOnce": {
+        "text" : "All at once",
+        "hint" : "Upload evidence all at once, without associating it to specific work items or disbursements"
+      },
+      "associatedToLineItems" : {
+        "text" : "Associated to specific line items",
+        "hint" : "Upload evidence individually, and associate specific evidence with individual work items or disbursements. This makes it less likely that your claim will be ejected due to a lack of documentation"
+      },
+      "error" : {
+        "empty" : "Select how you want to upload your evidence"
+      }
+    },
     "error": {
       "pageTitle": "Sorry, there is a problem with the service – {SERVICE_NAME} – GOV.UK"
     },

@@ -4,7 +4,7 @@ import type { Request, Response, NextFunction } from "express";
 import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
 import { parseNumberQueryParam } from "#src/helpers/index.js";
 import { InvalidPageError } from "#src/types/errors.js";
-import { ROUTES } from "#routes/index.js";
+import { buildRoute, ROUTES } from "#routes/helper.js";
 
 const NOT_FOUND = 404;
 
@@ -36,6 +36,9 @@ export async function handleYourClaimsPage(
         rows: claimsTableViewModel.rows,
         head: claimsTableViewModel.head,
         pagination: claimsTableViewModel.pagination,
+        createClaimHref: buildRoute(ROUTES.CHOOSE_UPLOAD, {
+          claimId: 1, //todo test only
+        }),
       });
     } else {
       res.status(NOT_FOUND).render("main/error.njk", {

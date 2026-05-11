@@ -4,12 +4,9 @@ import { handleYourClaimsPage } from "#src/controllers/viewClaimsController.js";
 import type { NextFunction, Request, Response } from "express";
 import express from "express";
 import { viewUploadEvidenceIndividuallyPage } from "#src/controllers/claims/uploadEvidenceIndividuallyController.js";
+import { chooseFileUpload, submitChooseFileUpload } from "#src/controllers/claims/chooseUploadController.js";
+import { ROUTES } from "./helper.js";
 
-export const ROUTES = {
-  CLAIMS: "/",
-  VIEW_CLAIM: "/claims/:claimId",
-  UPLOAD_EVIDENCE_INDIVIDUALLY: "/claims/:claimId/upload-evidence-individually",
-} as const;
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -56,6 +53,16 @@ router.get(
     await viewUploadEvidenceIndividuallyPage(req, res, next);
   },
 );
+
+/* GET choose how to upload file page. */
+router.get(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response, next: NextFunction): void {
+  chooseFileUpload(req, res, next);
+});
+
+/* POST choose how to upload file page. */
+router.post(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response, next: NextFunction): void {
+  submitChooseFileUpload(req, res, next);
+});
 
 // Make an API call with `Axios` and `middleware-axios`
 // GET users from external API
