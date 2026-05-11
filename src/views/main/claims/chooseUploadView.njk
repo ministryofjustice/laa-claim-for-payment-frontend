@@ -5,52 +5,56 @@
 
 {% extends "base.njk" %}
 {% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      
+      {% set radioItems = [] %}
 
-    {% set radioItems = [] %}
+      {% for choice in vm.form.choices %}
+      {% set radioItems = (radioItems.push({
+          value: choice.value,
+          text: t(choice.text),
+          hint: {
+              text: t(choice.hint.text)
+          }
+      }), radioItems) %}
+      {% endfor %}
 
-    {% for choice in vm.form.choices %}
-    {% set radioItems = (radioItems.push({
-        value: choice.value,
-        text: t(choice.text),
-        hint: {
-            text: t(choice.hint.text)
-        }
-    }), radioItems) %}
-    {% endfor %}
+      {{ backLink(t) }}
 
-    {{ backLink(t) }}
+      {% if vm.form.error %}
+      {{ govukErrorSummary({
+          titleText: t("common.errorSummaryTitle"),
+          errorList: [
+          {
+              text: t(vm.form.error.text),
+              href: "#" + vm.form.fieldName
+          }
+          ]
+      }) }}
+      {% endif %}
 
-    {% if vm.form.error %}
-    {{ govukErrorSummary({
-        titleText: t("common.errorSummaryTitle"),
-        errorList: [
-        {
-            text: t(vm.form.error.text),
-            href: "#" + vm.form.fieldName
-        }
-        ]
-    }) }}
-    {% endif %}
+    <form method="post">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
-  <form method="post">
-    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+      {{ govukRadios({
+      name: vm.form.fieldName,
+      fieldset: {
+          legend: {
+          text: t("pages.chooseUpload.title"),
+          isPageHeading: true,
+          classes: "govuk-fieldset__legend--xl"
+          }
+      },
+      errorMessage: {text: t(vm.form.error.text)} if vm.form.error ,
+      items: radioItems
+      }) }}
 
-    {{ govukRadios({
-    name: vm.form.fieldName,
-    fieldset: {
-        legend: {
-        text: t("pages.chooseUpload.title"),
-        isPageHeading: true,
-        classes: "govuk-fieldset__legend--xl"
-        }
-    },
-    errorMessage: {text: t(vm.form.error.text)} if vm.form.error ,
-    items: radioItems
-    }) }}
+      {{ govukButton({
+          text: t("common.saveAndContinue")
+      }) }}
+      </form>
 
-    {{ govukButton({
-        text: t("common.saveAndContinue")
-    }) }}
-    </form>
-
+    </div>
+  </div>
 {% endblock %}
