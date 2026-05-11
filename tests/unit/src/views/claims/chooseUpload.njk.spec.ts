@@ -27,7 +27,7 @@ describe("views/main/claims/chooseUploadView.njk", () => {
       const back = $("a.govuk-back-link");
 
       expect(back).to.have.length(1);
-      expect(back.text().trim()).to.equal("Back");
+      expect(back.text().trim()).to.equal("common.back");
       expect(back.attr("href")).to.equal("#");
     });
 

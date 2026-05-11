@@ -68,5 +68,5 @@ test('choose upload page redirects when associated to line items is selected', a
   await chooseUploadPage.chooseAssociatedToLineItems();
   await chooseUploadPage.submit();
 
-  await expect(page).toHaveURL(/multiple-file-upload/);
+  await expect(page).toHaveURL("http://localhost:3000/claims/1/upload-evidence-individually");
 });

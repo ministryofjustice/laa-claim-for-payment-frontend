@@ -1,2 +1,10 @@
 @use "govuk-frontend/dist/govuk/index";
 @use "@ministryofjustice/frontend/moj/all";
+
+body:not(.js-enabled) a[data-module="back-link"][href="#"] {
+  display: none;
+}
+
+body:not(.govuk-frontend-supported) a[data-module="back-link"][href="#"] {
+  display: none;
+}

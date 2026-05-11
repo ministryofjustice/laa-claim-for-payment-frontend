@@ -11,7 +11,13 @@
     "no": "No",
     "error": "Error",
     "warning": "Warning",
-    "errorSummaryTitle": "There is a problem"
+    "errorSummaryTitle": "There is a problem",
+    "saveAndContinue": "Save and continue",
+    "saveAndComeBackLater": "Save and come back later",
+    "uploadStatus": {
+      "notUploaded": "Not uploaded",
+      "uploaded": "Uploaded"
+    }
   },
   "navigation": {
     "mainNav": {},
@@ -36,7 +42,7 @@
       "title": "Your Claims"
     },
     "claims" : {
-        "title": "English"
+      "title": "English"
     },
     "chooseUpload" : {
       "title" : "How do you want to upload your evidence screen?",
@@ -54,6 +60,28 @@
     },
     "error": {
       "pageTitle": "Sorry, there is a problem with the service – {SERVICE_NAME} – GOV.UK"
+    },
+    "uploadEvidenceIndividually": {
+      "title": "Upload evidence individually",
+      "examples": "Examples of evidence include: a single court order, a bundle of court orders, court attendance notes.",
+      "reusingDocuments": {
+        "h2": "Reusing documents",
+        "p": "You can upload a document once and apply it to multiple work items."
+      },
+      "namingFiles": {
+        "h2": "Naming files",
+        "p1": "Files often have long, meaningless names, but if you rename them to an understandable name it will make it easier for us to assess your case.",
+        "p2": "For example, interim-hearing-court-order.pdf instead of file23.pdf."
+      },
+      "billNarrative": {
+        "h2": "Bill narrative"
+      },
+      "workItems": {
+        "h2": "Work items"
+      },
+      "disbursements": {
+        "h2": "Disbursements"
+      }
     }
   },
   "forms": {

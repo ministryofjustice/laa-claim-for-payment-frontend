@@ -1,4 +1,4 @@
-{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "components/backLink.njk" import backLink %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
@@ -18,7 +18,7 @@
     }), radioItems) %}
     {% endfor %}
 
-  {{ govukBackLink({ text: "Back", href: "#" }) }}
+    {{ backLink(t) }}
 
     {% if vm.form.error %}
     {{ govukErrorSummary({

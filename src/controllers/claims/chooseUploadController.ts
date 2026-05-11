@@ -1,3 +1,4 @@
+import { buildRoute, ROUTES } from "#routes/helper.js";
 import { createProcessedError } from "#src/helpers/errorHandler.js";
 import {
   ChooseUploadViewModel,
@@ -44,6 +45,8 @@ export function submitChooseFileUpload(
   next: NextFunction
 ): void {
   try {
+    const { params } = req;
+    const { claimId } = params;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedChoice: unknown = req.body?.[fileUploadFieldName];
 
@@ -62,7 +65,7 @@ export function submitChooseFileUpload(
 
     const redirectByFileUploadChoice: Record<FileUploadChoice, string> = {
       [FileUploadChoice.AllAtOnce]: "/all-at-once-file-upload",
-      [FileUploadChoice.AssociatedToLineItems]: "/multiple-file-upload",
+      [FileUploadChoice.AssociatedToLineItems]: buildRoute(ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, {claimId}),
     };
 
     res.redirect(redirectByFileUploadChoice[selectedChoice]);

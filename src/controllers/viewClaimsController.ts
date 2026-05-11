@@ -4,7 +4,7 @@ import type { Request, Response, NextFunction } from "express";
 import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
 import { parseNumberQueryParam } from "#src/helpers/index.js";
 import { InvalidPageError } from "#src/types/errors.js";
-import { buildRoute, ROUTES } from "#routes/index.js";
+import { buildRoute, ROUTES } from "#routes/helper.js";
 
 const NOT_FOUND = 404;
 

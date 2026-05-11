@@ -18,6 +18,8 @@ describe("Choose Upload Controller", () => {
   beforeEach(() => {
     req = {
       body: {},
+      path: "/claims/1/choose-upload",
+      params: { claimId: "1" },
     };
 
     renderStub = sinon.stub();
@@ -102,7 +104,7 @@ describe("Choose Upload Controller", () => {
 
       await submitChooseFileUpload(req as Request, res as Response, next);
 
-      expect(redirectStub.calledOnceWith("/multiple-file-upload")).to.be.true;
+      expect(redirectStub.calledOnceWith("/claims/1/upload-evidence-individually")).to.be.true;
       expect(renderStub.called).to.be.false;
       expect(statusStub.called).to.be.false;
     });
