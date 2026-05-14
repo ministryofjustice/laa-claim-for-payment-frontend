@@ -1,8 +1,7 @@
-import { createProcessedError } from '#src/scripts/helpers/errorHandler.js';
+import { createProcessedError } from '#src/helpers/errorHandler.js';
 import type { Request, Response, NextFunction } from 'express';
 import { claimService } from "#src/services/claimService.js";
 import { FileUploadForLineItemViewModel } from '#src/viewmodels/fileUploadForLineItemViewModel.js';
-
 
 const NOT_FOUND = 404;
 
@@ -11,6 +10,7 @@ const NOT_FOUND = 404;
  * @param {Request} req Express request object
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
+ * @returns {Promise<void>} Page to be returned
  */
 export async function fileUploadForLineItemPage(
   req: Request,
@@ -43,7 +43,7 @@ export async function fileUploadForLineItemPage(
     } else {
       res.status(NOT_FOUND).render("main/error.njk", {
         status: "404",
-        error: response.message,
+        // error: response.message,
       });
     }
   } catch (error) {

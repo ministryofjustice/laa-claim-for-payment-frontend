@@ -13,6 +13,7 @@ export class FileUploadForLineItemViewModel {
  * @param {Claim} claim Array of claims
  * @param {LineItem} lineItem Line item
  */
+// TODO: Consider taking in a claim and a lineItemId instead of duplicating json
   constructor(claim: Claim, lineItem: LineItem) {
     const { title } = lineItem;
     
