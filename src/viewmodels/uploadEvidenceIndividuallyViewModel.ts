@@ -26,7 +26,7 @@ export class UploadEvidenceIndividuallyViewModel {
       {
         link: {
           text: "Bill narrative",
-          href: "#",
+          href: "/claims/1/upload-evidence-individually/1/file-upload",
         },
         tag: this.buildTag(UploadStatus.Uploaded),
       },
@@ -39,21 +39,21 @@ export class UploadEvidenceIndividuallyViewModel {
       {
         link: {
           text: "Interim hearing on 20 December 2023",
-          href: "#",
+          href: "/claims/1/upload-evidence-individually/2/file-upload",
         },
         tag: this.buildTag(UploadStatus.NotUploaded),
       },
       {
         link: {
           text: "Interim hearing on 4 January 2024",
-          href: "#",
+          href: "/claims/1/upload-evidence-individually/3/file-upload",
         },
         tag: this.buildTag(UploadStatus.NotUploaded),
       },
       {
         link: {
           text: "Final hearing on 24 January 2024",
-          href: "#",
+          href: "/claims/1/upload-evidence-individually/4/file-upload",
         },
         tag: this.buildTag(UploadStatus.NotUploaded),
       },
@@ -66,28 +66,28 @@ export class UploadEvidenceIndividuallyViewModel {
       {
         link: {
           text: "Enquiry agent on 23 December 2023",
-          href: "#",
+          href: "/claims/1/upload-evidence-individually/5/file-upload",
         },
         tag: this.buildTag(UploadStatus.NotUploaded),
       },
       {
         link: {
           text: "Enquiry agent on 13 January 2023",
-          href: "#",
+          href: "/claims/1/upload-evidence-individually/6/file-upload",
         },
         tag: this.buildTag(UploadStatus.NotUploaded),
       },
       {
         link: {
           text: "Car mileage on 20 December 2023",
-          href: "#",
+          href: "/claims/1/upload-evidence-individually/7/file-upload",
         },
         tag: this.buildTag(UploadStatus.NotUploaded),
       },
       {
         link: {
           text: "Car mileage on 4 January 2024",
-          href: "#",
+          href: "/claims/1/upload-evidence-individually/8/file-upload",
         },
         tag: this.buildTag(UploadStatus.NotUploaded),
       },

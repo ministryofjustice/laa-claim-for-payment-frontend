@@ -2,6 +2,7 @@ export const ROUTES = {
   CLAIMS: '/',
   CHOOSE_UPLOAD: '/claims/:claimId/choose-upload',
   UPLOAD_EVIDENCE_INDIVIDUALLY: "/claims/:claimId/upload-evidence-individually",
+  UPLOAD_FILE_FOR_LINE_ITEM: "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload",
   VIEW_CLAIM: '/claims/:claimId',
 } as const;
 

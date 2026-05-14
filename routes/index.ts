@@ -6,7 +6,7 @@ import express from "express";
 import { viewUploadEvidenceIndividuallyPage } from "#src/controllers/claims/uploadEvidenceIndividuallyController.js";
 import { chooseFileUpload, submitChooseFileUpload } from "#src/controllers/claims/chooseUploadController.js";
 import { ROUTES } from "./helper.js";
-
+import { fileUploadForLineItemPage } from "#src/controllers/claims/fileUploadForLineItemController.js";
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -41,9 +41,9 @@ router.get(
   },
 );
 
-/* GET view upload evidence individually page. */
+/* GET view upload evidence individually page.*/
 router.get(
-  ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY,
+  ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY,//TODO: Needs to be renamed to line items or something similar
   limiter,
   async function (
     req: Request,
@@ -53,6 +53,18 @@ router.get(
     await viewUploadEvidenceIndividuallyPage(req, res, next);
   },
 );
+
+router.get(
+  ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
+  limiter,
+  async function(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    await fileUploadForLineItemPage(req, res, next);
+  }
+)
 
 /* GET choose how to upload file page. */
 router.get(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response, next: NextFunction): void {
