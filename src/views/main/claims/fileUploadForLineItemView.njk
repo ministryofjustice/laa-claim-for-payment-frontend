@@ -2,6 +2,10 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{%- from "govuk/components/file-upload/macro.njk" import govukFileUpload -%}
+{%- from "govuk/components/button/macro.njk" import govukButton -%}
+{%- from "govuk/components/error-summary/macro.njk" import govukErrorSummary -%}
+{%- from "moj/components/multi-file-upload/macro.njk" import mojMultiFileUpload -%}
 
 {% extends "base.njk" %}
 {% block content %}
@@ -29,7 +33,46 @@
     <h2 class="govuk-heading-m">{{ t('pages.fileUploadForLineItem.uploadFiles.title')}}</h2>
     <p class="govuk-body">{{ t('pages.fileUploadForLineItem.uploadFiles.maxSize') }}</p>
 
-    <div>SECTION FOR FILE UPLOAD</div>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {% if errorSummary.items.length %}
+          {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errorSummary.items
+          }) }}
+        {% endif %}
+
+      <form action="#" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+          {% set uploadHtml %}
+            {{ govukFileUpload({
+              id: "documents",
+              name: "documents",
+              classes: "moj-multi-file-upload__input",
+              attributes: { multiple: "" },
+              errorMessage: errorMessage
+            }) }}
+
+            {{ govukButton({
+              text: "Upload file",
+              classes: "govuk-button--secondary moj-multi-file-upload__button"
+            }) }}
+          {% endset %}
+
+          {{ mojMultiFileUpload({
+            uploadedFiles: {
+              items: uploadedFiles
+            },
+            uploadHtml: uploadHtml
+          }) }}
+
+          {{ govukButton({
+            text: "Continue"
+          }) }}
+        </form>
+      </div>
+    </div>
 
 
     <div class="govuk-button-group">

@@ -6,7 +6,8 @@ import express from "express";
 import { viewUploadEvidenceIndividuallyPage } from "#src/controllers/claims/uploadEvidenceIndividuallyController.js";
 import { chooseFileUpload, submitChooseFileUpload } from "#src/controllers/claims/chooseUploadController.js";
 import { ROUTES } from "./helper.js";
-import { fileUploadForLineItemPage } from "#src/controllers/claims/fileUploadForLineItemController.js";
+import { fileUploadForLineItemPage, uploadEvidenceFile, deleteEvidenceFile, uploadDir, continueFromFileUpload } from "#src/controllers/claims/fileUploadForLineItemController.js";
+import multer from 'multer';
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -14,6 +15,10 @@ const limiter = rateLimit({
 });
 
 const router = express.Router();
+
+const localUpload = multer({
+  dest: uploadDir,
+});
 
 /* GET home page. */
 router.get(
@@ -75,6 +80,19 @@ router.get(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response,
 router.post(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response, next: NextFunction): void {
   submitChooseFileUpload(req, res, next);
 });
+
+router.post(
+  '/ajax-upload',
+  localUpload.single('documents'),
+  uploadEvidenceFile,
+);
+
+router.post('/ajax-delete', deleteEvidenceFile);
+
+router.post(
+  '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload',
+  continueFromFileUpload,
+);
 
 // Make an API call with `Axios` and `middleware-axios`
 // GET users from external API

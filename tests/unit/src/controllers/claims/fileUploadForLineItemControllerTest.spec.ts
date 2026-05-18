@@ -1,14 +1,18 @@
 import { afterEach, beforeEach, describe, it } from "mocha";
 import { expect } from "chai";
 import * as sinon from "sinon";
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import "#utils/axiosSetup.js";
 import { claimService } from "#src/services/claimService.js";
 import { getClaimSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { fileUploadForLineItemPage } from "#src/controllers/claims/fileUploadForLineItemController.js";
+import { uploadEvidenceFile } from "#src/controllers/claims/fileUploadForLineItemController.js";
+import { deleteEvidenceFile, uploadDir } from '#src/controllers/claims/fileUploadForLineItemController.js'
 import { ApiResponse } from "#src/types/api-types.js";
 import { Claim } from "#src/types/Claim.js";
 import { viewClaimPage } from "#src/controllers/claims/viewClaimController.js";
+import fs from 'node:fs';
+import path from 'node:path';
 
 describe("View File Upload For Line Item Controller", () => {
   let req: Partial<Request>;
@@ -32,6 +36,9 @@ describe("View File Upload For Line Item Controller", () => {
     render: renderStub,
     status: statusStub,
     redirect: sinon.spy(),
+    locals: {
+      csrfToken: 'test-csrf-token',
+    },
   };
 
   next = sinon.stub();
@@ -55,7 +62,9 @@ describe("View File Upload For Line Item Controller", () => {
 
       expect(claimServiceStub.calledOnce).to.be.true;
       expect(claimServiceStub.calledWith(req.axiosMiddleware)).to.be.true;
-      expect(renderStub.calledWith("main/claims/fileUploadForLineItemView.njk")).to.be.true;
+      expect(renderStub.calledOnce).to.be.true;
+      expect(renderStub.firstCall.args[0]).to.equal("main/claims/fileUploadForLineItemView.njk",);
+      expect(renderStub.firstCall.args[1]).to.have.property("vm");
 
     });
 
@@ -106,6 +115,138 @@ describe("View File Upload For Line Item Controller", () => {
       expect(claimServiceStub.calledOnce).to.be.true;
       expect(claimServiceStub.calledWith(req.axiosMiddleware)).to.be.true;
       expect(renderStub.calledWith("main/error.njk")).to.be.true;
+    });
+
+    it("returns 400 when no file is uploaded", async() =>{
+      const req = {} as Request;
+      const status = sinon.stub().returnsThis();
+      const json = sinon.stub();
+
+      const res = {
+        status,
+        json,
+      } as unknown as Response;
+
+      const next = sinon.stub();
+
+      await uploadEvidenceFile(
+        req,
+        res,
+        next as unknown as NextFunction,
+      );
+
+      expect(status.calledWith(400)).to.equal(true);
+      expect(json.calledWith({
+        error: 'No file uploaded',
+      })).to.equal(true);
+      expect(next.called).to.equal(false);
+    });
+
+    it("returns uploaded file details when a file is uploaed", async() => {
+      const req = {
+        file: {
+          filename: 'abc123',
+          originalname: 'evidence.pdf',
+          size: 12345,
+        },
+      } as Request;
+
+      const status = sinon.stub().returnsThis();
+      const json = sinon.stub();
+
+      const res = {
+        status,
+        json,
+      } as unknown as Response;
+
+      const next = sinon.stub();
+
+      await uploadEvidenceFile(
+        req,
+        res,
+        next as unknown as NextFunction,
+      );
+
+      expect(json.calledOnce).to.equal(true);
+
+      expect(json.firstCall.args[0]).to.deep.equal({
+        file: {
+          filename: "abc123",
+          originalname: "evidence.pdf"
+        },
+        success: {
+          messageHtml: "\n        <a href=\"#\" class=\"govuk-link\">evidence.pdf</a>\n        <span class=\"govuk-!-margin-left-2\">12KB</span>\n        <strong class=\"govuk-tag govuk-tag--green govuk-!-margin-left-4\">Uploaded</strong>\n        ",
+          messageText: "evidence.pdf uploaded",
+        }
+      });
+      expect(status.called).to.equal(false);
+      expect(next.called).to.equal(false);
     })
+
+    it('deletes an uploaded file', async () => {
+      const existsSync = sinon.stub(fs, 'existsSync').returns(true);
+      const unlinkSync = sinon.stub(fs, 'unlinkSync');
+
+      const req = {
+        body: {
+          delete: 'abc123',
+        },
+      } as unknown as Request;
+
+      const status = sinon.stub().returnsThis();
+      const json = sinon.stub();
+
+      const res = {
+        status,
+        json,
+      } as unknown as Response;
+
+      const next = sinon.stub();
+
+      await deleteEvidenceFile(
+        req,
+        res,
+        next as unknown as NextFunction,
+      );
+
+      expect(unlinkSync.calledWith(path.resolve(uploadDir, 'abc123'))).to.equal(true);
+      expect(status.calledWith(200)).to.equal(true);
+      expect(json.firstCall.args[0]).to.deep.equal({ success: true });
+      expect(next.called).to.equal(false);
+
+      existsSync.restore();
+      unlinkSync.restore();
+    });
   })
+
+  it('returns 400 for an invalid file path', async () => {
+    const req = {
+      body: {
+        delete: '../secret-file',
+      },
+    } as unknown as Request;
+
+    const status = sinon.stub().returnsThis();
+    const json = sinon.stub();
+
+    const res = {
+      status,
+      json,
+    } as unknown as Response;
+
+    const next = sinon.stub();
+
+    await deleteEvidenceFile(
+      req,
+      res,
+      next as unknown as NextFunction,
+    );
+
+    expect(status.calledWith(400)).to.equal(true);
+    expect(json.firstCall.args[0]).to.deep.equal({
+      error: 'Invalid file path',
+    });
+    expect(next.called).to.equal(false);
+  });
+  
 })
