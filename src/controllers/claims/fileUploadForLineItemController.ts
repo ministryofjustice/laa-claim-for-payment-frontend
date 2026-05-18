@@ -1,7 +1,7 @@
 import { createProcessedError } from '#src/helpers/errorHandler.js';
 import { claimService } from '#src/services/claimService.js';
 import { FileUploadForLineItemViewModel } from '#src/viewmodels/fileUploadForLineItemViewModel.js';
-import type { Express, NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -87,7 +87,7 @@ export function uploadEvidenceFile(
 
     if (file === undefined) {
       res.status(BAD_REQUEST).json({
-        error: 'No file uploaded',
+        error: { message: 'No file uploaded' },
       });
       return;
     }
@@ -130,7 +130,7 @@ export function deleteEvidenceFile(
     
     if (fileId === undefined || fileId === '') {
       res.status(BAD_REQUEST).json({
-        error: 'Missing file id',
+        error: {message: 'Missing file id'},
       });
       return;
     }

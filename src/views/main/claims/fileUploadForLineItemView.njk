@@ -44,7 +44,14 @@
         {% endif %}
 
       <form action="#" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        <div
+          id="multi-file-upload-config"
+          hidden
+          data-upload-url="/ajax-upload"
+          data-delete-url="/ajax-delete"
+          data-csrf-token="{{ csrfToken }}">
+        </div>
+
           {% set uploadHtml %}
             {{ govukFileUpload({
               id: "documents",
@@ -65,10 +72,6 @@
               items: uploadedFiles
             },
             uploadHtml: uploadHtml
-          }) }}
-
-          {{ govukButton({
-            text: "Continue"
           }) }}
         </form>
       </div>

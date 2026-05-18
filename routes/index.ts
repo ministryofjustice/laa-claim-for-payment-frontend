@@ -5,7 +5,7 @@ import type { NextFunction, Request, Response } from "express";
 import express from "express";
 import { viewUploadEvidenceIndividuallyPage } from "#src/controllers/claims/uploadEvidenceIndividuallyController.js";
 import { chooseFileUpload, submitChooseFileUpload } from "#src/controllers/claims/chooseUploadController.js";
-import { ROUTES } from "./helper.js";
+import { ROUTES, multerErrorHandler } from "./helper.js";
 import { fileUploadForLineItemPage, uploadEvidenceFile, deleteEvidenceFile, uploadDir, continueFromFileUpload } from "#src/controllers/claims/fileUploadForLineItemController.js";
 import multer from 'multer';
 
@@ -17,7 +17,23 @@ const limiter = rateLimit({
 const router = express.Router();
 
 const localUpload = multer({
-  dest: uploadDir,
+  storage: multer.diskStorage({
+    destination: uploadDir,
+    filename: (_req, file, callback) => {
+      callback(null, file.originalname);
+    },
+  }),
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+  fileFilter: (_req, file, callback) => {
+    if (file.mimetype !== 'application/pdf') {
+      callback(new Error('Only PDF files can be uploaded'));
+      return;
+    }
+
+    callback(null, true);
+  },
 });
 
 /* GET home page. */
@@ -84,6 +100,7 @@ router.post(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response
 router.post(
   '/ajax-upload',
   localUpload.single('documents'),
+  multerErrorHandler,
   uploadEvidenceFile,
 );
 

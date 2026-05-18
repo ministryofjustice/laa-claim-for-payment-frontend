@@ -137,7 +137,7 @@ describe("View File Upload For Line Item Controller", () => {
 
       expect(status.calledWith(400)).to.equal(true);
       expect(json.calledWith({
-        error: 'No file uploaded',
+        error: { message: 'No file uploaded' },
       })).to.equal(true);
       expect(next.called).to.equal(false);
     });

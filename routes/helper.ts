@@ -1,3 +1,6 @@
+import type { NextFunction, Request, Response } from 'express';
+import multer from 'multer';
+
 export const ROUTES = {
   CLAIMS: '/',
   CHOOSE_UPLOAD: '/claims/:claimId/choose-upload',
@@ -22,4 +25,40 @@ export function buildRoute(
       path.replace(`:${key}`, encodeURIComponent(String(value))),
     route
   );
+}
+
+/**
+ * Handles multer upload validation and file upload errors.
+ *
+ * @param {Error} error The error thrown by multer or custom upload validation.
+ * @param {Request} _req Express request object.
+ * @param {Response} res Express response object.
+ * @param {NextFunction} next Express next middleware function.
+ * @returns {void}
+ */
+export function multerErrorHandler(
+  error: Error,
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  if (error instanceof multer.MulterError) {
+    res.status(400).json({
+      error: {
+        message: error.message,
+      },
+    });
+    return;
+  }
+
+  if (error.message === 'Only PDF files can be uploaded') {
+    res.status(400).json({
+      error: {
+        message: error.message,
+      },
+    });
+    return;
+  }
+
+  next(error);
 }

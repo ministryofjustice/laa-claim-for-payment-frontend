@@ -28,10 +28,19 @@ export const setupCsrf = (app: Application): void => {
      * @returns {string|undefined} The CSRF token if present, otherwise undefined.
      */
     getTokenFromRequest: (req: Request): string | undefined => {
-      // Type guard to ensure req.body exists and has _csrf property
-      if (hasCSRFToken(req.body)) {
-        return typeof req.body._csrf === "string" ? req.body._csrf : undefined;
+      const { headers } = req;
+      const body = req.body as unknown;
+      const { "x-csrf-token": headerToken } = headers;
+
+      if (typeof headerToken === "string" && headerToken.length > 0) {
+        return headerToken;
       }
+
+      if (hasCSRFToken(body)) {
+        const { _csrf } = body;
+        return typeof _csrf === "string" ? _csrf : undefined;
+      }
+
       return undefined;
     },
   });
