@@ -1,0 +1,81 @@
+import type { Claim } from "#src/types/Claim.js";
+import { billNarrativeLineItem, disbursementLineItem, workItemLineItem } from "./lineItems.js";
+
+export const claim1: Claim = {
+  id: 1,
+  client: "Giordano",
+  category: "Family",
+  concluded: new Date("2025-03-18"),
+  feeType: "Escape",
+  claimed: 234.56,
+  submissionId: "550e8400-e29b-41d4-a716-446655440000",
+  ufn: "someUFN",
+  providerUserId: "someProviderUserId",
+  lineItems: [
+    billNarrativeLineItem,
+    workItemLineItem
+  ],
+};
+
+export const claim2: Claim = {
+  id: 2,
+  client: "Amoto",
+  category: "Immigration and Asylum",
+  concluded: new Date("2025-03-14"),
+  feeType: "Fixed",
+  claimed: 56,
+  submissionId: "550e8400-e29b-41d4-a716-446655440000",
+  ufn: "someUFN",
+  providerUserId: "someProviderUserId",
+  lineItems: [
+    billNarrativeLineItem
+  ]
+};
+
+export const claim3: Claim = {
+  id: 3,
+  client: "DeMello",
+  category: "Immigration and Asylum",
+  concluded: new Date("2025-03-13"),
+  feeType: "Hourly",
+  claimed: 456.01,
+  submissionId: "550e8400-e29b-41d4-a716-446655440000",
+  ufn: "someUFN",
+  providerUserId: "someProviderUserId",
+  lineItems: [
+    workItemLineItem
+  ]
+};
+
+
+export const claim4: Claim = {
+  id: 4,
+  client: "Omar",
+  category: "Immigration and Asylum",
+  concluded: new Date("2025-03-12"),
+  feeType: "Hourly",
+  claimed: 456.01,
+  submissionId: "550e8400-e29b-41d4-a716-446655440000",
+  ufn: "someUFN",
+  providerUserId: "someProviderUserId",
+  lineItems: [
+    workItemLineItem
+  ]
+};
+
+export const claim5: Claim = {
+  id: 5,
+  client: "Omar",
+  category: "Immigration and Asylum",
+  concluded: new Date("2025-03-12"),
+  feeType: "Hourly",
+  claimed: 456.01,
+  submissionId: "550e8400-e29b-41d4-a716-446655440000",
+  ufn: "someUFN",
+  providerUserId: "someProviderUserId",
+  lineItems: [
+    billNarrativeLineItem,
+    workItemLineItem,
+    disbursementLineItem
+  ]
+};

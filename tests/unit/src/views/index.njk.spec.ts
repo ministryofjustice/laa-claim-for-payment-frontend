@@ -83,7 +83,7 @@ describe("views/main/index.njk", () => {
   it("renders a row for each claim", () => {
     const rows = $(".govuk-table__body > .govuk-table__row");
 
-    expect(rows.length).to.equal(11);
+    expect(rows.length).to.equal(4);
   });
 
   it("renders the pagination", () => {

@@ -1,34 +1,16 @@
 import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI, load } from "cheerio";
-import { Claim, LineItem } from "#src/types/Claim.js";
 import { FileUploadForLineItemViewModel } from "#src/viewmodels/fileUploadForLineItemViewModel.js";
+import { claim1 } from "#tests/assets/claim.js";
+import { billNarrativeLineItem, workItemLineItem } from "#tests/assets/lineItems.js";
 
 // Show full strings in diffs if something fails
 chaiConfig.truncateThreshold = 0;
 
-//TODO: Turn this into a test asset instead of duplicating
-const claim: Claim = {
-  id: 1,
-  concluded: new Date(),
-  ufn: "someUFN",
-  providerUserId: "someProviderUserId",
-  client: "someClient",
-  category: "someCategory",
-  feeType: "someFeeType",
-  claimed: 1,
-  submissionId: "someSubmissionId",
-  lineItems: [],
-};
-
-const lineItem: LineItem = {
-    id: 1,
-    title: "Bill Narrative",
-};
-
 describe("views/main/claims/fileUploadForLineItemView.njk", () => {
   let $: CheerioAPI;
 
-  const viewModel = new FileUploadForLineItemViewModel(claim, lineItem);
+  const viewModel = new FileUploadForLineItemViewModel(claim1, billNarrativeLineItem);
 
   beforeEach(async () => {
     // Import the JS helper at runtime to avoid TS/ESLint project faff
@@ -45,7 +27,7 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
   it("renders the title in the main H1", () => {
     const h1 = $("h1.govuk-heading-xl");
     expect(h1).to.have.length(1);
-    expect(h1.text().trim()).to.equal("Bill Narrative");
+    expect(h1.text().trim()).to.equal("Bill narrative");
   });
 
   it("renders a 'Back' link", () => {

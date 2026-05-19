@@ -38,13 +38,9 @@ export async function fileUploadForLineItemPage(
 
     if (response.status === 'success') {
       const { body: claim } = response;
+      const {lineItems} = claim;
 
-      const lineItems = [
-        { id: 1, title: 'Bill Narrative' },
-        { id: 2, title: 'Interim hearing on 20 December 2023' },
-      ];
-
-      const lineItem = lineItems.find((item) => item.id === lineItemId);
+      const lineItem = lineItems?.find((item) => item.id === lineItemId);
 
       if (lineItem === undefined) {
         res.status(NOT_FOUND).render('main/error.njk', {
