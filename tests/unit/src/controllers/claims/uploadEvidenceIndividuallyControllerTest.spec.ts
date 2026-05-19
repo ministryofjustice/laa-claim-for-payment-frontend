@@ -8,6 +8,7 @@ import { viewUploadEvidenceIndividuallyPage } from "#src/controllers/claims/uplo
 import { getClaimSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { ApiResponse } from "#src/types/api-types.js";
 import { Claim } from "#src/types/Claim.js";
+import { HttpError } from "http-errors";
 
 describe("Upload Evidence Individually controller test", () => {
   let req: Partial<Request>;
@@ -16,7 +17,6 @@ describe("Upload Evidence Individually controller test", () => {
   let renderStub: sinon.SinonStub;
   let statusStub: sinon.SinonStub;
   let claimServiceStub: sinon.SinonStub;
-  
 
   beforeEach(() => {
     req = {
@@ -64,6 +64,7 @@ describe("Upload Evidence Individually controller test", () => {
     it("should redirect to appropriate page when no claim is returned", async () => {
       const mockApiResponse: ApiResponse<Claim> = {
         status: "error",
+        statusCode: 404,
         message: "not found"
       };
 
@@ -75,7 +76,9 @@ describe("Upload Evidence Individually controller test", () => {
       // Assert
       expect(claimServiceStub.calledOnce).to.be.true;
       expect(claimServiceStub.calledWith(req.axiosMiddleware)).to.be.true;
-      expect(renderStub.calledWith("main/error.njk")).to.be.true;
+      expect(next.calledOnce).to.be.true;
+      expect(next.firstCall.args[0]).to.be.instanceOf(HttpError);
+      expect(next.firstCall.args[0].message).to.include("not found");
     });
 
     it("should delegate API errors to Express error handling middleware with user-friendly message", async () => {
@@ -89,7 +92,7 @@ describe("Upload Evidence Individually controller test", () => {
       // Assert - the controller should call next with a processed error
       expect(next.calledOnce).to.be.true;
       expect(next.firstCall.args[0]).to.be.instanceOf(Error);
-      expect(next.firstCall.args[0].message).to.include("An unexpected error occurred");
+      expect(next.firstCall.args[0].message).to.include("API Error");
     });
   });
 });

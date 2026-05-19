@@ -1,10 +1,10 @@
-import { createProcessedError } from '#src/helpers/errorHandler.js';
 import { escapeHtml } from '#src/helpers/escapehtml.js';
 import { claimService } from '#src/services/claimService.js';
 import { FileUploadForLineItemViewModel } from '#src/viewmodels/fileUploadForLineItemViewModel.js';
 import type { NextFunction, Request, Response } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
+import { processApiError, processError } from "#src/helpers/index.js";
 
 const NOT_FOUND = 404;
 const BAD_REQUEST = 400;
@@ -62,11 +62,9 @@ export async function fileUploadForLineItemPage(
       return;
     }
 
-    res.status(NOT_FOUND).render('main/error.njk', {
-      status: '404',
-    });
+    next(processApiError(response, 'fetching evidence upload details for user'));
   } catch (error) {
-    next(createProcessedError(error, 'fetching evidence upload details for user'));
+    next(processError(error, 'fetching evidence upload details for user'));
   }
 }
 

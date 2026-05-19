@@ -1,11 +1,10 @@
 import type { Page, Locator } from '@playwright/test';
+import { BasePage } from "#tests/playwright/pages/BasePage.js";
 
 /**
  * Page object for the choose upload page.
  */
-export class ChooseUploadPage {
-  private readonly page: Page;
-  private readonly url: string;
+export class ChooseUploadPage extends BasePage {
 
   /**
    * Creates a choose upload page object.
@@ -13,17 +12,7 @@ export class ChooseUploadPage {
    * @param {Page} page The Playwright page instance.
    */
   constructor(page: Page) {
-    this.page = page;
-    this.url = 'http://localhost:3000' + '/claims/1/choose-upload';
-  }
-
-  /**
-   * Gets the page heading.
-   *
-   * @returns {Locator} The heading locator.
-   */
-  get heading(): Locator {
-    return this.page.locator('h1, legend.govuk-fieldset__legend');
+    super(page, 'claims/1/choose-upload');
   }
 
   /**
@@ -78,24 +67,6 @@ export class ChooseUploadPage {
    */
   get associatedToLineItemsOption(): Locator {
     return this.page.locator('input[type="radio"][value="associated-to-line-items"]');
-  }
-
-  /**
-   * Navigates to the choose upload page.
-   *
-   * @returns {Promise<void>} Promise that resolves when navigation completes.
-   */
-  async navigate(): Promise<void> {
-    await this.page.goto(this.url);
-  }
-
-  /**
-   * Waits for the choose upload page to finish loading.
-   *
-   * @returns {Promise<void>} Promise that resolves when the page reaches network idle.
-   */
-  async waitForLoad(): Promise<void> {
-    await this.page.waitForLoadState('networkidle');
   }
 
   /**

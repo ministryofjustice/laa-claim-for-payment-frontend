@@ -60,7 +60,15 @@
       }
     },
     "error": {
-      "pageTitle": "Sorry, there is a problem with the service"
+      "notFound": {
+        "title": "Page not found",
+        "p1": "If you typed the web address, check it is correct.",
+        "p2": "If you pasted the web address, check you copied the entire address."
+      },
+      "internalServerError": {
+        "title": "Sorry, there is a problem with the service",
+        "p1": "Try again later."
+      }
     },
     "uploadEvidenceIndividually": {
       "title": "Upload evidence individually",

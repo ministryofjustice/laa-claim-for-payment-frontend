@@ -1,5 +1,4 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { createProcessedError } from "#src/helpers/errorHandler.js";
 import {
   ChooseUploadViewModel,
   FileUploadChoice,
@@ -7,6 +6,7 @@ import {
   isValidFileUploadChoice,
 } from "#src/viewmodels/chooseUploadViewModel.js";
 import type { Request, Response, NextFunction } from "express";
+import { processError } from "#src/helpers/index.js";
 
 /**
  * Choose file upload journey view
@@ -25,7 +25,7 @@ export function chooseFileUpload(
       vm: new ChooseUploadViewModel(),
     });
   } catch (error) {
-    const processedError = createProcessedError(
+    const processedError = processError(
       error,
       "rendering choose file upload page"
     );
@@ -70,7 +70,7 @@ export function submitChooseFileUpload(
 
     res.redirect(redirectByFileUploadChoice[selectedChoice]);
   } catch (error) {
-    const processedError = createProcessedError(
+    const processedError = processError(
       error,
       "submitting choose file upload page"
     );
