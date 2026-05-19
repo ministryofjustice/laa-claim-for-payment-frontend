@@ -1,16 +1,12 @@
 import { MultiFileUpload } from '@ministryofjustice/frontend';
-
-const UPLOAD_URL_ARGUMENT_INDEX = 1;
+import { patchMultiFileUpload } from './multiFileUploadPatched.js';
 
 const $multiFileUpload = document.querySelector(
   '[data-module="moj-multi-file-upload"]',
 );
 
 const configEl = document.getElementById('multi-file-upload-config');
-
-const uploadUrl = configEl?.dataset.uploadUrl;
-const deleteUrl = configEl?.dataset.deleteUrl;
-const csrfToken = configEl?.dataset.csrfToken;
+const { uploadUrl, deleteUrl, csrfToken } = configEl?.dataset ?? {};
 
 if (
   $multiFileUpload !== null &&
@@ -18,33 +14,14 @@ if (
   deleteUrl !== undefined &&
   csrfToken !== undefined
 ) {
-  const originalOpen = XMLHttpRequest.prototype.open.bind(
-    XMLHttpRequest.prototype,
-  );
-
-  XMLHttpRequest.prototype.open = function (...args) {
-    const urlArgument = /** @type {unknown} */ (
-      args.at(UPLOAD_URL_ARGUMENT_INDEX)
-    );
-
-    const url = typeof urlArgument === 'string' ? urlArgument : '';
-
-    originalOpen.apply(this, args);
-
-    if (url.includes(uploadUrl) || url.includes(deleteUrl)) {
-      this.setRequestHeader('x-csrf-token', csrfToken);
-    }
-
-    return undefined;
-  };
+  patchMultiFileUpload(csrfToken);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call, no-new -- Constructor initialises MOJ component; package has weak typings.
   new MultiFileUpload($multiFileUpload, {
     uploadUrl,
     deleteUrl,
     hooks: {
-       
-      entryHook: (upload) => {
+      entryHook: () => {
         const errorRows = document.querySelectorAll(
           '.moj-multi-file-upload__error',
         );
