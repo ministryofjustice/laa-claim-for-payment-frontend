@@ -1,4 +1,4 @@
-import type { Locator, Page } from "@playwright/test";
+import type { Locator } from "@playwright/test";
 import { BasePage } from "#tests/playwright/pages/BasePage.js";
 
 /**

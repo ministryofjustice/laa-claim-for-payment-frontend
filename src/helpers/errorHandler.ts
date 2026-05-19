@@ -107,14 +107,7 @@ export function processApiError(error: ApiError, context: string): HttpError {
  */
 export function createApiError(error: unknown): ApiError {
   if (axios.isAxiosError<ApiErrorResponse>(error)) {
-    if (error.response != null) {
-      const { response } = error;
-      return {
-        status: "error",
-        statusCode: response.status,
-        message: response.data.detail ?? getHttpErrorMessage(response.status),
-      };
-    } else {
+    if (error.response == null) {
       switch (error.code) {
         case "ECONNABORTED":
         case "ETIMEDOUT":
@@ -140,6 +133,13 @@ export function createApiError(error: unknown): ApiError {
             message: error.message,
           };
       }
+    } else {
+      const { response } = error;
+      return {
+        status: "error",
+        statusCode: response.status,
+        message: response.data.detail ?? getHttpErrorMessage(response.status),
+      };
     }
   }
 

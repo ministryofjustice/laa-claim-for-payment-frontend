@@ -3,8 +3,6 @@ import type { NextFunction, Request, Response } from "express";
 import { ClaimViewModel } from "#src/viewmodels/claimViewModel.js";
 import { processApiError, processError } from "#src/helpers/index.js";
 
-const NOT_FOUND = 404;
-
 /**
  * Handle claim view with API data
  * @param {Request} req Express request object
