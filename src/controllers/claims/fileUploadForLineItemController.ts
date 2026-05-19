@@ -1,4 +1,5 @@
 import { createProcessedError } from '#src/helpers/errorHandler.js';
+import { escapeHtml } from '#src/helpers/escapehtml.js';
 import { claimService } from '#src/services/claimService.js';
 import { FileUploadForLineItemViewModel } from '#src/viewmodels/fileUploadForLineItemViewModel.js';
 import type { NextFunction, Request, Response } from 'express';
@@ -186,13 +187,4 @@ function formatFileSize(sizeInBytes: number): string {
   }
 
   return `${Math.round(sizeInKilobytes / 1024)}MB`;
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
 }

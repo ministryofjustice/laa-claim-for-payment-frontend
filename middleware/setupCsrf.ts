@@ -29,12 +29,13 @@ export const setupCsrf = (app: Application): void => {
      */
     getTokenFromRequest: (req: Request): string | undefined => {
       const { headers } = req;
-      const body = req.body as unknown;
       const { "x-csrf-token": headerToken } = headers;
 
       if (typeof headerToken === "string" && headerToken.length > 0) {
         return headerToken;
       }
+
+      const body = req.body as unknown;
 
       if (hasCSRFToken(body)) {
         const { _csrf } = body;

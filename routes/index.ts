@@ -24,7 +24,7 @@ const localUpload = multer({
     },
   }),
   limits: {
-    fileSize: 10 * 1024 * 1024,
+    fileSize: 10 * 1024 * 1024, // limit max file size to 10MB
   },
   fileFilter: (_req, file, callback) => {
     if (file.mimetype !== 'application/pdf') {
