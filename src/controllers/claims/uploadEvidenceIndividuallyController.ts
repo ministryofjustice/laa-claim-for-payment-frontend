@@ -1,6 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import { UploadEvidenceIndividuallyViewModel } from "#src/viewmodels/uploadEvidenceIndividuallyViewModel.js";
-import { processError } from "#src/helpers/index.js";
+import { claimService } from "#src/services/claimService.js";
+import { processError } from "#public/src/helpers/index.js";
+import { processApiError } from "#src/helpers/index.js";
 
 /**
  * Handle upload evidence individually view
@@ -9,20 +11,23 @@ import { processError } from "#src/helpers/index.js";
  * @param {NextFunction} next Express next function
  * @returns {Promise<void>} Page to be returned
  */
-// eslint-disable-next-line @typescript-eslint/require-await -- temporary while we aren't fetching anything
 export async function viewUploadEvidenceIndividuallyPage(
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> {
   try {
-    const vm = new UploadEvidenceIndividuallyViewModel();
-    res.render("main/claims/uploadEvidenceIndividually.njk", { vm });
+    const claimId = Number(req.params.claimId);
+    const response = await claimService.getClaim(req.axiosMiddleware, claimId);
+
+    if (response.status === "success") {
+      const { body: claim } = response;
+      const vm = new UploadEvidenceIndividuallyViewModel(claim);
+      res.render("main/claims/uploadEvidenceIndividually.njk", { vm });
+    } else {
+      next(processApiError(response, `fetching evidence upload details for user`));
+    }
   } catch (error) {
-    const processedError = processError(
-      error,
-      `fetching evidence upload details for user`,
-    );
-    next(processedError);
+    next(processError(error, `fetching evidence upload details for user`));
   }
 }

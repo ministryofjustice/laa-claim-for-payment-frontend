@@ -1,0 +1,88 @@
+{% from "components/backLink.njk" import backLink %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{%- from "govuk/components/file-upload/macro.njk" import govukFileUpload -%}
+{%- from "govuk/components/button/macro.njk" import govukButton -%}
+{%- from "govuk/components/error-summary/macro.njk" import govukErrorSummary -%}
+{%- from "moj/components/multi-file-upload/macro.njk" import mojMultiFileUpload -%}
+
+{% extends "base.njk" %}
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+    {{ backLink(t) }}
+
+    <h1 class="govuk-heading-xl">{{ vm.title }}</h1>
+    
+    <p class="govuk-body">{{ t('pages.fileUploadForLineItem.p1') }}</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li> {{ t('pages.fileUploadForLineItem.ul1') }} </li>
+      <li> {{ t('pages.fileUploadForLineItem.ul2') }} </li>
+    </ul>
+
+    <h2 class="govuk-heading-m">{{ t('pages.fileUploadForLineItem.examplesOfEvidence.title')}}</h2>
+    <p class="govuk-body">{{ t('pages.fileUploadForLineItem.examplesOfEvidence.examples')}}</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li> {{ t('pages.fileUploadForLineItem.examplesOfEvidence.courtOrders') }}</li>
+      <li> {{ t('pages.fileUploadForLineItem.examplesOfEvidence.invoices') }}</li>
+      <li> {{ t('pages.fileUploadForLineItem.examplesOfEvidence.attendanceNotes') }}</li>
+    </ul>
+
+    <h2 class="govuk-heading-m">{{ t('pages.fileUploadForLineItem.uploadFiles.title')}}</h2>
+    <p class="govuk-body">{{ t('pages.fileUploadForLineItem.uploadFiles.maxSize') }}</p>
+
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {% if errorSummary.items.length %}
+          {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errorSummary.items
+          }) }}
+        {% endif %}
+
+      <form action="#" method="post" enctype="multipart/form-data">
+        <div
+          id="multi-file-upload-config"
+          hidden
+          data-upload-url="/ajax-upload"
+          data-delete-url="/ajax-delete"
+          data-csrf-token="{{ csrfToken }}">
+        </div>
+
+          {% set uploadHtml %}
+            {{ govukFileUpload({
+              id: "documents",
+              name: "documents",
+              classes: "moj-multi-file-upload__input",
+              attributes: { multiple: "" },
+              errorMessage: errorMessage
+            }) }}
+
+            {{ govukButton({
+              text: "Upload file",
+              classes: "govuk-button--secondary moj-multi-file-upload__button"
+            }) }}
+          {% endset %}
+
+          {{ mojMultiFileUpload({
+            uploadedFiles: {
+              items: uploadedFiles
+            },
+            uploadHtml: uploadHtml
+          }) }}
+        </form>
+      </div>
+    </div>
+
+
+    <div class="govuk-button-group">
+        <a class="govuk-button" href="{{vm.saveAndContinueHref}}">{{ t('common.saveAndContinue') }}</a>
+        <a class="govuk-button govuk-button--secondary" href="{{vm.saveAndContinueHref}}">{{ t('common.saveAndComeBackLater') }}</a>
+      </div>
+
+
+  </div>
+{% endblock %}

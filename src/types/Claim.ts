@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+export const LineItemSchema = z.object({
+  id: z.number(),
+  title: z.string()
+})
+
+export type LineItem = z.infer<typeof LineItemSchema>;
+
 export const ClaimResponseSchema = z.object({
   id: z.number(),
   ufn: z.string().optional(),
@@ -9,7 +16,8 @@ export const ClaimResponseSchema = z.object({
   concluded: z.string().optional().transform(val => (val == null ?  undefined : new Date(val))),
   feeType: z.string().optional(),
   claimed: z.number().optional(),
-  submissionId: z.string().optional()
+  submissionId: z.string().optional(),
+  lineItems: z.array(LineItemSchema).optional(),
 });
 
 export type Claim = z.infer<typeof ClaimResponseSchema>;
