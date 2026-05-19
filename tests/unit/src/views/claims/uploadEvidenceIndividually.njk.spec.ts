@@ -1,14 +1,28 @@
 import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI, load } from "cheerio";
 import { UploadEvidenceIndividuallyViewModel } from "#src/viewmodels/uploadEvidenceIndividuallyViewModel.js";
+import { Claim } from "#src/types/Claim.js";
 
 // Show full strings in diffs if something fails
 chaiConfig.truncateThreshold = 0;
 
+const claim: Claim = {
+  id: 1,
+  concluded: new Date(),
+  ufn: "someUFN",
+  providerUserId: "someProviderUserId",
+  client: "someClient",
+  category: "someCategory",
+  feeType: "someFeeType",
+  claimed: 1,
+  submissionId: "someSubmissionId",
+  lineItems: [],
+};
+
 describe("views/main/claims/uploadEvidenceIndividually.njk", () => {
   let $: CheerioAPI;
 
-  const viewModel = new UploadEvidenceIndividuallyViewModel();
+  const viewModel = new UploadEvidenceIndividuallyViewModel(claim);
 
   beforeEach(async () => {
     // Import the JS helper at runtime to avoid TS/ESLint project faff
