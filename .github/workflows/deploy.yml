@@ -157,9 +157,7 @@ jobs:
           kube-namespace: ${{ secrets.KUBE_NAMESPACE }}
           app-environment: dev
           session_secret: ${{ secrets.SESSION_SECRET }}
-          service_name: ${{ vars.SERVICE_NAME }}
           service_phase: ${{ vars.SERVICE_PHASE }}
-          department_name: ${{ vars.DEPARTMENT_NAME }}
           department_url: ${{ vars.DEPARTMENT_URL }}
           contact_email: ${{ vars.CONTACT_EMAIL }}
           service_url: ${{ vars.SERVICE_URL }}
@@ -211,9 +209,7 @@ jobs:
           kube-namespace: ${{ secrets.KUBE_NAMESPACE }}
           app-environment: uat
           session_secret: ${{ secrets.SESSION_SECRET }}
-          service_name: ${{ vars.SERVICE_NAME }}
           service_phase: ${{ vars.SERVICE_PHASE }}
-          department_name: ${{ vars.DEPARTMENT_NAME }}
           department_url: ${{ vars.DEPARTMENT_URL }}
           contact_email: ${{ vars.CONTACT_EMAIL }}
           service_url: ${{ vars.SERVICE_URL }}
@@ -244,9 +240,7 @@ jobs:
           kube-namespace: ${{ secrets.KUBE_NAMESPACE }}
           app-environment: staging
           session_secret: ${{ secrets.SESSION_SECRET }}
-          service_name: ${{ vars.SERVICE_NAME }}
           service_phase: ${{ vars.SERVICE_PHASE }}
-          department_name: ${{ vars.DEPARTMENT_NAME }}
           department_url: ${{ vars.DEPARTMENT_URL }}
           contact_email: ${{ vars.CONTACT_EMAIL }}
           service_url: ${{ vars.SERVICE_URL }}
@@ -278,9 +272,7 @@ jobs:
   #         kube-namespace: ${{ secrets.KUBE_NAMESPACE }}
   #         app-environment: production
   #         session_secret: ${{ secrets.SESSION_SECRET }}
-  #         service_name: ${{ vars.SERVICE_NAME }}
   #         service_phase: ${{ vars.SERVICE_PHASE }}
-  #         department_name: ${{ vars.DEPARTMENT_NAME }}
   #         department_url: ${{ vars.DEPARTMENT_URL }}
   #         contact_email: ${{ vars.CONTACT_EMAIL }}
   #         service_url: ${{ vars.SERVICE_URL }}

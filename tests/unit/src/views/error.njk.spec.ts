@@ -22,7 +22,7 @@ describe('views/main/error.njk', () => {
 
   it('renders the page <title> from the pageTitle block', () => {
     const title = $('head > title').text().trim();
-    expect(title).to.equal("Sorry, there is a problem with the service – 'SERVICE_NAME' – GOV.UK");
+    expect(title).to.equal("common.title");
   });
 
   it('renders the status in the main H1', () => {

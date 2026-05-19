@@ -2,6 +2,9 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% extends "base.njk" %}
+
+{% set title = vm.title %}
+
 {% block content %}
 
   {{ backLink(t) }}

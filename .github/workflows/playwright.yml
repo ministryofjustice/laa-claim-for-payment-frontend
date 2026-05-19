@@ -51,9 +51,7 @@ jobs:
           SESSION_NAME: "sessionId"
           NODE_ENV: "test"
           # Add other required environment variables
-          SERVICE_NAME: "Claim for Controlled Work"
           SERVICE_PHASE: "Alpha"
-          DEPARTMENT_NAME: "LAA Digital"
           DEPARTMENT_URL: "https://www.gov.uk/government/organisations/legal-aid-agency"
           CONTACT_EMAIL: "your-team@digital.justice.gov.uk"
           SERVICE_URL: "https://www.gov.uk/legal-aid"

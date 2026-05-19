@@ -5,13 +5,15 @@
 
 {% set govukRebrand = true %}
 
-{% block pageTitle %}{{config.SERVICE_NAME}} – GOV.UK{% endblock %}
+{% block pageTitle %}
+  {{ t('common.title', { title: title, service: t('common.service') }) }}
+{% endblock %}
 
 {% block head %}
   <link rel="stylesheet" href="/css/{{getAsset('main','css')}}">
-  <meta name="description" content="{{config.SERVICE_NAME}}">
+  <meta name="description" content="{{ t('common.service') }}">
   <meta name="keywords" content="GOV.UK, govuk, gov, government, uk, frontend, ui, user interface, jinja, python, flask, port, template, templating, macro, component, design system, html, forms, wtf, wtforms, widget, widgets, demo, example">
-  <meta name="author" content="{{config.DEPARTMENT_NAME}}">
+  <meta name="author" content="{{ t('common.department') }}">
   <script type="module" nonce="{{ cspNonce }}" src="/js/{{getAsset('custom','min.js')}}"></script>
 {% endblock %}
 
@@ -22,7 +24,7 @@
 {% block header %}
 {{ mojHeader({
     organisationLabel: {
-      text: config.DEPARTMENT_NAME,
+      text: t('common.department'),
       href: "#"
     },
     navigation: {
@@ -32,13 +34,13 @@
         href: "#",
         active: true
       }, {
-        text: "Sign out",
+        text: t('common.signOut'),
         href: "/logout"
       }]
     }
   }) }}
    {{ govukServiceNavigation({
-    serviceName: config.SERVICE_NAME,
+    serviceName: t('common.service'),
     serviceUrl: "#",
     navigation: [
       {
@@ -97,18 +99,18 @@
       items: [
         {
           href: "#",
-          text: "Accessibility"
+          text: t('navigation.footer.accessibility')
         },
         {
           href: "#",
-          text: "Cookies"
+          text: t('navigation.footer.cookiePolicy')
         },
         {
           href: "#",
-          text: "Privacy"
+          text: t('navigation.footer.privacyPolicy')
         }
       ],
-      html: 'Built by <a href="' + config.DEPARTMENT_URL +'" class="govuk-footer__link">' + config.DEPARTMENT_NAME + '</a>'
+      html: 'Built by <a href="' + config.DEPARTMENT_URL +'" class="govuk-footer__link">' + t('common.department') + '</a>'
     }
   }) }}
 {% endblock %}

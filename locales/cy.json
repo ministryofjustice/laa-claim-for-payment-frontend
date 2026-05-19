@@ -16,7 +16,10 @@
     "uploadStatus": {
       "notUploaded": "Not uploaded",
       "uploaded": "Uploaded"
-    }
+    },
+    "title": "{title} – {service} – GOV.UK",
+    "service": "Claim for controlled work",
+    "department": "Ministry of Justice"
   },
   "navigation": {
     "mainNav": {},
@@ -57,7 +60,7 @@
       }
     },
     "error": {
-      "pageTitle": "Sorry, there is a problem with the service – {SERVICE_NAME} – GOV.UK"
+      "pageTitle": "Sorry, there is a problem with the service"
     },
     "uploadEvidenceIndividually": {
       "title": "Upload evidence individually",
