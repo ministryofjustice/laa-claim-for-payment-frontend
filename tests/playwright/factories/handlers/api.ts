@@ -42,8 +42,16 @@ export const apiHandlers = [
   }),
 
   http.get('/api/v1/claims/:id', ({ params }) => {
-    console.log('🧩 MSW matched: GET /api/v1/claims/:id', params.id);
-    const claim = makeFakeClaim(Number(params.id));
-    return HttpResponse.json(claim);
+    const { id } = params;
+    if (typeof id !== 'string') {
+      throw new Error('URL missing a valid string id param.');
+    }
+    console.log('🧩 MSW matched: GET /api/v1/claims/%s', id);
+    if (id === '2') {
+      return HttpResponse.error();
+    } else {
+      const claim = makeFakeClaim(Number(params.id));
+      return HttpResponse.json(claim);
+    }
   }),
 ];

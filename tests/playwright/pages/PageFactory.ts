@@ -1,6 +1,8 @@
-import type { Page } from '@playwright/test';
-import { HomePage } from './HomePage.js';
-import { ViewClaimPage } from './ViewClaimPage.js'
+import type { Page } from "@playwright/test";
+import { HomePage } from "./HomePage.js";
+import { ViewClaimPage } from "./ViewClaimPage.js";
+import { NotFoundPage } from "#tests/playwright/pages/NotFoundPage.js";
+import { InternalServerErrorPage } from "#tests/playwright/pages/InternalServerErrorPage.js";
 
 /**
  * Factory class for creating page objects
@@ -31,5 +33,22 @@ export class PageFactory {
    */
   viewClaimPage(id: number): ViewClaimPage {
     return new ViewClaimPage(this.page, id);
+  }
+
+  /**
+   * gets the not found page for test
+   * @param { string } route the route
+   * @returns { NotFoundPage } the not found page
+   */
+  notFoundPage(route: string): NotFoundPage {
+    return new NotFoundPage(this.page, route);
+  }
+
+  /**
+   * gets the internal server error page for test
+   * @returns { InternalServerErrorPage } the internal server error page
+   */
+  internalServerErrorPage(): InternalServerErrorPage {
+    return new InternalServerErrorPage(this.page);
   }
 }
