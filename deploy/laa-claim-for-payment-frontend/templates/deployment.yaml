@@ -54,12 +54,8 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
-            - name: SERVICE_NAME
-              value: "{{ .Values.env.SERVICE_NAME }}"
             - name: SERVICE_PHASE
               value: "{{ .Values.env.SERVICE_PHASE }}"
-            - name: DEPARTMENT_NAME
-              value: "{{ .Values.env.DEPARTMENT_NAME }}"
             - name: DEPARTMENT_URL
               value: "{{ .Values.env.DEPARTMENT_URL }}"
             - name: CONTACT_EMAIL

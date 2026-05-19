@@ -30,7 +30,6 @@ function getRedisConfig(): RedisLocalConfig | RedisEnvConfig {
 const config: Config = {
   CONTACT_EMAIL: process.env.CONTACT_EMAIL,
   CONTACT_PHONE: process.env.CONTACT_PHONE,
-  DEPARTMENT_NAME: process.env.DEPARTMENT_NAME,
   DEPARTMENT_URL: process.env.DEPARTMENT_URL,
   RATELIMIT_HEADERS_ENABLED: process.env.RATELIMIT_HEADERS_ENABLED,
   RATELIMIT_STORAGE_URI: process.env.RATELIMIT_STORAGE_URI,
@@ -39,7 +38,6 @@ const config: Config = {
   RATE_WINDOW_MS: Number(
     process.env.RATE_WINDOW_MS ?? String(DEFAULT_RATE_WINDOW_MS_MINUTE * MILLISECONDS_IN_A_MINUTE)
   ),
-  SERVICE_NAME: process.env.SERVICE_NAME,
   SERVICE_PHASE: process.env.SERVICE_PHASE,
   SERVICE_URL: process.env.SERVICE_URL,
   session: {
@@ -57,7 +55,7 @@ const config: Config = {
     port: Number(process.env.PORT ?? DEFAULT_PORT),
     managementPort: Number(process.env.MANAGEMENT_PORT),
     environment: process.env.NODE_ENV ?? "development",
-    appName: process.env.SERVICE_NAME ?? "Your service name",
+    appName: "laa-claim-for-payment-frontend",
     useHttps: process.env.NODE_ENV === "production", // Use HTTPS in production
   },
   csrf: {

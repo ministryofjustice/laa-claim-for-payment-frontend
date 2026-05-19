@@ -37,7 +37,6 @@ process.env.NODE_ENV = 'test';
 process.env.PORT = TEST_PORT;
 process.env.SESSION_SECRET ??= 'test-secret-key';
 process.env.SESSION_NAME ??= 'test-session';
-process.env.SERVICE_NAME ??= 'Test Express Template';
 
 // Now import and start the actual Express application
 const appModulePath = '../public/app.js';
