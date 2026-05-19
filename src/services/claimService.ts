@@ -3,10 +3,14 @@ import {
   getClaim as getClaimApi,
   getClaims as getClaimsApi,
 } from "#src/generated/claim-api/sdk.gen.js";
-import { extractAndLogError } from "#src/helpers/index.js";
+import { createApiError } from "#src/helpers/index.js";
 import type { ApiResponse, Paginated } from "#src/types/api-types.js";
 import type { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
-import { type Claim, ClaimResponseSchema, ClaimsResponseSchema } from "#src/types/Claim.js";
+import {
+  type Claim,
+  ClaimResponseSchema,
+  ClaimsResponseSchema,
+} from "#src/types/Claim.js";
 import config from "../../config.js";
 
 interface ClaimServiceDeps {
@@ -38,11 +42,12 @@ class ClaimService {
     axiosMiddleware: AxiosInstanceWrapper,
     page?: number,
     limit?: number,
-    deps: ClaimServiceDeps = defaultDeps
+    deps: ClaimServiceDeps = defaultDeps,
   ): Promise<ApiResponse<Paginated<Claim>>> {
     const apiClient = deps.createClient({
       baseURL: config.api.baseUrl,
       axios: axiosMiddleware.axiosInstance,
+      throwOnError: true,
     });
 
     try {
@@ -63,12 +68,7 @@ class ClaimService {
         status: "success",
       };
     } catch (error) {
-      const errorMessage = extractAndLogError(error, "API error");
-
-      return {
-        status: "error",
-        message: errorMessage,
-      };
+      return createApiError(error);
     }
   }
 
@@ -83,11 +83,12 @@ class ClaimService {
   static async getClaim(
     axiosMiddleware: AxiosInstanceWrapper,
     claimId: number,
-    deps: ClaimServiceDeps = defaultDeps
+    deps: ClaimServiceDeps = defaultDeps,
   ): Promise<ApiResponse<Claim>> {
     const apiClient = deps.createClient({
       baseURL: config.api.baseUrl,
       axios: axiosMiddleware.axiosInstance,
+      throwOnError: true,
     });
 
     try {
@@ -103,12 +104,7 @@ class ClaimService {
         status: "success",
       };
     } catch (error) {
-      const errorMessage = extractAndLogError(error, "API error");
-
-      return {
-        status: "error",
-        message: errorMessage,
-      };
+      return createApiError(error);
     }
   }
 }

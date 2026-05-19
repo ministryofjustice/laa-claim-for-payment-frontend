@@ -13,6 +13,7 @@ export interface ApiSuccess<T> {
 
 export interface ApiError<E = string> {
   status: "error";
+  statusCode: number;
   message: E;
   body?: never;
 }

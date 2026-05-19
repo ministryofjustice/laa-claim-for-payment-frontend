@@ -1,6 +1,6 @@
-import { createProcessedError } from "#src/helpers/errorHandler.js";
 import type { NextFunction, Request, Response } from "express";
 import { UploadEvidenceIndividuallyViewModel } from "#src/viewmodels/uploadEvidenceIndividuallyViewModel.js";
+import { processError } from "#src/helpers/index.js";
 
 /**
  * Handle upload evidence individually view
@@ -19,7 +19,7 @@ export async function viewUploadEvidenceIndividuallyPage(
     const vm = new UploadEvidenceIndividuallyViewModel();
     res.render("main/claims/uploadEvidenceIndividually.njk", { vm });
   } catch (error) {
-    const processedError = createProcessedError(
+    const processedError = processError(
       error,
       `fetching evidence upload details for user`,
     );
