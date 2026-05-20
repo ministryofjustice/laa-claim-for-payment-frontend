@@ -1,0 +1,143 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call,
+@typescript-eslint/no-unsafe-member-access,
+@typescript-eslint/no-unsafe-assignment,
+@typescript-eslint/no-unsafe-argument,
+@typescript-eslint/explicit-function-return-type,
+@typescript-eslint/strict-boolean-expressions,
+@typescript-eslint/no-magic-numbers,
+@typescript-eslint/prefer-destructuring --
+This file patches the upstream MOJ MultiFileUpload component to add CSRF
+header support for upload and delete XMLHttpRequests. The upstream component
+is implemented as untyped JavaScript and relies on prototype overrides and
+internal properties, which trigger TypeScript ESLint unsafe-access rules. */
+import { MultiFileUpload } from '@ministryofjustice/frontend';
+
+/**
+ * Applies CSRF-aware patches to the MOJ MultiFileUpload component.
+ *
+ * @param {string} csrfToken
+ */
+export function patchMultiFileUpload(csrfToken) {
+  if (csrfToken === '') {
+    return;
+  }
+
+  /**
+   * @param {File} file
+   */
+  MultiFileUpload.prototype.uploadFile = function (file) {
+    this.config.hooks.entryHook(this, file);
+
+    const $item = this.getFileRow(file);
+    const $message = $item.querySelector('.moj-multi-file-upload__message');
+    const $actions = $item.querySelector('.moj-multi-file-upload__actions');
+    const $progress = $item.querySelector('.moj-multi-file-upload__progress');
+
+    const formData = new FormData();
+    formData.append('documents', file);
+
+    this.$feedbackContainer
+      .querySelector('.moj-multi-file-upload__list')
+      .append($item);
+
+    const xhr = new XMLHttpRequest();
+
+        const onLoad = () => {
+      if (
+        xhr.status < 200 ||
+        xhr.status >= 300 ||
+        !('success' in xhr.response)
+      ) {
+        onError(); return;
+      }
+
+      $message.innerHTML = this.getSuccessHtml(xhr.response.success)
+      this.$status.textContent = xhr.response.success.messageText
+
+      $actions.append(this.getDeleteButton(xhr.response.file))
+      this.config.hooks.exitHook(this, file, xhr, xhr.statusText)
+    }
+
+    const onError = () => {
+      const error = new Error(
+        xhr.response && 'error' in xhr.response
+          ? xhr.response.error.message
+          : xhr.statusText || 'Upload failed',
+      );
+
+      $message.innerHTML = this.getErrorHtml(error);
+      this.$status.textContent = error.message;
+
+      this.config.hooks.errorHook(this, file, xhr, xhr.statusText, error);
+    };
+
+    xhr.addEventListener('load', onLoad);
+    xhr.addEventListener('error', onError);
+
+    xhr.upload.addEventListener('progress', (event) => {
+      if (!event.lengthComputable) {
+        return;
+      }
+
+      const percentComplete = Math.round((event.loaded / event.total) * 100);
+      $progress.textContent = ` ${percentComplete}%`;
+    });
+
+    xhr.open('POST', this.config.uploadUrl);
+    xhr.setRequestHeader('x-csrf-token', csrfToken);
+    xhr.responseType = 'json';
+
+    xhr.send(formData);
+  };
+
+  /**
+   * @param {MouseEvent} event
+   */
+  MultiFileUpload.prototype.onFileDeleteClick = function (event) {
+    const $button = event.target;
+
+    if (
+      !$button ||
+      !($button instanceof HTMLButtonElement) ||
+      !$button.classList.contains('moj-multi-file-upload__delete')
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const xhr = new XMLHttpRequest();
+
+    xhr.addEventListener('load', () => {
+      if (xhr.status < 200 || xhr.status >= 300) {
+        return;
+      }
+
+      const $rows = Array.from(
+        this.$feedbackContainer.querySelectorAll('.moj-multi-file-upload__row'),
+      );
+
+      if ($rows.length === 1) {
+        this.$feedbackContainer.classList.add('moj-hidden');
+      }
+
+      const $rowDelete = $rows.find(($row) => $row.contains($button));
+      if ($rowDelete) {
+        $rowDelete.remove();
+      }
+
+      this.config.hooks.deleteHook(this, undefined, xhr, xhr.statusText);
+    });
+
+    xhr.open('POST', this.config.deleteUrl);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('x-csrf-token', csrfToken);
+    xhr.responseType = 'json';
+
+    xhr.send(
+      JSON.stringify({
+        [$button.name]: $button.value,
+      }),
+    );
+  };
+}

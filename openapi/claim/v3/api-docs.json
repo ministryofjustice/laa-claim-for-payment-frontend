@@ -402,6 +402,434 @@
         }
       }
     },
+    "/api/v1/claims/{claimId}/upload-evidence": {
+      "post": {
+        "tags": [
+          "Claims"
+        ],
+        "summary": "Upload evidence files for a claim",
+        "operationId": "uploadClaimEvidence",
+        "parameters": [
+          {
+            "name": "claimId",
+            "in": "path",
+            "description": "ID of the claim to add evidence to",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "documents": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "documents"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Evidence files uploaded successfully",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "**Invalid Request**\n* **Codes**: `VALIDATION_FAILED`, `BAD_REQUEST`\n* Occurs when the request payload fails validation or is malformed.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "**Unauthenticated**\n* **Codes**: `UNAUTHENTICATED`\n* Authentication is missing or the provided token is invalid.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "**Forbidden**\n* **Codes**: `FORBIDDEN`\n* The user is authenticated but lacks the required OAuth scopes or permissions.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "**Not Found**\n* **Codes**: `NOT_FOUND`\n* The requested resource (e.g., Claim ID) does not exist.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "**Conflict**\n* **Codes**: `CONFLICT`\n* The request conflicts with the current state of the resource in an upstream system.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "**Too Many Requests**\n* **Codes**: `TEMPORARILY_UNAVAILABLE`\n* An upstream service is currently rate-limiting requests.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "**Internal Server Error**\n* **Codes**: `INTERNAL_ERROR`, `SERVICE_ERROR`\n* An unexpected error occurred within this service.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "**Upstream Service Error**\n* **Codes**: `UPSTREAM_ERROR`\n* A dependent upstream service returned an invalid or error response.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "**Upstream Timeout**\n* **Codes**: `UPSTREAM_TIMEOUT`\n* A dependent upstream service failed to respond within the allowed time.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/claims/{claimId}/line-items/{lineItemId}/upload-evidence": {
+      "post": {
+        "tags": [
+          "Claims"
+        ],
+        "summary": "Upload evidence files for a specific line item.",
+        "operationId": "uploadLineItemEvidence",
+        "parameters": [
+          {
+            "name": "claimId",
+            "in": "path",
+            "description": "ID of the claim to add evidence to",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "lineItemId",
+            "in": "path",
+            "description": "ID of the line item to add evidence to",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "documents": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "documents"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Evidence files uploaded successfully",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "**Invalid Request**\n* **Codes**: `VALIDATION_FAILED`, `BAD_REQUEST`\n* Occurs when the request payload fails validation or is malformed.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "**Unauthenticated**\n* **Codes**: `UNAUTHENTICATED`\n* Authentication is missing or the provided token is invalid.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "**Forbidden**\n* **Codes**: `FORBIDDEN`\n* The user is authenticated but lacks the required OAuth scopes or permissions.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "**Not Found**\n* **Codes**: `NOT_FOUND`\n* The requested resource (e.g., Claim ID) does not exist.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "**Conflict**\n* **Codes**: `CONFLICT`\n* The request conflicts with the current state of the resource in an upstream system.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "**Too Many Requests**\n* **Codes**: `TEMPORARILY_UNAVAILABLE`\n* An upstream service is currently rate-limiting requests.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "**Internal Server Error**\n* **Codes**: `INTERNAL_ERROR`, `SERVICE_ERROR`\n* An unexpected error occurred within this service.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "**Upstream Service Error**\n* **Codes**: `UPSTREAM_ERROR`\n* A dependent upstream service returned an invalid or error response.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "**Upstream Timeout**\n* **Codes**: `UPSTREAM_TIMEOUT`\n* A dependent upstream service failed to respond within the allowed time.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/claims/{claimId}/line-items/{lineItemId}/evidence/{evidenceId}": {
+      "post": {
+        "tags": [
+          "Claims"
+        ],
+        "summary": "link evidence to line item",
+        "operationId": "linkEvidenceToLineItem",
+        "parameters": [
+          {
+            "name": "claimId",
+            "in": "path",
+            "description": "ID of the claim",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "evidenceId",
+            "in": "path",
+            "description": "ID of the evidence to link",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "lineItemId",
+            "in": "path",
+            "description": "ID of the line item to link to",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Evidence linked to line item"
+          },
+          "400": {
+            "description": "**Invalid Request**\n* **Codes**: `VALIDATION_FAILED`, `BAD_REQUEST`\n* Occurs when the request payload fails validation or is malformed.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "**Unauthenticated**\n* **Codes**: `UNAUTHENTICATED`\n* Authentication is missing or the provided token is invalid.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "**Forbidden**\n* **Codes**: `FORBIDDEN`\n* The user is authenticated but lacks the required OAuth scopes or permissions.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "**Not Found**\n* **Codes**: `NOT_FOUND`\n* The requested resource (e.g., Claim ID) does not exist.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "**Conflict**\n* **Codes**: `CONFLICT`\n* The request conflicts with the current state of the resource in an upstream system.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "**Too Many Requests**\n* **Codes**: `TEMPORARILY_UNAVAILABLE`\n* An upstream service is currently rate-limiting requests.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "**Internal Server Error**\n* **Codes**: `INTERNAL_ERROR`, `SERVICE_ERROR`\n* An unexpected error occurred within this service.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "**Upstream Service Error**\n* **Codes**: `UPSTREAM_ERROR`\n* A dependent upstream service returned an invalid or error response.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "**Upstream Timeout**\n* **Codes**: `UPSTREAM_TIMEOUT`\n* A dependent upstream service failed to respond within the allowed time.\n",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/claims/{claimId}": {
       "get": {
         "tags": [
@@ -720,6 +1148,50 @@
           }
         }
       },
+      "UploadError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "UploadFile": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          },
+          "originalname": {
+            "type": "string"
+          }
+        }
+      },
+      "UploadResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "$ref": "#/components/schemas/UploadSuccess"
+          },
+          "error": {
+            "$ref": "#/components/schemas/UploadError"
+          },
+          "file": {
+            "$ref": "#/components/schemas/UploadFile"
+          }
+        }
+      },
+      "UploadSuccess": {
+        "type": "object",
+        "properties": {
+          "messageText": {
+            "type": "string"
+          },
+          "messageHtml": {
+            "type": "string"
+          }
+        }
+      },
       "Claim": {
         "type": "object",
         "properties": {
@@ -769,11 +1241,40 @@
             "type": "string",
             "format": "uuid",
             "description": "id of the submission this claim belongs to"
+          },
+          "lineItems": {
+            "type": "array",
+            "description": "line items associated with the claim",
+            "items": {
+              "$ref": "#/components/schemas/LineItem"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "description": "evidence associated with the claim",
+            "items": {
+              "$ref": "#/components/schemas/ClaimEvidence"
+            }
           }
         },
         "required": [
           "id",
           "submissionId"
+        ]
+      },
+      "ClaimEvidence": {
+        "type": "object",
+        "properties": {
+          "fileKey": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "id"
         ]
       },
       "ClaimPage": {
@@ -802,6 +1303,34 @@
             "format": "int32"
           }
         }
+      },
+      "LineItem": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "evidenceItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClaimEvidence"
+            }
+          },
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "id"
+        ]
       }
     }
   }

@@ -1,9 +1,27 @@
 import { z } from "zod";
 
+export const EvidenceItemSchema = z.object({
+  fileKey: z.string(),
+  id: z.number(),
+});
+
+export type EvidenceItem = z.infer<typeof EvidenceItemSchema>;
+
+export enum Category {
+  BILL_NARRATIVE = "Bill Narrative",
+  WORK_ITEM = "Work Item",
+  DISBURSEMENT = "Disbursement",
+}
+
+export const CategorySchema = z.enum(Category);
+
 export const LineItemSchema = z.object({
   id: z.number(),
-  title: z.string()
-})
+  title: z.string(),
+  category: CategorySchema,
+  date: z.string().transform(val => new Date(val)),
+  evidenceItems: z.array(EvidenceItemSchema),
+});
 
 export type LineItem = z.infer<typeof LineItemSchema>;
 

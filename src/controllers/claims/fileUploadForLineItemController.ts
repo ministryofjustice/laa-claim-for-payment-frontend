@@ -1,6 +1,7 @@
 import { escapeHtml } from '#src/helpers/escapehtml.js';
 import { claimService } from '#src/services/claimService.js';
 import { FileUploadForLineItemViewModel } from '#src/viewmodels/fileUploadForLineItemViewModel.js';
+import { formatFileSize } from '#src/helpers/fileSizeFormatter.js';
 import type { NextFunction, Request, Response } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -38,13 +39,9 @@ export async function fileUploadForLineItemPage(
 
     if (response.status === 'success') {
       const { body: claim } = response;
+      const {lineItems} = claim;
 
-      const lineItems = [
-        { id: 1, title: 'Bill Narrative' },
-        { id: 2, title: 'Interim hearing on 20 December 2023' },
-      ];
-
-      const lineItem = lineItems.find((item) => item.id === lineItemId);
+      const lineItem = lineItems?.find((item) => item.id === lineItemId);
 
       if (lineItem === undefined) {
         res.status(NOT_FOUND).render('main/error.njk', {
@@ -86,7 +83,7 @@ export function uploadEvidenceFile(
 
     if (file === undefined) {
       res.status(BAD_REQUEST).json({
-        error: { message: 'No file uploaded' },
+        error: { message: 'No file uploaded' }, // TODO: pick up content from t?? instead of hardcoded
       });
       return;
     }
@@ -175,14 +172,4 @@ export function continueFromFileUpload(
   } catch (error) {
     next(error);
   }
-}
-
-function formatFileSize(sizeInBytes: number): string {
-  const sizeInKilobytes = sizeInBytes / 1024;
-
-  if (sizeInKilobytes < 1024) {
-    return `${Math.max(1, Math.round(sizeInKilobytes))}KB`;
-  }
-
-  return `${Math.round(sizeInKilobytes / 1024)}MB`;
 }

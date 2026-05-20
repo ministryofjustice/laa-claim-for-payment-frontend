@@ -1,28 +1,16 @@
 import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI, load } from "cheerio";
 import { UploadEvidenceIndividuallyViewModel } from "#src/viewmodels/uploadEvidenceIndividuallyViewModel.js";
-import { Claim } from "#src/types/Claim.js";
+import { claim5 } from "#tests/assets/claim.js";
 
 // Show full strings in diffs if something fails
 chaiConfig.truncateThreshold = 0;
 
-const claim: Claim = {
-  id: 1,
-  concluded: new Date(),
-  ufn: "someUFN",
-  providerUserId: "someProviderUserId",
-  client: "someClient",
-  category: "someCategory",
-  feeType: "someFeeType",
-  claimed: 1,
-  submissionId: "someSubmissionId",
-  lineItems: [],
-};
 
 describe("views/main/claims/uploadEvidenceIndividually.njk", () => {
   let $: CheerioAPI;
 
-  const viewModel = new UploadEvidenceIndividuallyViewModel(claim);
+  const viewModel = new UploadEvidenceIndividuallyViewModel(claim5);
 
   beforeEach(async () => {
     // Import the JS helper at runtime to avoid TS/ESLint project faff
@@ -131,7 +119,7 @@ describe("views/main/claims/uploadEvidenceIndividually.njk", () => {
     const taskList = $(".govuk-task-list#work-items");
     expect(taskList).to.have.length(1);
     const tasks = taskList.find(".govuk-task-list__item");
-    expect(tasks).to.have.length(3);
+    expect(tasks).to.have.length(1);
   });
 
   it("renders the 'disbursements' h2", () => {
@@ -147,7 +135,7 @@ describe("views/main/claims/uploadEvidenceIndividually.njk", () => {
     const taskList = $(".govuk-task-list#disbursements");
     expect(taskList).to.have.length(1);
     const tasks = taskList.find(".govuk-task-list__item");
-    expect(tasks).to.have.length(4);
+    expect(tasks).to.have.length(1);
   });
 
   it("renders a 'Save and continue' button", () => {

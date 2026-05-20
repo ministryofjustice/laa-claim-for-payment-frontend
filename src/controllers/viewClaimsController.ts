@@ -34,7 +34,7 @@ export async function handleYourClaimsPage(
         head: claimsTableViewModel.head,
         pagination: claimsTableViewModel.pagination,
         createClaimHref: buildRoute(ROUTES.CHOOSE_UPLOAD, {
-          claimId: 1, //todo test only
+          claimId: 3, //todo test only
         }),
       });
     } else {
