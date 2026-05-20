@@ -20,7 +20,8 @@
     },
     "title": "{title} – {service} – GOV.UK",
     "service": "Claim for controlled work",
-    "department": "Ministry of Justice"
+    "department": "Ministry of Justice",
+    "selectDocument": "Select {document}"
   },
   "navigation": {
     "mainNav": {},
@@ -106,7 +107,9 @@
         "attendanceNotes": "court attendance notes"
       },
       "reuseADocument": {
-        "title": "Reuse a document"
+        "title": "Reuse a document",
+        "fileName": "File name",
+        "fileSize": "File size"
       },
       "uploadFiles":{
         "title": "Upload files",

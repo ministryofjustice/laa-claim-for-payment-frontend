@@ -3,8 +3,8 @@
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
         <th class="govuk-table__header" scope="col" id="documents-select-all"></th>
-        <th class="govuk-table__header" scope="col">File name</th>
-        <th class="govuk-table__header" scope="col">File size</th>
+        <th class="govuk-table__header" scope="col">{{ t('pages.fileUploadForLineItem.reuseADocument.fileName') }}</th>
+        <th class="govuk-table__header" scope="col">{{ t('pages.fileUploadForLineItem.reuseADocument.fileSize') }}</th>
       </tr>
     </thead>
     <tbody class="govuk-table__body">
@@ -12,9 +12,9 @@
         <tr class="govuk-table__row govuk-table__row--selected">
           <td class="govuk-table__cell">
             <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
-              <input type="checkbox" class="govuk-checkboxes__input" id="document-{{ reusableDocument.id }}">
-              <label class="govuk-label govuk-checkboxes__label" for="document-{{ reusableDocument.id }}">
-                <span class="govuk-visually-hidden">Select {{ reusableDocument.fileKey }}</span>
+              <input type="checkbox" class="govuk-checkboxes__input" id="document-{{ reusableDocument.name }}">
+              <label class="govuk-label govuk-checkboxes__label" for="document-{{ reusableDocument.name }}">
+                <span class="govuk-visually-hidden">{{ t('common.selectDocument', { document: reusableDocument.name }) }}</span>
               </label>
             </div>
           </td>
