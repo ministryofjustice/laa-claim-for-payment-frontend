@@ -116,7 +116,7 @@ describe("Choose Upload Controller", () => {
 
       expect(next.calledOnce).to.be.true;
       expect(next.firstCall.args[0]).to.be.instanceOf(Error);
-      expect(next.firstCall.args[0].message).to.include("An unexpected error occurred");
+      expect(next.firstCall.args[0].message).to.include("Render Error");
     });
 
     it("should delegate errors to Express error handling middleware on POST", async () => {
@@ -130,7 +130,7 @@ describe("Choose Upload Controller", () => {
 
       expect(next.calledOnce).to.be.true;
       expect(next.firstCall.args[0]).to.be.instanceOf(Error);
-      expect(next.firstCall.args[0].message).to.include("An unexpected error occurred");
+      expect(next.firstCall.args[0].message).to.include("Redirect Error");
     });
   });
 });

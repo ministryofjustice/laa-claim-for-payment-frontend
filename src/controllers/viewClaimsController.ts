@@ -1,12 +1,9 @@
-import { createProcessedError } from "#src/helpers/errorHandler.js";
 import { claimService } from "#src/services/claimService.js";
-import type { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
-import { parseNumberQueryParam } from "#src/helpers/index.js";
+import { parseNumberQueryParam, processApiError, processError } from "#src/helpers/index.js";
 import { InvalidPageError } from "#src/types/errors.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-
-const NOT_FOUND = 404;
 
 /**
  * Handle claim view with API data
@@ -41,21 +38,14 @@ export async function handleYourClaimsPage(
         }),
       });
     } else {
-      res.status(NOT_FOUND).render("main/error.njk", {
-        status: "404",
-        error: response.message,
-      });
+      next(processApiError(response, `fetching claims details for user`));
     }
   } catch (error) {
     if (error instanceof InvalidPageError) {
       console.info(error.message);
       res.redirect(`${ROUTES.CLAIMS}?page=${error.pageToRedirectTo}`);
     } else {
-      // Use the error processing utility
-      const processedError = createProcessedError(error, `fetching claims details for user`);
-
-      // Pass the processed error to the global error handler
-      next(processedError);
+      next(processError(error, `fetching claims details for user`));
     }
   }
 }

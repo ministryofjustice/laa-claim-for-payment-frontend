@@ -8,15 +8,6 @@
  * import { devLog, safeString, formatDate } from '#src/scripts/helpers';
  */
 
-// Development logging utilities
-export {
-  devLog,
-  devWarn,
-  devError,
-  devDebug,
-  isDevelopment
-} from './devLogger.js';
-
 // Data transformation utilities
 export {
   safeString,
@@ -35,12 +26,6 @@ export {
   isYes
 } from './dataTransformers.js';
 
-// Date formatting utilities
-export {
-  formatDate,
-  dateStringFromThreeFields
-} from './dateFormatter.js';
-
 // Session helpers
 export {
   storeSessionData,
@@ -57,15 +42,3 @@ export {
   nunjucksT,
   type ExpressLocaleLoader
 } from './i18nLoader.js';
-
-// Error handling utilities
-export {
-  extractErrorMessage,
-  isHttpError,
-  isAuthError,
-  isForbiddenError,
-  isNotFoundError,
-  isServerError,
-  createProcessedError,
-  extractAndLogError,
-} from './errorHandler.js';

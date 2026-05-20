@@ -21,14 +21,9 @@ export {
 
 // Error handling utilities
 export {
-  extractErrorMessage,
-  isHttpError,
-  isAuthError,
-  isForbiddenError,
-  isNotFoundError,
-  isServerError,
-  createProcessedError,
-  extractAndLogError,
+  processError,
+  processApiError,
+  createApiError
 } from "./errorHandler.js";
 
 export { parseNumberQueryParam } from "./queryParsers.js";

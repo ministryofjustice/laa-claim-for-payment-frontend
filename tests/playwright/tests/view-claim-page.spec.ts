@@ -15,10 +15,8 @@ test('home page displays service name and table', async ({ pages, checkAccessibi
   
   // Test the service name heading is present
   await expect(page.heading).toBeVisible();
-  const serviceName = await page.getServiceName();
-  expect(serviceName).toBeTruthy();
+  await expect(page.heading).toHaveText('LAA-001');
 
-  await expect(page.heading).toContainText('LAA-001')
   const summary = page.summaryTable
   await expect(summary).toBeVisible();
   await expect(summary).toContainText('£234.56');

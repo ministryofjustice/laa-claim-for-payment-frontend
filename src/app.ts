@@ -1,25 +1,25 @@
-import type { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 import express from "express";
 import chalk from "chalk";
 import morgan from "morgan";
 import compression from "compression";
 import {
-  setupCsrf,
-  setupMiddlewares,
   setupConfig,
+  setupCsrf,
   setupLocaleMiddleware,
+  setupMiddlewares,
 } from "#middleware/index.js";
 import session from "express-session";
 import {
-  nunjucksSetup,
-  rateLimitSetUp,
-  helmetSetup,
   axiosMiddleware,
-  displayAsciiBanner,
-  oidcSetup,
-  setupRedisSession,
   buildRedisClient,
+  displayAsciiBanner,
+  helmetSetup,
+  nunjucksSetup,
+  oidcSetup,
   prometheusSetup,
+  rateLimitSetUp,
+  setupRedisSession,
 } from "#utils/index.js";
 import config from "#config.js";
 import indexRouter from "#routes/index.js";
@@ -27,6 +27,7 @@ import livereload from "connect-livereload";
 import { requiresAuth } from "#utils/openidSetup.js";
 import { initializeI18nextSync } from "./scripts/helpers/i18nLoader.js";
 import { initRedis } from "#utils/redisClient.js";
+import createHttpError from "http-errors";
 
 const TRUST_FIRST_PROXY = 1;
 const SUCCESSFUL_REQUEST = 200;
@@ -136,9 +137,26 @@ const createApp = async (): Promise<express.Application> => {
     app.use(livereload());
   }
 
-  app.use((req, res, next) => {
-    res.status(404).send("Page not found");
+  app.use((req, res, next): void => {
+    next(new createHttpError.NotFound(`${req.url} not found`));
   });
+
+  app.use(
+    (err: Error, req: Request, res: Response, next: NextFunction): void => {
+      console.error(err.stack);
+      let statusCode = 500;
+      if (createHttpError.isHttpError(err)) {
+        if (err.statusCode === 404) {
+          res.status(404).render("main/notFound.njk");
+          return;
+        }
+        // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignoring rule here
+        statusCode = err.statusCode;
+      }
+
+      res.status(statusCode).render("main/internalServerError.njk");
+    },
+  );
 
   return app;
 };
@@ -176,7 +194,7 @@ const createManagementApp = (): express.Application => {
 
 /**
  * Starts the public app and management app together on their respective ports
- * 
+ *
  * @returns {Promise<void>} the running apps
  */
 const startApps = async (): Promise<void> => {
@@ -193,7 +211,9 @@ const startApps = async (): Promise<void> => {
 
   managementApp.listen(config.app.managementPort, () => {
     console.log(
-      chalk.yellow(`Management listening on port ${config.app.managementPort}...`),
+      chalk.yellow(
+        `Management listening on port ${config.app.managementPort}...`,
+      ),
     );
   });
 };

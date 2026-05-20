@@ -8,6 +8,7 @@ import { viewClaimPage } from "#src/controllers/claims/viewClaimController.js";
 import { getClaimSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { ApiResponse } from "#src/types/api-types.js";
 import { Claim } from "#src/types/Claim.js";
+import { HttpError } from "http-errors";
 
 describe("View Claim Controller", () => {
   let req: Partial<Request>;
@@ -62,6 +63,7 @@ describe("View Claim Controller", () => {
     it("should redirect to appropriate page when no claim is returned", async () => {
       const mockApiResponse: ApiResponse<Claim> = {
         status: "error",
+        statusCode: 500,
         message: "not found"
       };
 
@@ -73,7 +75,9 @@ describe("View Claim Controller", () => {
       // Assert
       expect(claimServiceStub.calledOnce).to.be.true;
       expect(claimServiceStub.calledWith(req.axiosMiddleware)).to.be.true;
-      expect(renderStub.calledWith("main/error.njk")).to.be.true;
+      expect(next.calledOnce).to.be.true;
+      expect(next.firstCall.args[0]).to.be.instanceOf(HttpError);
+      expect(next.firstCall.args[0].message).to.include("not found");
     });
 
     it("should delegate API errors to Express error handling middleware with user-friendly message", async () => {
@@ -87,7 +91,7 @@ describe("View Claim Controller", () => {
       // Assert - the controller should call next with a processed error
       expect(next.calledOnce).to.be.true;
       expect(next.firstCall.args[0]).to.be.instanceOf(Error);
-      expect(next.firstCall.args[0].message).to.include("An unexpected error occurred");
+      expect(next.firstCall.args[0].message).to.include("API Error");
     });
   });
 });
