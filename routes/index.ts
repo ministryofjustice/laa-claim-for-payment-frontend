@@ -16,6 +16,8 @@ const limiter = rateLimit({
 
 const router = express.Router();
 
+// TODO: move this logic somewhere in controller
+//.     Replace all loca storage uploading to backend calls
 const localUpload = multer({
   storage: multer.diskStorage({
     destination: uploadDir,
@@ -24,11 +26,12 @@ const localUpload = multer({
     },
   }),
   limits: {
-    fileSize: 10 * 1024 * 1024, // limit max file size to 10MB
+    fileSize: 10 * 1024 * 1024, // limit max file size to 10MB... also not working
   },
+  // TODO: Figure out where this goes
   fileFilter: (_req, file, callback) => {
     if (file.mimetype !== 'application/pdf') {
-      callback(new Error('Only PDF files can be uploaded'));
+      callback(new Error('Only PDF files can be uploaded')); 
       return;
     }
 
