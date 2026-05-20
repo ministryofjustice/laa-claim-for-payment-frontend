@@ -4,6 +4,7 @@ import { UploadStatusTagClass } from "#src/viewmodels/components/status.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { type Claim, Category, type EvidenceItem } from "#src/types/Claim.js";
 import { formatDateReadable } from "#src/helpers/dataFormatters.js";
+import type { Message } from "./components/message.js";
 
 /**
  *
@@ -26,11 +27,16 @@ export class UploadEvidenceIndividuallyViewModel {
       UploadEvidenceIndividuallyViewModel.buildItemTasks(Category.DISBURSEMENT, claim);
   }
 
-  private static buildLineItemTitle(title: string, date: Date): string {
-    return `${title} on ${formatDateReadable(date)}` // TODO: Somehow this needs to use t for Welsh
+  private static buildLineItemTitle(title: string, date: Date): Message {
+    return {
+      key: 'common.onDate',
+      args: {
+        title,
+        date: formatDateReadable(date),
+      },
+    };
   }
 
-  // TODO - only show if a bill narrative is present in the claim
   private static buildBillNarrativeTasks(claim: Claim): EvidenceTask[] {
     return claim.lineItems?.filter((lineItem) => lineItem.category ===  Category.BILL_NARRATIVE)
     .map((lineItem) => ({

@@ -13,6 +13,7 @@
     "errorSummaryTitle": "Mae yna broblem",
     "saveAndContinue": "Save and continue",
     "saveAndComeBackLater": "Save and come back later",
+    "onDate": "{title} on {date}",
     "uploadStatus": {
       "notUploaded": "Not uploaded",
       "uploaded": "Uploaded"

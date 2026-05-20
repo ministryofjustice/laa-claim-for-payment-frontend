@@ -1,11 +1,14 @@
-import type { Claim, LineItem } from "#src/types/Claim.js";
-import { buildRoute, ROUTES } from "#routes/helper.js";
+import { buildRoute, ROUTES } from '#routes/helper.js';
+import { formatDateReadable } from '#src/helpers/dataFormatters.js';
+import type { Claim, LineItem } from '#src/types/Claim.js';
+import { Category } from '#src/types/Claim.js';
+import type { Message } from '#src/viewmodels/components/message.js';
 
 /**
  *
  */
 export class FileUploadForLineItemViewModel {
-  readonly title: string;
+  readonly title: string | Message;
   readonly saveAndContinueHref: string;
 
 /**
@@ -13,11 +16,26 @@ export class FileUploadForLineItemViewModel {
  * @param {Claim} claim Array of claims
  * @param {LineItem} lineItem Line item
  */
-// TODO: Consider taking in a claim and a lineItemId instead of duplicating json
   constructor(claim: Claim, lineItem: LineItem) {
-    const { title } = lineItem;
-    
-    this.title = title;
-    this.saveAndContinueHref = buildRoute(ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, {claimId: claim.id})
+    this.title = FileUploadForLineItemViewModel.buildTitle(lineItem);
+
+    this.saveAndContinueHref = buildRoute(
+      ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY,
+      { claimId: claim.id },
+    );
+  }
+
+  private static buildTitle(lineItem: LineItem): string | Message {
+    if (lineItem.category === Category.BILL_NARRATIVE) {
+      return lineItem.title;
+    }
+
+    return {
+      key: 'common.onDate',
+      args: {
+        title: lineItem.title,
+        date: formatDateReadable(lineItem.date),
+      },
+    };
   }
 }
