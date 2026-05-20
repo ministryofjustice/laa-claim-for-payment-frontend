@@ -93,23 +93,25 @@
         "h2": "Disbursements"
       }
     },
-    "fileUploadForLineItem": {        
-        "p1": "You can upload evidence that applies to:",
-        "ul1": "several line items, and reuse it for other line items later",
-        "ul2": "only this line item",
-
-        "examplesOfEvidence": {
-          "title": "Examples of evidence",
-          "examples": "Examples of evidence include:",
-          "courtOrders": "A single court order, or a bundle of court orders",
-          "invoices": "A single disbursement invoice, or a bundle of invoices",
-          "attendanceNotes": "court attendance notes"
-        },
-        "uploadFiles":{
-          "title": "Upload files",
-          "maxSize": "The maximum file size is 10MB."
-        }
+    "fileUploadForLineItem": {
+      "p1": "You can upload evidence that applies to:",
+      "ul1": "several line items, and reuse it for other line items later",
+      "ul2": "only this line item",
+      "examplesOfEvidence": {
+        "title": "Examples of evidence",
+        "examples": "Examples of evidence include:",
+        "courtOrders": "A single court order, or a bundle of court orders",
+        "invoices": "A single disbursement invoice, or a bundle of invoices",
+        "attendanceNotes": "court attendance notes"
+      },
+      "reuseADocument": {
+        "title": "Reuse a document"
+      },
+      "uploadFiles":{
+        "title": "Upload files",
+        "maxSize": "The maximum file size is 10MB."
       }
+    }
   },
   "forms": {
     "name": {

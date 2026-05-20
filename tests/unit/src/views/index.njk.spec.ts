@@ -5,6 +5,7 @@ import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseDat
 import { getEnValue } from "#tests/support/i18n.js";
 import { expect, config as chaiConfig } from "chai";
 import { load, CheerioAPI } from "cheerio";
+import { renderView } from "#tests/unit/src/views/base/renderView.js";
 
 // Show full strings in diffs if something fails
 chaiConfig.truncateThreshold = 0;
@@ -28,12 +29,7 @@ describe("views/main/index.njk", () => {
   };
 
   beforeEach(async () => {
-    // Import the JS helper at runtime to avoid TS/ESLint project faff
-    const { setupNunjucksForGovUk } = await import("../../../support/nunjucks-govuk.js");
-    const env = setupNunjucksForGovUk();
-
-    const html = env.render("main/index.njk", context);
-    $ = load(html);
+    $ = await renderView('main/index.njk', context);
   });
 
   it("renders the H1", () => {

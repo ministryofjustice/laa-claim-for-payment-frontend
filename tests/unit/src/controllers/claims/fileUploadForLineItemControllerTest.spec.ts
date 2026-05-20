@@ -118,7 +118,9 @@ describe("View File Upload For Line Item Controller", () => {
 
       expect(claimServiceStub.calledOnce).to.be.true;
       expect(claimServiceStub.calledWith(req.axiosMiddleware)).to.be.true;
-      expect(renderStub.calledWith("main/error.njk")).to.be.true;
+      expect(next.calledOnce).to.be.true;
+      expect(next.firstCall.args[0]).to.be.instanceOf(HttpError);
+      expect(next.firstCall.args[0].message).to.include("Line item 3 not found");
     });
 
     it("returns 400 when no file is uploaded", async() =>{

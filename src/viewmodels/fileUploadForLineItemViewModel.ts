@@ -3,7 +3,7 @@ import { formatDateReadable } from "#src/helpers/dataFormatters.js";
 import type { Claim, LineItem } from "#src/types/Claim.js";
 import { Category } from "#src/types/Claim.js";
 import type { Message } from "#src/viewmodels/components/message.js";
-import { ReusableDocument } from "#src/viewmodels/components/evidence.js";
+import type { ReusableDocument } from "#src/viewmodels/components/evidence.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 
 /**
@@ -28,7 +28,7 @@ export class FileUploadForLineItemViewModel {
 
     this.reusableDocuments =
       claim.lineItems
-        ?.filter((li) => li.id != claim.id)
+        ?.filter((li) => li.id !== lineItem.id)
         .flatMap((li) => li.evidenceItems)
         .map((ei) => ({ name: ei.fileKey, size: formatFileSize(ei.fileSize) })) ?? [];
   }

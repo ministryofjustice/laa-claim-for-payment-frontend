@@ -6,8 +6,8 @@ import type { NextFunction, Request, Response } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
 import { processApiError, processError } from "#src/helpers/index.js";
+import createHttpError from "http-errors";
 
-const NOT_FOUND = 404;
 const BAD_REQUEST = 400;
 const OK = 200;
 
@@ -44,9 +44,7 @@ export async function fileUploadForLineItemPage(
       const lineItem = lineItems?.find((item) => item.id === lineItemId);
 
       if (lineItem === undefined) {
-        res.status(NOT_FOUND).render('main/error.njk', {
-          status: '404',
-        });
+        next(new createHttpError.NotFound(`Line item ${lineItemId} not found`));
         return;
       }
 

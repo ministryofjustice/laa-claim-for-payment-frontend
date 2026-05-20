@@ -2,6 +2,7 @@ import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI, load } from "cheerio";
 import { UploadEvidenceIndividuallyViewModel } from "#src/viewmodels/uploadEvidenceIndividuallyViewModel.js";
 import { claim5 } from "#tests/assets/claim.js";
+import { renderView } from "#tests/unit/src/views/base/renderView.js";
 
 // Show full strings in diffs if something fails
 chaiConfig.truncateThreshold = 0;
@@ -13,15 +14,9 @@ describe("views/main/claims/uploadEvidenceIndividually.njk", () => {
   const viewModel = new UploadEvidenceIndividuallyViewModel(claim5);
 
   beforeEach(async () => {
-    // Import the JS helper at runtime to avoid TS/ESLint project faff
-    const { setupNunjucksForGovUk } =
-      await import("../../../../support/nunjucks-govuk.js");
-    const env = setupNunjucksForGovUk();
-
-    const html = env.render("main/claims/uploadEvidenceIndividually.njk", {
-      vm: viewModel,
+    $ = await renderView('main/claims/uploadEvidenceIndividually.njk', {
+      vm: viewModel
     });
-    $ = load(html);
   });
 
   it("renders the title in the main H1", () => {

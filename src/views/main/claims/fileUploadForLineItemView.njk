@@ -11,7 +11,7 @@
 
 {% extends "base.njk" %}
 
-{% set title = vm.title %}
+{% set title = renderTextOrMessage(t, vm.title) %}
 
 {% block content %}
   <div class="govuk-grid-row">

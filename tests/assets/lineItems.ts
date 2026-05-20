@@ -4,7 +4,7 @@ export const evidenceItem: EvidenceItem = {
   id: 1,
   fileKey: "evidence1.pdf",
   fileSize: 1000
-} 
+}
 
 export const billNarrativeLineItem: LineItem = {
   id: 1,

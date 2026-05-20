@@ -1,13 +1,30 @@
 import { FileUploadForLineItemViewModel } from "#src/viewmodels/fileUploadForLineItemViewModel.js";
 import { claim1 } from "#tests/assets/claim.js";
-import { billNarrativeLineItem } from "#tests/assets/lineItems.js";
+import {
+  billNarrativeLineItem,
+  workItemLineItem,
+} from "#tests/assets/lineItems.js";
 import { expect } from "chai";
 
 describe("FileUploadForLineItemViewModel constructor()", ()=>{
-  it("builds the title and saveAndContinueHref", () =>{
+  it("builds the title and saveAndContinueHref", () => {
     const vm = new FileUploadForLineItemViewModel(claim1, billNarrativeLineItem);
 
-    expect(vm.title).to.equal("Bill narrative")
+    expect(vm.title).to.equal("Bill narrative");
     expect(vm.saveAndContinueHref).to.equal("/claims/1/upload-evidence-individually");
-  })
+  });
+
+  it("builds the reusable documents when there are no evidence items not already uploaded for this line item", () => {
+    const vm = new FileUploadForLineItemViewModel(claim1, billNarrativeLineItem);
+
+    expect(vm.reusableDocuments.length).to.equal(0);
+  });
+
+  it("builds the reusable documents when there are evidence items not already uploaded for this line item", () => {
+    const vm = new FileUploadForLineItemViewModel(claim1, workItemLineItem);
+
+    expect(vm.reusableDocuments.length).to.equal(1);
+    expect(vm.reusableDocuments[0].name).to.equal("evidence1.pdf");
+    expect(vm.reusableDocuments[0].size).to.equal("1KB");
+  });
 })
