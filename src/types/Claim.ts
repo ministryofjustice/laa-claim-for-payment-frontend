@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const EvidenceItemSchema = z.object({
   fileKey: z.string(),
+  fileSize: z.number(),
   id: z.number(),
 });
 
