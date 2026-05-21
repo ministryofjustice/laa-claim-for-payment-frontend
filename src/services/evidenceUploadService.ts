@@ -48,10 +48,12 @@ view.set(file.buffer);
     success: {
       messageText: `${file.originalname} uploaded`,
       messageHtml: `
-        <a href="#" class="govuk-link">${escapeHtml(file.originalname)}</a>
-        <span class="govuk-!-margin-left-2">${formatFileSize(file.size)}</span>
-        <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">Uploaded</strong>
-      `,
+        <span class="uploaded-file-row">
+          <a href="#" class="govuk-link uploaded-file-name">${escapeHtml(file.originalname)}</a>
+          <span class="uploaded-file-size govuk-!-margin-left-2">${formatFileSize(file.size)}</span>
+          <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">Uploaded</strong>
+        </span>
+      `
     },
     file: {
       filename: file.originalname,
