@@ -8,6 +8,12 @@ export const EvidenceItemSchema = z.object({
 
 export type EvidenceItem = z.infer<typeof EvidenceItemSchema>;
 
+export const LinkedEvidenceItemSchema = z.object({
+  id: z.number(),
+});
+
+export type LinkedEvidenceItem = z.infer<typeof LinkedEvidenceItemSchema>;
+
 export enum Category {
   BILL_NARRATIVE = "Bill Narrative",
   WORK_ITEM = "Work Item",
@@ -21,7 +27,7 @@ export const LineItemSchema = z.object({
   title: z.string(),
   category: CategorySchema,
   date: z.string().transform(val => new Date(val)),
-  evidenceItems: z.array(EvidenceItemSchema),
+  evidenceItems: z.array(LinkedEvidenceItemSchema),
 });
 
 export type LineItem = z.infer<typeof LineItemSchema>;
@@ -37,6 +43,7 @@ export const ClaimResponseSchema = z.object({
   claimed: z.number().optional(),
   submissionId: z.string().optional(),
   lineItems: z.array(LineItemSchema).optional(),
+  evidence: z.array(EvidenceItemSchema).optional(),
 });
 
 export type Claim = z.infer<typeof ClaimResponseSchema>;

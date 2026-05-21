@@ -32,31 +32,19 @@ export class FileUploadForLineItemViewModel {
 
     this.title = FileUploadForLineItemViewModel.buildTitle(lineItem);
 
-    this.saveAndContinueHref = buildRoute(
-      ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY,
-      { claimId: claim.id },
-    );
+    this.saveAndContinueHref = buildRoute(ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, {
+      claimId: claim.id,
+    });
 
-    const existingIds = new Set(lineItem.evidenceItems.map(ei => ei.id));
-
+    const existingIds = new Set(lineItem.evidenceItems.map((ei) => ei.id));
     this.reusableDocuments =
-      Array.from(
-        new Map(
-          (claim.lineItems ?? [])
-            // Exclude the current line item so we don't show evidence already linked here
-            .filter((li) => li.id !== lineItem.id)
-            // Collect all evidence items from the remaining line items
-            .flatMap((li) => li.evidenceItems)
-            // Exclude any evidence already linked to this line item
-            .filter((ei) => !existingIds.has(ei.id))
-            // Use the evidence item id as the map key to remove duplicates
-            .map((ei) => [ei.id, ei])
-        ).values()
-      ).map((ei) => ({
-        id: ei.id,
-        name: ei.fileKey,
-        size: formatFileSize(ei.fileSize),
-      }));
+      claim.evidence
+        ?.filter((e) => !existingIds.has(e.id))
+        .map((e) => ({
+          id: e.id,
+          name: e.fileKey,
+          size: formatFileSize(e.fileSize),
+        })) ?? [];
   }
 
   private static buildTitle(lineItem: LineItem): string | Message {
@@ -65,7 +53,7 @@ export class FileUploadForLineItemViewModel {
     }
 
     return {
-      key: 'common.onDate',
+      key: "common.onDate",
       args: {
         title: lineItem.title,
         date: formatDateReadable(lineItem.date),
