@@ -4,6 +4,7 @@ import {
   disbursementLineItem,
   workItemLineItem1,
   workItemLineItem2,
+  workItemLineItem3,
 } from "./lineItems.js";
 
 export const claim1: Claim = {
@@ -98,5 +99,22 @@ export const claim6: Claim = {
   lineItems: [
     billNarrativeLineItem,
     workItemLineItem2
+  ]
+};
+
+export const claim7: Claim = {
+  id: 7,
+  client: "Omar",
+  category: "Immigration and Asylum",
+  concluded: new Date("2025-03-12"),
+  feeType: "Hourly",
+  claimed: 456.01,
+  submissionId: "550e8400-e29b-41d4-a716-446655440000",
+  ufn: "someUFN",
+  providerUserId: "someProviderUserId",
+  lineItems: [
+    workItemLineItem1,
+    workItemLineItem2,
+    workItemLineItem3
   ]
 };

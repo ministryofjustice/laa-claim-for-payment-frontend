@@ -1,12 +1,12 @@
-import { claimService } from '#src/services/claimService.js';
-import { FileUploadForLineItemViewModel } from '#src/viewmodels/fileUploadForLineItemViewModel.js';
-import type { NextFunction, Request, Response } from 'express';
-import fs from 'node:fs';
-import path from 'node:path';
+import { claimService } from "#src/services/claimService.js";
+import { FileUploadForLineItemViewModel } from "#src/viewmodels/fileUploadForLineItemViewModel.js";
+import type { NextFunction, Request, Response } from "express";
+import fs from "node:fs";
+import path from "node:path";
 import { processApiError, processError } from "#src/helpers/index.js";
 import createHttpError from "http-errors";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { uploadLineItemEvidence } from '#src/services/evidenceUploadService.js';
+import { uploadLineItemEvidence } from "#src/services/evidenceUploadService.js";
 
 const BAD_REQUEST = 400;
 const OK = 200;
@@ -79,20 +79,31 @@ export async function linkEvidenceToLineItem(
   try {
     const claimId = Number(req.params.claimId);
     const lineItemId = Number(req.params.lineItemId);
-    const evidenceIds: number[] = ([] as string[])
-      .concat(req.body?.documents ?? [])
-      .map(String)
-      .map(id => id.trim())
-      .filter(Boolean)
-      .map(Number);
-    // TODO - if evidence IDs is empty, skip
-    await claimService.linkEvidenceToLineItem(req.axiosMiddleware, claimId, lineItemId, evidenceIds);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
+    const documents: unknown = req.body?.documents;
+
+    const evidenceIds: number[] = Array.isArray(documents)
+      ? documents
+        .filter((id): id is string => typeof id === 'string')
+        .map(id => id.trim())
+        .filter(Boolean)
+        .map(Number)
+      : [];
+
+    if (evidenceIds.length > 0) {
+      const response = await claimService.linkEvidenceToLineItem(req.axiosMiddleware, claimId, lineItemId, evidenceIds);
+      if (response.status === 'error') {
+        next(processApiError(response, "linking evidence to line item"));
+        return;
+      }
+    }
     const redirectUrl = buildRoute(ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, {
-      claimId: claimId,
+      claimId,
     });
     res.redirect(redirectUrl);
   } catch (error) {
-    next(processError(error, ""));
+    next(processError(error, "linking evidence to line item"));
   }
 }
 
@@ -148,7 +159,7 @@ export function deleteEvidenceFile(
   try {
     // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- Using alias because "delete" is a reserved keyword.
     const { delete: fileId } = req.body;
-    
+
     if (fileId === undefined || fileId === '') {
       res.status(BAD_REQUEST).json({
         error: {message: 'Missing file id'},

@@ -1,5 +1,5 @@
 import { FileUploadForLineItemViewModel } from "#src/viewmodels/fileUploadForLineItemViewModel.js";
-import { claim1, claim6 } from "#tests/assets/claim.js";
+import { claim1, claim6, claim7 } from "#tests/assets/claim.js";
 import {
   billNarrativeLineItem,
   workItemLineItem1,
@@ -32,5 +32,11 @@ describe("FileUploadForLineItemViewModel constructor()", ()=>{
     const vm = new FileUploadForLineItemViewModel(claim6, billNarrativeLineItem);
 
     expect(vm.reusableDocuments.length).to.equal(0);
+  });
+
+  it("builds the reusable documents when the same evidence has been linked to multiple other items", () => {
+    const vm = new FileUploadForLineItemViewModel(claim7, workItemLineItem1);
+
+    expect(vm.reusableDocuments.length).to.equal(1);
   });
 })

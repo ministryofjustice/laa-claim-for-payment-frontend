@@ -34,6 +34,16 @@ export const workItemLineItem2: LineItem = {
   ],
 }
 
+export const workItemLineItem3: LineItem = {
+  id: 5,
+  title: "Interim hearing",
+  category: Category.WORK_ITEM,
+  date: new Date("2023-12-21"),
+  evidenceItems: [
+    evidenceItem
+  ],
+}
+
 export const disbursementLineItem: LineItem = {
   id: 3,
   title: "Enquiry agent",

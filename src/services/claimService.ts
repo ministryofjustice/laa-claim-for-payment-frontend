@@ -121,6 +121,7 @@ class ClaimService {
    * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
    * @returns {Promise<ApiResponse<null>>} Null response in app response format.
    */
+  // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   static async linkEvidenceToLineItem(
     axiosMiddleware: AxiosInstanceWrapper,
     claimId: number,

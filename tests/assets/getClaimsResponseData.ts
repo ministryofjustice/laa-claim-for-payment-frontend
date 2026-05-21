@@ -24,3 +24,8 @@ export const getClaimsSuccessResponseData: ApiResponse<Paginated<Claim>> = {
   },
   status: "success",
 };
+
+export const linkLineItemToEvidenceResponseData: ApiResponse<null> = {
+  body: null,
+  status: "success",
+}
