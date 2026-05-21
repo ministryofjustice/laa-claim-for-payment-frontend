@@ -35,7 +35,7 @@
     <p class="govuk-body">{{ t('pages.fileUploadForLineItem.uploadFiles.maxSize') }}</p>
 
     <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
+      <div class="govuk-grid-column-three-quarters">
 
         {% if errorSummary.items.length %}
           {{ govukErrorSummary({
@@ -48,8 +48,8 @@
         <div
           id="multi-file-upload-config"
           hidden
-          data-upload-url="/ajax-upload"
-          data-delete-url="/ajax-delete"
+          data-upload-url="{{ vm.uploadUrl }}"
+          data-delete-url="{{ vm.deleteUrl }}"
           data-csrf-token="{{ csrfToken }}">
         </div>
 
@@ -68,12 +68,16 @@
             }) }}
           {% endset %}
 
-          {{ mojMultiFileUpload({
-            uploadedFiles: {
-              items: uploadedFiles
-            },
-            uploadHtml: uploadHtml
-          }) }}
+          <div class="upload-wrapper">
+
+            {{ mojMultiFileUpload({
+              uploadedFiles: {
+                items: uploadedFiles or []
+              },
+              uploadHtml: uploadHtml
+            }) }}
+
+          </div>
         </form>
       </div>
     </div>

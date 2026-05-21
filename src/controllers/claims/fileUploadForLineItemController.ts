@@ -1,11 +1,10 @@
-import { escapeHtml } from '#src/helpers/escapehtml.js';
 import { claimService } from '#src/services/claimService.js';
 import { FileUploadForLineItemViewModel } from '#src/viewmodels/fileUploadForLineItemViewModel.js';
-import { formatFileSize } from '#src/helpers/fileSizeFormatter.js';
 import type { NextFunction, Request, Response } from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
 import { processApiError, processError } from "#src/helpers/index.js";
+import { uploadLineItemEvidence } from '#src/services/evidenceUploadService.js';
 
 const NOT_FOUND = 404;
 const BAD_REQUEST = 400;
@@ -73,37 +72,31 @@ export async function fileUploadForLineItemPage(
  * @param {NextFunction} next Express next function.
  * @returns {void}
  */
-export function uploadEvidenceFile(
+export async function uploadEvidenceFile(
   req: MulterRequest,
   res: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   try {
     const { file } = req;
 
     if (file === undefined) {
       res.status(BAD_REQUEST).json({
-        error: { message: 'No file uploaded' }, // TODO: pick up content from t?? instead of hardcoded
+        error: { message: 'No file uploaded' },
       });
       return;
     }
 
-    res.json({
-      success: {
-        messageText: `${file.originalname} uploaded`,
-        messageHtml: `
-        <a href="#" class="govuk-link">${escapeHtml(file.originalname)}</a>
-        <span class="govuk-!-margin-left-2">${formatFileSize(file.size)}</span>
-        <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">Uploaded</strong>
-        `,
-      },
-      file: {
-        filename: file.filename,
-        originalname: file.originalname,
-      },
+    const response = await uploadLineItemEvidence({
+      axiosMiddleware: req.axiosMiddleware,
+      claimId: Number(req.params.claimId),
+      lineItemId: Number(req.params.lineItemId),
+      file,
     });
+
+    res.json(response);
   } catch (error) {
-    next(error);
+    next(processError(error, 'uploading evidence file'));
   }
 }
 

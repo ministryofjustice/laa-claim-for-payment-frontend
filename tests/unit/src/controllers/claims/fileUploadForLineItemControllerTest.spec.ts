@@ -14,6 +14,7 @@ import { viewClaimPage } from "#src/controllers/claims/viewClaimController.js";
 import fs from 'node:fs';
 import path from 'node:path';
 import { HttpError } from "http-errors";
+import config from "#config.js";
 
 describe("View File Upload For Line Item Controller", () => {
   let req: Partial<Request>;
@@ -146,14 +147,25 @@ describe("View File Upload For Line Item Controller", () => {
       expect(next.called).to.equal(false);
     });
 
-    it("returns uploaded file details when a file is uploaed", async() => {
+    it('returns uploaded file details when a file is uploaded', async () => {
+      const axiosPost = sinon.stub().resolves({ data: {} });
+
       const req = {
+        params: {
+          claimId: '1',
+          lineItemId: '2',
+        },
+        axiosMiddleware: {
+          post: axiosPost,
+        },
         file: {
           filename: 'abc123',
           originalname: 'evidence.pdf',
           size: 12345,
+          mimetype: 'application/pdf',
+          buffer: Buffer.from('fake pdf content'),
         },
-      } as Request;
+      } as unknown as Request;
 
       const status = sinon.stub().returnsThis();
       const json = sinon.stub();
@@ -171,21 +183,31 @@ describe("View File Upload For Line Item Controller", () => {
         next as unknown as NextFunction,
       );
 
+      expect(axiosPost.calledOnce).to.equal(true);
+      expect(axiosPost.firstCall.args[0]).to.equal(
+        `${config.api.baseUrl}/api/v1/claims/1/line-items/2/upload-evidence`,
+      );
+
       expect(json.calledOnce).to.equal(true);
 
-      expect(json.firstCall.args[0]).to.deep.equal({
-        file: {
-          filename: "abc123",
-          originalname: "evidence.pdf"
-        },
-        success: {
-          messageHtml: "\n        <a href=\"#\" class=\"govuk-link\">evidence.pdf</a>\n        <span class=\"govuk-!-margin-left-2\">12KB</span>\n        <strong class=\"govuk-tag govuk-tag--green govuk-!-margin-left-4\">Uploaded</strong>\n        ",
-          messageText: "evidence.pdf uploaded",
-        }
+      const responseBody = json.firstCall.args[0];
+
+      expect(responseBody.file).to.deep.equal({
+        filename: 'evidence.pdf',
+        originalname: 'evidence.pdf',
       });
+
+      expect(responseBody.success.messageText).to.equal(
+        'evidence.pdf uploaded',
+      );
+
+      expect(responseBody.success.messageHtml).to.include('evidence.pdf');
+      expect(responseBody.success.messageHtml).to.include('12KB');
+      expect(responseBody.success.messageHtml).to.include('Uploaded');
+
       expect(status.called).to.equal(false);
       expect(next.called).to.equal(false);
-    })
+    });
 
     it('deletes an uploaded file', async () => {
       const existsSync = sinon.stub(fs, 'existsSync').returns(true);

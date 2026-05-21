@@ -1,8 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { UploadEvidenceIndividuallyViewModel } from "#src/viewmodels/uploadEvidenceIndividuallyViewModel.js";
 import { claimService } from "#src/services/claimService.js";
-import { processError } from "#public/src/helpers/index.js";
-import { processApiError } from "#src/helpers/index.js";
+import { processError, processApiError } from "#src/helpers/index.js";
 
 /**
  * Handle upload evidence individually view

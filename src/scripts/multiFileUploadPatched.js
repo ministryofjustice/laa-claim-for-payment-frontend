@@ -22,6 +22,23 @@ export function patchMultiFileUpload(csrfToken) {
     return;
   }
 
+  MultiFileUpload.prototype.getDeleteButton = function (file) {
+    const $link = document.createElement('a');
+
+    $link.setAttribute('href', '#');
+    $link.setAttribute('role', 'button');
+    $link.setAttribute('data-delete-file-id', file.filename);
+
+    $link.classList.add(
+      'moj-multi-file-upload__delete',
+      'govuk-link',
+    );
+
+    $link.innerHTML = `Delete <span class="govuk-visually-hidden">${file.originalname}</span>`;
+
+    return $link;
+  };
+
   /**
    * @param {File} file
    */
@@ -51,8 +68,10 @@ export function patchMultiFileUpload(csrfToken) {
         onError(); return;
       }
 
-      $message.innerHTML = this.getSuccessHtml(xhr.response.success)
-      this.$status.textContent = xhr.response.success.messageText
+      $message.innerHTML = xhr.response.success.messageHtml;
+      this.$status.textContent = xhr.response.success.messageText;
+
+      showUploadedFilesHeading();
 
       $actions.append(this.getDeleteButton(xhr.response.file))
       this.config.hooks.exitHook(this, file, xhr, xhr.statusText)
@@ -98,7 +117,7 @@ export function patchMultiFileUpload(csrfToken) {
 
     if (
       !$button ||
-      !($button instanceof HTMLButtonElement) ||
+      !($button instanceof HTMLAnchorElement) ||
       !$button.classList.contains('moj-multi-file-upload__delete')
     ) {
       return;
@@ -126,6 +145,8 @@ export function patchMultiFileUpload(csrfToken) {
         $rowDelete.remove();
       }
 
+      hideUploadedFilesHeadingIfEmpty();
+
       this.config.hooks.deleteHook(this, undefined, xhr, xhr.statusText);
     });
 
@@ -136,8 +157,41 @@ export function patchMultiFileUpload(csrfToken) {
 
     xhr.send(
       JSON.stringify({
-        [$button.name]: $button.value,
+        delete: $button.dataset.deleteFileId,
       }),
     );
   };
+
+   function showUploadedFilesHeading() {
+    const container = document.querySelector('.moj-multi-file__uploaded-files');
+
+    if (container === null) {
+      return;
+    }
+
+    let heading = document.getElementById('uploaded-files-heading');
+
+    if (heading === null) {
+      heading = document.createElement('div');
+      heading.id = 'uploaded-files-heading';
+      heading.innerHTML = `
+        <h2 class="govuk-heading-m">Uploaded files</h2>
+        <p class="govuk-body">Select the file name to open a copy in a new tab.</p>
+      `;
+
+      container.prepend(heading);
+    }
+
+    heading.classList.remove('moj-hidden');
+  }
+
+  function hideUploadedFilesHeadingIfEmpty() {
+    const uploadedRows = document.querySelectorAll('.moj-multi-file-upload__row');
+
+    if (uploadedRows.length === 0) {
+      document
+        .getElementById('uploaded-files-heading')
+        ?.classList.add('moj-hidden');
+    }
+  }
 }
