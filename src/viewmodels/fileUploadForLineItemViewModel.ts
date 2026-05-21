@@ -10,6 +10,8 @@ import type { Message } from '#src/viewmodels/components/message.js';
 export class FileUploadForLineItemViewModel {
   readonly title: string | Message;
   readonly saveAndContinueHref: string;
+  readonly uploadUrl: string;
+  readonly deleteUrl: string;
 
 /**
  * Creates a view model containing the summary rows derived from the claim data
@@ -17,6 +19,14 @@ export class FileUploadForLineItemViewModel {
  * @param {LineItem} lineItem Line item
  */
   constructor(claim: Claim, lineItem: LineItem) {
+    const fileUploadRoute = buildRoute(ROUTES.UPLOAD_FILE_FOR_LINE_ITEM, {
+      claimId: claim.id,
+      lineItemId: lineItem.id,
+    });
+
+    this.uploadUrl = `${fileUploadRoute}/ajax-upload`;
+    this.deleteUrl = `${fileUploadRoute}/ajax-delete`;
+
     this.title = FileUploadForLineItemViewModel.buildTitle(lineItem);
 
     this.saveAndContinueHref = buildRoute(
