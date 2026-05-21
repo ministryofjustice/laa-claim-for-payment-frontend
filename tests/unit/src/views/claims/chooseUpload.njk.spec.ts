@@ -1,26 +1,19 @@
 import { ChooseUploadViewModel } from "#src/viewmodels/chooseUploadViewModel.js";
 import { expect, config as chaiConfig } from "chai";
 import { load, CheerioAPI } from "cheerio";
+import { renderView } from "#tests/unit/src/views/base/renderView.js";
 
 chaiConfig.truncateThreshold = 0;
 
 describe("views/main/claims/chooseUploadView.njk", () => {
   let $: CheerioAPI;
 
-  const t = (key: string): string => key;
-
   describe("without errors", () => {
     beforeEach(async () => {
-      const { setupNunjucksForGovUk } = await import("../../../../support/nunjucks-govuk.js");
-      const env = setupNunjucksForGovUk();
-
-      const html = env.render("main/claims/chooseUploadView.njk", {
+      $ = await renderView('main/claims/chooseUploadView.njk', {
         csrfToken: "csrf-token",
-        t,
         vm: new ChooseUploadViewModel(),
       });
-
-      $ = load(html);
     });
 
     it("renders a Back link", () => {
@@ -92,20 +85,14 @@ describe("views/main/claims/chooseUploadView.njk", () => {
 
   describe("with errors", () => {
     beforeEach(async () => {
-      const { setupNunjucksForGovUk } = await import("../../../../support/nunjucks-govuk.js");
-      const env = setupNunjucksForGovUk();
-
-      const html = env.render("main/claims/chooseUploadView.njk", {
+      $ = await renderView('main/claims/chooseUploadView.njk', {
         csrfToken: "csrf-token",
-        t,
         vm: new ChooseUploadViewModel({
           error: {
             text: "pages.chooseUpload.error.empty",
           },
         }),
       });
-
-      $ = load(html);
     });
 
     it("renders an error summary", () => {

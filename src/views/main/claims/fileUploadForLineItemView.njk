@@ -1,4 +1,5 @@
 {% from "components/backLink.njk" import backLink %}
+{% from "components/multiSelect.njk" import multiSelect %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
@@ -9,6 +10,59 @@
 {% from "components/renderTextOrMessage.njk" import renderTextOrMessage %}
 
 {% extends "base.njk" %}
+
+{% set title = renderTextOrMessage(t, vm.title) %}
+
+{% macro uploadFilesHtml() %}
+  <h2 class="govuk-heading-m">{{ t('pages.fileUploadForLineItem.uploadFiles.title')}}</h2>
+  <p class="govuk-body">{{ t('pages.fileUploadForLineItem.uploadFiles.maxSize') }}</p>
+
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-three-quarters">
+
+      {% if errorSummary.items.length %}
+        {{ govukErrorSummary({
+          titleText: "There is a problem",
+          errorList: errorSummary.items
+        }) }}
+      {% endif %}
+
+      <form action="#" method="post" enctype="multipart/form-data">
+        <div
+          id="multi-file-upload-config"
+          hidden
+          data-upload-url="{{ vm.uploadUrl }}"
+          data-delete-url="{{ vm.deleteUrl }}"
+          data-csrf-token="{{ csrfToken }}">
+        </div>
+
+      {% set uploadHtml %}
+        {{ govukFileUpload({
+          id: "documents",
+          name: "documents",
+          classes: "moj-multi-file-upload__input",
+          attributes: { multiple: "" },
+          errorMessage: errorMessage
+        }) }}
+
+        {{ govukButton({
+          text: "Upload file",
+          classes: "govuk-button--secondary moj-multi-file-upload__button"
+        }) }}
+      {% endset %}
+
+      <div class="upload-wrapper">
+        {{ mojMultiFileUpload({
+          uploadedFiles: {
+            items: uploadedFiles
+          },
+          uploadHtml: uploadHtml
+        }) }}
+      </div>
+    </div>
+  </div>
+{% endmacro %}
+
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -31,63 +85,29 @@
       <li> {{ t('pages.fileUploadForLineItem.examplesOfEvidence.attendanceNotes') }}</li>
     </ul>
 
-    <h2 class="govuk-heading-m">{{ t('pages.fileUploadForLineItem.uploadFiles.title')}}</h2>
-    <p class="govuk-body">{{ t('pages.fileUploadForLineItem.uploadFiles.maxSize') }}</p>
+    {% if vm.reusableDocuments.length %}
+      <h2 class="govuk-heading-m">{{ t('pages.fileUploadForLineItem.reuseADocument.title')}}</h2>
+      <form method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        {{ multiSelect(t, vm.reusableDocuments) }}
 
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-three-quarters">
+        {{ uploadFilesHtml() }}
 
-        {% if errorSummary.items.length %}
-          {{ govukErrorSummary({
-            titleText: "There is a problem",
-            errorList: errorSummary.items
+        <div class="govuk-button-group">
+          {{ govukButton({
+            text: t('common.saveAndContinue')
           }) }}
-        {% endif %}
 
-      <form action="#" method="post" enctype="multipart/form-data">
-        <div
-          id="multi-file-upload-config"
-          hidden
-          data-upload-url="{{ vm.uploadUrl }}"
-          data-delete-url="{{ vm.deleteUrl }}"
-          data-csrf-token="{{ csrfToken }}">
+          <a class="govuk-button govuk-button--secondary" href="{{ vm.saveAndContinueHref }}">{{ t('common.saveAndComeBackLater') }}</a>
         </div>
+      </form>
+    {% else %}
+      {{ uploadFilesHtml() }}
 
-          {% set uploadHtml %}
-            {{ govukFileUpload({
-              id: "documents",
-              name: "documents",
-              classes: "moj-multi-file-upload__input",
-              attributes: { multiple: "" },
-              errorMessage: errorMessage
-            }) }}
-
-            {{ govukButton({
-              text: "Upload file",
-              classes: "govuk-button--secondary moj-multi-file-upload__button"
-            }) }}
-          {% endset %}
-
-          <div class="upload-wrapper">
-
-            {{ mojMultiFileUpload({
-              uploadedFiles: {
-                items: uploadedFiles or []
-              },
-              uploadHtml: uploadHtml
-            }) }}
-
-          </div>
-        </form>
+      <div class="govuk-button-group">
+        <a class="govuk-button" href="{{ vm.saveAndContinueHref }}">{{ t('common.saveAndContinue') }}</a>
+        <a class="govuk-button govuk-button--secondary" href="{{ vm.saveAndContinueHref }}">{{ t('common.saveAndComeBackLater') }}</a>
       </div>
-    </div>
-
-
-    <div class="govuk-button-group">
-        <a class="govuk-button" href="{{vm.saveAndContinueHref}}">{{ t('common.saveAndContinue') }}</a>
-        <a class="govuk-button govuk-button--secondary" href="{{vm.saveAndContinueHref}}">{{ t('common.saveAndComeBackLater') }}</a>
-      </div>
-
-
+    {% endif %}
   </div>
 {% endblock %}

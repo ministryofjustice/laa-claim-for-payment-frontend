@@ -2,6 +2,7 @@ import { createClient } from "#src/generated/claim-api/client/client.gen.js";
 import {
   getClaim as getClaimApi,
   getClaims as getClaimsApi,
+  linkEvidenceToLineItem as linkEvidenceToLineItemApi,
 } from "#src/generated/claim-api/sdk.gen.js";
 import { createApiError } from "#src/helpers/index.js";
 import type { ApiResponse, Paginated } from "#src/types/api-types.js";
@@ -17,12 +18,14 @@ interface ClaimServiceDeps {
   createClient: typeof createClient;
   getClaims: typeof getClaimsApi;
   getClaim: typeof getClaimApi;
+  linkEvidenceToLineItem: typeof linkEvidenceToLineItemApi;
 }
 
 const defaultDeps: ClaimServiceDeps = {
   createClient,
   getClaims: getClaimsApi,
   getClaim: getClaimApi,
+  linkEvidenceToLineItem: linkEvidenceToLineItemApi,
 };
 
 /**
@@ -101,6 +104,49 @@ class ClaimService {
 
       return {
         body: parsed,
+        status: "success",
+      };
+    } catch (error) {
+      return createApiError(error);
+    }
+  }
+
+  /**
+   * Link an array of evidence IDs to the given line item ID.
+   *
+   * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
+   * @param {number} claimId - Claim identifier.
+   * @param {number} lineItemId - Line item identifier.
+   * @param {number[]} evidenceIds - Evidence identifiers.
+   * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
+   * @returns {Promise<ApiResponse<null>>} Null response in app response format.
+   */
+  // eslint-disable-next-line @typescript-eslint/max-params -- ignore
+  static async linkEvidenceToLineItem(
+    axiosMiddleware: AxiosInstanceWrapper,
+    claimId: number,
+    lineItemId: number,
+    evidenceIds: number[],
+    deps: ClaimServiceDeps = defaultDeps,
+  ): Promise<ApiResponse<null>> {
+    const apiClient = deps.createClient({
+      baseURL: config.api.baseUrl,
+      axios: axiosMiddleware.axiosInstance,
+      throwOnError: true,
+    });
+
+    try {
+      await deps.linkEvidenceToLineItem({
+        client: apiClient,
+        path: {
+          claimId,
+          lineItemId,
+        },
+        body: evidenceIds,
+      });
+
+      return {
+        body: null,
         status: "success",
       };
     } catch (error) {

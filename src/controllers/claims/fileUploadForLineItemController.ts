@@ -1,12 +1,13 @@
-import { claimService } from '#src/services/claimService.js';
-import { FileUploadForLineItemViewModel } from '#src/viewmodels/fileUploadForLineItemViewModel.js';
-import type { NextFunction, Request, Response } from 'express';
-import fs from 'node:fs';
-import path from 'node:path';
+import { claimService } from "#src/services/claimService.js";
+import { FileUploadForLineItemViewModel } from "#src/viewmodels/fileUploadForLineItemViewModel.js";
+import type { NextFunction, Request, Response } from "express";
+import fs from "node:fs";
+import path from "node:path";
 import { processApiError, processError } from "#src/helpers/index.js";
-import { uploadLineItemEvidence } from '#src/services/evidenceUploadService.js';
+import createHttpError from "http-errors";
+import { buildRoute, ROUTES } from "#routes/helper.js";
+import { uploadLineItemEvidence } from "#src/services/evidenceUploadService.js";
 
-const NOT_FOUND = 404;
 const BAD_REQUEST = 400;
 const OK = 200;
 
@@ -43,9 +44,7 @@ export async function fileUploadForLineItemPage(
       const lineItem = lineItems?.find((item) => item.id === lineItemId);
 
       if (lineItem === undefined) {
-        res.status(NOT_FOUND).render('main/error.njk', {
-          status: '404',
-        });
+        next(new createHttpError.NotFound(`Line item ${lineItemId} not found`));
         return;
       }
 
@@ -61,6 +60,50 @@ export async function fileUploadForLineItemPage(
     next(processApiError(response, 'fetching evidence upload details for user'));
   } catch (error) {
     next(processError(error, 'fetching evidence upload details for user'));
+  }
+}
+
+/**
+ * Handles linking of evidence files for a claim line item.
+ *
+ * @param {MulterRequest} req Express request object containing the uploaded file.
+ * @param {Response} res Express response object.
+ * @param {NextFunction} next Express next function.
+ * @returns {void}
+ */
+export async function linkEvidenceToLineItem(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const claimId = Number(req.params.claimId);
+    const lineItemId = Number(req.params.lineItemId);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
+    const documents: unknown = req.body?.documents;
+
+    const evidenceIds: number[] = Array.isArray(documents)
+      ? documents
+        .filter((id): id is string => typeof id === 'string')
+        .map(id => id.trim())
+        .filter(Boolean)
+        .map(Number)
+      : [];
+
+    if (evidenceIds.length > 0) {
+      const response = await claimService.linkEvidenceToLineItem(req.axiosMiddleware, claimId, lineItemId, evidenceIds);
+      if (response.status === 'error') {
+        next(processApiError(response, "linking evidence to line item"));
+        return;
+      }
+    }
+    const redirectUrl = buildRoute(ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, {
+      claimId,
+    });
+    res.redirect(redirectUrl);
+  } catch (error) {
+    next(processError(error, "linking evidence to line item"));
   }
 }
 
@@ -116,7 +159,7 @@ export function deleteEvidenceFile(
   try {
     // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- Using alias because "delete" is a reserved keyword.
     const { delete: fileId } = req.body;
-    
+
     if (fileId === undefined || fileId === '') {
       res.status(BAD_REQUEST).json({
         error: {message: 'Missing file id'},

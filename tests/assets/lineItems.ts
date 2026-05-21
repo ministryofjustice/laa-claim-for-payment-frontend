@@ -3,7 +3,8 @@ import { Category, type EvidenceItem, type LineItem } from "#src/types/Claim.js"
 export const evidenceItem: EvidenceItem = {
   id: 1,
   fileKey: "evidence1.pdf",
-} 
+  fileSize: 1000
+}
 
 export const billNarrativeLineItem: LineItem = {
   id: 1,
@@ -15,7 +16,7 @@ export const billNarrativeLineItem: LineItem = {
   ],
 }
 
-export const workItemLineItem: LineItem = {
+export const workItemLineItem1: LineItem = {
   id: 2,
   title: "Interim hearing",
   category: Category.WORK_ITEM,
@@ -23,6 +24,25 @@ export const workItemLineItem: LineItem = {
   evidenceItems: [],
 }
 
+export const workItemLineItem2: LineItem = {
+  id: 4,
+  title: "Interim hearing",
+  category: Category.WORK_ITEM,
+  date: new Date("2023-12-21"),
+  evidenceItems: [
+    evidenceItem
+  ],
+}
+
+export const workItemLineItem3: LineItem = {
+  id: 5,
+  title: "Interim hearing",
+  category: Category.WORK_ITEM,
+  date: new Date("2023-12-21"),
+  evidenceItems: [
+    evidenceItem
+  ],
+}
 
 export const disbursementLineItem: LineItem = {
   id: 3,

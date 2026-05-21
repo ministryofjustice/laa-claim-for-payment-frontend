@@ -1,0 +1,46 @@
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% macro multiSelect(t, reusableDocuments) %}
+  {% set rows = [] %}
+
+  {% for reusableDocument in reusableDocuments %}
+    {% set checkboxHtml %}
+      <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
+        <input type="checkbox" class="govuk-checkboxes__input" name="documents" id="document-{{ reusableDocument.id }}" value="{{ reusableDocument.id }}">
+        <label class="govuk-label govuk-checkboxes__label" for="document-{{ reusableDocument.id }}">
+          <span class="govuk-visually-hidden">
+            {{ t('common.selectDocument', { document: reusableDocument.name }) }}
+          </span>
+        </label>
+      </div>
+    {% endset %}
+
+    {% set rows = rows.concat([[
+      { html: checkboxHtml },
+      { text: reusableDocument.name },
+      { text: reusableDocument.size }
+    ]]) %}
+  {% endfor %}
+
+  {{ govukTable({
+    attributes: {
+      "data-module": "moj-multi-select",
+      "data-id-prefix": "documents-"
+    },
+    head: [
+      {
+        text: "",
+        attributes: {
+          "id": "documents-select-all"
+        }
+      },
+      {
+        text: t('pages.fileUploadForLineItem.reuseADocument.fileName')
+      },
+      {
+        text: t('pages.fileUploadForLineItem.reuseADocument.fileSize')
+      }
+    ],
+    rows: rows
+  }) }}
+{% endmacro %}

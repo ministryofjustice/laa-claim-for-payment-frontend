@@ -6,7 +6,7 @@ import express from "express";
 import { viewUploadEvidenceIndividuallyPage } from "#src/controllers/claims/uploadEvidenceIndividuallyController.js";
 import { chooseFileUpload, submitChooseFileUpload } from "#src/controllers/claims/chooseUploadController.js";
 import { ROUTES, multerErrorHandler } from "./helper.js";
-import { fileUploadForLineItemPage, uploadEvidenceFile, deleteEvidenceFile, continueFromFileUpload } from "#src/controllers/claims/fileUploadForLineItemController.js";
+import { fileUploadForLineItemPage, uploadEvidenceFile, deleteEvidenceFile, continueFromFileUpload, linkEvidenceToLineItem } from "#src/controllers/claims/fileUploadForLineItemController.js";
 import { evidenceUpload } from '#src/helpers/multerUpload.js';
 
 const limiter = rateLimit({
@@ -66,6 +66,11 @@ router.get(
     await fileUploadForLineItemPage(req, res, next);
   }
 )
+
+/* POST linked evidence. */
+router.post(ROUTES.UPLOAD_FILE_FOR_LINE_ITEM, limiter, async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+  await linkEvidenceToLineItem(req, res, next);
+});
 
 /* GET choose how to upload file page. */
 router.get(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response, next: NextFunction): void {

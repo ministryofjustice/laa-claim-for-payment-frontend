@@ -3,6 +3,7 @@ import { ClaimViewModel } from "#src/viewmodels/claimViewModel.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { expect, config as chaiConfig } from "chai";
 import { load, CheerioAPI } from "cheerio";
+import { renderView } from "#tests/unit/src/views/base/renderView.js";
 
 // Show full strings in diffs if something fails
 chaiConfig.truncateThreshold = 0;
@@ -15,13 +16,9 @@ describe("views/main/claims/view.njk", () => {
   const viewModel = new ClaimViewModel(claim);
 
   beforeEach(async () => {
-    // Import the JS helper at runtime to avoid TS/ESLint project faff
-    const { setupNunjucksForGovUk } =
-      await import("../../../../support/nunjucks-govuk.js");
-    const env = setupNunjucksForGovUk();
-
-    const html = env.render("main/claims/view.njk", { vm: viewModel });
-    $ = load(html);
+    $ = await renderView('main/claims/view.njk', {
+      vm: viewModel
+    });
   });
 
   it("renders the title in the main H1", () => {

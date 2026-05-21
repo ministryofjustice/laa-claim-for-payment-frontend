@@ -1,5 +1,12 @@
 import type { Claim } from "#src/types/Claim.js";
-import { billNarrativeLineItem, disbursementLineItem, workItemLineItem } from "./lineItems.js";
+import {
+  billNarrativeLineItem,
+  disbursementLineItem,
+  evidenceItem,
+  workItemLineItem1,
+  workItemLineItem2,
+  workItemLineItem3,
+} from "./lineItems.js";
 
 export const claim1: Claim = {
   id: 1,
@@ -13,8 +20,11 @@ export const claim1: Claim = {
   providerUserId: "someProviderUserId",
   lineItems: [
     billNarrativeLineItem,
-    workItemLineItem
+    workItemLineItem1
   ],
+  evidence: [
+    evidenceItem
+  ]
 };
 
 export const claim2: Claim = {
@@ -29,6 +39,9 @@ export const claim2: Claim = {
   providerUserId: "someProviderUserId",
   lineItems: [
     billNarrativeLineItem
+  ],
+  evidence: [
+    evidenceItem
   ]
 };
 
@@ -43,8 +56,9 @@ export const claim3: Claim = {
   ufn: "someUFN",
   providerUserId: "someProviderUserId",
   lineItems: [
-    workItemLineItem
-  ]
+    workItemLineItem1
+  ],
+  evidence: []
 };
 
 
@@ -59,8 +73,9 @@ export const claim4: Claim = {
   ufn: "someUFN",
   providerUserId: "someProviderUserId",
   lineItems: [
-    workItemLineItem
-  ]
+    workItemLineItem1
+  ],
+  evidence: []
 };
 
 export const claim5: Claim = {
@@ -75,7 +90,49 @@ export const claim5: Claim = {
   providerUserId: "someProviderUserId",
   lineItems: [
     billNarrativeLineItem,
-    workItemLineItem,
+    workItemLineItem1,
     disbursementLineItem
+  ],
+  evidence: [
+    evidenceItem
+  ]
+};
+
+export const claim6: Claim = {
+  id: 6,
+  client: "Omar",
+  category: "Immigration and Asylum",
+  concluded: new Date("2025-03-12"),
+  feeType: "Hourly",
+  claimed: 456.01,
+  submissionId: "550e8400-e29b-41d4-a716-446655440000",
+  ufn: "someUFN",
+  providerUserId: "someProviderUserId",
+  lineItems: [
+    billNarrativeLineItem,
+    workItemLineItem2
+  ],
+  evidence: [
+    evidenceItem
+  ]
+};
+
+export const claim7: Claim = {
+  id: 7,
+  client: "Omar",
+  category: "Immigration and Asylum",
+  concluded: new Date("2025-03-12"),
+  feeType: "Hourly",
+  claimed: 456.01,
+  submissionId: "550e8400-e29b-41d4-a716-446655440000",
+  ufn: "someUFN",
+  providerUserId: "someProviderUserId",
+  lineItems: [
+    workItemLineItem1,
+    workItemLineItem2,
+    workItemLineItem3
+  ],
+  evidence: [
+    evidenceItem
   ]
 };

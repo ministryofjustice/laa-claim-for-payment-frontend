@@ -34,6 +34,7 @@ describe("Claim Service", () => {
           },
         }),
         getClaim: sinon.stub(),
+        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaims(
@@ -78,6 +79,7 @@ describe("Claim Service", () => {
           },
         }),
         getClaim: sinon.stub(),
+        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaims(
@@ -97,6 +99,7 @@ describe("Claim Service", () => {
         createClient: sinon.stub().returns({}),
         getClaims: sinon.stub().rejects(new Error("boom")),
         getClaim: sinon.stub(),
+        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaims(
@@ -118,6 +121,7 @@ describe("Claim Service", () => {
           data: { foo: "bar" },
         }),
         getClaim: sinon.stub(),
+        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaims(
@@ -151,6 +155,7 @@ describe("Claim Service", () => {
             submissionId: "sub-1",
           },
         }),
+        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaim(
@@ -191,6 +196,7 @@ describe("Claim Service", () => {
             },
           },
         }),
+        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaim(
@@ -209,6 +215,7 @@ describe("Claim Service", () => {
         createClient: sinon.stub().returns({}),
         getClaims: sinon.stub(),
         getClaim: sinon.stub().rejects(new Error("boom")),
+        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaim(
@@ -229,11 +236,89 @@ describe("Claim Service", () => {
         getClaim: sinon.stub().resolves({
           data: { invalid: true },
         }),
+        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaim(
         { axiosInstance: {} } as any,
         123,
+        deps as any
+      );
+
+      expect(result.status).to.equal("error");
+      expect(result.message).to.be.a("string").and.not.empty;
+      expect(result).to.not.have.property("body");
+    });
+  });
+
+  describe("linkEvidenceToLineItem", () => {
+    it("returns success", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaims: sinon.stub(),
+        getClaim: sinon.stub(),
+        linkEvidenceToLineItem: sinon.stub().resolves(null),
+      };
+
+      const result = await claimService.linkEvidenceToLineItem(
+        { axiosInstance: {} } as any,
+        1,
+        2,
+        [3, 4, 5],
+        deps as any
+      );
+
+      expect(result.status).to.equal("success");
+      expect(result.body).to.be.null;
+    });
+
+    it("returns error for a non-200 response", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaims: sinon.stub(),
+        getClaim: sinon.stub(),
+        linkEvidenceToLineItem: sinon.stub().rejects({
+          isAxiosError: true,
+          response: {
+            status: 404,
+            data: {
+              detail: "Resource not found",
+              instance: "/api/v1/claims/1/line-items/2/evidence",
+              status: 404,
+              title: "Not found",
+              correlationId: "b7d7c91f-950a-43f6-a8de-ffb37f1001c1",
+              errorCode: "NOT_FOUND",
+            },
+          },
+        }),
+      };
+
+      const result = await claimService.linkEvidenceToLineItem(
+        { axiosInstance: {} } as any,
+        1,
+        2,
+        [3, 4, 5],
+        deps as any
+      ) as ApiError;
+
+      expect(result.status).to.equal("error");
+      expect(result.statusCode).to.equal(404);
+      expect(result.message).to.equal("Resource not found");
+    });
+
+    it("returns error shape when the API call fails", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaims: sinon.stub(),
+        getClaim: sinon.stub(),
+        linkEvidenceToLineItem: sinon.stub().rejects(new Error("boom")),
+      };
+
+      const result = await claimService.linkEvidenceToLineItem(
+        { axiosInstance: {} } as any,
+        1,
+        2,
+        [3, 4, 5],
         deps as any
       );
 
