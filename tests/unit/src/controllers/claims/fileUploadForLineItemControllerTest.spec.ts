@@ -14,6 +14,7 @@ import { viewClaimPage } from "#src/controllers/claims/viewClaimController.js";
 import fs from 'node:fs';
 import path from 'node:path';
 import { HttpError } from "http-errors";
+import config from "#config.js";
 
 describe("View File Upload For Line Item Controller", () => {
   let req: Partial<Request>;
@@ -184,7 +185,7 @@ describe("View File Upload For Line Item Controller", () => {
 
       expect(axiosPost.calledOnce).to.equal(true);
       expect(axiosPost.firstCall.args[0]).to.equal(
-        'http://localhost:8080/api/v1/claims/1/line-items/2/upload-evidence',
+        `${config.api.baseUrl}/api/v1/claims/1/line-items/2/upload-evidence`,
       );
 
       expect(json.calledOnce).to.equal(true);

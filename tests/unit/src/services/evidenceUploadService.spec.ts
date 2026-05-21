@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { uploadLineItemEvidence } from '#src/services/evidenceUploadService.js';
+import config from '#config.js';
 
 describe('evidenceUploadService', () => {
   it('posts uploaded file to the backend and returns upload response', async () => {
@@ -22,7 +23,7 @@ describe('evidenceUploadService', () => {
 
     expect(post.calledOnce).to.equal(true);
     expect(post.firstCall.args[0]).to.equal(
-      'http://localhost:8080/api/v1/claims/3/line-items/2/upload-evidence',
+      `${config.api.baseUrl}/api/v1/claims/3/line-items/2/upload-evidence`,
     );
 
     expect(result.file).to.deep.equal({
