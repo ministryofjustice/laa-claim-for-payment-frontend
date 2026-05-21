@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { processApiError, processError } from "#src/helpers/index.js";
 import createHttpError from "http-errors";
+import { buildRoute, ROUTES } from "#routes/helper.js";
 
 const BAD_REQUEST = 400;
 const OK = 200;
@@ -60,6 +61,39 @@ export async function fileUploadForLineItemPage(
     next(processApiError(response, 'fetching evidence upload details for user'));
   } catch (error) {
     next(processError(error, 'fetching evidence upload details for user'));
+  }
+}
+
+/**
+ * Handles linking of evidence files for a claim line item.
+ *
+ * @param {MulterRequest} req Express request object containing the uploaded file.
+ * @param {Response} res Express response object.
+ * @param {NextFunction} next Express next function.
+ * @returns {void}
+ */
+export async function linkEvidenceToLineItem(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const claimId = Number(req.params.claimId);
+    const lineItemId = Number(req.params.lineItemId);
+    const evidenceIds: number[] = ([] as string[])
+      .concat(req.body?.documents ?? [])
+      .map(String)
+      .map(id => id.trim())
+      .filter(Boolean)
+      .map(Number);
+    // TODO - if evidence IDs is empty, skip
+    await claimService.linkEvidenceToLineItem(req.axiosMiddleware, claimId, lineItemId, evidenceIds);
+    const redirectUrl = buildRoute(ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, {
+      claimId: claimId,
+    });
+    res.redirect(redirectUrl);
+  } catch (error) {
+    next(processError(error, ""));
   }
 }
 

@@ -1,27 +1,46 @@
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
 {% macro multiSelect(t, reusableDocuments) %}
-  <table class="govuk-table" data-module="moj-multi-select" data-id-prefix="documents-">
-    <thead class="govuk-table__head">
-      <tr class="govuk-table__row">
-        <th class="govuk-table__header" scope="col" id="documents-select-all"></th>
-        <th class="govuk-table__header" scope="col">{{ t('pages.fileUploadForLineItem.reuseADocument.fileName') }}</th>
-        <th class="govuk-table__header" scope="col">{{ t('pages.fileUploadForLineItem.reuseADocument.fileSize') }}</th>
-      </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-      {% for reusableDocument in reusableDocuments %}
-        <tr class="govuk-table__row govuk-table__row--selected">
-          <td class="govuk-table__cell">
-            <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
-              <input type="checkbox" class="govuk-checkboxes__input" id="document-{{ reusableDocument.name }}">
-              <label class="govuk-label govuk-checkboxes__label" for="document-{{ reusableDocument.name }}">
-                <span class="govuk-visually-hidden">{{ t('common.selectDocument', { document: reusableDocument.name }) }}</span>
-              </label>
-            </div>
-          </td>
-          <td class="govuk-table__cell">{{ reusableDocument.name }}</td>
-          <td class="govuk-table__cell">{{ reusableDocument.size }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  {% set rows = [] %}
+
+  {% for reusableDocument in reusableDocuments %}
+    {% set checkboxHtml %}
+      <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
+        <input type="checkbox" class="govuk-checkboxes__input" name="documents" id="document-{{ reusableDocument.id }}" value="{{ reusableDocument.id }}">
+        <label class="govuk-label govuk-checkboxes__label" for="document-{{ reusableDocument.id }}">
+          <span class="govuk-visually-hidden">
+            {{ t('common.selectDocument', { document: reusableDocument.name }) }}
+          </span>
+        </label>
+      </div>
+    {% endset %}
+
+    {% set rows = rows.concat([[
+      { html: checkboxHtml },
+      { text: reusableDocument.name },
+      { text: reusableDocument.size }
+    ]]) %}
+  {% endfor %}
+
+  {{ govukTable({
+    attributes: {
+      "data-module": "moj-multi-select",
+      "data-id-prefix": "documents-"
+    },
+    head: [
+      {
+        text: "",
+        attributes: {
+          "id": "documents-select-all"
+        }
+      },
+      {
+        text: t('pages.fileUploadForLineItem.reuseADocument.fileName')
+      },
+      {
+        text: t('pages.fileUploadForLineItem.reuseADocument.fileSize')
+      }
+    ],
+    rows: rows
+  }) }}
 {% endmacro %}

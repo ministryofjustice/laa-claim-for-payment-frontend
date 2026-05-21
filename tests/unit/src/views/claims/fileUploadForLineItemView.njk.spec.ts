@@ -2,7 +2,7 @@ import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI, load } from "cheerio";
 import { FileUploadForLineItemViewModel } from "#src/viewmodels/fileUploadForLineItemViewModel.js";
 import { claim1 } from "#tests/assets/claim.js";
-import { billNarrativeLineItem, workItemLineItem } from "#tests/assets/lineItems.js";
+import { billNarrativeLineItem, workItemLineItem1 } from "#tests/assets/lineItems.js";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
 
 // Show full strings in diffs if something fails
@@ -97,7 +97,7 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
   describe("with reusable documents", () => {
     let $: CheerioAPI;
 
-    const viewModel = new FileUploadForLineItemViewModel(claim1, workItemLineItem);
+    const viewModel = new FileUploadForLineItemViewModel(claim1, workItemLineItem1);
 
     beforeEach(async () => {
       $ = await renderView('main/claims/fileUploadForLineItemView.njk', {

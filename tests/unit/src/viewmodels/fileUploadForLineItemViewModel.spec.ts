@@ -1,8 +1,8 @@
 import { FileUploadForLineItemViewModel } from "#src/viewmodels/fileUploadForLineItemViewModel.js";
-import { claim1 } from "#tests/assets/claim.js";
+import { claim1, claim6 } from "#tests/assets/claim.js";
 import {
   billNarrativeLineItem,
-  workItemLineItem,
+  workItemLineItem1,
 } from "#tests/assets/lineItems.js";
 import { expect } from "chai";
 
@@ -21,10 +21,16 @@ describe("FileUploadForLineItemViewModel constructor()", ()=>{
   });
 
   it("builds the reusable documents when there are evidence items not already uploaded for this line item", () => {
-    const vm = new FileUploadForLineItemViewModel(claim1, workItemLineItem);
+    const vm = new FileUploadForLineItemViewModel(claim1, workItemLineItem1);
 
     expect(vm.reusableDocuments.length).to.equal(1);
     expect(vm.reusableDocuments[0].name).to.equal("evidence1.pdf");
     expect(vm.reusableDocuments[0].size).to.equal("1KB");
+  });
+
+  it("builds the reusable documents when there is an evidence item in another line item that is already linked to this line item", () => {
+    const vm = new FileUploadForLineItemViewModel(claim6, billNarrativeLineItem);
+
+    expect(vm.reusableDocuments.length).to.equal(0);
   });
 })

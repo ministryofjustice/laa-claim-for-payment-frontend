@@ -6,6 +6,7 @@ export interface EvidenceTask {
 }
 
 export interface ReusableDocument {
+  id: number;
   name: string;
   size: string;
 }

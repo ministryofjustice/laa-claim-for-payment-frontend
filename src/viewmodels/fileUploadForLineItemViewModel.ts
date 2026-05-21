@@ -1,6 +1,6 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { formatDateReadable } from "#src/helpers/dataFormatters.js";
-import type { Claim, LineItem } from "#src/types/Claim.js";
+import type { Claim, EvidenceItem, LineItem } from "#src/types/Claim.js";
 import { Category } from "#src/types/Claim.js";
 import type { Message } from "#src/viewmodels/components/message.js";
 import type { ReusableDocument } from "#src/viewmodels/components/evidence.js";
@@ -26,11 +26,39 @@ export class FileUploadForLineItemViewModel {
       claimId: claim.id,
     });
 
-    this.reusableDocuments =
-      claim.lineItems
-        ?.filter((li) => li.id !== lineItem.id)
-        .flatMap((li) => li.evidenceItems)
-        .map((ei) => ({ name: ei.fileKey, size: formatFileSize(ei.fileSize) })) ?? [];
+    this.reusableDocuments = this.getReusableDocuments(claim, lineItem);
+  }
+
+  private getReusableDocuments(claim: Claim, lineItem: LineItem) {
+    const otherLineItems = this.getOtherLineItems(claim, lineItem);
+    const allEvidence = this.extractEvidenceItems(otherLineItems);
+    const filteredEvidence = this.excludeExistingEvidence(allEvidence, lineItem);
+
+    return this.mapToReusableDocuments(filteredEvidence);
+  }
+
+  private getOtherLineItems(claim: Claim, currentLineItem: LineItem): LineItem[] {
+    return claim.lineItems?.filter(li => li.id !== currentLineItem.id) ?? [];
+  }
+
+  private extractEvidenceItems(lineItems: LineItem[]): EvidenceItem[] {
+    return lineItems.flatMap(li => li.evidenceItems);
+  }
+
+  private excludeExistingEvidence(
+    evidenceItems: EvidenceItem[],
+    lineItem: LineItem
+  ): EvidenceItem[] {
+    const existingIds = new Set(lineItem.evidenceItems.map(e => e.id));
+    return evidenceItems.filter(ei => !existingIds.has(ei.id));
+  }
+
+  private mapToReusableDocuments(evidenceItems: EvidenceItem[]) {
+    return evidenceItems.map(ei => ({
+      id: ei.id,
+      name: ei.fileKey,
+      size: formatFileSize(ei.fileSize),
+    }));
   }
 
   private static buildTitle(lineItem: LineItem): string | Message {

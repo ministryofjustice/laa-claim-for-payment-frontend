@@ -694,7 +694,7 @@
         }
       }
     },
-    "/api/v1/claims/{claimId}/line-items/{lineItemId}/evidence/{evidenceId}": {
+    "/api/v1/claims/{claimId}/line-items/{lineItemId}/evidence": {
       "post": {
         "tags": [
           "Claims"
@@ -713,16 +713,6 @@
             }
           },
           {
-            "name": "evidenceId",
-            "in": "path",
-            "description": "ID of the evidence to link",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
             "name": "lineItemId",
             "in": "path",
             "description": "ID of the line item to link to",
@@ -733,6 +723,21 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "description": "IDs of the evidence to link",
+                "items": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "204": {
             "description": "Evidence linked to line item"
