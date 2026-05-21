@@ -8,3 +8,38 @@ body:not(.js-enabled) a[data-module="back-link"][href="#"] {
 body:not(.govuk-frontend-supported) a[data-module="back-link"][href="#"] {
   display: none;
 }
+
+.moj-multi-file-upload {
+  display: flex;
+  flex-direction: column;
+}
+
+.upload-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.moj-multi-file-upload__upload {
+  order: 1;
+}
+
+#uploaded-files-heading {
+  order: 2;
+}
+
+.moj-multi-file__uploaded-files {
+  order: 3;
+}
+
+.uploaded-file-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.uploaded-file-name,
+.uploaded-file-size {
+  font-size: 16px;
+  line-height: 1.25;
+}

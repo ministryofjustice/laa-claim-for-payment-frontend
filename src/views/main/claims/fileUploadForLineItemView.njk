@@ -17,8 +17,8 @@
   <h2 class="govuk-heading-m">{{ t('pages.fileUploadForLineItem.uploadFiles.title')}}</h2>
   <p class="govuk-body">{{ t('pages.fileUploadForLineItem.uploadFiles.maxSize') }}</p>
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-three-quarters">
 
       {% if errorSummary.items.length %}
         {{ govukErrorSummary({
@@ -27,13 +27,14 @@
         }) }}
       {% endif %}
 
-      <div
-        id="multi-file-upload-config"
-        hidden
-        data-upload-url="/ajax-upload"
-        data-delete-url="/ajax-delete"
-        data-csrf-token="{{ csrfToken }}">
-      </div>
+      <form action="#" method="post" enctype="multipart/form-data">
+        <div
+          id="multi-file-upload-config"
+          hidden
+          data-upload-url="{{ vm.uploadUrl }}"
+          data-delete-url="{{ vm.deleteUrl }}"
+          data-csrf-token="{{ csrfToken }}">
+        </div>
 
       {% set uploadHtml %}
         {{ govukFileUpload({
@@ -50,12 +51,14 @@
         }) }}
       {% endset %}
 
-      {{ mojMultiFileUpload({
-        uploadedFiles: {
-          items: uploadedFiles
-        },
-        uploadHtml: uploadHtml
-      }) }}
+      <div class="upload-wrapper">
+        {{ mojMultiFileUpload({
+          uploadedFiles: {
+            items: uploadedFiles
+          },
+          uploadHtml: uploadHtml
+        }) }}
+      </div>
     </div>
   </div>
 {% endmacro %}

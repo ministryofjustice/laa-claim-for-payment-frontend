@@ -6,10 +6,8 @@ import express from "express";
 import { viewUploadEvidenceIndividuallyPage } from "#src/controllers/claims/uploadEvidenceIndividuallyController.js";
 import { chooseFileUpload, submitChooseFileUpload } from "#src/controllers/claims/chooseUploadController.js";
 import { ROUTES, multerErrorHandler } from "./helper.js";
-import { fileUploadForLineItemPage, uploadEvidenceFile, deleteEvidenceFile, uploadDir, continueFromFileUpload,
-  linkEvidenceToLineItem
-} from "#src/controllers/claims/fileUploadForLineItemController.js";
-import multer from 'multer';
+import { fileUploadForLineItemPage, uploadEvidenceFile, deleteEvidenceFile, continueFromFileUpload, linkEvidenceToLineItem } from "#src/controllers/claims/fileUploadForLineItemController.js";
+import { evidenceUpload } from '#src/helpers/multerUpload.js';
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -17,29 +15,6 @@ const limiter = rateLimit({
 });
 
 const router = express.Router();
-
-// TODO: move this logic somewhere in controller
-//.     Replace all loca storage uploading to backend calls
-const localUpload = multer({
-  storage: multer.diskStorage({
-    destination: uploadDir,
-    filename: (_req, file, callback) => {
-      callback(null, file.originalname);
-    },
-  }),
-  limits: {
-    fileSize: 10 * 1024 * 1024, // limit max file size to 10MB... also not working
-  },
-  // TODO: Figure out where this goes
-  fileFilter: (_req, file, callback) => {
-    if (file.mimetype !== 'application/pdf') {
-      callback(new Error('Only PDF files can be uploaded')); 
-      return;
-    }
-
-    callback(null, true);
-  },
-});
 
 /* GET home page. */
 router.get(
@@ -108,13 +83,16 @@ router.post(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response
 });
 
 router.post(
-  '/ajax-upload',
-  localUpload.single('documents'),
+  `${ROUTES.UPLOAD_FILE_FOR_LINE_ITEM}/ajax-upload`,
+  evidenceUpload.single('documents'),
   multerErrorHandler,
   uploadEvidenceFile,
 );
 
-router.post('/ajax-delete', deleteEvidenceFile);
+router.post(
+  `${ROUTES.UPLOAD_FILE_FOR_LINE_ITEM}/ajax-delete`,
+  deleteEvidenceFile,
+)
 
 router.post(
   '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload',
