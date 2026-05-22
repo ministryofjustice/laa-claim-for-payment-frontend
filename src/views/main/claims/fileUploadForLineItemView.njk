@@ -22,7 +22,7 @@
 
       {% if errorSummary.items.length %}
         {{ govukErrorSummary({
-          titleText: "There is a problem",
+          titleText: t('common.errorSummaryTitle'),
           errorList: errorSummary.items
         }) }}
       {% endif %}

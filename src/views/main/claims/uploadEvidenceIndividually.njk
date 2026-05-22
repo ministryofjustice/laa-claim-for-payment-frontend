@@ -23,14 +23,20 @@
       <p class="govuk-body">{{ t('pages.uploadEvidenceIndividually.namingFiles.p1') }}</p>
       <p class="govuk-body">{{ t('pages.uploadEvidenceIndividually.namingFiles.p2') }}</p>
 
-      <h2 class="govuk-heading-m">{{ t('pages.uploadEvidenceIndividually.billNarrative.h2') }}</h2>
-      {{ taskList(t, vm.billNarrativeTasks, "bill-narrative") }}
+      {% if vm.billNarrativeTasks.length %}
+        <h2 class="govuk-heading-m">{{ t('pages.uploadEvidenceIndividually.billNarrative.h2') }}</h2>
+        {{ taskList(t, vm.billNarrativeTasks, "bill-narrative") }}
+      {% endif %}
 
-      <h2 class="govuk-heading-m">{{ t('pages.uploadEvidenceIndividually.workItems.h2') }}</h2>
-      {{ taskList(t, vm.workItemsTasks, "work-items") }}
+      {% if vm.workItemsTasks.length %}
+        <h2 class="govuk-heading-m">{{ t('pages.uploadEvidenceIndividually.workItems.h2') }}</h2>
+        {{ taskList(t, vm.workItemsTasks, "work-items") }}
+      {% endif %}
 
-      <h2 class="govuk-heading-m">{{ t('pages.uploadEvidenceIndividually.disbursements.h2') }}</h2>
-      {{ taskList(t, vm.disbursementsTasks, "disbursements") }}
+      {% if vm.disbursementsTasks.length %}
+        <h2 class="govuk-heading-m">{{ t('pages.uploadEvidenceIndividually.disbursements.h2') }}</h2>
+        {{ taskList(t, vm.disbursementsTasks, "disbursements") }}
+      {% endif %}
 
       <div class="govuk-button-group">
         <a class="govuk-button" href="#">{{ t('common.saveAndContinue') }}</a>
