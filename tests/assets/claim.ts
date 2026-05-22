@@ -136,3 +136,21 @@ export const claim7: Claim = {
     evidenceItem
   ]
 };
+
+export const claim8: Claim = {
+  id: 8,
+  client: "Omar",
+  category: "Immigration and Asylum",
+  concluded: new Date("2025-03-12"),
+  feeType: "Hourly",
+  claimed: 456.01,
+  submissionId: "550e8400-e29b-41d4-a716-446655440000",
+  ufn: "someUFN",
+  providerUserId: "someProviderUserId",
+  lineItems: [
+    disbursementLineItem
+  ],
+  evidence: [
+    evidenceItem
+  ]
+};
