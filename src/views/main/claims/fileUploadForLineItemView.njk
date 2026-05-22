@@ -8,10 +8,49 @@
 {%- from "govuk/components/error-summary/macro.njk" import govukErrorSummary -%}
 {%- from "moj/components/multi-file-upload/macro.njk" import mojMultiFileUpload -%}
 {% from "components/renderTextOrMessage.njk" import renderTextOrMessage %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% extends "base.njk" %}
 
 {% set title = renderTextOrMessage(t, vm.title) %}
+
+{% macro uploadedFilesHtml() %}
+  {% if vm.uploadedFiles.length %}
+    <h2 class="govuk-heading-m">{{ t('pages.fileUploadForLineItem.uploadedFiles.title') }}</h2>
+
+    {% set rows = [] %}
+
+    {% for uploadedFile in vm.uploadedFiles %}
+      {% set valueHtml %}
+         <span class="uploaded-file-row">
+            <span class="uploaded-file-size govuk-!-margin-left-2">{{uploadedFile.size}}</span>
+            <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">Uploaded</strong>
+          </span>
+      {% endset %}
+      {% set row = {
+          key: {
+            text: renderTextOrMessage(t, uploadedFile.name)
+          },
+          value: {
+            html: valueHtml
+          },
+          actions: {
+            items: [
+              {
+                href: '#',
+                text: t('common.delete')
+              }
+            ]
+          }
+        } 
+      %}
+
+      {% set rows = rows.concat([row]) %}
+
+    {% endfor %}
+    {{ govukSummaryList({ rows: rows, attributes: {id: "uploaded-files"} }) }}
+  {% endif %}
+{% endmacro %}
 
 {% macro uploadFilesHtml() %}
   <h2 class="govuk-heading-m">{{ t('pages.fileUploadForLineItem.uploadFiles.title')}}</h2>
@@ -27,14 +66,14 @@
         }) }}
       {% endif %}
 
-      <form action="#" method="post" enctype="multipart/form-data">
-        <div
-          id="multi-file-upload-config"
-          hidden
-          data-upload-url="{{ vm.uploadUrl }}"
-          data-delete-url="{{ vm.deleteUrl }}"
-          data-csrf-token="{{ csrfToken }}">
-        </div>
+      <div
+        id="multi-file-upload-config"
+        hidden
+        data-upload-url="{{ vm.uploadUrl }}"
+        data-delete-url="{{ vm.deleteUrl }}"
+        data-csrf-token="{{ csrfToken }}"
+        data-uploaded-files="{{ vm.uploadedFiles | dump | escape }}">
+      </div>
 
       {% set uploadHtml %}
         {{ govukFileUpload({
@@ -54,7 +93,7 @@
       <div class="upload-wrapper">
         {{ mojMultiFileUpload({
           uploadedFiles: {
-            items: uploadedFiles
+            items: []
           },
           uploadHtml: uploadHtml
         }) }}
@@ -92,6 +131,7 @@
         {{ multiSelect(t, vm.reusableDocuments) }}
 
         {{ uploadFilesHtml() }}
+        {{ uploadedFilesHtml() }}
 
         <div class="govuk-button-group">
           {{ govukButton({
@@ -103,6 +143,7 @@
       </form>
     {% else %}
       {{ uploadFilesHtml() }}
+      {{ uploadedFilesHtml() }}
 
       <div class="govuk-button-group">
         <a class="govuk-button" href="{{ vm.saveAndContinueHref }}">{{ t('common.saveAndContinue') }}</a>

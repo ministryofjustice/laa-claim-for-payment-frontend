@@ -3,6 +3,7 @@
     "back": "Back",
     "change": "Change",
     "remove": "Remove",
+    "delete": "Delete",
     "save": "Save",
     "cancel": "Cancel",
     "signOut": "Sign out",
@@ -111,9 +112,12 @@
         "fileName": "File name",
         "fileSize": "File size"
       },
-      "uploadFiles":{
+      "uploadFiles": {
         "title": "Upload files",
         "maxSize": "The maximum file size is 10MB."
+      },
+      "uploadedFiles": {
+        "title": "Uploaded files"
       }
     }
   },

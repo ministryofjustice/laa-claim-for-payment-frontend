@@ -15,6 +15,7 @@ export class FileUploadForLineItemViewModel {
   readonly uploadUrl: string;
   readonly deleteUrl: string;
   readonly reusableDocuments: ReusableDocument[];
+  readonly uploadedFiles: ReusableDocument[];
 
   /**
    * Creates a view model containing the summary rows derived from the claim data
@@ -44,6 +45,15 @@ export class FileUploadForLineItemViewModel {
           id: e.id,
           name: e.fileKey,
           size: formatFileSize(e.fileSize),
+        })) ?? [];
+
+    this.uploadedFiles =
+      claim.evidence
+        ?.filter((evidence) => existingIds.has(evidence.id))
+        .map((evidence) => ({
+          id: evidence.id,
+          name: evidence.fileKey,
+          size: formatFileSize(evidence.fileSize),
         })) ?? [];
   }
 
