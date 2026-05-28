@@ -13,14 +13,10 @@ internal properties, which trigger TypeScript ESLint unsafe-access rules. */
 import { MultiFileUpload } from '@ministryofjustice/frontend';
 
 /**
- * Applies CSRF-aware patches to the MOJ MultiFileUpload component.
- *
- * @param {string} csrfToken
+ * Applies UI changes to the MOJ MultiFileUpload component.
  */
-export function patchMultiFileUpload(csrfToken) {
-  if (csrfToken === '') {
-    return;
-  }
+export function patchMultiFileUpload() {
+
 
   MultiFileUpload.prototype.getDeleteButton = function (file) {
     const $link = document.createElement('a');
@@ -103,7 +99,6 @@ export function patchMultiFileUpload(csrfToken) {
     });
 
     xhr.open('POST', this.config.uploadUrl);
-    xhr.setRequestHeader('x-csrf-token', csrfToken);
     xhr.responseType = 'json';
 
     xhr.send(formData);
@@ -152,7 +147,6 @@ export function patchMultiFileUpload(csrfToken) {
 
     xhr.open('POST', this.config.deleteUrl);
     xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('x-csrf-token', csrfToken);
     xhr.responseType = 'json';
 
     xhr.send(
