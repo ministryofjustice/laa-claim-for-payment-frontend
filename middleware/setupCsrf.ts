@@ -35,7 +35,7 @@ export const setupCsrf = (app: Application): void => {
         return typeof _csrf === "string" ? _csrf : undefined;
       }
 
-      if (req.session.csrfToken){
+      if (req.session.csrfToken != null){
         return req.session.csrfToken
       }
 
