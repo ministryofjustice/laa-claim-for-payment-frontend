@@ -20,7 +20,6 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
     beforeEach(async () => {
       $ = await renderView('main/claims/fileUploadForLineItemView.njk', {
         vm: viewModel,
-        csrfToken: "test-csrf-token",
         uploadedFile: [],
       });
     });
@@ -120,10 +119,6 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
       expect(config.attr("data-delete-url")).to.equal(
         "/claims/1/upload-evidence-individually/1/file-upload/ajax-delete",
       );
-
-      expect(config.attr("data-csrf-token")).to.equal(
-        "test-csrf-token",
-      );
     });
 
     it("renders the multi-file upload component", () => {
@@ -177,7 +172,6 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
     beforeEach(async () => {
       $ = await renderView('main/claims/fileUploadForLineItemView.njk', {
         vm: viewModel,
-        csrfToken: "test-csrf-token",
         uploadedFile: [],
       });
     });
