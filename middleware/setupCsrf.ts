@@ -18,8 +18,9 @@ const hasCSRFToken = (body: unknown): body is { _csrf: unknown } =>
  * - Ensures CSRF tokens are available in views for forms.
  *
  * @param {Application} app - The Express application instance.
+ * @param {Function} [csrfFactory=csrfSync] - Factory function used to create
+ * the CSRF protection middleware. Defaults to `csrfSync`. This can be overridden in tests
  */
-
 export const setupCsrf = (app: Application, csrfFactory = csrfSync): void => {
   const { csrfSynchronisedProtection } = csrfFactory({
     /**
