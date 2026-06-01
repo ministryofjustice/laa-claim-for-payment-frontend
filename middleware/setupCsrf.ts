@@ -19,8 +19,9 @@ const hasCSRFToken = (body: unknown): body is { _csrf: unknown } =>
  *
  * @param {Application} app - The Express application instance.
  */
-export const setupCsrf = (app: Application): void => {
-  const { csrfSynchronisedProtection } = csrfSync({
+
+export const setupCsrf = (app: Application, csrfFactory = csrfSync): void => {
+  const { csrfSynchronisedProtection } = csrfFactory({
     /**
      * Extracts the CSRF token from the request body.
      *
@@ -35,8 +36,8 @@ export const setupCsrf = (app: Application): void => {
         return typeof _csrf === "string" ? _csrf : undefined;
       }
 
-      if (req.session.csrfToken != null){
-        return req.session.csrfToken
+      if (req.session.csrfToken != null) {
+        return req.session.csrfToken;
       }
 
       return undefined;
