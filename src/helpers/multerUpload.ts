@@ -1,3 +1,4 @@
+import createHttpError from 'http-errors';
 import multer from 'multer';
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
@@ -14,7 +15,12 @@ export const evidenceUpload = multer({
   },
   fileFilter: (_req, file, callback) => {
     if (file.mimetype !== PDF_MIME_TYPE) {
-      callback(new Error('Only PDF files can be uploaded'));
+      callback(
+        new createHttpError.UnsupportedMediaType(
+          'Only PDF files can be uploaded',
+        ),
+      );
+
       return;
     }
 

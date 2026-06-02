@@ -8,6 +8,14 @@ const $multiFileUpload = document.querySelector(
 const configEl = document.getElementById('multi-file-upload-config');
 const { uploadUrl, deleteUrl } = configEl?.dataset ?? {};
 
+const {
+  uploadUrl,
+  deleteUrl,
+  uploadStatusText,
+  dropzoneHintText,
+  dropzoneButtonText,
+} = configEl?.dataset ?? {};
+
 if (
   $multiFileUpload !== null &&
   uploadUrl !== undefined &&
@@ -18,6 +26,9 @@ if (
   new MultiFileUpload($multiFileUpload, {
     uploadUrl,
     deleteUrl,
+    uploadStatusText,
+    dropzoneHintText,
+    dropzoneButtonText,
     hooks: {
       entryHook: () => {
         const errorRows = document.querySelectorAll(

@@ -3,7 +3,6 @@ import { escapeHtml } from '#src/helpers/escapehtml.js';
 import { formatFileSize } from '#src/helpers/fileSizeFormatter.js';
 import type { UploadResponse } from '#src/types/api-types.js';
 
-
 interface UploadEvidenceParams {
   axiosMiddleware: {
     post: (url: string, body: FormData) => Promise<{ data: unknown }>;
@@ -11,6 +10,10 @@ interface UploadEvidenceParams {
   claimId: number;
   lineItemId: number;
   file: Express.Multer.File;
+  translations: {
+    uploaded: string;
+    uploadedMessage: string;
+  };
 }
 
 /**
@@ -26,7 +29,13 @@ interface UploadEvidenceParams {
 export async function uploadLineItemEvidence(
   params: UploadEvidenceParams,): Promise<UploadResponse> {
   const formData = new FormData();
-  const { axiosMiddleware, claimId, lineItemId, file } = params;
+  const {
+    axiosMiddleware,
+    claimId,
+    lineItemId,
+    file,
+    translations,
+  } = params;
 
   const arrayBuffer = new ArrayBuffer(file.buffer.byteLength);
   const view = new Uint8Array(arrayBuffer);
@@ -46,12 +55,14 @@ view.set(file.buffer);
 
   return {
     success: {
-      messageText: `${file.originalname} uploaded`,
+      messageText: translations.uploadedMessage,
       messageHtml: `
         <span class="uploaded-file-row">
           <a href="#" class="govuk-link uploaded-file-name">${escapeHtml(file.originalname)}</a>
           <span class="uploaded-file-size govuk-!-margin-left-2">${formatFileSize(file.size)}</span>
-          <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">Uploaded</strong>
+          <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">
+            ${translations.uploaded}
+          </strong>
         </span>
       `
     },

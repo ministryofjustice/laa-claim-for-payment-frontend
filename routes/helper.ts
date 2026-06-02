@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
+import { HttpError } from 'http-errors';
 import multer from 'multer';
 
 export const ROUTES = {
@@ -31,30 +32,33 @@ export function buildRoute(
  * Handles multer upload validation and file upload errors.
  *
  * @param {Error} error The error thrown by multer or custom upload validation.
- * @param {Request} _req Express request object.
+ * @param {Request} req Express request object.
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next middleware function.
  * @returns {void}
  */
 export function multerErrorHandler(
   error: Error,
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction,
 ): void {
   if (error instanceof multer.MulterError) {
     res.status(400).json({
       error: {
-        message: error.message,
+        message:
+          error.code === 'LIMIT_FILE_SIZE'
+          ? req.t('multiFileUpload.errors.fileTooLarge')
+          : error.message,
       },
     });
     return;
   }
 
-  if (error.message === 'Only PDF files can be uploaded') {
+  if (error instanceof HttpError && error.statusCode === 415) {
     res.status(400).json({
       error: {
-        message: error.message,
+        message: req.t('multiFileUpload.errors.onlyPdf'),
       },
     });
     return;

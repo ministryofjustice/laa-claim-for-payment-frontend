@@ -554,6 +554,8 @@ router.get("/users", async (req: Request, res: Response, next: NextFunction) => 
 export default router;
 ```
 
+The [OpenAPI Specification](openapi/claim/v3/api-docs.json) should be a copy of http://localhost:8080/v3/api-docs. `@hey-api/openapi-ts` generates TypeScript code from this specification.
+
 ### Nunjucks templating
 
 This project uses [Nunjucks](https://mozilla.github.io/nunjucks/) for server-side HTML templating. You can render Nunjucks templates from your TypeScript route handlers just as you would from JavaScript. Templates are located in the `views/` directory and are compatible with both JS and TS backends.
