@@ -345,11 +345,17 @@ describe("Claim Service", () => {
         buffer: Buffer.from('fake pdf content'),
       } as Express.Multer.File;
 
+      const translations = {
+        uploaded: 'Uploaded',
+        uploadedMessage: 'evidence.pdf uploaded',
+      };
+
       const result = await claimService.uploadLineItemEvidence(
         { axiosInstance: {} } as any,
         1,
         2,
         file,
+        translations,
         deps as any
       );
 
@@ -380,11 +386,17 @@ describe("Claim Service", () => {
         buffer: Buffer.from('fake pdf content'),
       } as Express.Multer.File;
 
+      const translations = {
+        uploaded: 'Uploaded',
+        uploadedMessage: '<script>.pdf uploaded',
+      };
+
       const result = await claimService.uploadLineItemEvidence(
         { axiosInstance: {} } as any,
         1,
         2,
         file,
+        translations,
         deps as any
       );
 
@@ -420,11 +432,17 @@ describe("Claim Service", () => {
         buffer: Buffer.from('fake pdf content'),
       } as Express.Multer.File;
 
+      const translations = {
+        uploaded: 'Uploaded',
+        uploadedMessage: 'evidence.pdf uploaded',
+      };
+
       const result = await claimService.uploadLineItemEvidence(
         { axiosInstance: {} } as any,
         1,
         2,
         file,
+        translations,
         deps as any
       ) as ApiError;
 
@@ -449,11 +467,17 @@ describe("Claim Service", () => {
         buffer: Buffer.from('fake pdf content'),
       } as Express.Multer.File;
 
+      const translations = {
+        uploaded: 'Uploaded',
+        uploadedMessage: 'evidence.pdf uploaded',
+      };
+
       const result = await claimService.uploadLineItemEvidence(
         { axiosInstance: {} } as any,
         1,
         2,
         file,
+        translations,
         deps as any
       );
 

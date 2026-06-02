@@ -32,11 +32,24 @@ describe("View File Upload For Line Item Controller", () => {
   let linkEvidenceStub: sinon.SinonStub;
   let uploadLineItemEvidenceStub: sinon.SinonStub;
 
+  const mockT = ((key: string, args?: Record<string, string>): string => {
+    if (key === "multiFileUpload.uploadedMessage" && args?.filename) {
+      return `${args.filename} uploaded`;
+    }
+
+    if (key === "common.uploadStatus.uploaded") {
+      return "Uploaded";
+    }
+
+    return key;
+  }) as Request["t"];
+
   beforeEach(() => {
     req = {
       axiosMiddleware: {} as any,
       path: "/claims/1/upload-evidence-individually/1/file-upload",
       params: { claimId: "1", lineItemId: "1" },
+      t: mockT,
     };
 
     renderStub = sinon.stub();
@@ -121,6 +134,7 @@ describe("View File Upload For Line Item Controller", () => {
         axiosMiddleware: {} as any,
         path: "/claims/1/upload-evidence-individually/3/file-upload",
         params: { claimId: "1", lineItemId: "3" },
+        t: mockT,
       };
 
       const mockApiResponse = getClaimSuccessResponseData;
@@ -139,7 +153,10 @@ describe("View File Upload For Line Item Controller", () => {
     });
 
     it("returns 400 when no file is uploaded", async () => {
-      const req = {} as Request;
+      const req = {
+        t: mockT,
+      } as unknown as Request;
+
       const status = sinon.stub().returnsThis();
       const json = sinon.stub();
 
@@ -186,6 +203,7 @@ describe("View File Upload For Line Item Controller", () => {
           lineItemId: "2",
         },
         axiosMiddleware: {} as any,
+        t: mockT,
         file: {
           filename: "abc123",
           originalname: "evidence.pdf",
@@ -226,6 +244,7 @@ describe("View File Upload For Line Item Controller", () => {
       const unlinkSync = sinon.stub(fs, "unlinkSync");
 
       const req = {
+        t: mockT,
         body: {
           delete: "abc123",
         },
@@ -259,6 +278,7 @@ describe("View File Upload For Line Item Controller", () => {
         body: {
           delete: "../secret-file",
         },
+        t: mockT,
       } as unknown as Request;
 
       const status = sinon.stub().returnsThis();

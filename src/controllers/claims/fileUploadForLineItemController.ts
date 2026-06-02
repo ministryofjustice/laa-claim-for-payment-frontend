@@ -129,11 +129,19 @@ export async function uploadEvidenceFile(
       return;
     }
 
+    const translations = {
+      uploaded: req.t("common.uploadStatus.uploaded"),
+      uploadedMessage: req.t("multiFileUpload.uploadedMessage", {
+        filename: file.originalname,
+      }),
+    };
+
     const response = await claimService.uploadLineItemEvidence(
       req.axiosMiddleware,
       Number(req.params.claimId),
       Number(req.params.lineItemId),
       file,
+      translations,
     );
 
     res.json(response);

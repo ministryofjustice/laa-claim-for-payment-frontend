@@ -23,6 +23,27 @@
     "department": "Ministry of Justice",
     "selectDocument": "Select {document}"
   },
+  "multiFileUpload": {
+    "uploadStatusText": "Uploading files, please wait",
+    "dropzoneHintText": "Drag and drop files here or",
+    "dropzoneButtonText": "Choose files",
+    "uploadedFiles": {
+      "title": "Uploaded files",
+      "hint": "Select the file name to open a copy in a new tab."
+    },
+    "uploadedMessage": "{filename} uploaded",
+    "actions": {
+      "delete": "Delete"
+    },
+    "errors": {
+      "uploadFailed": "Upload failed",
+      "noFileUploaded": "No file uploaded",
+      "fileTooLarge": "File must not be larger than 10mb",
+      "onlyPdf": "Only PDF files can be uploaded",
+      "missingFileId": "Missing file id",
+      "invalidFilePath": "Invalid file path"
+    }
+  },
   "navigation": {
     "mainNav": {},
     "footer": {

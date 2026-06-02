@@ -14,11 +14,16 @@
 {% set title = renderTextOrMessage(t, vm.title) %}
 
 {% macro uploadFilesHtml() %}
-  <h2 class="govuk-heading-m">{{ t('pages.fileUploadForLineItem.uploadFiles.title')}}</h2>
-  <p class="govuk-body">{{ t('pages.fileUploadForLineItem.uploadFiles.maxSize') }}</p>
+  <h2 class="govuk-heading-m">
+    {{ t('pages.fileUploadForLineItem.uploadFiles.title') }}
+  </h2>
 
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-three-quarters">
+  <p class="govuk-body">
+    {{ t('pages.fileUploadForLineItem.uploadFiles.maxSize') }}
+  </p>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
 
       {% if errorSummary.items.length %}
         {{ govukErrorSummary({
@@ -27,14 +32,16 @@
         }) }}
       {% endif %}
 
-      <form action="#" method="post" enctype="multipart/form-data">
-        <div
-          id="multi-file-upload-config"
-          hidden
-          data-upload-url="{{ vm.uploadUrl }}"
-          data-delete-url="{{ vm.deleteUrl }}"
-          data-csrf-token="{{ csrfToken }}">
-        </div>
+      <div
+        id="multi-file-upload-config"
+        hidden
+        data-upload-url="{{ vm.uploadUrl }}"
+        data-delete-url="{{ vm.deleteUrl }}"
+        data-csrf-token="{{ csrfToken }}"
+        data-upload-status-text="{{ t('multiFileUpload.uploadStatusText') }}"
+        data-dropzone-hint-text="{{ t('multiFileUpload.dropzoneHintText') }}"
+        data-dropzone-button-text="{{ t('multiFileUpload.dropzoneButtonText') }}">
+      </div>
 
       {% set uploadHtml %}
         {{ govukFileUpload({
@@ -59,6 +66,7 @@
           uploadHtml: uploadHtml
         }) }}
       </div>
+
     </div>
   </div>
 {% endmacro %}
@@ -67,47 +75,81 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-    {{ backLink(t) }}
+      {{ backLink(t) }}
 
-    <h1 class="govuk-heading-xl">{{ renderTextOrMessage(t, vm.title) }}</h1>
+      <h1 class="govuk-heading-xl">
+        {{ renderTextOrMessage(t, vm.title) }}
+      </h1>
 
-    <p class="govuk-body">{{ t('pages.fileUploadForLineItem.p1') }}</p>
-    <ul class="govuk-list govuk-list--bullet">
-      <li> {{ t('pages.fileUploadForLineItem.ul1') }} </li>
-      <li> {{ t('pages.fileUploadForLineItem.ul2') }} </li>
-    </ul>
+      <p class="govuk-body">
+        {{ t('pages.fileUploadForLineItem.p1') }}
+      </p>
 
-    <h2 class="govuk-heading-m">{{ t('pages.fileUploadForLineItem.examplesOfEvidence.title')}}</h2>
-    <p class="govuk-body">{{ t('pages.fileUploadForLineItem.examplesOfEvidence.examples')}}</p>
-    <ul class="govuk-list govuk-list--bullet">
-      <li> {{ t('pages.fileUploadForLineItem.examplesOfEvidence.courtOrders') }}</li>
-      <li> {{ t('pages.fileUploadForLineItem.examplesOfEvidence.invoices') }}</li>
-      <li> {{ t('pages.fileUploadForLineItem.examplesOfEvidence.attendanceNotes') }}</li>
-    </ul>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>{{ t('pages.fileUploadForLineItem.ul1') }}</li>
+        <li>{{ t('pages.fileUploadForLineItem.ul2') }}</li>
+      </ul>
 
-    {% if vm.reusableDocuments.length %}
-      <h2 class="govuk-heading-m">{{ t('pages.fileUploadForLineItem.reuseADocument.title')}}</h2>
-      <form method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-        {{ multiSelect(t, vm.reusableDocuments) }}
+      <h2 class="govuk-heading-m">
+        {{ t('pages.fileUploadForLineItem.examplesOfEvidence.title') }}
+      </h2>
+
+      <p class="govuk-body">
+        {{ t('pages.fileUploadForLineItem.examplesOfEvidence.examples') }}
+      </p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>{{ t('pages.fileUploadForLineItem.examplesOfEvidence.courtOrders') }}</li>
+        <li>{{ t('pages.fileUploadForLineItem.examplesOfEvidence.invoices') }}</li>
+        <li>{{ t('pages.fileUploadForLineItem.examplesOfEvidence.attendanceNotes') }}</li>
+      </ul>
+
+      {% if vm.reusableDocuments.length %}
+
+        <h2 class="govuk-heading-m">
+          {{ t('pages.fileUploadForLineItem.reuseADocument.title') }}
+        </h2>
+
+        <form method="post">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+          {{ multiSelect(t, vm.reusableDocuments) }}
+
+          {{ uploadFilesHtml() }}
+
+          <div class="govuk-button-group">
+            {{ govukButton({
+              text: t('common.saveAndContinue')
+            }) }}
+
+            <a
+              class="govuk-button govuk-button--secondary"
+              href="{{ vm.saveAndContinueHref }}">
+              {{ t('common.saveAndComeBackLater') }}
+            </a>
+          </div>
+        </form>
+
+      {% else %}
 
         {{ uploadFilesHtml() }}
 
         <div class="govuk-button-group">
-          {{ govukButton({
-            text: t('common.saveAndContinue')
-          }) }}
+          <a
+            class="govuk-button"
+            href="{{ vm.saveAndContinueHref }}">
+            {{ t('common.saveAndContinue') }}
+          </a>
 
-          <a class="govuk-button govuk-button--secondary" href="{{ vm.saveAndContinueHref }}">{{ t('common.saveAndComeBackLater') }}</a>
+          <a
+            class="govuk-button govuk-button--secondary"
+            href="{{ vm.saveAndContinueHref }}">
+            {{ t('common.saveAndComeBackLater') }}
+          </a>
         </div>
-      </form>
-    {% else %}
-      {{ uploadFilesHtml() }}
 
-      <div class="govuk-button-group">
-        <a class="govuk-button" href="{{ vm.saveAndContinueHref }}">{{ t('common.saveAndContinue') }}</a>
-        <a class="govuk-button govuk-button--secondary" href="{{ vm.saveAndContinueHref }}">{{ t('common.saveAndComeBackLater') }}</a>
-      </div>
-    {% endif %}
+      {% endif %}
+
+    </div>
   </div>
 {% endblock %}

@@ -166,6 +166,9 @@ class ClaimService {
    * @param {number} claimId - Claim identifier.
    * @param {number} lineItemId - Line item identifier.
    * @param {object} file Uploaded file from multer.
+   * @param {object} translations Translations.
+   * @param {string} translations.uploaded Translation for uploaded message.
+   * @param {string} translations.uploadedMessage Translation for uploadedMessage message.
    * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
    * @returns {Promise<UploadResponse>} Upload response for the multi-file upload component.
    */
@@ -175,6 +178,10 @@ class ClaimService {
     claimId: number,
     lineItemId: number,
     file: Express.Multer.File,
+    translations: {
+      uploaded: string;
+      uploadedMessage: string;
+    },
     deps: ClaimServiceDeps = defaultDeps,
   ): Promise<ApiResponse<UploadResponse>> {
     try {
@@ -204,12 +211,14 @@ class ClaimService {
         status: "success",
         body: {
           success: {
-            messageText: `${file.originalname} uploaded`,
+            messageText: translations.uploadedMessage,
             messageHtml: `
               <span class="uploaded-file-row">
                 <a href="#" class="govuk-link uploaded-file-name">${escapeHtml(file.originalname)}</a>
                 <span class="uploaded-file-size govuk-!-margin-left-2">${formatFileSize(file.size)}</span>
-                <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">Uploaded</strong>
+                <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">
+                  ${translations.uploaded}
+                </strong>
               </span>`,
           },
           file: {
