@@ -6,7 +6,6 @@ const $multiFileUpload = document.querySelector(
 );
 
 const configEl = document.getElementById('multi-file-upload-config');
-const { uploadUrl, deleteUrl } = configEl?.dataset ?? {};
 
 const {
   uploadUrl,
