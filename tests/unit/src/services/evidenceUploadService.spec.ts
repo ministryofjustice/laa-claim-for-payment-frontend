@@ -19,6 +19,10 @@ describe('evidenceUploadService', () => {
       claimId: 3,
       lineItemId: 2,
       file,
+      translations: {
+        uploaded: 'Uploaded',
+        uploadedMessage: 'evidence.pdf uploaded',
+      },
     });
 
     expect(post.calledOnce).to.equal(true);
@@ -52,6 +56,10 @@ describe('evidenceUploadService', () => {
       claimId: 3,
       lineItemId: 2,
       file,
+      translations: {
+        uploaded: 'Uploaded',
+        uploadedMessage: '<script>.pdf uploaded',
+      },
     });
 
     expect(result.success.messageHtml).to.include('&lt;script&gt;.pdf');
