@@ -203,7 +203,9 @@ class ClaimService {
           lineItemId,
         },
         body: {
-          documents: new Blob([arrayBuffer], { type: file.mimetype }),
+          documents: new File([arrayBuffer], file.originalname, {
+            type: file.mimetype,
+          }),
         },
       });
 

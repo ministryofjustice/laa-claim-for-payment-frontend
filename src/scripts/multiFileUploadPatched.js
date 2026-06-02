@@ -63,7 +63,7 @@ export function patchMultiFileUpload(csrfToken) {
       if (
         xhr.status < 200 ||
         xhr.status >= 300 ||
-        !('success' in xhr.response)
+        xhr.response.status === 'error'
       ) {
         onError(); return;
       }
