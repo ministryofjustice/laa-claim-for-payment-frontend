@@ -124,7 +124,9 @@ export async function uploadEvidenceFile(
 
     if (file === undefined) {
       res.status(BAD_REQUEST).json({
-        error: { message: 'No file uploaded' },
+        error: {
+          message: req.t('multiFileUpload.errors.noFileUploaded')
+        }
       });
       return;
     }
@@ -169,7 +171,9 @@ export function deleteEvidenceFile(
 
     if (fileId === undefined || fileId === '') {
       res.status(BAD_REQUEST).json({
-        error: {message: 'Missing file id'},
+        error: {
+          message: req.t('multiFileUpload.errors.missingFileId')
+        }
       });
       return;
     }
@@ -178,7 +182,9 @@ export function deleteEvidenceFile(
 
     if (!filePath.startsWith(uploadDir)) {
       res.status(BAD_REQUEST).json({
-        error: 'Invalid file path',
+        error: {
+          message: req.t('multiFileUpload.errors.invalidFilePath')
+        }
       });
       return;
     }
