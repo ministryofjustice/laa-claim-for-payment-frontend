@@ -14,13 +14,6 @@ describe('evidenceUploadService', () => {
       buffer: Buffer.from('fake pdf content'),
     } as Express.Multer.File;
 
-    // const result = await uploadLineItemEvidence({
-    //   axiosMiddleware: { post },
-    //   claimId: 3,
-    //   lineItemId: 2,
-    //   file,
-    // });
-
     const result = await uploadLineItemEvidence({
       axiosMiddleware: { post },
       claimId: 3,
@@ -57,13 +50,6 @@ describe('evidenceUploadService', () => {
       size: 12345,
       buffer: Buffer.from('fake pdf content'),
     } as Express.Multer.File;
-
-    // const result = await uploadLineItemEvidence({
-    //   axiosMiddleware: { post },
-    //   claimId: 3,
-    //   lineItemId: 2,
-    //   file,
-    // });
 
     const result = await uploadLineItemEvidence({
       axiosMiddleware: { post },
