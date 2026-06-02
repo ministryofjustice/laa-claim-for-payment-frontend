@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
+import { HttpError } from 'http-errors';
 import multer from 'multer';
 
 export const ROUTES = {
@@ -54,7 +55,7 @@ export function multerErrorHandler(
     return;
   }
 
-  if (error instanceof Error && 'statusCode' in error && error.statusCode === 415) {
+  if (error instanceof HttpError && error.statusCode === 415) {
     res.status(400).json({
       error: {
         message: req.t('multiFileUpload.errors.onlyPdf'),
