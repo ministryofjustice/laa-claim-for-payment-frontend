@@ -20,6 +20,7 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
     beforeEach(async () => {
       $ = await renderView('main/claims/fileUploadForLineItemView.njk', {
         vm: viewModel,
+        csrfToken: "test-csrf-token",
         uploadedFile: [],
       });
     });
@@ -162,6 +163,13 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
         "/claims/1/upload-evidence-individually",
       );
     });
+
+    it("renders the CSRF token", () => {
+      const csrf = $("input[name='_csrf']");
+
+      expect(csrf).to.have.length(1);
+      expect(csrf.attr("value")).to.equal("test-csrf-token");
+    });
   });
 
   describe("with reusable documents", () => {
@@ -173,6 +181,8 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
       $ = await renderView('main/claims/fileUploadForLineItemView.njk', {
         vm: viewModel,
         uploadedFile: [],
+        csrfToken: "test-csrf-token",
+
       });
     });
 
@@ -188,6 +198,13 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
     it("renders a multi-select", () => {
       const multiSelect = $('[data-module="moj-multi-select"]');
       expect(multiSelect.length).to.equal(1);
+    });
+
+    it("renders the CSRF token", () => {
+      const csrf = $("input[name='_csrf']");
+
+      expect(csrf).to.have.length(1);
+      expect(csrf.attr("value")).to.equal("test-csrf-token");
     });
   });
 });
