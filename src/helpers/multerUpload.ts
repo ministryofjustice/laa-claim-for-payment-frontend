@@ -14,7 +14,7 @@ export const evidenceUpload = multer({
   },
   fileFilter: (_req, file, callback) => {
     if (file.mimetype !== PDF_MIME_TYPE) {
-      callback(new Error('Only PDF files can be uploaded'));
+      callback(new Error('ONLY_PDF_FILES'));
       return;
     }
 

@@ -9,16 +9,17 @@ import {
   linkLineItemToEvidenceResponseData,
 } from "#tests/assets/getClaimsResponseData.js";
 import {
+  deleteEvidenceFile,
   fileUploadForLineItemPage,
   linkEvidenceToLineItem,
+  uploadDir,
+  uploadEvidenceFile,
 } from "#src/controllers/claims/fileUploadForLineItemController.js";
-import { uploadEvidenceFile } from "#src/controllers/claims/fileUploadForLineItemController.js";
-import { deleteEvidenceFile, uploadDir } from '#src/controllers/claims/fileUploadForLineItemController.js'
 import { ApiResponse } from "#src/types/api-types.js";
 import { Claim } from "#src/types/Claim.js";
 import { viewClaimPage } from "#src/controllers/claims/viewClaimController.js";
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from "node:fs";
+import path from "node:path";
 import { HttpError } from "http-errors";
 import config from "#config.js";
 
@@ -27,26 +28,38 @@ describe("View File Upload For Line Item Controller", () => {
   let res: any;
   let next: any;
   let renderStub: sinon.SinonStub;
-  let statusStub: sinon.SinonStub;
   let getClaimStub: sinon.SinonStub;
   let linkEvidenceStub: sinon.SinonStub;
+
+  const mockT = ((key: string, args?: Record<string, string>): string => {
+    if (key === "multiFileUpload.uploadedMessage" && args?.filename) {
+      return `${args.filename} uploaded`;
+    }
+
+    if (key === "common.uploadStatus.uploaded") {
+      return "Uploaded";
+    }
+
+    return key;
+  }) as Request["t"];
 
   beforeEach(() => {
     req = {
       axiosMiddleware: {} as any,
       path: "/claims/1/upload-evidence-individually/1/file-upload",
-      params: { claimId: "1", lineItemId: "1" }
+      params: { claimId: "1", lineItemId: "1" },
+      t: mockT,
     };
 
     renderStub = sinon.stub();
-    statusStub = sinon.stub().returns({ render: renderStub });
 
     res = {
       render: renderStub,
-      status: statusStub,
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
       redirect: sinon.spy(),
       locals: {
-        csrfToken: 'test-csrf-token',
+        csrfToken: "test-csrf-token",
       },
     };
 
@@ -61,35 +74,31 @@ describe("View File Upload For Line Item Controller", () => {
   });
 
   describe("fileUploadForLineItemPage", () => {
-    it("should render view of the file upload for line item page with data and correct template", async() => {
-
-      const mockApiResponse = getClaimSuccessResponseData;
-
-      getClaimStub.resolves(mockApiResponse);
+    it("should render view of the file upload for line item page with data and correct template", async () => {
+      getClaimStub.resolves(getClaimSuccessResponseData);
 
       await fileUploadForLineItemPage(req as Request, res as Response, next);
 
       expect(getClaimStub.calledOnce).to.be.true;
       expect(getClaimStub.calledWith(req.axiosMiddleware)).to.be.true;
       expect(renderStub.calledOnce).to.be.true;
-      expect(renderStub.firstCall.args[0]).to.equal("main/claims/fileUploadForLineItemView.njk",);
+      expect(renderStub.firstCall.args[0]).to.equal(
+        "main/claims/fileUploadForLineItemView.njk",
+      );
       expect(renderStub.firstCall.args[1]).to.have.property("vm");
-
     });
 
     it("should redirect to appropriate page when no claim is returned", async () => {
       const mockApiResponse: ApiResponse<Claim> = {
         status: "error",
         statusCode: 404,
-        message: "not found"
+        message: "not found",
       };
 
       getClaimStub.resolves(mockApiResponse);
 
-      // Act
       await viewClaimPage(req as Request, res as Response, next);
 
-      // Assert
       expect(getClaimStub.calledOnce).to.be.true;
       expect(getClaimStub.calledWith(req.axiosMiddleware)).to.be.true;
       expect(next.calledOnce).to.be.true;
@@ -98,14 +107,12 @@ describe("View File Upload For Line Item Controller", () => {
     });
 
     it("should delegate API errors to Express error handling middleware with user-friendly message", async () => {
-      // Arrange
       const error = new Error("API Error");
+
       getClaimStub.rejects(error);
 
-      // Act
       await viewClaimPage(req as Request, res as Response, next);
 
-      // Assert - the controller should call next with a processed error
       expect(next.calledOnce).to.be.true;
       expect(next.firstCall.args[0]).to.be.instanceOf(Error);
       expect(next.firstCall.args[0].message).to.include("API Error");
@@ -115,12 +122,11 @@ describe("View File Upload For Line Item Controller", () => {
       req = {
         axiosMiddleware: {} as any,
         path: "/claims/1/upload-evidence-individually/3/file-upload",
-        params: { claimId: "1", lineItemId: "3" }
-      }
+        params: { claimId: "1", lineItemId: "3" },
+        t: mockT,
+      };
 
-      const mockApiResponse = getClaimSuccessResponseData;
-
-      getClaimStub.resolves(mockApiResponse);
+      getClaimStub.resolves(getClaimSuccessResponseData);
 
       await fileUploadForLineItemPage(req as Request, res as Response, next);
 
@@ -131,8 +137,11 @@ describe("View File Upload For Line Item Controller", () => {
       expect(next.firstCall.args[0].message).to.include("Line item 3 not found");
     });
 
-    it("returns 400 when no file is uploaded", async() =>{
-      const req = {} as Request;
+    it("returns 400 when no file is uploaded", async () => {
+      const req = {
+        t: mockT,
+      } as unknown as Request;
+
       const status = sinon.stub().returnsThis();
       const json = sinon.stub();
 
@@ -150,31 +159,34 @@ describe("View File Upload For Line Item Controller", () => {
       );
 
       expect(status.calledWith(400)).to.equal(true);
-      expect(json.calledWith({
-        error: { message: 'No file uploaded' },
-      })).to.equal(true);
+      expect(json.firstCall.args[0]).to.deep.equal({
+        error: {
+          message: "multiFileUpload.errors.noFileUploaded",
+        }
+      });
       expect(next.called).to.equal(false);
     });
   });
 
   describe("uploadEvidenceFile", () => {
-    it('returns uploaded file details when a file is uploaded', async () => {
+    it("returns uploaded file details when a file is uploaded", async () => {
       const axiosPost = sinon.stub().resolves({ data: {} });
 
       const req = {
         params: {
-          claimId: '1',
-          lineItemId: '2',
+          claimId: "1",
+          lineItemId: "2",
         },
         axiosMiddleware: {
           post: axiosPost,
         },
+        t: mockT,
         file: {
-          filename: 'abc123',
-          originalname: 'evidence.pdf',
+          filename: "abc123",
+          originalname: "evidence.pdf",
           size: 12345,
-          mimetype: 'application/pdf',
-          buffer: Buffer.from('fake pdf content'),
+          mimetype: "application/pdf",
+          buffer: Buffer.from("fake pdf content"),
         },
       } as unknown as Request;
 
@@ -204,17 +216,17 @@ describe("View File Upload For Line Item Controller", () => {
       const responseBody = json.firstCall.args[0];
 
       expect(responseBody.file).to.deep.equal({
-        filename: 'evidence.pdf',
-        originalname: 'evidence.pdf',
+        filename: "evidence.pdf",
+        originalname: "evidence.pdf",
       });
 
       expect(responseBody.success.messageText).to.equal(
-        'evidence.pdf uploaded',
+        "evidence.pdf uploaded",
       );
 
-      expect(responseBody.success.messageHtml).to.include('evidence.pdf');
-      expect(responseBody.success.messageHtml).to.include('12KB');
-      expect(responseBody.success.messageHtml).to.include('Uploaded');
+      expect(responseBody.success.messageHtml).to.include("evidence.pdf");
+      expect(responseBody.success.messageHtml).to.include("12KB");
+      expect(responseBody.success.messageHtml).to.include("Uploaded");
 
       expect(status.called).to.equal(false);
       expect(next.called).to.equal(false);
@@ -222,13 +234,14 @@ describe("View File Upload For Line Item Controller", () => {
   });
 
   describe("deleteEvidenceFile", () => {
-    it('deletes an uploaded file', async () => {
-      const existsSync = sinon.stub(fs, 'existsSync').returns(true);
-      const unlinkSync = sinon.stub(fs, 'unlinkSync');
+    it("deletes an uploaded file", async () => {
+      const existsSync = sinon.stub(fs, "existsSync").returns(true);
+      const unlinkSync = sinon.stub(fs, "unlinkSync");
 
       const req = {
+        t: mockT,
         body: {
-          delete: 'abc123',
+          delete: "abc123",
         },
       } as unknown as Request;
 
@@ -248,7 +261,9 @@ describe("View File Upload For Line Item Controller", () => {
         next as unknown as NextFunction,
       );
 
-      expect(unlinkSync.calledWith(path.resolve(uploadDir, 'abc123'))).to.equal(true);
+      expect(unlinkSync.calledWith(path.resolve(uploadDir, "abc123"))).to.equal(
+        true,
+      );
       expect(status.calledWith(200)).to.equal(true);
       expect(json.firstCall.args[0]).to.deep.equal({ success: true });
       expect(next.called).to.equal(false);
@@ -257,11 +272,12 @@ describe("View File Upload For Line Item Controller", () => {
       unlinkSync.restore();
     });
 
-    it('returns 400 for an invalid file path', async () => {
+    it("returns 400 for an invalid file path", async () => {
       const req = {
         body: {
-          delete: '../secret-file',
+          delete: "../secret-file",
         },
+        t: mockT,
       } as unknown as Request;
 
       const status = sinon.stub().returnsThis();
@@ -282,39 +298,41 @@ describe("View File Upload For Line Item Controller", () => {
 
       expect(status.calledWith(400)).to.equal(true);
       expect(json.firstCall.args[0]).to.deep.equal({
-        error: 'Invalid file path',
+        error: {
+          message: "multiFileUpload.errors.invalidFilePath",
+        }
       });
       expect(next.called).to.equal(false);
     });
   });
 
   describe("linkEvidenceToLineItem", () => {
-    it("should link evidence to line item and redirect when selection made", async() => {
+    it("should link evidence to line item and redirect when selection made", async () => {
       req.params = {
         claimId: "1",
-        lineItemId: "1"
+        lineItemId: "1",
       };
 
       req.body = {
         documents: ["1"],
       };
 
-      const mockApiResponse = linkLineItemToEvidenceResponseData;
-
-      linkEvidenceStub.resolves(mockApiResponse);
+      linkEvidenceStub.resolves(linkLineItemToEvidenceResponseData);
 
       await linkEvidenceToLineItem(req as Request, res as Response, next);
 
       expect(linkEvidenceStub.calledOnce).to.be.true;
       expect(linkEvidenceStub.calledWith(req.axiosMiddleware)).to.be.true;
       expect(renderStub.calledOnce).to.be.false;
-      expect(res.redirect.calledWith("/claims/1/upload-evidence-individually")).to.be.true;
+      expect(
+        res.redirect.calledWith("/claims/1/upload-evidence-individually"),
+      ).to.be.true;
     });
 
-    it("should redirect when no selection made", async() => {
+    it("should redirect when no selection made", async () => {
       req.params = {
         claimId: "1",
-        lineItemId: "1"
+        lineItemId: "1",
       };
 
       req.body = {
@@ -325,13 +343,15 @@ describe("View File Upload For Line Item Controller", () => {
 
       expect(linkEvidenceStub.calledOnce).to.be.false;
       expect(renderStub.calledOnce).to.be.false;
-      expect(res.redirect.calledWith("/claims/1/upload-evidence-individually")).to.be.true;
+      expect(
+        res.redirect.calledWith("/claims/1/upload-evidence-individually"),
+      ).to.be.true;
     });
 
-    it("should ignore empty document IDs", async() => {
+    it("should ignore empty document IDs", async () => {
       req.params = {
         claimId: "1",
-        lineItemId: "1"
+        lineItemId: "1",
       };
 
       req.body = {
@@ -342,13 +362,15 @@ describe("View File Upload For Line Item Controller", () => {
 
       expect(linkEvidenceStub.calledOnce).to.be.false;
       expect(renderStub.calledOnce).to.be.false;
-      expect(res.redirect.calledWith("/claims/1/upload-evidence-individually")).to.be.true;
+      expect(
+        res.redirect.calledWith("/claims/1/upload-evidence-individually"),
+      ).to.be.true;
     });
 
     it("should redirect to appropriate page when no claim is returned", async () => {
       req.params = {
         claimId: "1",
-        lineItemId: "1"
+        lineItemId: "1",
       };
 
       req.body = {
@@ -358,7 +380,7 @@ describe("View File Upload For Line Item Controller", () => {
       const mockApiResponse: ApiResponse<null> = {
         status: "error",
         statusCode: 404,
-        message: "not found"
+        message: "not found",
       };
 
       linkEvidenceStub.resolves(mockApiResponse);
@@ -375,7 +397,7 @@ describe("View File Upload For Line Item Controller", () => {
     it("should delegate API errors to Express error handling middleware with user-friendly message", async () => {
       req.params = {
         claimId: "1",
-        lineItemId: "1"
+        lineItemId: "1",
       };
 
       req.body = {
@@ -383,6 +405,7 @@ describe("View File Upload For Line Item Controller", () => {
       };
 
       const error = new Error("API Error");
+
       linkEvidenceStub.rejects(error);
 
       await linkEvidenceToLineItem(req as Request, res as Response, next);
@@ -394,4 +417,4 @@ describe("View File Upload For Line Item Controller", () => {
       expect(next.firstCall.args[0].message).to.include("API Error");
     });
   });
-})
+});
