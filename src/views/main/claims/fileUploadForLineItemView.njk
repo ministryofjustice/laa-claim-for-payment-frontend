@@ -32,44 +32,40 @@
         }) }}
       {% endif %}
 
-      <form action="#" method="post" enctype="multipart/form-data">
+      <div
+        id="multi-file-upload-config"
+        hidden
+        data-upload-url="{{ vm.uploadUrl }}"
+        data-delete-url="{{ vm.deleteUrl }}"
+        data-csrf-token="{{ csrfToken }}"
+        data-upload-status-text="{{ t('multiFileUpload.uploadStatusText') }}"
+        data-dropzone-hint-text="{{ t('multiFileUpload.dropzoneHintText') }}"
+        data-dropzone-button-text="{{ t('multiFileUpload.dropzoneButtonText') }}">
+      </div>
 
-        <div
-          id="multi-file-upload-config"
-          hidden
-          data-upload-url="{{ vm.uploadUrl }}"
-          data-delete-url="{{ vm.deleteUrl }}"
-          data-csrf-token="{{ csrfToken }}"
-          data-upload-status-text="{{ t('multiFileUpload.uploadStatusText') }}"
-          data-dropzone-hint-text="{{ t('multiFileUpload.dropzoneHintText') }}"
-          data-dropzone-button-text="{{ t('multiFileUpload.dropzoneButtonText') }}">
-        </div>
+      {% set uploadHtml %}
+        {{ govukFileUpload({
+          id: "documents",
+          name: "documents",
+          classes: "moj-multi-file-upload__input",
+          attributes: { multiple: "" },
+          errorMessage: errorMessage
+        }) }}
 
-        {% set uploadHtml %}
-          {{ govukFileUpload({
-            id: "documents",
-            name: "documents",
-            classes: "moj-multi-file-upload__input",
-            attributes: { multiple: "" },
-            errorMessage: errorMessage
-          }) }}
+        {{ govukButton({
+          text: "Upload file",
+          classes: "govuk-button--secondary moj-multi-file-upload__button"
+        }) }}
+      {% endset %}
 
-          {{ govukButton({
-            text: "Upload file",
-            classes: "govuk-button--secondary moj-multi-file-upload__button"
-          }) }}
-        {% endset %}
-
-        <div class="upload-wrapper">
-          {{ mojMultiFileUpload({
-            uploadedFiles: {
-              items: uploadedFiles
-            },
-            uploadHtml: uploadHtml
-          }) }}
-        </div>
-
-      </form>
+      <div class="upload-wrapper">
+        {{ mojMultiFileUpload({
+          uploadedFiles: {
+            items: uploadedFiles
+          },
+          uploadHtml: uploadHtml
+        }) }}
+      </div>
 
     </div>
   </div>

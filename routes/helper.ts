@@ -46,7 +46,7 @@ export function multerErrorHandler(
     res.status(400).json({
       error: {
         message:
-        error.code === 'LIMIT_FILE_SIZE'
+          error.code === 'LIMIT_FILE_SIZE'
           ? req.t('multiFileUpload.errors.fileTooLarge')
           : error.message,
       },
@@ -54,7 +54,7 @@ export function multerErrorHandler(
     return;
   }
 
-  if (error.message === 'ONLY_PDF_FILES') {
+  if (error instanceof Error && 'statusCode' in error && error.statusCode === 415) {
     res.status(400).json({
       error: {
         message: req.t('multiFileUpload.errors.onlyPdf'),
