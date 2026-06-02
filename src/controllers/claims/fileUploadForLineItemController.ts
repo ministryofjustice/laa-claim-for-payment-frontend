@@ -6,7 +6,6 @@ import path from "node:path";
 import { processApiError, processError } from "#src/helpers/index.js";
 import createHttpError from "http-errors";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { uploadLineItemEvidence } from "#src/services/evidenceUploadService.js";
 
 const BAD_REQUEST = 400;
 const OK = 200;
@@ -130,12 +129,12 @@ export async function uploadEvidenceFile(
       return;
     }
 
-    const response = await uploadLineItemEvidence({
-      axiosMiddleware: req.axiosMiddleware,
-      claimId: Number(req.params.claimId),
-      lineItemId: Number(req.params.lineItemId),
+    const response = await claimService.uploadLineItemEvidence(
+      req.axiosMiddleware,
+      Number(req.params.claimId),
+      Number(req.params.lineItemId),
       file,
-    });
+    );
 
     res.json(response);
   } catch (error) {

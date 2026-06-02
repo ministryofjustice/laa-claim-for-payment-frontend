@@ -327,4 +327,139 @@ describe("Claim Service", () => {
       expect(result).to.not.have.property("body");
     });
   });
+
+  describe("uploadLineItemEvidence", () => {
+    it("returns success", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaims: sinon.stub(),
+        getClaim: sinon.stub(),
+        linkEvidenceToLineItem: sinon.stub(),
+        uploadLineItemEvidence: sinon.stub().resolves({ data: {} }),
+      };
+
+      const file = {
+        originalname: 'evidence.pdf',
+        mimetype: 'application/pdf',
+        size: 12345,
+        buffer: Buffer.from('fake pdf content'),
+      } as Express.Multer.File;
+
+      const result = await claimService.uploadLineItemEvidence(
+        { axiosInstance: {} } as any,
+        1,
+        2,
+        file,
+        deps as any
+      );
+
+      expect(result.status).to.equal("success");
+      expect(result.body?.file).to.deep.equal({
+        filename: 'evidence.pdf',
+        originalname: 'evidence.pdf',
+      });
+      expect(result.body?.success.messageText).to.equal('evidence.pdf uploaded');
+      expect(result.body?.success.messageHtml).to.include('evidence.pdf');
+      expect(result.body?.success.messageHtml).to.include('12KB');
+      expect(result.body?.success.messageHtml).to.include('Uploaded');
+    });
+
+    it('escapes file names in the success HTML', async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaims: sinon.stub(),
+        getClaim: sinon.stub(),
+        linkEvidenceToLineItem: sinon.stub(),
+        uploadLineItemEvidence: sinon.stub().resolves({ data: {} }),
+      };
+
+      const file = {
+        originalname: '<script>.pdf',
+        mimetype: 'application/pdf',
+        size: 12345,
+        buffer: Buffer.from('fake pdf content'),
+      } as Express.Multer.File;
+
+      const result = await claimService.uploadLineItemEvidence(
+        { axiosInstance: {} } as any,
+        1,
+        2,
+        file,
+        deps as any
+      );
+
+      expect(result.body?.success.messageHtml).to.include('&lt;script&gt;.pdf');
+    });
+
+    it("returns error for a non-200 response", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaims: sinon.stub(),
+        getClaim: sinon.stub(),
+        linkEvidenceToLineItem: sinon.stub(),
+        uploadLineItemEvidence: sinon.stub().rejects({
+          isAxiosError: true,
+          response: {
+            status: 404,
+            data: {
+              detail: "Resource not found",
+              instance: "/api/v1/claims/1/line-items/2/upload-evidence",
+              status: 404,
+              title: "Not found",
+              correlationId: "b7d7c91f-950a-43f6-a8de-ffb37f1001c1",
+              errorCode: "NOT_FOUND",
+            },
+          },
+        }),
+      };
+
+      const file = {
+        originalname: 'evidence.pdf',
+        mimetype: 'application/pdf',
+        size: 12345,
+        buffer: Buffer.from('fake pdf content'),
+      } as Express.Multer.File;
+
+      const result = await claimService.uploadLineItemEvidence(
+        { axiosInstance: {} } as any,
+        1,
+        2,
+        file,
+        deps as any
+      ) as ApiError;
+
+      expect(result.status).to.equal("error");
+      expect(result.statusCode).to.equal(404);
+      expect(result.message).to.equal("Resource not found");
+    });
+
+    it("returns error shape when the API call fails", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaims: sinon.stub(),
+        getClaim: sinon.stub(),
+        linkEvidenceToLineItem: sinon.stub(),
+        uploadLineItemEvidence: sinon.stub().rejects(new Error("boom")),
+      };
+
+      const file = {
+        originalname: 'evidence.pdf',
+        mimetype: 'application/pdf',
+        size: 12345,
+        buffer: Buffer.from('fake pdf content'),
+      } as Express.Multer.File;
+
+      const result = await claimService.uploadLineItemEvidence(
+        { axiosInstance: {} } as any,
+        1,
+        2,
+        file,
+        deps as any
+      );
+
+      expect(result.status).to.equal("error");
+      expect(result.message).to.be.a("string").and.not.empty;
+      expect(result).to.not.have.property("body");
+    });
+  });
 });

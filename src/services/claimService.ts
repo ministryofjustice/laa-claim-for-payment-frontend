@@ -3,9 +3,10 @@ import {
   getClaim as getClaimApi,
   getClaims as getClaimsApi,
   linkEvidenceToLineItem as linkEvidenceToLineItemApi,
+  uploadLineItemEvidence as uploadLineItemEvidenceApi,
 } from "#src/generated/claim-api/sdk.gen.js";
 import { createApiError } from "#src/helpers/index.js";
-import type { ApiResponse, Paginated } from "#src/types/api-types.js";
+import type { ApiResponse, Paginated, UploadResponse } from "#src/types/api-types.js";
 import type { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
 import {
   type Claim,
@@ -13,12 +14,15 @@ import {
   ClaimsResponseSchema,
 } from "#src/types/Claim.js";
 import config from "../../config.js";
+import { escapeHtml } from "#src/helpers/escapehtml.js";
+import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 
 interface ClaimServiceDeps {
   createClient: typeof createClient;
   getClaims: typeof getClaimsApi;
   getClaim: typeof getClaimApi;
   linkEvidenceToLineItem: typeof linkEvidenceToLineItemApi;
+  uploadLineItemEvidence: typeof uploadLineItemEvidenceApi;
 }
 
 const defaultDeps: ClaimServiceDeps = {
@@ -26,6 +30,7 @@ const defaultDeps: ClaimServiceDeps = {
   getClaims: getClaimsApi,
   getClaim: getClaimApi,
   linkEvidenceToLineItem: linkEvidenceToLineItemApi,
+  uploadLineItemEvidence: uploadLineItemEvidenceApi,
 };
 
 /**
@@ -148,6 +153,70 @@ class ClaimService {
       return {
         body: null,
         status: "success",
+      };
+    } catch (error) {
+      return createApiError(error);
+    }
+  }
+
+  /**
+   * Uploads evidence for a claim line item and returns a response for the multi-file upload component.
+   *
+   * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.   * @param {number} claimId Claim ID.
+   * @param {number} claimId - Claim identifier.
+   * @param {number} lineItemId - Line item identifier.
+   * @param {object} file Uploaded file from multer.
+   * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
+   * @returns {Promise<UploadResponse>} Upload response for the multi-file upload component.
+   */
+  // eslint-disable-next-line @typescript-eslint/max-params -- ignore
+  static async uploadLineItemEvidence(
+    axiosMiddleware: AxiosInstanceWrapper,
+    claimId: number,
+    lineItemId: number,
+    file: Express.Multer.File,
+    deps: ClaimServiceDeps = defaultDeps,
+  ): Promise<ApiResponse<UploadResponse>> {
+    try {
+      const apiClient = deps.createClient({
+        baseURL: config.api.baseUrl,
+        axios: axiosMiddleware.axiosInstance,
+        throwOnError: true,
+      });
+
+      const arrayBuffer = new ArrayBuffer(file.buffer.byteLength);
+      const view = new Uint8Array(arrayBuffer);
+
+      view.set(file.buffer);
+
+      await deps.uploadLineItemEvidence({
+        client: apiClient,
+        path: {
+          claimId,
+          lineItemId,
+        },
+        body: {
+          documents: new Blob([arrayBuffer], { type: file.mimetype }),
+        },
+      });
+
+      return {
+        status: "success",
+        body: {
+          success: {
+            messageText: `${file.originalname} uploaded`,
+            messageHtml: `
+              <span class="uploaded-file-row">
+                <a href="#" class="govuk-link uploaded-file-name">${escapeHtml(file.originalname)}</a>
+                <span class="uploaded-file-size govuk-!-margin-left-2">${formatFileSize(file.size)}</span>
+                <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">Uploaded</strong>
+              </span>`,
+          },
+          file: {
+            filename: file.originalname,
+            originalname: file.originalname,
+          },
+        },
       };
     } catch (error) {
       return createApiError(error);

@@ -59,7 +59,7 @@ export function patchMultiFileUpload(csrfToken) {
 
     const xhr = new XMLHttpRequest();
 
-        const onLoad = () => {
+    const onLoad = () => {
       if (
         xhr.status < 200 ||
         xhr.status >= 300 ||
@@ -68,12 +68,12 @@ export function patchMultiFileUpload(csrfToken) {
         onError(); return;
       }
 
-      $message.innerHTML = xhr.response.success.messageHtml;
-      this.$status.textContent = xhr.response.success.messageText;
+      $message.innerHTML = xhr.response.body.success.messageHtml;
+      this.$status.textContent = xhr.response.body.success.messageText;
 
       showUploadedFilesHeading();
 
-      $actions.append(this.getDeleteButton(xhr.response.file))
+      $actions.append(this.getDeleteButton(xhr.response.body.file))
       this.config.hooks.exitHook(this, file, xhr, xhr.statusText)
     }
 
@@ -162,7 +162,7 @@ export function patchMultiFileUpload(csrfToken) {
     );
   };
 
-   function showUploadedFilesHeading() {
+  function showUploadedFilesHeading() {
     const container = document.querySelector('.moj-multi-file__uploaded-files');
 
     if (container === null) {
