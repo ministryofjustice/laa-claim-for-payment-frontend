@@ -3,10 +3,15 @@ import {
   getClaim as getClaimApi,
   getClaims as getClaimsApi,
   linkEvidenceToLineItem as linkEvidenceToLineItemApi,
+  unlinkEvidenceFromLineItem as unlinkEvidenceFromLineItemApi,
   uploadLineItemEvidence as uploadLineItemEvidenceApi,
 } from "#src/generated/claim-api/sdk.gen.js";
 import { createApiError } from "#src/helpers/index.js";
-import type { ApiResponse, Paginated, UploadResponse } from "#src/types/api-types.js";
+import type {
+  AjaxUploadResponse,
+  ApiResponse,
+  Paginated,
+} from "#src/types/api-types.js";
 import type { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
 import {
   type Claim,
@@ -16,6 +21,7 @@ import {
 import config from "../../config.js";
 import { escapeHtml } from "#src/helpers/escapehtml.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
+import { UploadResponse } from "#src/generated/claim-api/index.js";
 
 interface ClaimServiceDeps {
   createClient: typeof createClient;
@@ -23,6 +29,7 @@ interface ClaimServiceDeps {
   getClaim: typeof getClaimApi;
   linkEvidenceToLineItem: typeof linkEvidenceToLineItemApi;
   uploadLineItemEvidence: typeof uploadLineItemEvidenceApi;
+  unlinkEvidenceFromLineItem: typeof unlinkEvidenceFromLineItemApi;
 }
 
 const defaultDeps: ClaimServiceDeps = {
@@ -31,6 +38,7 @@ const defaultDeps: ClaimServiceDeps = {
   getClaim: getClaimApi,
   linkEvidenceToLineItem: linkEvidenceToLineItemApi,
   uploadLineItemEvidence: uploadLineItemEvidenceApi,
+  unlinkEvidenceFromLineItem: unlinkEvidenceFromLineItemApi,
 };
 
 /**
@@ -183,7 +191,7 @@ class ClaimService {
       uploadedMessage: string;
     },
     deps: ClaimServiceDeps = defaultDeps,
-  ): Promise<ApiResponse<UploadResponse>> {
+  ): Promise<ApiResponse<AjaxUploadResponse>> {
     try {
       const apiClient = deps.createClient({
         baseURL: config.api.baseUrl,
@@ -196,7 +204,7 @@ class ClaimService {
 
       view.set(file.buffer);
 
-      await deps.uploadLineItemEvidence({
+      const response = await deps.uploadLineItemEvidence({
         client: apiClient,
         path: {
           claimId,
@@ -208,6 +216,14 @@ class ClaimService {
           }),
         },
       });
+
+      if (response.data == null) {
+        return createApiError(response.error);
+      }
+
+      if (response.data.type === "error") {
+        return createApiError(response.data);
+      }
 
       return {
         status: "success",
@@ -224,10 +240,54 @@ class ClaimService {
               </span>`,
           },
           file: {
+            id: response.data.evidenceId,
             filename: file.originalname,
             originalname: file.originalname,
           },
         },
+      };
+    } catch (error) {
+      return createApiError(error);
+    }
+  }
+
+  /**
+   * Unlink evidence from a line item.
+   *
+   * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.   * @param {number} claimId Claim ID.
+   * @param {number} claimId - Claim identifier.
+   * @param {number} lineItemId - Line item identifier.
+   * @param {number} evidenceId - Evidence identifier.
+   * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
+   * @returns {Promise<ApiResponse<null>>} Null response in app response format.
+   */
+  // eslint-disable-next-line @typescript-eslint/max-params -- ignore
+  static async unlinkEvidenceFromLineItem(
+    axiosMiddleware: AxiosInstanceWrapper,
+    claimId: number,
+    lineItemId: number,
+    evidenceId: number,
+    deps: ClaimServiceDeps = defaultDeps,
+  ): Promise<ApiResponse<null>> {
+    try {
+      const apiClient = deps.createClient({
+        baseURL: config.api.baseUrl,
+        axios: axiosMiddleware.axiosInstance,
+        throwOnError: true,
+      });
+
+      await deps.unlinkEvidenceFromLineItem({
+        client: apiClient,
+        path: {
+          claimId,
+          lineItemId,
+          evidenceId,
+        },
+      });
+
+      return {
+        body: null,
+        status: "success",
       };
     } catch (error) {
       return createApiError(error);

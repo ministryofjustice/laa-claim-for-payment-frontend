@@ -330,12 +330,25 @@ describe("Claim Service", () => {
 
   describe("uploadLineItemEvidence", () => {
     it("returns success", async () => {
+      const mockApiResponse = {
+        data: {
+          type: 'success',
+          evidenceId: 3,
+          file: {
+            filename: 'evidence.pdf',
+            originalname: 'evidence.pdf',
+            filesize: 12345,
+          },
+          message: "File uploaded with ID: 3 and linked to line item: 2",
+        }
+      };
+
       const deps = {
         createClient: sinon.stub().returns({}),
         getClaims: sinon.stub(),
         getClaim: sinon.stub(),
         linkEvidenceToLineItem: sinon.stub(),
-        uploadLineItemEvidence: sinon.stub().resolves({ data: {} }),
+        uploadLineItemEvidence: sinon.stub().resolves(mockApiResponse),
       };
 
       const file = {
@@ -361,6 +374,7 @@ describe("Claim Service", () => {
 
       expect(result.status).to.equal("success");
       expect(result.body?.file).to.deep.equal({
+        id: 3,
         filename: 'evidence.pdf',
         originalname: 'evidence.pdf',
       });
@@ -371,12 +385,25 @@ describe("Claim Service", () => {
     });
 
     it('escapes file names in the success HTML', async () => {
+      const mockApiResponse = {
+        data: {
+          type: 'success',
+          evidenceId: 3,
+          file: {
+            filename: '<script>.pdf',
+            originalname: '<script>.pdf',
+            filesize: 12345,
+          },
+          message: "File uploaded with ID: 3 and linked to line item: 2",
+        }
+      };
+
       const deps = {
         createClient: sinon.stub().returns({}),
         getClaims: sinon.stub(),
         getClaim: sinon.stub(),
         linkEvidenceToLineItem: sinon.stub(),
-        uploadLineItemEvidence: sinon.stub().resolves({ data: {} }),
+        uploadLineItemEvidence: sinon.stub().resolves(mockApiResponse),
       };
 
       const file = {

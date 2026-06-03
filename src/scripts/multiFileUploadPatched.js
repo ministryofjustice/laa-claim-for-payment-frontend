@@ -22,12 +22,14 @@ export function patchMultiFileUpload(csrfToken) {
     return;
   }
 
-  MultiFileUpload.prototype.getDeleteButton = function (file) {
+  MultiFileUpload.prototype.getDeleteButton = function (file, evidenceId) {
     const $link = document.createElement('a');
 
     $link.setAttribute('href', '#');
     $link.setAttribute('role', 'button');
-    $link.setAttribute('data-delete-file-id', file.filename);
+    $link.setAttribute('data-delete-file-id', String(file.id));
+
+    $link.dataset.filename = file.filename;
 
     $link.classList.add(
       'moj-multi-file-upload__delete',
@@ -158,6 +160,7 @@ export function patchMultiFileUpload(csrfToken) {
     xhr.send(
       JSON.stringify({
         delete: $button.dataset.deleteFileId,
+        name: $button.dataset.filename
       }),
     );
   };
