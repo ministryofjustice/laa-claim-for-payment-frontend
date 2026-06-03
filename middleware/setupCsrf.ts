@@ -18,9 +18,11 @@ const hasCSRFToken = (body: unknown): body is { _csrf: unknown } =>
  * - Ensures CSRF tokens are available in views for forms.
  *
  * @param {Application} app - The Express application instance.
+ * @param {Function} [csrfFactory=csrfSync] - Factory function used to create
+ * the CSRF protection middleware. Defaults to `csrfSync`. This can be overridden in tests
  */
-export const setupCsrf = (app: Application): void => {
-  const { csrfSynchronisedProtection } = csrfSync({
+export const setupCsrf = (app: Application, csrfFactory = csrfSync): void => {
+  const { csrfSynchronisedProtection } = csrfFactory({
     /**
      * Extracts the CSRF token from the request body.
      *
@@ -28,18 +30,15 @@ export const setupCsrf = (app: Application): void => {
      * @returns {string|undefined} The CSRF token if present, otherwise undefined.
      */
     getTokenFromRequest: (req: Request): string | undefined => {
-      const { headers } = req;
-      const { "x-csrf-token": headerToken } = headers;
-
-      if (typeof headerToken === "string" && headerToken.length > 0) {
-        return headerToken;
-      }
-
       const body = req.body as unknown;
 
       if (hasCSRFToken(body)) {
         const { _csrf } = body;
         return typeof _csrf === "string" ? _csrf : undefined;
+      }
+
+      if (req.session.csrfToken != null) {
+        return req.session.csrfToken;
       }
 
       return undefined;

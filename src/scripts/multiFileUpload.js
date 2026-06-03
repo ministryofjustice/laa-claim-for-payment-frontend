@@ -10,7 +10,6 @@ const configEl = document.getElementById('multi-file-upload-config');
 const {
   uploadUrl,
   deleteUrl,
-  csrfToken,
   uploadStatusText,
   dropzoneHintText,
   dropzoneButtonText,
@@ -19,10 +18,8 @@ const {
 if (
   $multiFileUpload !== null &&
   uploadUrl !== undefined &&
-  deleteUrl !== undefined &&
-  csrfToken !== undefined
-) {
-  patchMultiFileUpload(csrfToken);
+  deleteUrl !== undefined) {
+  patchMultiFileUpload();
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call, no-new -- Constructor initialises MOJ component; package has weak typings.
   new MultiFileUpload($multiFileUpload, {

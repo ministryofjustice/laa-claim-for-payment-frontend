@@ -14,6 +14,7 @@
 {% set title = renderTextOrMessage(t, vm.title) %}
 
 {% macro uploadFilesHtml() %}
+  <input type="hidden" name="_csrf" value="{{ csrfToken }}">
   <h2 class="govuk-heading-m">
     {{ t('pages.fileUploadForLineItem.uploadFiles.title') }}
   </h2>
@@ -37,7 +38,6 @@
         hidden
         data-upload-url="{{ vm.uploadUrl }}"
         data-delete-url="{{ vm.deleteUrl }}"
-        data-csrf-token="{{ csrfToken }}"
         data-upload-status-text="{{ t('multiFileUpload.uploadStatusText') }}"
         data-dropzone-hint-text="{{ t('multiFileUpload.dropzoneHintText') }}"
         data-dropzone-button-text="{{ t('multiFileUpload.dropzoneButtonText') }}">
@@ -111,8 +111,6 @@
         </h2>
 
         <form method="post">
-          <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-
           {{ multiSelect(t, vm.reusableDocuments) }}
 
           {{ uploadFilesHtml() }}
