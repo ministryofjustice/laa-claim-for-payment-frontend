@@ -32,12 +32,13 @@ export interface Paginated<Data> {
   data: Data[];
 } 
 
-export interface UploadResponse {
+export interface AjaxUploadResponse {
   success: {
     messageText: string;
     messageHtml: string;
   };
   file: {
+    id: number;
     filename: string;
     originalname: string;
   };

@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { HttpError } from 'http-errors';
 import multer from 'multer';
+import type { MulterRequest } from "#src/types/requests.js";
 
 export const ROUTES = {
   CLAIMS: '/',
@@ -39,7 +40,7 @@ export function buildRoute(
  */
 export function multerErrorHandler(
   error: Error,
-  req: Request,
+  req: MulterRequest,
   res: Response,
   next: NextFunction,
 ): void {
@@ -47,9 +48,9 @@ export function multerErrorHandler(
     res.status(400).json({
       error: {
         message:
-          error.code === 'LIMIT_FILE_SIZE'
-          ? req.t('multiFileUpload.errors.fileTooLarge')
-          : error.message,
+          error.code === "LIMIT_FILE_SIZE"
+            ? req.t("multiFileUpload.errors.fileTooLarge")
+            : error.message,
       },
     });
     return;

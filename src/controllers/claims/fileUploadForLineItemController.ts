@@ -1,23 +1,12 @@
 import { claimService } from "#src/services/claimService.js";
 import { FileUploadForLineItemViewModel } from "#src/viewmodels/fileUploadForLineItemViewModel.js";
 import type { NextFunction, Request, Response } from "express";
-import fs from "node:fs";
-import path from "node:path";
 import { processApiError, processError } from "#src/helpers/index.js";
 import createHttpError from "http-errors";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { uploadLineItemEvidence } from "#src/services/evidenceUploadService.js";
+import type { DeleteFileRequest, MulterRequest } from "#src/types/requests.js";
 
 const BAD_REQUEST = 400;
-const OK = 200;
-
-export const uploadDir = path.resolve('tmp/uploads');
-
-type MulterRequest = Request & {
-  file?: Express.Multer.File;
-};
-
-type DeleteFileRequest = Request<Record<string, string>, unknown, { delete?: string }>;
 
 /**
  * File upload page for Bill narrative.
@@ -37,9 +26,9 @@ export async function fileUploadForLineItemPage(
     const lineItemId = Number(req.params.lineItemId);
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
-    if (response.status === 'success') {
+    if (response.status === "success") {
       const { body: claim } = response;
-      const {lineItems} = claim;
+      const { lineItems } = claim;
 
       const lineItem = lineItems?.find((item) => item.id === lineItemId);
 
@@ -50,16 +39,18 @@ export async function fileUploadForLineItemPage(
 
       const vm = new FileUploadForLineItemViewModel(claim, lineItem);
 
-      res.render('main/claims/fileUploadForLineItemView.njk', {
+      res.render("main/claims/fileUploadForLineItemView.njk", {
         vm,
         csrfToken: res.locals.csrfToken,
       });
       return;
     }
 
-    next(processApiError(response, 'fetching evidence upload details for user'));
+    next(
+      processApiError(response, "fetching evidence upload details for user"),
+    );
   } catch (error) {
-    next(processError(error, 'fetching evidence upload details for user'));
+    next(processError(error, "fetching evidence upload details for user"));
   }
 }
 
@@ -85,15 +76,20 @@ export async function linkEvidenceToLineItem(
 
     const evidenceIds: number[] = Array.isArray(documents)
       ? documents
-        .filter((id): id is string => typeof id === 'string')
-        .map(id => id.trim())
-        .filter(Boolean)
-        .map(Number)
+          .filter((id): id is string => typeof id === "string")
+          .map((id) => id.trim())
+          .filter(Boolean)
+          .map(Number)
       : [];
 
     if (evidenceIds.length > 0) {
-      const response = await claimService.linkEvidenceToLineItem(req.axiosMiddleware, claimId, lineItemId, evidenceIds);
-      if (response.status === 'error') {
+      const response = await claimService.linkEvidenceToLineItem(
+        req.axiosMiddleware,
+        claimId,
+        lineItemId,
+        evidenceIds,
+      );
+      if (response.status === "error") {
         next(processApiError(response, "linking evidence to line item"));
         return;
       }
@@ -126,28 +122,30 @@ export async function uploadEvidenceFile(
     if (file === undefined) {
       res.status(BAD_REQUEST).json({
         error: {
-          message: req.t('multiFileUpload.errors.noFileUploaded')
-        }
+          message: req.t("multiFileUpload.errors.noFileUploaded"),
+        },
       });
       return;
     }
 
-    const response = await uploadLineItemEvidence({
-      axiosMiddleware: req.axiosMiddleware,
-      claimId: Number(req.params.claimId),
-      lineItemId: Number(req.params.lineItemId),
+    const translations = {
+      uploaded: req.t("common.uploadStatus.uploaded"),
+      uploadedMessage: req.t("multiFileUpload.uploadedMessage", {
+        filename: file.originalname,
+      }),
+    };
+
+    const response = await claimService.uploadLineItemEvidence(
+      req.axiosMiddleware,
+      Number(req.params.claimId),
+      Number(req.params.lineItemId),
       file,
-      translations: {
-        uploaded: req.t('common.uploadStatus.uploaded'),
-        uploadedMessage: req.t('multiFileUpload.uploadedMessage', {
-          filename: file.originalname,
-        }),
-      },
-    });
+      translations,
+    );
 
     res.json(response);
   } catch (error) {
-    next(processError(error, 'uploading evidence file'));
+    next(processError(error, "uploading evidence file"));
   }
 }
 
@@ -159,42 +157,31 @@ export async function uploadEvidenceFile(
  * @param {NextFunction} next Express next function.
  * @returns {void}
  */
-export function deleteEvidenceFile(
+export async function deleteEvidenceFile(
   req: DeleteFileRequest,
   res: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   try {
     // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- Using alias because "delete" is a reserved keyword.
     const { delete: fileId } = req.body;
-
-    if (fileId === undefined || fileId === '') {
+    if (fileId === "") {
       res.status(BAD_REQUEST).json({
         error: {
-          message: req.t('multiFileUpload.errors.missingFileId')
-        }
+          message: req.t("multiFileUpload.errors.missingFileId"),
+        },
       });
       return;
     }
 
-    const filePath = path.resolve(uploadDir, fileId);
+    const response = await claimService.unlinkEvidenceFromLineItem(
+      req.axiosMiddleware,
+      Number(req.params.claimId),
+      Number(req.params.lineItemId),
+      Number(fileId),
+    );
 
-    if (!filePath.startsWith(uploadDir)) {
-      res.status(BAD_REQUEST).json({
-        error: {
-          message: req.t('multiFileUpload.errors.invalidFilePath')
-        }
-      });
-      return;
-    }
-
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
-
-    res.status(OK).json({
-      success: true,
-    });
+    res.json(response);
   } catch (error) {
     next(error);
   }

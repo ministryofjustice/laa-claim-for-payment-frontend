@@ -23,7 +23,9 @@ export function patchMultiFileUpload() {
 
     $link.setAttribute('href', '#');
     $link.setAttribute('role', 'button');
-    $link.setAttribute('data-delete-file-id', file.filename);
+    $link.setAttribute('data-delete-file-id', String(file.id));
+
+    $link.dataset.filename = file.filename;
 
     $link.classList.add(
       'moj-multi-file-upload__delete',
@@ -55,21 +57,21 @@ export function patchMultiFileUpload() {
 
     const xhr = new XMLHttpRequest();
 
-        const onLoad = () => {
+    const onLoad = () => {
       if (
         xhr.status < 200 ||
         xhr.status >= 300 ||
-        !('success' in xhr.response)
+        xhr.response.status === 'error'
       ) {
         onError(); return;
       }
 
-      $message.innerHTML = xhr.response.success.messageHtml;
-      this.$status.textContent = xhr.response.success.messageText;
+      $message.innerHTML = xhr.response.body.success.messageHtml;
+      this.$status.textContent = xhr.response.body.success.messageText;
 
       showUploadedFilesHeading();
 
-      $actions.append(this.getDeleteButton(xhr.response.file))
+      $actions.append(this.getDeleteButton(xhr.response.body.file))
       this.config.hooks.exitHook(this, file, xhr, xhr.statusText)
     }
 
@@ -152,11 +154,12 @@ export function patchMultiFileUpload() {
     xhr.send(
       JSON.stringify({
         delete: $button.dataset.deleteFileId,
+        name: $button.dataset.filename
       }),
     );
   };
 
-   function showUploadedFilesHeading() {
+  function showUploadedFilesHeading() {
     const container = document.querySelector('.moj-multi-file__uploaded-files');
 
     if (container === null) {

@@ -1200,7 +1200,7 @@
           "Claims"
         ],
         "summary": "Delete evidence from a claim",
-        "operationId": "unlinkEvidenceFromLineItem_1",
+        "operationId": "deleteEvidenceFromClaim",
         "parameters": [
           {
             "name": "claimId",
@@ -1414,10 +1414,21 @@
       "UploadError": {
         "type": "object",
         "properties": {
+          "file": {
+            "$ref": "#/components/schemas/UploadFile"
+          },
           "message": {
             "type": "string"
+          },
+          "type": {
+            "type": "string"
           }
-        }
+        },
+        "required": [
+          "file",
+          "message",
+          "type"
+        ]
       },
       "UploadFile": {
         "type": "object",
@@ -1435,29 +1446,45 @@
         }
       },
       "UploadResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "success": "#/components/schemas/UploadSuccess",
+            "error": "#/components/schemas/UploadError"
+          }
+        },
+        "oneOf": [
+          {
             "$ref": "#/components/schemas/UploadSuccess"
           },
-          "error": {
+          {
             "$ref": "#/components/schemas/UploadError"
-          },
-          "file": {
-            "$ref": "#/components/schemas/UploadFile"
           }
-        }
+        ]
       },
       "UploadSuccess": {
         "type": "object",
         "properties": {
-          "messageText": {
+          "evidenceId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "file": {
+            "$ref": "#/components/schemas/UploadFile"
+          },
+          "message": {
             "type": "string"
           },
-          "messageHtml": {
+          "type": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "evidenceId",
+          "file",
+          "message",
+          "type"
+        ]
       },
       "Claim": {
         "type": "object",
