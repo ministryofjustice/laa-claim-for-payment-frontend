@@ -22,7 +22,7 @@ export function patchMultiFileUpload(csrfToken) {
     return;
   }
 
-  MultiFileUpload.prototype.getDeleteButton = function (file, evidenceId) {
+  MultiFileUpload.prototype.getDeleteButton = function (file) {
     const $link = document.createElement('a');
 
     $link.setAttribute('href', '#');
