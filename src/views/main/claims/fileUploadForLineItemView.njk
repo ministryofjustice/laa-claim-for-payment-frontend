@@ -13,6 +13,42 @@
 
 {% set title = renderTextOrMessage(t, vm.title) %}
 
+{% set uploadedItems = [] %}
+
+{% for uploadedFile in vm.uploadedFiles %}
+
+  {% set messageHtml %}
+    <span class="moj-multi-file-upload__success">
+      span class="uploaded-file-row">
+        <a href="#" class="govuk-link uploaded-file-name">
+          {{ uploadedFile.name }}
+        </a>
+
+        <span class="uploaded-file-size govuk-!-margin-left-2">
+          {{ uploadedFile.size }}
+        </span>
+
+        <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">
+          {{ t('common.uploadStatus.uploaded') }}
+        </strong>
+      </span>
+    </span>
+  {% endset %}
+
+  {% set uploadedItem = {
+    fileName: uploadedFile.id,
+    originalFileName: uploadedFile.name,
+    message: {
+      html: messageHtml | safe
+    },
+    deleteButton: {
+      text: 'Delete'
+    }
+  } %}
+
+  {% set uploadedItems = (uploadedItems.push(uploadedItem), uploadedItems) %}
+{% endfor %}
+
 {% macro uploadFilesHtml() %}
   <input type="hidden" name="_csrf" value="{{ csrfToken }}">
   <h2 class="govuk-heading-m">
@@ -23,51 +59,48 @@
     {{ t('pages.fileUploadForLineItem.uploadFiles.maxSize') }}
   </p>
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-three-quarters">
+  {% if errorSummary.items.length %}
+    {{ govukErrorSummary({
+      titleText: t('common.errorSummaryTitle'),
+      errorList: errorSummary.items
+    }) }}
+  {% endif %}
 
-      {% if errorSummary.items.length %}
-        {{ govukErrorSummary({
-          titleText: t('common.errorSummaryTitle'),
-          errorList: errorSummary.items
-        }) }}
-      {% endif %}
+  <div
+    id="multi-file-upload-config"
+    hidden
+    data-upload-url="{{ vm.uploadUrl }}"
+    data-delete-url="{{ vm.deleteUrl }}"
+    data-upload-status-text="{{ t('multiFileUpload.uploadStatusText') }}"
+    data-dropzone-hint-text="{{ t('multiFileUpload.dropzoneHintText') }}"
+    data-dropzone-button-text="{{ t('multiFileUpload.dropzoneButtonText') }}">
+  </div>
 
-      <div
-        id="multi-file-upload-config"
-        hidden
-        data-upload-url="{{ vm.uploadUrl }}"
-        data-delete-url="{{ vm.deleteUrl }}"
-        data-upload-status-text="{{ t('multiFileUpload.uploadStatusText') }}"
-        data-dropzone-hint-text="{{ t('multiFileUpload.dropzoneHintText') }}"
-        data-dropzone-button-text="{{ t('multiFileUpload.dropzoneButtonText') }}">
-      </div>
+  {% set uploadHtml %}
+    {{ govukFileUpload({
+      id: "documents",
+      name: "documents",
+      classes: "moj-multi-file-upload__input",
+      attributes: { multiple: "" },
+      errorMessage: errorMessage
+    }) }}
 
-      {% set uploadHtml %}
-        {{ govukFileUpload({
-          id: "documents",
-          name: "documents",
-          classes: "moj-multi-file-upload__input",
-          attributes: { multiple: "" },
-          errorMessage: errorMessage
-        }) }}
+    {{ govukButton({
+      text: "Upload file",
+      classes: "govuk-button--secondary moj-multi-file-upload__button"
+    }) }}
+  {% endset %}
 
-        {{ govukButton({
-          text: "Upload file",
-          classes: "govuk-button--secondary moj-multi-file-upload__button"
-        }) }}
-      {% endset %}
-
-      <div class="upload-wrapper">
-        {{ mojMultiFileUpload({
-          uploadedFiles: {
-            items: uploadedFiles
-          },
-          uploadHtml: uploadHtml
-        }) }}
-      </div>
-
-    </div>
+  <div class="upload-wrapper">
+    {{ mojMultiFileUpload({
+      uploadedFiles: {
+        heading: {
+          text: t('multiFileUpload.uploadedFiles.title')
+        },
+        items: uploadedItems
+      },
+      uploadHtml: uploadHtml
+    }) }}
   </div>
 {% endmacro %}
 

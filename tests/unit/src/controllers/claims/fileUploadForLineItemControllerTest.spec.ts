@@ -160,8 +160,7 @@ describe("View File Upload For Line Item Controller", () => {
             messageHtml: "<span>Uploaded</span>",
           },
           file: {
-            id: 1,
-            filename: "evidence.pdf",
+            filename: "1",
             originalname: "evidence.pdf",
           },
         },
@@ -195,7 +194,7 @@ describe("View File Upload For Line Item Controller", () => {
 
       const responseBody = json.firstCall.args[0];
 
-      expect(responseBody).to.deep.equal(mockApiResponse);
+      expect(responseBody).to.deep.equal(mockApiResponse.body);
 
       expect(status.called).to.equal(false);
       expect(next.called).to.equal(false);

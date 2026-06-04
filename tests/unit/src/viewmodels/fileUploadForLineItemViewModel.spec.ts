@@ -38,5 +38,35 @@ describe("FileUploadForLineItemViewModel constructor()", ()=>{
     const vm = new FileUploadForLineItemViewModel(claim7, workItemLineItem1);
 
     expect(vm.reusableDocuments.length).to.equal(1);
+    expect(vm.reusableDocuments[0].name).to.equal("evidence1.pdf");
+    expect(vm.reusableDocuments[0].size).to.equal("1KB");
+  });
+
+  it("builds the uploaded files when there are no evidence items not already uploaded for this line item", () => {
+    const vm = new FileUploadForLineItemViewModel(claim1, billNarrativeLineItem);
+
+    expect(vm.uploadedFiles.length).to.equal(1);
+    expect(vm.uploadedFiles[0].name).to.equal("evidence1.pdf");
+    expect(vm.uploadedFiles[0].size).to.equal("1KB");
+  });
+
+  it("builds the uploaded files when there are evidence items not already uploaded for this line item", () => {
+    const vm = new FileUploadForLineItemViewModel(claim1, workItemLineItem1);
+
+    expect(vm.uploadedFiles.length).to.equal(0);
+  });
+
+  it("builds the uploaded files when there is an evidence item in another line item that is already linked to this line item", () => {
+    const vm = new FileUploadForLineItemViewModel(claim6, billNarrativeLineItem);
+
+    expect(vm.uploadedFiles.length).to.equal(1);
+    expect(vm.uploadedFiles[0].name).to.equal("evidence1.pdf");
+    expect(vm.uploadedFiles[0].size).to.equal("1KB");
+  });
+
+  it("builds the uploaded files when the same evidence has been linked to multiple other items", () => {
+    const vm = new FileUploadForLineItemViewModel(claim7, workItemLineItem1);
+
+    expect(vm.uploadedFiles.length).to.equal(0);
   });
 })

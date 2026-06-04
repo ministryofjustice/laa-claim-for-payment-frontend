@@ -38,7 +38,6 @@ export interface AjaxUploadResponse {
     messageHtml: string;
   };
   file: {
-    id: number;
     filename: string;
     originalname: string;
   };

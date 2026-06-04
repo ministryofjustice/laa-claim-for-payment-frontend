@@ -1,7 +1,6 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { formatDateReadable } from "#src/helpers/dataFormatters.js";
-import type { Claim, LineItem } from "#src/types/Claim.js";
-import { Category } from "#src/types/Claim.js";
+import { Category, type Claim, type EvidenceItem, type LineItem } from "#src/types/Claim.js";
 import type { Message } from "#src/viewmodels/components/message.js";
 import type { ReusableDocument } from "#src/viewmodels/components/evidence.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
@@ -15,6 +14,7 @@ export class FileUploadForLineItemViewModel {
   readonly uploadUrl: string;
   readonly deleteUrl: string;
   readonly reusableDocuments: ReusableDocument[];
+  readonly uploadedFiles: ReusableDocument[];
 
   /**
    * Creates a view model containing the summary rows derived from the claim data
@@ -37,14 +37,28 @@ export class FileUploadForLineItemViewModel {
     });
 
     const existingIds = new Set(lineItem.evidenceItems.map((ei) => ei.id));
+
     this.reusableDocuments =
       claim.evidence
         ?.filter((e) => !existingIds.has(e.id))
-        .map((e) => ({
-          id: e.id,
-          name: e.fileKey,
-          size: formatFileSize(e.fileSize),
-        })) ?? [];
+        .map((evidence) =>
+          FileUploadForLineItemViewModel.buildReusableDocument(evidence),
+        ) ?? [];
+
+    this.uploadedFiles =
+      claim.evidence
+        ?.filter((e) => existingIds.has(e.id))
+        .map((evidence) =>
+          FileUploadForLineItemViewModel.buildReusableDocument(evidence),
+        ) ?? [];
+  }
+
+  private static buildReusableDocument(evidence: EvidenceItem): ReusableDocument {
+    return {
+      id: evidence.id,
+      name: evidence.fileKey,
+      size: formatFileSize(evidence.fileSize),
+    }
   }
 
   private static buildTitle(lineItem: LineItem): string | Message {

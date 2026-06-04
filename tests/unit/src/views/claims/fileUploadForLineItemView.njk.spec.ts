@@ -1,7 +1,7 @@
 import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI, load } from "cheerio";
 import { FileUploadForLineItemViewModel } from "#src/viewmodels/fileUploadForLineItemViewModel.js";
-import { claim1 } from "#tests/assets/claim.js";
+import { claim1, claim2, claim3 } from "#tests/assets/claim.js";
 import { billNarrativeLineItem, workItemLineItem1 } from "#tests/assets/lineItems.js";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
 
@@ -182,7 +182,6 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
         vm: viewModel,
         uploadedFile: [],
         csrfToken: "test-csrf-token",
-
       });
     });
 
@@ -205,6 +204,66 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
 
       expect(csrf).to.have.length(1);
       expect(csrf.attr("value")).to.equal("test-csrf-token");
+    });
+  });
+
+  describe("with no uploaded files", () => {
+    let $: CheerioAPI;
+
+    const viewModel = new FileUploadForLineItemViewModel(
+      claim3,
+      workItemLineItem1,
+    );
+
+    beforeEach(async () => {
+      $ = await renderView('main/claims/fileUploadForLineItemView.njk', {
+        vm: viewModel,
+        uploadedFile: [],
+        csrfToken: "test-csrf-token",
+      });
+    });
+
+    it("renders a hidden container for the uploaded files", () => {
+      const elements = $("#main-content .moj-multi-file__uploaded-files");
+      const element = elements.eq(0);
+      expect(element.hasClass("moj-hidden")).to.be.true;
+    });
+
+    it("renders an empty summary list", () => {
+      const elements = $("#main-content .moj-multi-file-upload__list");
+      const element = elements.eq(0);
+      const rows = element.find(".moj-multi-file-upload__row");
+      expect(rows.length).to.equal(0);
+    });
+  });
+
+  describe("with uploaded files", () => {
+    let $: CheerioAPI;
+
+    const viewModel = new FileUploadForLineItemViewModel(
+      claim2,
+      billNarrativeLineItem,
+    );
+
+    beforeEach(async () => {
+      $ = await renderView('main/claims/fileUploadForLineItemView.njk', {
+        vm: viewModel,
+        uploadedFile: [],
+        csrfToken: "test-csrf-token",
+      });
+    });
+
+    it("renders a container for the uploaded files", () => {
+      const elements = $("#main-content .moj-multi-file__uploaded-files");
+      const element = elements.eq(0);
+      expect(element.hasClass("moj-hidden")).to.be.false;
+    });
+
+    it("renders a summary list with one row", () => {
+      const elements = $("#main-content .moj-multi-file-upload__list");
+      const element = elements.eq(0);
+      const rows = element.find(".moj-multi-file-upload__row");
+      expect(rows.length).to.equal(1);
     });
   });
 });

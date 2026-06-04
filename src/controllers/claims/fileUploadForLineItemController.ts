@@ -143,7 +143,7 @@ export async function uploadEvidenceFile(
       translations,
     );
 
-    res.json(response);
+    res.json(response.body);
   } catch (error) {
     next(processError(error, "uploading evidence file"));
   }

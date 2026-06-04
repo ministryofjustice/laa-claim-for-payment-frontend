@@ -15,6 +15,16 @@ export function makeFakeClaim(id: number, overrides = {}): object {
     feeType: "Escape",
     claimed: 234.56,
     submissionId: "550e8400-e29b-41d4-a716-446655440000",
+    lineItems: [
+      {
+        id: 1,
+        title: "Interim hearing on 20 December 2023",
+        category: "Work Item",
+        date: "2024-01-04",
+        evidenceItems: [],
+      },
+    ],
+    evidence: [],
     ...overrides
   }
 }
@@ -41,17 +51,48 @@ export const apiHandlers = [
     });
   }),
 
-  http.get('/api/v1/claims/:id', ({ params }) => {
-    const { id } = params;
-    if (typeof id !== 'string') {
+  http.get('/api/v1/claims/:claimId', ({ params }) => {
+    const { claimId } = params;
+    if (typeof claimId !== 'string') {
       throw new Error('URL missing a valid string id param.');
     }
-    console.log('🧩 MSW matched: GET /api/v1/claims/%s', id);
-    if (id === '2') {
+    console.log('🧩 MSW matched: GET /api/v1/claims/%s', claimId);
+    if (claimId === '2') {
       return HttpResponse.error();
     } else {
-      const claim = makeFakeClaim(Number(params.id));
+      const claim = makeFakeClaim(Number(claimId));
       return HttpResponse.json(claim);
     }
+  }),
+
+  http.post('/api/v1/claims/:claimId/line-items/:lineItemId/upload-evidence', ({ params }) => {
+    const { claimId, lineItemId } = params;
+    if (typeof claimId !== 'string' || typeof lineItemId !== 'string') {
+      throw new Error('URL missing valid string id params.');
+    }
+    console.log('🧩 MSW matched: POST /api/v1/claims/%s/line-items/%s/upload-evidence', claimId, lineItemId);
+
+    const response = {
+      type: "success",
+      evidenceId: 1,
+      file: {
+        filename: "test.pdf",
+        originalname: "test.pdf",
+        filesize: 12345
+      },
+      message: "File uploaded with ID: 1"
+    };
+
+    return HttpResponse.json(response, { status: 201 });
+  }),
+
+  http.delete('/api/v1/claims/:claimId/line-items/:lineItemId/evidence/:evidenceId', ({ params }) => {
+    const { claimId, lineItemId, evidenceId } = params;
+    if (typeof claimId !== 'string' || typeof lineItemId !== 'string' || typeof evidenceId !== 'string') {
+      throw new Error('URL missing valid string id params.');
+    }
+    console.log('🧩 MSW matched: DELETE /api/v1/claims/%s/line-items/%s/evidence/%s', claimId, lineItemId, evidenceId);
+
+    return HttpResponse.json(null, { status: 204 });
   }),
 ];
