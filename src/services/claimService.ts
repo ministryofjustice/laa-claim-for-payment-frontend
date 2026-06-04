@@ -240,8 +240,7 @@ class ClaimService {
               </span>`,
           },
           file: {
-            id: response.data.evidenceId,
-            filename: file.originalname,
+            filename: String(response.data.evidenceId),
             originalname: file.originalname,
           },
         },

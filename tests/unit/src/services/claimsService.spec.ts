@@ -374,8 +374,7 @@ describe("Claim Service", () => {
 
       expect(result.status).to.equal("success");
       expect(result.body?.file).to.deep.equal({
-        id: 3,
-        filename: 'evidence.pdf',
+        filename: '3',
         originalname: 'evidence.pdf',
       });
       expect(result.body?.success.messageText).to.equal('evidence.pdf uploaded');
