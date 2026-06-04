@@ -8,14 +8,14 @@ test("upload a file then delete the file", async ({
   page,
   checkAccessibility,
 }) => {
-  const name = "test.pdf";
+  const fileName = "test.pdf";
 
   const fileUploadForLineItemPage = new FileUploadForLineItemPage(page);
 
   await fileUploadForLineItemPage.navigate();
   await fileUploadForLineItemPage.waitForLoad();
 
-  const filePath = createTempPdf(name);
+  const filePath = createTempPdf(fileName);
 
   await expect(fileUploadForLineItemPage.uploadedFilesContainer).toHaveClass(/moj-hidden/);
   await expect(fileUploadForLineItemPage.uploadedFilesHeading).not.toBeVisible();
@@ -27,7 +27,9 @@ test("upload a file then delete the file", async ({
   await expect(fileUploadForLineItemPage.uploadedFilesHeading).toBeVisible();
   await expect(fileUploadForLineItemPage.uploadedFilesHintText).toBeVisible();
 
-  await fileUploadForLineItemPage.deleteFile(name);
+  await fileUploadForLineItemPage.checkFileRow(fileName, "1KB");
+
+  await fileUploadForLineItemPage.deleteFile(fileName);
 
   await expect(fileUploadForLineItemPage.uploadedFilesContainer).toHaveClass(/moj-hidden/);
   await expect(fileUploadForLineItemPage.uploadedFilesHeading).not.toBeVisible();
