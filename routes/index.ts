@@ -8,6 +8,7 @@ import { chooseFileUpload, submitChooseFileUpload } from "#src/controllers/claim
 import { ROUTES, multerErrorHandler } from "./helper.js";
 import { fileUploadForLineItemPage, uploadEvidenceFile, deleteEvidenceFile, continueFromFileUpload, linkEvidenceToLineItem } from "#src/controllers/claims/fileUploadForLineItemController.js";
 import { evidenceUpload } from '#src/helpers/multerUpload.js';
+import { howManyClientsRetained, submitHowManyClientsRetained } from "#src/controllers/poa/howManyClientsRetainedController.js";
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -98,6 +99,16 @@ router.post(
   '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload',
   continueFromFileUpload,
 );
+
+
+router.get(ROUTES.HOW_MANY_CLIENTS_RETAINED, limiter, function (req: Request, res: Response, next: NextFunction): void {
+  howManyClientsRetained(req, res, next);
+});
+
+router.post(ROUTES.HOW_MANY_CLIENTS_RETAINED, limiter, function (req: Request, res: Response, next: NextFunction): void {
+  submitHowManyClientsRetained(req, res, next);
+});
+
 
 // Make an API call with `Axios` and `middleware-axios`
 // GET users from external API

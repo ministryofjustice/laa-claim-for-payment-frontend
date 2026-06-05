@@ -136,6 +136,21 @@
         "title": "Upload files",
         "maxSize": "The maximum file size is 10MB."
       }
+    },
+    "howManyClientsRetained" : {
+      "title" : "How many clients are retained?",
+      "none": {
+        "text" : "0"
+      },
+      "one" : {
+        "text" : "1"
+      },
+      "moreThanTwo" : {
+        "text": "2+"
+      },
+      "error" : {
+        "empty" : "Select how many clients are retained"
+      }
     }
   },
   "forms": {

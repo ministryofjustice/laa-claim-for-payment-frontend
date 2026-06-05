@@ -1,0 +1,109 @@
+import {
+  RadioQuestionViewModel,
+  isValidChoice,
+} from "#src/viewmodels/radioQuestionViewModel.js";
+import type { Request, Response, NextFunction } from "express";
+import { processError } from "#src/helpers/index.js";
+
+
+const howManyClientsRetainedFieldName = "howManyClientsRetained" as const;
+
+const HowManyClientsRetainedChoice = {
+  None: "none",
+  One: "one",
+  MoreThanTwo: "more-than-two",
+} as const;
+
+type HowManyClientsRetainedChoice =
+  (typeof HowManyClientsRetainedChoice)[keyof typeof HowManyClientsRetainedChoice];
+
+const howManyClientsRetainedChoices = [
+  {
+    value: HowManyClientsRetainedChoice.None,
+    text: "pages.howManyClientsRetained.none.text",
+  },
+    {
+    value: HowManyClientsRetainedChoice.One,
+    text: "pages.howManyClientsRetained.one.text",
+  },
+    {
+    value: HowManyClientsRetainedChoice.MoreThanTwo,
+    text: "pages.howManyClientsRetained.moreThanTwo.text",
+  },
+] as const;
+
+/**
+ * get how many clients retained view
+ * @param {Request} req Express request object
+ * @param {Response} res Express response object
+ * @param {NextFunction} next Express next function
+ */
+export function howManyClientsRetained(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  try {
+    res.render("main/radioQuestionPage.njk", {
+      csrfToken: res.locals.csrfToken,
+      vm: new RadioQuestionViewModel({
+        title: "pages.howManyClientsRetained.title", 
+        fieldName: howManyClientsRetainedFieldName, 
+        choices: howManyClientsRetainedChoices
+      }),
+    });
+  } catch (error) {
+    const processedError = processError(
+      error,
+      "rendering choose file upload page"
+    );
+    next(processedError);
+  }
+}
+
+/**
+ * Submit how many clients retained
+ * @param {Request} req Express request object
+ * @param {Response} res Express response object
+ * @param {NextFunction} next Express next function
+ */
+export function submitHowManyClientsRetained(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
+    const selectedChoice: unknown = req.body?.[howManyClientsRetainedFieldName];
+
+    if (!isValidChoice(howManyClientsRetainedChoices, selectedChoice)) {
+      res.status(400).render("main/radioQuestionPage.njk", {
+        csrfToken: res.locals.csrfToken,
+        vm: new RadioQuestionViewModel({
+          title: "pages.howManyClientsRetained.title",
+          fieldName: howManyClientsRetainedFieldName, 
+          choices: howManyClientsRetainedChoices,
+          selectedValue: typeof selectedChoice === "string" ? selectedChoice : undefined,
+          error: {
+            text: "pages.howManyClientsRetained.error.empty",
+          },
+        }),
+      });
+      return;
+    }
+
+    const redirectByChoice: Record<HowManyClientsRetainedChoice, string> = {
+      [HowManyClientsRetainedChoice.None]: "/none",
+      [HowManyClientsRetainedChoice.One]: "/one",
+      [HowManyClientsRetainedChoice.MoreThanTwo]: "/two",
+    };
+
+    res.redirect(redirectByChoice[selectedChoice]);
+  } catch (error) {
+    const processedError = processError(
+      error,
+      "submitting how many clients retained page"
+    );
+    next(processedError);
+  }
+}
