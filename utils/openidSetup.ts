@@ -119,10 +119,10 @@ export const oidcSetup = (app: Application): void => {
   app.get(LOGIN_PATH, async (req: Request, res: Response) => {
     const config = await getConfig();
 
-    const redirectUri = req.session.oidc?.redirect_uri ?? `${BASE_URL}${CALLBACK_PATH}`;
-    const codeVerifier = req.session.oidc?.code_verifier ?? randomPKCECodeVerifier();
+    const redirectUri = `${BASE_URL}${CALLBACK_PATH}`;
+    const codeVerifier = randomPKCECodeVerifier();
     const codeChallenge = await calculatePKCECodeChallenge(codeVerifier);
-    const state = req.session.oidc?.state ?? randomState();
+    const state = randomState();
 
     // Persist flow state in the session
     req.session.oidc = {
@@ -168,24 +168,20 @@ export const oidcSetup = (app: Application): void => {
 
       const idTokenPayload = decodeIdToken(tokens.id_token);
 
-      req.session.regenerate((err) => {
-        if (err != null) {
-          next(err);
-          return;
-        }
+      req.session.oidc = {
+        ...sess,
+        tokens,
+        userinfo: idTokenPayload, 
+      };
 
-        req.session.oidc = {
-          tokens,
-          userinfo: idTokenPayload,
-        };
-
-        // redirect to home page
-        res.redirect('/');
-      });
+      // redirect to home page
+      res.redirect('/');
     } catch (err) {
+
       handleCallbackError(err, req);
-      next(err);
-    }
+
+  next(err);
+}
   });
 
   // GET /logout -> clear session, optionally call OP logout if available
