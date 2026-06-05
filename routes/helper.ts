@@ -9,6 +9,7 @@ export const ROUTES = {
   UPLOAD_EVIDENCE_INDIVIDUALLY: "/claims/:claimId/upload-evidence-individually",
   UPLOAD_FILE_FOR_LINE_ITEM: "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload",
   VIEW_CLAIM: '/claims/:claimId',
+  HOW_MANY_CLIENTS_RETAINED: '/claims/:claimId/how-many-clients-retained'
 } as const;
 
 /**
