@@ -71,9 +71,6 @@ class ClaimService {
         query: { limit, page },
       });
 
-      console.log("******");
-      console.log(response.data);
-
       const parsed = ClaimsResponseSchema.parse(response.data);
       const { claims: data } = parsed;
       const meta = parsed;
@@ -114,10 +111,6 @@ class ClaimService {
         path: { claimId },
         client: apiClient,
       });
-
-      console.log("******");
-      console.log(response.data);
-      console.log(response.data?.lineItems);
 
       const parsed = ClaimResponseSchema.parse(response.data);
 
