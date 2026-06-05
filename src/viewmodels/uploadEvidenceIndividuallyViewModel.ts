@@ -2,7 +2,7 @@ import type { EvidenceTask } from "#src/viewmodels/components/evidence.js";
 import { UploadStatus } from "#src/models/uploadStatus.js";
 import { UploadStatusTagClass } from "#src/viewmodels/components/status.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { Category, type Claim, type LinkedEvidenceItem } from "#src/types/Claim.js";
+import { Category, type Claim } from "#src/types/Claim.js";
 import { formatDateReadable } from "#src/helpers/dataFormatters.js";
 import type { Message } from "./components/message.js";
 
@@ -59,7 +59,7 @@ export class UploadEvidenceIndividuallyViewModel {
     })) ?? [];
   }
 
-  private static buildTag(evidenceItems: LinkedEvidenceItem[]): EvidenceTask["tag"] {
+  private static buildTag(evidenceItems: number[]): EvidenceTask["tag"] {
     const status = evidenceItems.length > 0 ?  UploadStatus.Uploaded : UploadStatus.NotUploaded
     return {
       text: {

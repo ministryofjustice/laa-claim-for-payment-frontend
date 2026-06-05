@@ -36,7 +36,7 @@ export class FileUploadForLineItemViewModel {
       claimId: claim.id,
     });
 
-    const existingIds = new Set(lineItem.evidenceItems.map((ei) => ei.id));
+    const existingIds = new Set(lineItem.evidenceItems);
 
     this.reusableDocuments =
       claim.evidence

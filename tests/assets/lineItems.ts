@@ -11,9 +11,7 @@ export const billNarrativeLineItem: LineItem = {
   title: "Bill narrative",
   category: Category.BILL_NARRATIVE,
   date: new Date("2026-06-19"),
-  evidenceItems: [
-    evidenceItem
-  ],
+  evidenceItems: [1],
 }
 
 export const workItemLineItem1: LineItem = {
@@ -29,9 +27,7 @@ export const workItemLineItem2: LineItem = {
   title: "Interim hearing",
   category: Category.WORK_ITEM,
   date: new Date("2023-12-21"),
-  evidenceItems: [
-    evidenceItem
-  ],
+  evidenceItems: [1],
 }
 
 export const workItemLineItem3: LineItem = {
@@ -39,9 +35,7 @@ export const workItemLineItem3: LineItem = {
   title: "Interim hearing",
   category: Category.WORK_ITEM,
   date: new Date("2023-12-21"),
-  evidenceItems: [
-    evidenceItem
-  ],
+  evidenceItems: [1],
 }
 
 export const disbursementLineItem: LineItem = {
