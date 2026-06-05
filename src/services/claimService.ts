@@ -21,7 +21,6 @@ import {
 import config from "../../config.js";
 import { escapeHtml } from "#src/helpers/escapehtml.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
-import { UploadResponse } from "#src/generated/claim-api/index.js";
 
 interface ClaimServiceDeps {
   createClient: typeof createClient;
@@ -178,7 +177,7 @@ class ClaimService {
    * @param {string} translations.uploaded Translation for uploaded message.
    * @param {string} translations.uploadedMessage Translation for uploadedMessage message.
    * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
-   * @returns {Promise<UploadResponse>} Upload response for the multi-file upload component.
+   * @returns {Promise<AjaxUploadResponse>} Upload response for the multi-file upload component.
    */
   // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   static async uploadLineItemEvidence(
