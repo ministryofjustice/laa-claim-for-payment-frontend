@@ -1,0 +1,51 @@
+{% from "components/backLink.njk" import backLink %}
+{% from "govuk/components/task-list/macro.njk" import govukTaskList %}
+{% from "components/taskList.njk" import taskList %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% extends "base.njk" %}
+
+{% set title = t('pages.profitCostDetails.title') %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      {% set courtTypeRadioItems = [] %}
+
+      {% for choice in vm.form.courtTypeChoices %}
+        {% set courtTypeRadioItems = (courtTypeRadioItems.push({
+          value: choice.value,
+          text: t(choice.text)
+        }), courtTypeRadioItems) %}
+      {% endfor %}
+
+      {{ backLink(t) }}
+
+      <h1 class="govuk-heading-xl">{{ t('pages.profitCostDetails.title') }}</h1>
+
+      <form method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+        <div class="govuk-form-group">
+          {{ govukRadios({
+          name: vm.form.courtTypeFieldName,
+          fieldset: {
+              legend: {
+              text: t("pages.profitCostDetails.courtType.title"),
+              isPageHeading: false,
+              classes: "govuk-fieldset__legend--l"
+              }
+          },
+          errorMessage: {text: t(vm.form.error.text)} if vm.form.error ,
+          items: courtTypeRadioItems
+      }) }}
+        </div>
+        {{ govukButton({
+          text: t("common.saveAndContinue")
+      }) }}
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

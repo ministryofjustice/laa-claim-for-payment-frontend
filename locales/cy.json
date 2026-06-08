@@ -150,6 +150,27 @@
       "error" : {
         "empty" : "Select how many clients are retained"
       }
+    },
+    "profitCostDetails":{
+      "title": "Profit cost details",
+      "courtType": {
+        "title": "Court or judge type",
+        "countyCourt": {
+          "text": "County court"
+        },
+        "highCourt": {
+          "text": "High court"
+        },
+        "magistratesCourt": {
+          "text": "Magistrates court"
+        },
+        "otherJudge": {
+          "text": "Other judge"
+        },
+        "error": {
+          "empty": "Select court or judge type"
+        }
+      }
     }
   },
 
