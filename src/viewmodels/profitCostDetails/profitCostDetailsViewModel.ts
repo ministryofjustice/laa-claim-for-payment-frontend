@@ -1,17 +1,38 @@
-import { clientStatusChoices, clientStatusFieldName, CourtTypeChoice, courtTypeChoices, courtTypeFieldName, firstSolicitorChoices, firstSolicitorFieldName, transferSolicitorChoices, transferSolicitorFieldName } from "./profitCostDetailsFields.js";
+import {
+  ClientStatusChoice,
+  clientStatusChoices,
+  clientStatusFieldName,
+  CourtTypeChoice,
+  courtTypeChoices,
+  courtTypeFieldName,
+  FirstSolicitorChoice,
+  firstSolicitorChoices,
+  firstSolicitorFieldName,
+  TransferSolicitorChoice,
+  transferSolicitorChoices,
+  transferSolicitorFieldName,
+} from "./profitCostDetailsFields.js";
 
-
-
-interface ProfitCostDetailsViewModelParams {
+export interface ProfitCostDetailsViewModelParams {
   courtTypeSelectedValue?: string;
   clientStatusSelectedValue?: string;
   firstSolicitorSelectedValue?: string;
   transferSolicitorSelectedValue?: string;
   error?: {
-    text: string;
+    courtTypeError?: {
+      text: string;
+    };
+    clientStatusError?: {
+      text: string;
+    };
+    firstSolicitorError?: {
+      text: string;
+    };
+    transferSolicitorError?: {
+      text: string;
+    };
   };
 }
-
 
 /**
  *
@@ -49,7 +70,10 @@ export class ProfitCostDetailsViewModel {
         checked: choice.value === params.transferSolicitorSelectedValue,
       })),
 
-      error: params.error,
+      courtTypeError: params.error?.courtTypeError,
+      clientStatusError: params.error?.clientStatusError,
+      firstSolicitorError: params.error?.firstSolicitorError,
+      transferSolicitorError: params.error?.transferSolicitorError,
     };
   }
 }
@@ -60,6 +84,26 @@ export class ProfitCostDetailsViewModel {
  * @param {unknown} value The submitted court type choice.
  * @returns {boolean} Whether the submitted choice is valid.
  */
-export function isValidCourtTypeChoice(value: unknown): value is CourtTypeChoice {
+export function isValidCourtTypeChoice(
+  value: unknown,
+): value is CourtTypeChoice {
   return courtTypeChoices.some((choice) => choice.value === value);
+}
+
+export function isValidClientStatusChoice(
+  value: unknown,
+): value is ClientStatusChoice {
+  return clientStatusChoices.some((choice) => choice.value === value);
+}
+
+export function isValidFirstSolicitorChoice(
+  value: unknown,
+): value is FirstSolicitorChoice {
+  return firstSolicitorChoices.some((choice) => choice.value === value);
+}
+
+export function isValidTransferSolicitorChoice(
+  value: unknown,
+): value is TransferSolicitorChoice {
+  return transferSolicitorChoices.some((choice) => choice.value === value);
 }

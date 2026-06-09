@@ -10,7 +10,7 @@
 
 {% block content %}
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column">
 
       {% set courtTypeRadioItems = [] %}
       {% set clientStatusRadioItems = [] %}
@@ -61,13 +61,10 @@
               classes: "govuk-fieldset__legend--l"
               }
           },
-          errorMessage: {text: t(vm.form.error.text)} if vm.form.error ,
+          errorMessage: { text: t(vm.form.courtTypeError.text) } if vm.form.courtTypeError,
           items: courtTypeRadioItems
       }) }}
         </div>
-        {{ govukButton({
-          text: t("common.saveAndContinue")
-      }) }}
 
         <div class="govuk-form-group">
           {{ govukRadios({
@@ -79,7 +76,7 @@
               classes: "govuk-fieldset__legend--l"
             }
           },
-          errorMessage: { text: t(vm.form.error.text) } if vm.form.error,
+          errorMessage: { text: t(vm.form.clientStatusError.text) } if vm.form.clientStatusError,
           items: clientStatusRadioItems
         }) }}
         </div>
@@ -94,7 +91,7 @@
               classes: "govuk-fieldset__legend--l"
             }
           },
-          errorMessage: { text: t(vm.form.error.text) } if vm.form.error,
+          errorMessage: { text: t(vm.form.firstSolicitorError.text) } if vm.form.firstSolicitorError,
           items: firstSolicitorRadioItems
         }) }}
         </div>
@@ -109,9 +106,15 @@
               classes: "govuk-fieldset__legend--l"
             }
           },
-          errorMessage: { text: t(vm.form.error.text) } if vm.form.error,
+          errorMessage: { text: t(vm.form.transferSolicitorError.text) } if vm.form.transferSolicitorError,
           items: transferSolicitorRadioItems
         }) }}
+        </div>
+        <div class="govuk-button-group">
+          {{ govukButton({
+          text: t("common.saveAndContinue")
+      }) }}
+          <a class="govuk-button govuk-button--secondary" href="#">{{ t('common.saveAndComeBackLater') }}</a>
         </div>
       </form>
     </div>

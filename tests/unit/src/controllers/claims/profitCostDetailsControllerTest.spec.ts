@@ -67,7 +67,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.error.text).to.equal(
+      expect(renderArgs.vm.form.courtTypeError.text).to.equal(
         "pages.profitCostDetails.courtType.error.empty",
       );
     });
@@ -83,7 +83,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.error.text).to.equal(
+      expect(renderArgs.vm.form.courtTypeError.text).to.equal(
         "pages.profitCostDetails.courtType.error.empty",
       );
     });
@@ -108,7 +108,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.error.text).to.equal(
+      expect(renderArgs.vm.form.clientStatusError.text).to.equal(
         "pages.profitCostDetails.clientStatus.error.empty",
       );
     });
@@ -124,7 +124,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.error.text).to.equal(
+      expect(renderArgs.vm.form.clientStatusError.text).to.equal(
         "pages.profitCostDetails.clientStatus.error.empty",
       );
     });
@@ -149,7 +149,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.error.text).to.equal(
+      expect(renderArgs.vm.form.firstSolicitorError.text).to.equal(
         "pages.profitCostDetails.firstSolicitor.error.empty",
       );
     });
@@ -165,7 +165,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.error.text).to.equal(
+      expect(renderArgs.vm.form.firstSolicitorError.text).to.equal(
         "pages.profitCostDetails.firstSolicitor.error.empty",
       );
     });
@@ -190,7 +190,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.error.text).to.equal(
+      expect(renderArgs.vm.form.transferSolicitorError.text).to.equal(
         "pages.profitCostDetails.transferSolicitor.error.empty",
       );
     });
@@ -206,10 +206,9 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.error.text).to.equal(
+      expect(renderArgs.vm.form.transferSolicitorError.text).to.equal(
         "pages.profitCostDetails.transferSolicitor.error.empty",
       );
     });
   });
-  ``;
 });
