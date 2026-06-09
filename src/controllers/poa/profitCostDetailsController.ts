@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { processError } from "#src/helpers/index.js";
-import { courtTypeFieldName, isValidCourtTypeChoice, ProfitCostDetailsViewModel } from "#src/viewmodels/profitCostDetailsViewModel.js";
+import { isValidCourtTypeChoice, ProfitCostDetailsViewModel } from "#src/viewmodels/profitCostDetails/profitCostDetailsViewModel.js";
+import { courtTypeFieldName } from "#src/viewmodels/profitCostDetails/profitCostDetailsFields.js";
 
 /**
  * Choose file upload journey view
