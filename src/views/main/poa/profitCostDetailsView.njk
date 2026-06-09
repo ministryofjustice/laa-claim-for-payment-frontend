@@ -13,12 +13,36 @@
     <div class="govuk-grid-column-two-thirds">
 
       {% set courtTypeRadioItems = [] %}
+      {% set clientStatusRadioItems = [] %}
+      {% set firstSolicitorRadioItems = [] %}
+      {% set transferSolicitorRadioItems = [] %}
 
       {% for choice in vm.form.courtTypeChoices %}
         {% set courtTypeRadioItems = (courtTypeRadioItems.push({
           value: choice.value,
           text: t(choice.text)
         }), courtTypeRadioItems) %}
+      {% endfor %}
+
+      {% for choice in vm.form.clientStatusChoices %}
+        {% set clientStatusRadioItems = (clientStatusRadioItems.push({
+          value: choice.value,
+          text: t(choice.text)
+        }), clientStatusRadioItems) %}
+      {% endfor %}
+
+      {% for choice in vm.form.firstSolicitorChoices %}
+        {% set firstSolicitorRadioItems = (firstSolicitorRadioItems.push({
+          value: choice.value,
+          text: t(choice.text)
+        }), firstSolicitorRadioItems) %}
+      {% endfor %}
+
+      {% for choice in vm.form.transferSolicitorChoices %}
+        {% set transferSolicitorRadioItems = (transferSolicitorRadioItems.push({
+          value: choice.value,
+          text: t(choice.text)
+        }), transferSolicitorRadioItems) %}
       {% endfor %}
 
       {{ backLink(t) }}
@@ -44,8 +68,52 @@
         {{ govukButton({
           text: t("common.saveAndContinue")
       }) }}
-      </form>
 
+        <div class="govuk-form-group">
+          {{ govukRadios({
+          name: vm.form.clientStatusFieldName,
+          fieldset: {
+            legend: {
+              text: t("pages.profitCostDetails.clientStatus.title"),
+              isPageHeading: false,
+              classes: "govuk-fieldset__legend--l"
+            }
+          },
+          errorMessage: { text: t(vm.form.error.text) } if vm.form.error,
+          items: clientStatusRadioItems
+        }) }}
+        </div>
+
+        <div class="govuk-form-group">
+          {{ govukRadios({
+          name: vm.form.firstSolicitorFieldName,
+          fieldset: {
+            legend: {
+              text: t("pages.profitCostDetails.firstSolicitor.title"),
+              isPageHeading: false,
+              classes: "govuk-fieldset__legend--l"
+            }
+          },
+          errorMessage: { text: t(vm.form.error.text) } if vm.form.error,
+          items: firstSolicitorRadioItems
+        }) }}
+        </div>
+
+        <div class="govuk-form-group">
+          {{ govukRadios({
+          name: vm.form.transferSolicitorFieldName,
+          fieldset: {
+            legend: {
+              text: t("pages.profitCostDetails.transferSolicitor.title"),
+              isPageHeading: false,
+              classes: "govuk-fieldset__legend--l"
+            }
+          },
+          errorMessage: { text: t(vm.form.error.text) } if vm.form.error,
+          items: transferSolicitorRadioItems
+        }) }}
+        </div>
+      </form>
     </div>
   </div>
 {% endblock %}
