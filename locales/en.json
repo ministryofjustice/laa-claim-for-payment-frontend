@@ -171,6 +171,45 @@
         "error": {
           "empty": "Select court or judge type"
         }
+      },
+      "clientStatus": {
+        "title": "What is your client’s party status?",
+        "child": {
+          "text": "Child"
+        },
+        "joinedParty": {
+          "text": "Joined party"
+        },
+        "parent": {
+          "text": "Parent"
+        },
+        "error": {
+          "empty": "Select your client’s party status"
+        }
+      },
+      "firstSolicitor": {
+        "title": "Are you the first solicitor firm acting on this case?",
+        "yes": {
+          "text": "Yes"
+        },
+        "no": {
+          "text": "No"
+        },
+        "error": {
+          "empty": "Select if you are the first solicitor firm acting on this case"
+        }
+      },
+      "transferSolicitor": {
+        "title": "Has there been a transfer of solicitor on this case?",
+        "yes": {
+          "text": "Yes"
+        },
+        "no": {
+          "text": "No"
+        },
+        "error": {
+          "empty": "Select if there has been a transfer of solicitor on this case"
+        }
       }
     }
   },
