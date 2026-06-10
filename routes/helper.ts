@@ -10,7 +10,8 @@ export const ROUTES = {
   UPLOAD_FILE_FOR_LINE_ITEM: "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload",
   VIEW_CLAIM: '/claims/:claimId',
   HOW_MANY_CLIENTS_RETAINED: '/claims/:claimId/how-many-clients-retained',
-  PROFIT_COST_DETAILS: '/claims/:claimId/profit-cost'
+  HOW_MANY_CLIENTS_AT_START_OF_CASE: '/claims/:claimId/how-many-clients-at-start-of-case',
+  PROFIT_COST_DETAILS: '/claims/:claimId/profit-cost-details'
 } as const;
 
 /**

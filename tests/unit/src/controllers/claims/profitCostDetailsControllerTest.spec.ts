@@ -6,6 +6,9 @@ import {
   profitCostDetails,
   submitProfitCostDetails,
 } from "#src/controllers/poa/profitCostDetailsController.js";
+import { next } from "#node_modules/cheerio/dist/esm/api/traversing.js";
+import { buildRoute, ROUTES } from "#routes/helper.js";
+import { courtTypeFieldName, clientStatusFieldName, firstSolicitorFieldName, transferOfSolicitorFieldName } from "#src/viewmodels/profitCostDetails/profitCostDetailsFields.js";
 
 describe("Profit cost details controller", () => {
   let req: Partial<Request>;
@@ -48,6 +51,47 @@ describe("Profit cost details controller", () => {
     expect(renderStub.calledOnce).to.be.true;
     expect(renderStub.calledWith("main/poa/profitCostDetailsView.njk")).to.be
       .true;
+  });
+
+
+it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'", async () => {
+    req.body = {
+      [courtTypeFieldName]: "county-court",
+      [clientStatusFieldName]: "child",
+      [firstSolicitorFieldName]: "yes",
+      [transferOfSolicitorFieldName]: "yes",
+    };
+
+    await submitProfitCostDetails(req as Request, res as Response, next);
+
+    expect(redirectStub.calledOnce).to.be.true;
+
+    const expectedRoute = buildRoute(
+      ROUTES.HOW_MANY_CLIENTS_RETAINED,
+      { claimId: 1 },
+    );
+
+    expect(redirectStub.calledWith(expectedRoute)).to.be.true;
+  });
+
+  it("redirects to HOW_MANY_CLIENTS_AT_START_OF_CASE when transfer of solicitor is 'no'", async () => {
+    req.body = {
+      [courtTypeFieldName]: "county-court",
+      [clientStatusFieldName]: "child",
+      [firstSolicitorFieldName]: "yes",
+      [transferOfSolicitorFieldName]: "no",
+    };
+
+    await submitProfitCostDetails(req as Request, res as Response, next);
+
+    expect(redirectStub.calledOnce).to.be.true;
+
+    const expectedRoute = buildRoute(
+      ROUTES.HOW_MANY_CLIENTS_AT_START_OF_CASE,
+      { claimId: 1 },
+    );
+
+    expect(redirectStub.calledWith(expectedRoute)).to.be.true;
   });
 
   describe("Court type question", () => {

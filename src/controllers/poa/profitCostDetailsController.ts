@@ -15,6 +15,7 @@ import {
   TransferOfSolicitorChoice,
   transferOfSolicitorFieldName,
 } from "#src/viewmodels/profitCostDetails/profitCostDetailsFields.js";
+import { buildRoute, ROUTES } from "#routes/helper.js";
 
 /**
  * Choose file upload journey view
@@ -53,8 +54,6 @@ export function submitProfitCostDetails(
   next: NextFunction,
 ): void {
   try {
-    // const { params } = req;
-    // const { claimId } = params;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedCourtTypeChoice: unknown = req.body?.[courtTypeFieldName];
     const selectedClientStatusChoice: unknown =
@@ -120,11 +119,25 @@ export function submitProfitCostDetails(
       return;
     }
 
-    const redirectByTransferOfSolicitorChoice: Record<TransferOfSolicitorChoice, string> = {
-      [TransferOfSolicitorChoice.Yes]: "",
-      [TransferOfSolicitorChoice.No]: "",
+    const claimId = Number(req.params.claimId);
+
+    const validatedTransferOfSolicitorChoice =
+      selectedTransferOfSolicitorChoice as TransferOfSolicitorChoice;
+
+    const redirectByTransferOfSolicitorChoice: Record<TransferOfSolicitorChoice,string> = {
+      [TransferOfSolicitorChoice.Yes]: buildRoute(
+        ROUTES.HOW_MANY_CLIENTS_RETAINED,
+        { claimId },
+      ),
+      [TransferOfSolicitorChoice.No]: buildRoute(
+        ROUTES.HOW_MANY_CLIENTS_AT_START_OF_CASE,
+        { claimId },
+      ),
     };
 
+    res.redirect(
+      redirectByTransferOfSolicitorChoice[validatedTransferOfSolicitorChoice],
+    );
   } catch (error) {
     const processedError = processError(
       error,
