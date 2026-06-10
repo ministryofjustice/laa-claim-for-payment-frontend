@@ -78,31 +78,32 @@ export class ProfitCostDetailsViewModel {
     };
 
     this.errorList = [];
+    const { error } = params;
 
-    if (params.error?.courtTypeError) {
+    if (error?.courtTypeError !== undefined) {
       this.errorList.push({
-        text: params.error.courtTypeError.text,
+        text: error.courtTypeError.text,
         href: `#${courtTypeFieldName}`,
       });
     }
 
-    if (params.error?.clientStatusError) {
+    if (error?.clientStatusError !== undefined) {
       this.errorList.push({
-        text: params.error.clientStatusError.text,
+        text: error.clientStatusError.text,
         href: `#${clientStatusFieldName}`,
       });
     }
 
-    if (params.error?.firstSolicitorError) {
+    if (error?.firstSolicitorError !== undefined) {
       this.errorList.push({
-        text: params.error.firstSolicitorError.text,
+        text: error.firstSolicitorError.text,
         href: `#${firstSolicitorFieldName}`,
       });
     }
 
-    if (params.error?.transferOfSolicitorError) {
+    if (error?.transferOfSolicitorError !== undefined) {
       this.errorList.push({
-        text: params.error.transferOfSolicitorError.text,
+        text: error.transferOfSolicitorError.text,
         href: `#${transferOfSolicitorFieldName}`,
       });
     }
@@ -122,8 +123,10 @@ export function isValidCourtTypeChoice(
 }
 
 /**
+ * Checks whether the submitted client status choice is valid.
  *
- * @param value
+ * @param {unknown} value The submitted court type choice.
+ * @returns {boolean} Whether the submitted choice is valid.
  */
 export function isValidClientStatusChoice(
   value: unknown,
@@ -132,8 +135,10 @@ export function isValidClientStatusChoice(
 }
 
 /**
+ * Checks whether the submitted first solicitor choice is valid.
  *
- * @param value
+ * @param {unknown} value The submitted court type choice.
+ * @returns {boolean} Whether the submitted choice is valid.
  */
 export function isValidFirstSolicitorChoice(
   value: unknown,
@@ -142,8 +147,10 @@ export function isValidFirstSolicitorChoice(
 }
 
 /**
+ * Checks whether the submitted transfer of solicitor choice is valid.
  *
- * @param value
+ * @param {unknown} value The submitted court type choice.
+ * @returns {boolean} Whether the submitted choice is valid.
  */
 export function isValidTransferOfSolicitorChoice(
   value: unknown,
