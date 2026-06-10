@@ -8,16 +8,16 @@ import {
   FirstSolicitorChoice,
   firstSolicitorChoices,
   firstSolicitorFieldName,
-  TransferSolicitorChoice,
-  transferSolicitorChoices,
-  transferSolicitorFieldName,
+  TransferOfSolicitorChoice,
+  transferOfSolicitorChoices,
+  transferOfSolicitorFieldName,
 } from "./profitCostDetailsFields.js";
 
 export interface ProfitCostDetailsViewModelParams {
   courtTypeSelectedValue?: string;
   clientStatusSelectedValue?: string;
   firstSolicitorSelectedValue?: string;
-  transferSolicitorSelectedValue?: string;
+  transferOfSolicitorSelectedValue?: string;
   error?: {
     courtTypeError?: {
       text: string;
@@ -28,7 +28,7 @@ export interface ProfitCostDetailsViewModelParams {
     firstSolicitorError?: {
       text: string;
     };
-    transferSolicitorError?: {
+    transferOfSolicitorError?: {
       text: string;
     };
   };
@@ -65,16 +65,16 @@ export class ProfitCostDetailsViewModel {
         checked: choice.value === params.firstSolicitorSelectedValue,
       })),
 
-      transferSolicitorFieldName,
-      transferSolicitorChoices: transferSolicitorChoices.map((choice) => ({
+      transferOfSolicitorFieldName: transferOfSolicitorFieldName,
+      transferOfSolicitorChoices: transferOfSolicitorChoices.map((choice) => ({
         ...choice,
-        checked: choice.value === params.transferSolicitorSelectedValue,
+        checked: choice.value === params.transferOfSolicitorSelectedValue,
       })),
 
       courtTypeError: params.error?.courtTypeError,
       clientStatusError: params.error?.clientStatusError,
       firstSolicitorError: params.error?.firstSolicitorError,
-      transferSolicitorError: params.error?.transferSolicitorError,
+      transferOfSolicitorError: params.error?.transferOfSolicitorError,
     };
 
     this.errorList = [];
@@ -100,15 +100,15 @@ export class ProfitCostDetailsViewModel {
       });
     }
 
-    if (params.error?.transferSolicitorError) {
+    if (params.error?.transferOfSolicitorError) {
       this.errorList.push({
-        text: params.error.transferSolicitorError.text,
-        href: `#${transferSolicitorFieldName}`,
+        text: params.error.transferOfSolicitorError.text,
+        href: `#${transferOfSolicitorFieldName}`,
       });
     }
   }
 }
-  
+
 /**
  * Checks whether the submitted court type choice is valid.
  *
@@ -133,8 +133,8 @@ export function isValidFirstSolicitorChoice(
   return firstSolicitorChoices.some((choice) => choice.value === value);
 }
 
-export function isValidTransferSolicitorChoice(
+export function isValidTransferOfSolicitorChoice(
   value: unknown,
-): value is TransferSolicitorChoice {
-  return transferSolicitorChoices.some((choice) => choice.value === value);
+): value is TransferOfSolicitorChoice {
+  return transferOfSolicitorChoices.some((choice) => choice.value === value);
 }

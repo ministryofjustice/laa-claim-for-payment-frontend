@@ -177,27 +177,27 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.transferSolicitorFieldName).to.equal(
-        "transferSolicitorChoice",
+      expect(renderArgs.vm.form.transferOfSolicitorFieldName).to.equal(
+        "transferOfSolicitorChoice",
       );
-      expect(renderArgs.vm.form.transferSolicitorChoices).to.have.length(2);
+      expect(renderArgs.vm.form.transferOfSolicitorChoices).to.have.length(2);
     });
 
-    it("should return error when no transfer solicitor option is selected", async () => {
+    it("should return error when no transfer of solicitor option is selected", async () => {
       await submitProfitCostDetails(req as Request, res as Response, next);
 
       expect(statusStub.calledOnceWith(400)).to.be.true;
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.transferSolicitorError.text).to.equal(
-        "pages.profitCostDetails.transferSolicitor.error.empty",
+      expect(renderArgs.vm.form.transferOfSolicitorError.text).to.equal(
+        "pages.profitCostDetails.transferOfSolicitor.error.empty",
       );
     });
 
-    it("should return error when an invalid transfer solicitor option is selected", async () => {
+    it("should return error when an invalid transfer of solicitor option is selected", async () => {
       req.body = {
-        transferSolicitorChoice: "invalid",
+        transferOfSolicitorChoice: "invalid",
       };
 
       await submitProfitCostDetails(req as Request, res as Response, next);
@@ -206,8 +206,8 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.transferSolicitorError.text).to.equal(
-        "pages.profitCostDetails.transferSolicitor.error.empty",
+      expect(renderArgs.vm.form.transferOfSolicitorError.text).to.equal(
+        "pages.profitCostDetails.transferOfSolicitor.error.empty",
       );
     });
   });

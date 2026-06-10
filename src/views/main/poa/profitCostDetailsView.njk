@@ -16,7 +16,7 @@
       {% set courtTypeRadioItems = [] %}
       {% set clientStatusRadioItems = [] %}
       {% set firstSolicitorRadioItems = [] %}
-      {% set transferSolicitorRadioItems = [] %}
+      {% set transferOfSolicitorRadioItems = [] %}
 
       {% for choice in vm.form.courtTypeChoices %}
         {% set courtTypeRadioItems = (courtTypeRadioItems.push({
@@ -39,11 +39,11 @@
         }), firstSolicitorRadioItems) %}
       {% endfor %}
 
-      {% for choice in vm.form.transferSolicitorChoices %}
-        {% set transferSolicitorRadioItems = (transferSolicitorRadioItems.push({
+      {% for choice in vm.form.transferOfSolicitorChoices %}
+        {% set transferOfSolicitorRadioItems = (transferOfSolicitorRadioItems.push({
           value: choice.value,
           text: t(choice.text)
-        }), transferSolicitorRadioItems) %}
+        }), transferOfSolicitorRadioItems) %}
       {% endfor %}
 
       {{ backLink(t) }}
@@ -115,16 +115,16 @@
 
         <div class="govuk-form-group">
           {{ govukRadios({
-          name: vm.form.transferSolicitorFieldName,
+          name: vm.form.transferOfSolicitorFieldName,
           fieldset: {
             legend: {
-              text: t("pages.profitCostDetails.transferSolicitor.title"),
+              text: t("pages.profitCostDetails.transferOfSolicitor.title"),
               isPageHeading: false,
               classes: "govuk-fieldset__legend--l"
             }
           },
-          errorMessage: { text: t(vm.form.transferSolicitorError.text) } if vm.form.transferSolicitorError,
-          items: transferSolicitorRadioItems
+          errorMessage: { text: t(vm.form.transferOfSolicitorError.text) } if vm.form.transferOfSolicitorError,
+          items: transferOfSolicitorRadioItems
         }) }}
         </div>
         <div class="govuk-button-group">

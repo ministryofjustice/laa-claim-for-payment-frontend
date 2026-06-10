@@ -3,7 +3,7 @@ import {
   isValidClientStatusChoice,
   isValidCourtTypeChoice,
   isValidFirstSolicitorChoice,
-  isValidTransferSolicitorChoice,
+  isValidTransferOfSolicitorChoice,
   ProfitCostDetailsViewModel,
 } from "#src/viewmodels/profitCostDetails/profitCostDetailsViewModel.js";
 
@@ -123,26 +123,26 @@ describe("ProfitCostDetailsViewModel", () => {
   });
 
   describe("transfer of solicitor field", () => {
-    it("creates the form field name for transfer solicitor", () => {
+    it("creates the form field name for transfer of solicitor", () => {
       const vm = new ProfitCostDetailsViewModel();
 
-      expect(vm.form.transferSolicitorFieldName).to.equal(
-        "transferSolicitorChoice",
+      expect(vm.form.transferOfSolicitorFieldName).to.equal(
+        "transferOfSolicitorChoice",
       );
     });
 
-    it("creates the radio choices for transfer solicitor", () => {
+    it("creates the radio choices for transfer of solicitor", () => {
       const vm = new ProfitCostDetailsViewModel();
 
-      expect(vm.form.transferSolicitorChoices).to.have.length(2);
+      expect(vm.form.transferOfSolicitorChoices).to.have.length(2);
     });
 
     it("marks the selected choice as checked", () => {
       const vm = new ProfitCostDetailsViewModel({
-        transferSolicitorSelectedValue: "yes",
+        transferOfSolicitorSelectedValue: "yes",
       });
 
-      const selected = vm.form.transferSolicitorChoices.find(
+      const selected = vm.form.transferOfSolicitorChoices.find(
         (c: any) => c.value === "yes",
       );
 
@@ -151,13 +151,13 @@ describe("ProfitCostDetailsViewModel", () => {
     it("adds an error when provided", () => {
       const vm = new ProfitCostDetailsViewModel({
         error: {
-          transferSolicitorError: { text: "error.key" },
+          transferOfSolicitorError: { text: "error.key" },
         },
       });
 
       expect(vm.errorList).to.have.length(1);
       expect(vm.errorList[0].text).to.equal("error.key");
-      expect(vm.errorList[0].href).to.equal("#transferSolicitorChoice");
+      expect(vm.errorList[0].href).to.equal("#transferOfSolicitorChoice");
     });
   });
 
@@ -217,16 +217,16 @@ describe("ProfitCostDetailsViewModel", () => {
     });
   });
 
-  describe("isValidTransferSolicitorChoice()", () => {
+  describe("isValidTransferOfSolicitorChoice()", () => {
     it("returns true for valid choices", () => {
-      expect(isValidTransferSolicitorChoice("yes")).to.equal(true);
-      expect(isValidTransferSolicitorChoice("no")).to.equal(true);
+      expect(isValidTransferOfSolicitorChoice("yes")).to.equal(true);
+      expect(isValidTransferOfSolicitorChoice("no")).to.equal(true);
     });
 
     it("returns false for invalid choices", () => {
-      expect(isValidTransferSolicitorChoice(undefined)).to.equal(false);
-      expect(isValidTransferSolicitorChoice("")).to.equal(false);
-      expect(isValidTransferSolicitorChoice("invalid")).to.equal(false);
+      expect(isValidTransferOfSolicitorChoice(undefined)).to.equal(false);
+      expect(isValidTransferOfSolicitorChoice("")).to.equal(false);
+      expect(isValidTransferOfSolicitorChoice("invalid")).to.equal(false);
     });
   });
 });

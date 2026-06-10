@@ -199,7 +199,7 @@
           "empty": "Select if you are the first solicitor firm acting on this case"
         }
       },
-      "transferSolicitor": {
+      "transferOfSolicitor": {
         "title": "Has there been a transfer of solicitor on this case?",
         "yes": {
           "text": "Yes"

@@ -4,7 +4,7 @@ import {
   isValidClientStatusChoice,
   isValidCourtTypeChoice,
   isValidFirstSolicitorChoice,
-  isValidTransferSolicitorChoice,
+  isValidTransferOfSolicitorChoice,
   ProfitCostDetailsViewModel,
   ProfitCostDetailsViewModelParams,
 } from "#src/viewmodels/profitCostDetails/profitCostDetailsViewModel.js";
@@ -12,7 +12,8 @@ import {
   clientStatusFieldName,
   courtTypeFieldName,
   firstSolicitorFieldName,
-  transferSolicitorFieldName,
+  TransferOfSolicitorChoice,
+  transferOfSolicitorFieldName,
 } from "#src/viewmodels/profitCostDetails/profitCostDetailsFields.js";
 
 /**
@@ -60,8 +61,8 @@ export function submitProfitCostDetails(
       req.body?.[clientStatusFieldName];
     const selectedFirstSolicitorChoice: unknown =
       req.body?.[firstSolicitorFieldName];
-    const selectedTransferSolicitorChoice: unknown =
-      req.body?.[transferSolicitorFieldName];
+    const selectedTransferOfSolicitorChoice: unknown =
+      req.body?.[transferOfSolicitorFieldName];
 
     const errors: ProfitCostDetailsViewModelParams["error"] = {};
 
@@ -83,9 +84,9 @@ export function submitProfitCostDetails(
       };
     }
 
-    if (!isValidTransferSolicitorChoice(selectedTransferSolicitorChoice)) {
-      errors.transferSolicitorError = {
-        text: "pages.profitCostDetails.transferSolicitor.error.empty",
+    if (!isValidTransferOfSolicitorChoice(selectedTransferOfSolicitorChoice)) {
+      errors.transferOfSolicitorError = {
+        text: "pages.profitCostDetails.transferOfSolicitor.error.empty",
       };
     }
 
@@ -108,9 +109,9 @@ export function submitProfitCostDetails(
               ? selectedFirstSolicitorChoice
               : undefined,
 
-          transferSolicitorSelectedValue:
-            typeof selectedTransferSolicitorChoice === "string"
-              ? selectedTransferSolicitorChoice
+          transferOfSolicitorSelectedValue:
+            typeof selectedTransferOfSolicitorChoice === "string"
+              ? selectedTransferOfSolicitorChoice
               : undefined,
 
           error: errors,
@@ -119,12 +120,10 @@ export function submitProfitCostDetails(
       return;
     }
 
-    // const redirectByTransferOfSolicitorChoice: Record<TransferOfSolicitorChoice, string> = {
-    //   [TransferOfSolicitorChoice.Yes]: "",
-    //   [TransferOfSolicitorChoice.No]: "",
-    // };
-
-    // res.redirect(redirectByTransferOfSolicitorChoice[transferOfSolictorChoice]);
+    const redirectByTransferOfSolicitorChoice: Record<TransferOfSolicitorChoice, string> = {
+      [TransferOfSolicitorChoice.Yes]: "",
+      [TransferOfSolicitorChoice.No]: "",
+    };
 
   } catch (error) {
     const processedError = processError(

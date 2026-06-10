@@ -88,14 +88,14 @@ describe("views/main/poa/profitCostDetailsView.njk", () => {
     });
 
     it("renders the transfer of solicitor radios", () => {
-      const radios = $("input[type='radio'][name='transferSolicitorChoice']");
+      const radios = $("input[type='radio'][name='transferOfSolicitorChoice']");
 
       expect(radios).to.have.length(2);
     });
 
     it("renders the transfer of solicitor legend", () => {
       const legend = $("legend").filter((_, el) =>
-        $(el).text().includes("pages.profitCostDetails.transferSolicitor.title")
+        $(el).text().includes("pages.profitCostDetails.transferOfSolicitor.title")
       );
 
       expect(legend).to.have.length(1);
