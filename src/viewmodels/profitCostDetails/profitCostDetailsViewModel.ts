@@ -39,6 +39,7 @@ export interface ProfitCostDetailsViewModelParams {
  */
 export class ProfitCostDetailsViewModel {
   readonly form;
+  readonly errorList;
 
   /**
    * Creates a choose upload page view model.
@@ -75,6 +76,36 @@ export class ProfitCostDetailsViewModel {
       firstSolicitorError: params.error?.firstSolicitorError,
       transferSolicitorError: params.error?.transferSolicitorError,
     };
+
+    this.errorList = [];
+
+    if (params.error?.courtTypeError) {
+      this.errorList.push({
+        text: params.error.courtTypeError.text,
+        href: `#${courtTypeFieldName}`,
+      });
+    }
+
+    if (params.error?.clientStatusError) {
+      this.errorList.push({
+        text: params.error.clientStatusError.text,
+        href: `#${clientStatusFieldName}`,
+      });
+    }
+
+    if (params.error?.firstSolicitorError) {
+      this.errorList.push({
+        text: params.error.firstSolicitorError.text,
+        href: `#${firstSolicitorFieldName}`,
+      });
+    }
+
+    if (params.error?.transferSolicitorError) {
+      this.errorList.push({
+        text: params.error.transferSolicitorError.text,
+        href: `#${transferSolicitorFieldName}`,
+      });
+    }
   }
 }
 

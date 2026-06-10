@@ -3,6 +3,7 @@
 {% from "components/taskList.njk" import taskList %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% extends "base.njk" %}
 
@@ -48,6 +49,22 @@
       {{ backLink(t) }}
 
       <h1 class="govuk-heading-xl">{{ t('pages.profitCostDetails.title') }}</h1>
+
+      {% set errors = [] %}
+
+      {% for e in vm.errorList %}
+        {% set errors = (errors.push({
+          text: t(e.text),
+          href: e.href
+        }), errors) %}
+      {% endfor %}
+
+      {% if errors.length > 0 %}
+        {{ govukErrorSummary({
+          titleText: t("common.errorSummaryTitle"),
+          errorList: errors
+        }) }}
+      {% endif %}
 
       <form method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
