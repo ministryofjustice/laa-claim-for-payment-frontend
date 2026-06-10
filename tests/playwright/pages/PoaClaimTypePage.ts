@@ -57,14 +57,4 @@ export class PoaClaimTypePage extends BasePage {
       name: "Save and continue",
     });
   }
-
-  /**
-   * get save and come back later link
-   * @returns {Locator} Save and come back later link
-   */
-  get saveAndComeBackLaterLink(): Locator {
-    return this.page.getByRole("link", {
-      name: "Save and come back later",
-    });
-  }
 }
