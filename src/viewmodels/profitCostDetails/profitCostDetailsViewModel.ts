@@ -1,14 +1,14 @@
 import {
-  ClientStatusChoice,
+  type ClientStatusChoice,
   clientStatusChoices,
   clientStatusFieldName,
-  CourtTypeChoice,
+  type CourtTypeChoice,
   courtTypeChoices,
   courtTypeFieldName,
-  FirstSolicitorChoice,
+  type FirstSolicitorChoice,
   firstSolicitorChoices,
   firstSolicitorFieldName,
-  TransferOfSolicitorChoice,
+  type TransferOfSolicitorChoice,
   transferOfSolicitorChoices,
   transferOfSolicitorFieldName,
 } from "./profitCostDetailsFields.js";
@@ -65,7 +65,7 @@ export class ProfitCostDetailsViewModel {
         checked: choice.value === params.firstSolicitorSelectedValue,
       })),
 
-      transferOfSolicitorFieldName: transferOfSolicitorFieldName,
+      transferOfSolicitorFieldName,
       transferOfSolicitorChoices: transferOfSolicitorChoices.map((choice) => ({
         ...choice,
         checked: choice.value === params.transferOfSolicitorSelectedValue,
@@ -121,18 +121,30 @@ export function isValidCourtTypeChoice(
   return courtTypeChoices.some((choice) => choice.value === value);
 }
 
+/**
+ *
+ * @param value
+ */
 export function isValidClientStatusChoice(
   value: unknown,
 ): value is ClientStatusChoice {
   return clientStatusChoices.some((choice) => choice.value === value);
 }
 
+/**
+ *
+ * @param value
+ */
 export function isValidFirstSolicitorChoice(
   value: unknown,
 ): value is FirstSolicitorChoice {
   return firstSolicitorChoices.some((choice) => choice.value === value);
 }
 
+/**
+ *
+ * @param value
+ */
 export function isValidTransferOfSolicitorChoice(
   value: unknown,
 ): value is TransferOfSolicitorChoice {
