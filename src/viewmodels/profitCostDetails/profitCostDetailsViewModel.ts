@@ -125,7 +125,7 @@ export function isValidCourtTypeChoice(
 /**
  * Checks whether the submitted client status choice is valid.
  *
- * @param {unknown} value The submitted court type choice.
+ * @param {unknown} value The submitted client status choice.
  * @returns {boolean} Whether the submitted choice is valid.
  */
 export function isValidClientStatusChoice(
@@ -137,7 +137,7 @@ export function isValidClientStatusChoice(
 /**
  * Checks whether the submitted first solicitor choice is valid.
  *
- * @param {unknown} value The submitted court type choice.
+ * @param {unknown} value The submitted first solicitor choice.
  * @returns {boolean} Whether the submitted choice is valid.
  */
 export function isValidFirstSolicitorChoice(
@@ -149,7 +149,7 @@ export function isValidFirstSolicitorChoice(
 /**
  * Checks whether the submitted transfer of solicitor choice is valid.
  *
- * @param {unknown} value The submitted court type choice.
+ * @param {unknown} value The submitted transfer of solicitor choice.
  * @returns {boolean} Whether the submitted choice is valid.
  */
 export function isValidTransferOfSolicitorChoice(
