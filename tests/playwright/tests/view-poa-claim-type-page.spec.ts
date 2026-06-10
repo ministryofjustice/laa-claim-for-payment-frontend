@@ -16,7 +16,6 @@ test.describe("POA claim type page", () => {
     await expect(poaClaimTypePage.expertCostRadio).toBeVisible();
     await expect(poaClaimTypePage.nonExpertDisbursementRadio).toBeVisible();
     await expect(poaClaimTypePage.saveAndContinueButton).toBeVisible();
-    // await expect(poaClaimTypePage.saveAndComeBackLaterLink).toBeVisible();
 
     await checkAccessibility();
   });
