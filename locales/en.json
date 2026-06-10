@@ -151,6 +151,21 @@
       "error" : {
         "empty" : "Select how many clients are retained"
       }
+    },    
+    "poaClaimType": {
+      "title": "What type of POA are you claiming?",
+      "profitCost": {
+        "text": "Profit cost"
+      },
+      "expertCost": {
+        "text": "Expert cost"
+      },
+      "nonExpertDisbursement": {
+        "text": "Non expert disbursement"
+      },
+      "error": {
+        "empty": "Select what type of POA you are claiming"
+      }
     }
   },
   "forms": {

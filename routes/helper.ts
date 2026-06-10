@@ -6,10 +6,14 @@ import type { MulterRequest } from "#src/types/requests.js";
 export const ROUTES = {
   CLAIMS: '/',
   CHOOSE_UPLOAD: '/claims/:claimId/choose-upload',
-  UPLOAD_EVIDENCE_INDIVIDUALLY: "/claims/:claimId/upload-evidence-individually",
-  UPLOAD_FILE_FOR_LINE_ITEM: "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload",
+  UPLOAD_EVIDENCE_INDIVIDUALLY: '/claims/:claimId/upload-evidence-individually',
+  UPLOAD_FILE_FOR_LINE_ITEM: '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload',
   VIEW_CLAIM: '/claims/:claimId',
-  HOW_MANY_CLIENTS_RETAINED: '/claims/:claimId/how-many-clients-retained'
+  HOW_MANY_CLIENTS_RETAINED: '/claims/:claimId/how-many-clients-retained',
+  POA_CLAIM_TYPE: '/claims/:claimId/poa/claim-type',
+  PROFIT_COST_DETAILS: '/claims/:claimId/poa/profit-cost-details',
+  EXPERT_COST_DETAILS: '/claims/:claimId/poa/expert-cost-details',
+  NON_EXPERT_COST_DETAILS: '/claims/:claimId/poa/non-expert-disbursement',
 } as const;
 
 /**
