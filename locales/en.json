@@ -154,9 +154,18 @@
     },    
     "poaClaimType": {
       "title": "What type of POA are you claiming?",
-      "profitCost": "Profit cost",
-      "expertCost": "Expert cost",
-      "nonExpertDisbursement": "Non expert disbursement"
+      "profitCost": {
+        "text": "Profit cost"
+      },
+      "expertCost": {
+        "text": "Expert cost"
+      },
+      "nonExpertDisbursement": {
+        "text": "Non expert disbursement"
+      },
+      "error": {
+        "empty": "Select what type of POA you are claiming"
+      }
     }
   },
   "forms": {

@@ -1,19 +1,43 @@
-import { buildRoute, ROUTES } from '#routes/helper.js';
-import { PoaClaimTypeViewModel } from '#src/viewmodels/poa/poatClaimTypeViewModel.js';
-import { processError } from '#src/helpers/index.js';
-import type { NextFunction, Request, Response } from 'express';
+import { buildRoute, ROUTES } from "#routes/helper.js";
+import { processError } from "#src/helpers/index.js";
+import {
+  RadioQuestionViewModel,
+  isValidChoice,
+} from "#src/viewmodels/radioQuestionViewModel.js";
+import type { NextFunction, Request, Response } from "express";
 
-const PROFIT_COST = 'profit-cost';
-const EXPERT_COST = 'expert-cost';
-const NON_EXPERT_DISBURSEMENT = 'non-expert-disbursement';
+const poaClaimTypeFieldName = "poaClaimType" as const;
+
+const PoaClaimTypeChoice = {
+  ProfitCost: "profit-cost",
+  ExpertCost: "expert-cost",
+  NonExpertDisbursement: "non-expert-disbursement",
+} as const;
+
+type PoaClaimTypeChoice =
+  (typeof PoaClaimTypeChoice)[keyof typeof PoaClaimTypeChoice];
+
+const poaClaimTypeChoices = [
+  {
+    value: PoaClaimTypeChoice.ProfitCost,
+    text: "pages.poaClaimType.profitCost.text",
+  },
+  {
+    value: PoaClaimTypeChoice.ExpertCost,
+    text: "pages.poaClaimType.expertCost.text",
+  },
+  {
+    value: PoaClaimTypeChoice.NonExpertDisbursement,
+    text: "pages.poaClaimType.nonExpertDisbursement.text",
+  },
+] as const;
 
 /**
- * Displays the POA claim type page.
+ * Display POA claim type page.
  *
  * @param {Request} req Express request object.
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
- * @returns {void}
  */
 export function poaClaimTypePage(
   req: Request,
@@ -21,25 +45,25 @@ export function poaClaimTypePage(
   next: NextFunction,
 ): void {
   try {
-    const claimId = Number(req.params.claimId);
-
-    const vm = new PoaClaimTypeViewModel(claimId);
-
-    res.render('main/poa/poaClaimTypeView.njk', {
-      vm,
+    res.render("main/radioQuestionPage.njk", {
+      csrfToken: res.locals.csrfToken,
+      vm: new RadioQuestionViewModel({
+        title: "pages.poaClaimType.title",
+        fieldName: poaClaimTypeFieldName,
+        choices: poaClaimTypeChoices,
+      }),
     });
   } catch (error) {
-    next(processError(error, 'displaying POA claim type page'));
+    next(processError(error, "rendering POA claim type page"));
   }
 }
 
 /**
- * Handles submission of the POA claim type page.
+ * Submit POA claim type page.
  *
  * @param {Request} req Express request object.
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
- * @returns {void}
  */
 export function submitPoaClaimType(
   req: Request,
@@ -47,67 +71,45 @@ export function submitPoaClaimType(
   next: NextFunction,
 ): void {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
+    const selectedChoice: unknown = req.body?.[poaClaimTypeFieldName];
+
+    if (!isValidChoice(poaClaimTypeChoices, selectedChoice)) {
+      res.status(400).render("main/radioQuestionPage.njk", {
+        csrfToken: res.locals.csrfToken,
+        vm: new RadioQuestionViewModel({
+          title: "pages.poaClaimType.title",
+          fieldName: poaClaimTypeFieldName,
+          choices: poaClaimTypeChoices,
+          selectedValue:
+            typeof selectedChoice === "string" ? selectedChoice : undefined,
+          error: {
+            text: "pages.poaClaimType.error.empty",
+          },
+        }),
+      });
+      return;
+    }
+
     const claimId = Number(req.params.claimId);
 
-     
-    const claimType = getClaimType(req.body);
+    const redirectByChoice: Record<PoaClaimTypeChoice, string> = {
+      [PoaClaimTypeChoice.ProfitCost]: buildRoute(
+        ROUTES.PROFIT_COST_DETAILS,
+        { claimId },
+      ),
+      [PoaClaimTypeChoice.ExpertCost]: buildRoute(
+        ROUTES.EXPERT_COST_DETAILS,
+        { claimId },
+      ),
+      [PoaClaimTypeChoice.NonExpertDisbursement]: buildRoute(
+        ROUTES.NON_EXPERT_COST_DETAILS,
+        { claimId },
+      ),
+    };
 
-    switch (claimType) {
-      case PROFIT_COST:
-        res.redirect(
-          buildRoute(ROUTES.PROFIT_COST_DETAILS, {
-            claimId,
-          }),
-        );
-        return;
-
-      case EXPERT_COST:
-        res.redirect(
-          buildRoute(ROUTES.EXPERT_COST_DETAILS, {
-            claimId,
-          }),
-        );
-        return;
-
-      case NON_EXPERT_DISBURSEMENT:
-        res.redirect(
-          buildRoute(ROUTES.NON_EXPERT_COST_DETAILS, {
-            claimId,
-          }),
-        );
-        return;
-
-      default: {
-        const vm = new PoaClaimTypeViewModel(claimId);
-
-        res.render('main/poa/poaClaimTypeView.njk', {
-          vm,
-          errorSummary: {
-            items: [
-              {
-                text: 'Select what type of POA you are claiming',
-                href: '#claimType',
-              },
-            ],
-          },
-        });
-      }
-    }
+    res.redirect(redirectByChoice[selectedChoice]);
   } catch (error) {
-    next(processError(error, 'submitting POA claim type'));
+    next(processError(error, "submitting POA claim type page"));
   }
-}
-
-
-function getClaimType(body: unknown): string | undefined {
-  if (
-    typeof body === 'object' &&
-    body !== null &&
-    'claimType' in body &&
-    typeof body.claimType === 'string'
-  ) {
-    return body.claimType;
-  }
-
-  return undefined;
 }
