@@ -108,7 +108,7 @@ export class ProfitCostDetailsViewModel {
     }
   }
 }
-
+  
 /**
  * Checks whether the submitted court type choice is valid.
  *
