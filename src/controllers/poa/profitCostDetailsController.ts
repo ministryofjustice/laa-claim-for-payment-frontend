@@ -54,20 +54,15 @@ export function submitProfitCostDetails(
   next: NextFunction,
 ): void {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
+    /* eslint-disable @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary. */
     const selectedCourtTypeChoice: unknown = req.body?.[courtTypeFieldName];
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedClientStatusChoice: unknown =
       req.body?.[clientStatusFieldName];
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedFirstSolicitorChoice: unknown =
       req.body?.[firstSolicitorFieldName];
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedTransferOfSolicitorChoice: unknown =
       req.body?.[transferOfSolicitorFieldName];
+    /* eslint-enable @typescript-eslint/no-unsafe-member-access */
 
     const errors: ProfitCostDetailsViewModelParams["error"] = {};
 
@@ -127,10 +122,8 @@ export function submitProfitCostDetails(
 
     const claimId = Number(req.params.claimId);
 
-    // Safe to assert as TransferOfSolicitorChoice because validation has already occurred
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-    const validatedTransferOfSolicitorChoice =
-      selectedTransferOfSolicitorChoice as TransferOfSolicitorChoice;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Safe to assert as TransferOfSolicitorChoice because validation has already occurred
+    const validatedTransferOfSolicitorChoice = selectedTransferOfSolicitorChoice as TransferOfSolicitorChoice;
 
     const redirectByTransferOfSolicitorChoice: Record<TransferOfSolicitorChoice,string> = {
       [TransferOfSolicitorChoice.Yes]: buildRoute(
