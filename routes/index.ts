@@ -9,6 +9,7 @@ import { ROUTES, multerErrorHandler } from "./helper.js";
 import { fileUploadForLineItemPage, uploadEvidenceFile, deleteEvidenceFile, continueFromFileUpload, linkEvidenceToLineItem } from "#src/controllers/claims/fileUploadForLineItemController.js";
 import { evidenceUpload } from '#src/helpers/multerUpload.js';
 import { howManyClientsRetained, submitHowManyClientsRetained } from "#src/controllers/poa/howManyClientsRetainedController.js";
+import { poaClaimTypePage, submitPoaClaimType } from "#src/controllers/poa/poaClaimTypeController.js";
 import { profitCostDetails, submitProfitCostDetails } from "#src/controllers/poa/profitCostDetailsController.js";
 
 const limiter = rateLimit({
@@ -109,6 +110,38 @@ router.get(ROUTES.HOW_MANY_CLIENTS_RETAINED, limiter, function (req: Request, re
 router.post(ROUTES.HOW_MANY_CLIENTS_RETAINED, limiter, function (req: Request, res: Response, next: NextFunction): void {
   submitHowManyClientsRetained(req, res, next);
 });
+
+router.get(
+  ROUTES.HOW_MANY_CLIENTS_RETAINED,
+  limiter,
+  function (req: Request, res: Response, next: NextFunction): void {
+    howManyClientsRetained(req, res, next);
+  },
+);
+
+router.post(
+  ROUTES.HOW_MANY_CLIENTS_RETAINED,
+  limiter,
+  function (req: Request, res: Response, next: NextFunction): void {
+    submitHowManyClientsRetained(req, res, next);
+  },
+);
+
+router.get(
+  ROUTES.POA_CLAIM_TYPE,
+  limiter,
+  function (req, res, next): void {
+    poaClaimTypePage(req, res, next);
+  },
+);
+
+router.post(
+  ROUTES.POA_CLAIM_TYPE,
+  limiter,
+  function (req, res, next): void {
+    submitPoaClaimType(req, res, next);
+  },
+);
 
 router.get(ROUTES.PROFIT_COST_DETAILS,limiter, function(req: Request, res: Response, next: NextFunction,): void {
   profitCostDetails(req, res, next);
