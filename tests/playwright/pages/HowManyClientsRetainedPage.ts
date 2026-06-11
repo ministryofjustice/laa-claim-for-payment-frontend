@@ -11,7 +11,7 @@ export class HowManyClientsRetainedPage extends BasePage {
    * @param {Page} page The Playwright page instance.
    */
   constructor(page: Page) {
-    super(page, "claims/1/how-many-clients-retained");
+    super(page, "claims/1/poa/how-many-clients-retained");
   }
 
   /**

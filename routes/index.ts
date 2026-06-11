@@ -10,6 +10,7 @@ import { fileUploadForLineItemPage, uploadEvidenceFile, deleteEvidenceFile, cont
 import { evidenceUpload } from '#src/helpers/multerUpload.js';
 import { howManyClientsRetained, submitHowManyClientsRetained } from "#src/controllers/poa/howManyClientsRetainedController.js";
 import { poaClaimTypePage, submitPoaClaimType } from "#src/controllers/poa/poaClaimTypeController.js";
+import { profitCostDetails, submitProfitCostDetails } from "#src/controllers/poa/profitCostDetailsController.js";
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -141,6 +142,14 @@ router.post(
     submitPoaClaimType(req, res, next);
   },
 );
+
+router.get(ROUTES.PROFIT_COST_DETAILS,limiter, function(req: Request, res: Response, next: NextFunction,): void {
+  profitCostDetails(req, res, next);
+});
+
+router.post(ROUTES.PROFIT_COST_DETAILS, limiter, function (req: Request, res: Response, next: NextFunction): void {
+  submitProfitCostDetails(req, res, next);
+});
 
 
 // Make an API call with `Axios` and `middleware-axios`
