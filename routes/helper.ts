@@ -10,13 +10,13 @@ export const ROUTES = {
   UPLOAD_FILE_FOR_LINE_ITEM: '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload',
   VIEW_CLAIM: '/claims/:claimId',
   HOW_MANY_CLIENTS_RETAINED: '/claims/:claimId/poa/how-many-clients-retained',
-  HOW_MANY_CLIENTS_AT_START_OF_CASE: '/claims/:claimId/poa/how-many-clients-at-start-of-case',
   POA_CLAIM_TYPE: '/claims/:claimId/poa/claim-type',
   PROFIT_COST_DETAILS: '/claims/:claimId/poa/profit-cost-details',
   EXPERT_COST_DETAILS: '/claims/:claimId/poa/expert-cost-details',
   NON_EXPERT_COST_DETAILS: '/claims/:claimId/poa/non-expert-disbursement',
   MULTIPLE_CLIENT_HEARINGS: '/claims/:claimId/poa/hearings-with-more-than-one-client',
-  ESCAPING_FIXED_FEE: 'claims/:claimId/poa/escaping-standard-fixed-fee'
+  ESCAPING_FIXED_FEE: 'claims/:claimId/poa/escaping-standard-fixed-fee',
+  NUMBER_OF_CLIENTS_START_OF_CASE: '/claims/:claimId/poa/number-of-clients-start-of-case',
 } as const;
 
 /**
