@@ -210,7 +210,7 @@
           "text": "No"
         },
         "error": {
-          "empty": "Select if you are the first solicitor firm acting on this case"
+          "empty": "Select yes if you are the first solicitor firm acting on this case"
         }
       },
       "transferOfSolicitor": {
@@ -222,7 +222,7 @@
           "text": "No"
         },
         "error": {
-          "empty": "Select if there has been a transfer of solicitor on this case"
+          "empty": "Select yes if there has been a transfer of solicitor on this case"
         }
       }
     },
