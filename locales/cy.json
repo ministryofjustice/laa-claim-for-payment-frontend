@@ -225,6 +225,18 @@
           "empty": "Select if there has been a transfer of solicitor on this case"
         }
       }
+    },
+    "multipleClientHearings": {
+      "title": "Have you attended at least one hearing where you have represented more than one client?",
+      "yes": {
+        "text": "Yes"
+        },
+      "no": {
+        "text": "No"
+      },
+      "error": {
+        "empty": "Select yes if you have attended at least one hearing where you have represented more than one client."
+      }
     }
   },
 

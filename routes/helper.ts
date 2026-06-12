@@ -15,6 +15,8 @@ export const ROUTES = {
   PROFIT_COST_DETAILS: '/claims/:claimId/poa/profit-cost-details',
   EXPERT_COST_DETAILS: '/claims/:claimId/poa/expert-cost-details',
   NON_EXPERT_COST_DETAILS: '/claims/:claimId/poa/non-expert-disbursement',
+  MULTIPLE_CLIENT_HEARINGS: '/claims/:claimId/poa/hearings-with-more-than-one-client',
+  ESCAPING_FIXED_FEE: 'claims/:claimId/poa/escaping-standard-fixed-fee'
 } as const;
 
 /**
