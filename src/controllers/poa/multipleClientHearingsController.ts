@@ -1,0 +1,103 @@
+import {
+  RadioQuestionViewModel,
+  isValidChoice,
+} from "#src/viewmodels/radioQuestionViewModel.js";
+import type { Request, Response, NextFunction } from "express";
+import { processError } from "#src/helpers/index.js";
+import { buildRoute, ROUTES } from "#routes/helper.js";
+
+const multipleClientHearingsFieldName = "multipleClientHearings" as const;
+
+const MultipleClientHearingsChoice = {
+  Yes: "yes",
+  No: "no",
+} as const;
+
+type MultipleClientHearingsChoice =
+  (typeof MultipleClientHearingsChoice)[keyof typeof MultipleClientHearingsChoice];
+
+const multipleClientHearingsChoices = [
+  {
+    value: MultipleClientHearingsChoice.Yes,
+    text: "pages.multipleClientHearings.yes.text",
+  },
+    {
+    value: MultipleClientHearingsChoice.No,
+    text: "pages.multipleClientHearings.no.text",
+  }
+] as const;
+
+/**
+ * get how many clients retained view
+ * @param {Request} req Express request object
+ * @param {Response} res Express response object
+ * @param {NextFunction} next Express next function
+ */
+export function multipleClientHearings(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  try {
+    res.render("main/radioQuestionPage.njk", {
+      csrfToken: res.locals.csrfToken,
+      vm: new RadioQuestionViewModel({
+        title: "pages.multipleClientHearings.title", 
+        fieldName: multipleClientHearingsFieldName, 
+        choices: multipleClientHearingsChoices
+      }),
+    });
+  } catch (error) {
+    const processedError = processError(
+      error,
+      "rendering choose file upload page"
+    );
+    next(processedError);
+  }
+}
+
+/**
+ * Submit how many clients retained
+ * @param {Request} req Express request object
+ * @param {Response} res Express response object
+ * @param {NextFunction} next Express next function
+ */
+export function submitMultipleClientHearings(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
+    const selectedChoice: unknown = req.body?.[multipleClientHearingsFieldName];
+
+    
+    if (!isValidChoice(multipleClientHearingsChoices, selectedChoice)) {
+      res.status(400).render("main/radioQuestionPage.njk", {
+        csrfToken: res.locals.csrfToken,
+        vm: new RadioQuestionViewModel({
+          title: "pages.multipleClientHearings.title",
+          fieldName: multipleClientHearingsFieldName, 
+          choices: multipleClientHearingsChoices,
+          selectedValue: typeof selectedChoice === "string" ? selectedChoice : undefined,
+          error: {
+            text: "pages.multipleClientHearings.error.empty",
+          },
+        }),
+      });
+      return;
+    }
+    const claimId = Number(req.params.claimId);
+
+    res.redirect(buildRoute(
+            ROUTES.ESCAPING_FIXED_FEE,
+            { claimId }));
+            
+  } catch (error) {
+    const processedError = processError(
+      error,
+      "submitting how many clients retained page"
+    );
+    next(processedError);
+  }
+}

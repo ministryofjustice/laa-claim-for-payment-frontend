@@ -11,6 +11,7 @@ import { evidenceUpload } from '#src/helpers/multerUpload.js';
 import { howManyClientsRetained, submitHowManyClientsRetained } from "#src/controllers/poa/howManyClientsRetainedController.js";
 import { poaClaimTypePage, submitPoaClaimType } from "#src/controllers/poa/poaClaimTypeController.js";
 import { profitCostDetails, submitProfitCostDetails } from "#src/controllers/poa/profitCostDetailsController.js";
+import { multipleClientHearings, submitMultipleClientHearings } from "#src/controllers/poa/multipleClientHearingsController.js";
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -150,6 +151,22 @@ router.get(ROUTES.PROFIT_COST_DETAILS,limiter, function(req: Request, res: Respo
 router.post(ROUTES.PROFIT_COST_DETAILS, limiter, function (req: Request, res: Response, next: NextFunction): void {
   submitProfitCostDetails(req, res, next);
 });
+
+router.get(
+  ROUTES.MULTIPLE_CLIENT_HEARINGS,
+  limiter,
+  function (req: Request, res: Response, next: NextFunction): void {
+    multipleClientHearings(req, res, next);
+  },
+);
+
+router.post(
+  ROUTES.MULTIPLE_CLIENT_HEARINGS,
+  limiter,
+  function (req: Request, res: Response, next: NextFunction): void {
+    submitMultipleClientHearings(req, res, next);
+  },
+);
 
 
 // Make an API call with `Axios` and `middleware-axios`
