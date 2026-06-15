@@ -11,7 +11,7 @@ export class MultipleClientHearingsPage extends BasePage {
    * @param {Page} page The Playwright page instance.
    */
   constructor(page: Page) {
-    super(page, "claims/1/poa/hearings-with-more-than-one-client");
+    super(page, "claims/1/poa/multiple-client-hearings");
   }
 
   /**

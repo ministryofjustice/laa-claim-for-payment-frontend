@@ -4,6 +4,7 @@ import {
 } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { Request, Response, NextFunction } from "express";
 import { processError } from "#src/helpers/index.js";
+import { buildRoute, ROUTES } from "#routes/helper.js";
 
 
 const howManyClientsRetainedFieldName = "howManyClientsRetained" as const;
@@ -92,11 +93,22 @@ export function submitHowManyClientsRetained(
       return;
     }
 
-    const redirectByChoice: Record<HowManyClientsRetainedChoice, string> = {
-      [HowManyClientsRetainedChoice.None]: "/none",
-      [HowManyClientsRetainedChoice.One]: "/one",
-      [HowManyClientsRetainedChoice.MoreThanTwo]: "/two",
-    };
+  const claimId = Number(req.params.claimId);
+
+  const redirectByChoice: Record<HowManyClientsRetainedChoice, string> = {
+    [HowManyClientsRetainedChoice.None]: buildRoute(
+      ROUTES.MULTIPLE_CLIENT_HEARINGS,
+      { claimId },
+    ),
+    [HowManyClientsRetainedChoice.One]: buildRoute(
+      ROUTES.MULTIPLE_CLIENT_HEARINGS,
+      { claimId },
+    ),
+    [HowManyClientsRetainedChoice.MoreThanTwo]: buildRoute(
+      ROUTES.MULTIPLE_CLIENT_HEARINGS,
+      { claimId },
+    ),
+  };
 
     res.redirect(redirectByChoice[selectedChoice]);
   } catch (error) {

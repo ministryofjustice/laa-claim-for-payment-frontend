@@ -12,6 +12,7 @@ import { howManyClientsRetained, submitHowManyClientsRetained } from "#src/contr
 import { poaClaimTypePage, submitPoaClaimType } from "#src/controllers/poa/poaClaimTypeController.js";
 import { profitCostDetails, submitProfitCostDetails } from "#src/controllers/poa/profitCostDetailsController.js";
 import { multipleClientHearings, submitMultipleClientHearings } from "#src/controllers/poa/multipleClientHearingsController.js";
+import { numberOfClientsStartOfCase, submitNumberOfClientsStartOfCase } from "#src/controllers/poa/numberOfClientsStartOfCaseController.js";
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -167,6 +168,14 @@ router.post(
     submitMultipleClientHearings(req, res, next);
   },
 );
+
+router.get(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, limiter, function(req: Request, res: Response, next: NextFunction): void {
+  numberOfClientsStartOfCase(req, res, next);
+});
+
+router.post(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, limiter, function(req: Request, res: Response, next: NextFunction): void {
+  submitNumberOfClientsStartOfCase(req, res, next);
+});
 
 
 // Make an API call with `Axios` and `middleware-axios`

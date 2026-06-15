@@ -237,6 +237,21 @@
       "error": {
         "empty": "Select yes if you have attended at least one hearing where you have represented more than one client."
       }
+    },
+    "numberOfClientsStartOfCase": {
+      "title": "How many clients did you have at the start of the case?",
+      "none": {
+        "text": "0"
+      },
+      "one": {
+        "text": "1"
+      },
+      "moreThanTwo": {
+        "text": "2+"
+      },
+      "error": {
+        "empty": "Select how many clients you had at the start of the case"
+      }
     }
   },
 

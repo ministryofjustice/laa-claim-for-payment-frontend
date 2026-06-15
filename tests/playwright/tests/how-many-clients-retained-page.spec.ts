@@ -29,7 +29,7 @@ test.describe("How many clients retained page", () => {
     await howManyClientsRetainedPage.noneRadio.check();
     await howManyClientsRetainedPage.saveAndContinueButton.click();
 
-    await expect(page).toHaveURL(/\/none$/);
+    await expect(page).toHaveURL(/\/claims\/1\/poa\/multiple-client-hearings$/);
   });
 
   test("redirects to one route when One is selected", async ({ page }) => {
@@ -41,7 +41,7 @@ test.describe("How many clients retained page", () => {
     await howManyClientsRetainedPage.oneRadio.check();
     await howManyClientsRetainedPage.saveAndContinueButton.click();
 
-    await expect(page).toHaveURL(/\/one$/);
+    await expect(page).toHaveURL(/\/claims\/1\/poa\/multiple-client-hearings$/);
   });
 
   test("redirects to two route when More than two is selected", async ({
@@ -55,6 +55,6 @@ test.describe("How many clients retained page", () => {
     await howManyClientsRetainedPage.moreThanTwoRadio.check();
     await howManyClientsRetainedPage.saveAndContinueButton.click();
 
-    await expect(page).toHaveURL(/\/two$/);
+    await expect(page).toHaveURL(/\/claims\/1\/poa\/multiple-client-hearings$/);
   });
 });

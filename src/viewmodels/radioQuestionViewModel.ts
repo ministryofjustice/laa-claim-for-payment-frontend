@@ -1,6 +1,4 @@
-
-
-interface RadioQuestionOptions<ChoiceType> {
+export interface RadioQuestionOptions<ChoiceType> {
   value: ChoiceType;
   text: string;
   hint?: {
