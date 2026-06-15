@@ -3,20 +3,13 @@ import { processError } from "#src/helpers/index.js";
 import {
   isValidChoice,
   RadioQuestionViewModel,
+  type RadioQuestionOptions,
 } from "#src/viewmodels/radioQuestionViewModel.js";
-
-interface RadioChoice<ChoiceType extends string> {
-  value: ChoiceType;
-  text: string;
-  hint?: {
-    text: string;
-  };
-}
 
 interface RadioQuestionControllerParams<ChoiceType extends string> {
   title: string;
   fieldName: string;
-  choices: ReadonlyArray<RadioChoice<ChoiceType>>;
+  choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
   errorText: string;
   renderErrorContext: string;
   submitErrorContext: string;

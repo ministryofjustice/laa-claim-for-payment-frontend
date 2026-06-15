@@ -131,7 +131,7 @@ export function submitProfitCostDetails(
         { claimId },
       ),
       [TransferOfSolicitorChoice.No]: buildRoute(
-        ROUTES.HOW_MANY_CLIENTS_AT_START_OF_CASE,
+        ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
         { claimId },
       ),
     };

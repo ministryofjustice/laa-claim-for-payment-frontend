@@ -74,7 +74,7 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
     expect(redirectStub.calledWith(expectedRoute)).to.be.true;
   });
 
-  it("redirects to HOW_MANY_CLIENTS_AT_START_OF_CASE when transfer of solicitor is 'no'", async () => {
+  it("redirects to NUMBER_OF_CLIENTS_START_OF_CASE when transfer of solicitor is 'no'", async () => {
     req.body = {
       [courtTypeFieldName]: "county-court",
       [clientStatusFieldName]: "child",
@@ -87,7 +87,7 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
     expect(redirectStub.calledOnce).to.be.true;
 
     const expectedRoute = buildRoute(
-      ROUTES.HOW_MANY_CLIENTS_AT_START_OF_CASE,
+      ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
       { claimId: 1 },
     );
 
