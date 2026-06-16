@@ -53,6 +53,7 @@ describe("views/main/poa/submissionSuccessfulView.njk", () => {
     const link = p.find(".govuk-link");
     expect(link).to.have.length(1);
     expect(link.text().trim()).to.equal("pages.poa.submissionSuccessful.p2.link");
+    expect(link.attr("href")).to.equal("https://www.gov.uk/guidance/civil-processing-dates");
 
     expect(p.text().trim()).to.match(
       /.*pages\.poa\.submissionSuccessful\.p2\.2$/
@@ -73,5 +74,6 @@ describe("views/main/poa/submissionSuccessfulView.njk", () => {
     const link = p.find(".govuk-link");
     expect(link).to.have.length(1);
     expect(link.text().trim()).to.equal("pages.poa.submissionSuccessful.link");
+    expect(link.attr("href")).to.equal("/claims/1/summary");
   });
 });
