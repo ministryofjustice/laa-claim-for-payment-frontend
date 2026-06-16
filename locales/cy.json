@@ -252,6 +252,18 @@
       "error": {
         "empty": "Select how many clients you had at the start of the case"
       }
+    },
+    "poa": {
+      "submissionSuccessful": {
+        "title": "Payment on account submitted",
+        "h2": "What happens next",
+        "p1": "We are processing this POA and you will receive a decision shortly.",
+        "p2.1": "You can view the",
+        "p2.link": "guidance on processing timescales",
+        "p2.2": "for more information.",
+        "p3": "Your account will be updated.",
+        "link": "Return to claim summary page"
+      }
     }
   },
 
