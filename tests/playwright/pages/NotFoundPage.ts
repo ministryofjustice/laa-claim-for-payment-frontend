@@ -11,7 +11,7 @@ export class NotFoundPage extends BasePage {
    * @returns {Locator} The first paragraph
    */
   get firstParagraph(): Locator {
-    return this.page.locator('#main-content p').nth(0);
+    return this.getNthParagraph(0);
   }
 
   /**
@@ -19,6 +19,6 @@ export class NotFoundPage extends BasePage {
    * @returns {Locator} The second paragraph
    */
   get secondParagraph(): Locator {
-    return this.page.locator('#main-content p').nth(1);
+    return this.getNthParagraph(1);
   }
 }

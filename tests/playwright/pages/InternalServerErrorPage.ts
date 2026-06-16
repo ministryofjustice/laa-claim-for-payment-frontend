@@ -19,6 +19,6 @@ export class InternalServerErrorPage extends BasePage {
    * @returns {Locator} The first paragraph
    */
   get firstParagraph(): Locator {
-    return this.page.locator('#main-content p').nth(0);
+    return this.getNthParagraph(0);
   }
 }

@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { processError } from "#src/helpers/index.js";
 
 /**
- * Choose file upload journey view
+ * POA successful submission view
  * @param {Request} req Express request object
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
