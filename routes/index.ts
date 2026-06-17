@@ -13,6 +13,7 @@ import { poaClaimTypePage, submitPoaClaimType } from "#src/controllers/poa/poaCl
 import { profitCostDetails, submitProfitCostDetails } from "#src/controllers/poa/profitCostDetailsController.js";
 import { multipleClientHearings, submitMultipleClientHearings } from "#src/controllers/poa/multipleClientHearingsController.js";
 import { numberOfClientsStartOfCase, submitNumberOfClientsStartOfCase } from "#src/controllers/poa/numberOfClientsStartOfCaseController.js";
+import { escapingFixedFee, submitEscapingFixedFee } from "#src/controllers/poa/escapingFixedFeeController.js";
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -176,6 +177,22 @@ router.get(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, limiter, function(req: Reques
 router.post(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, limiter, function(req: Request, res: Response, next: NextFunction): void {
   submitNumberOfClientsStartOfCase(req, res, next);
 });
+
+router.get(
+  ROUTES.ESCAPING_FIXED_FEE,
+  limiter,
+  function (req: Request, res: Response, next: NextFunction): void {
+    escapingFixedFee(req, res, next);
+  },
+);
+
+router.post(
+  ROUTES.ESCAPING_FIXED_FEE,
+  limiter,
+  function (req: Request, res: Response, next: NextFunction): void {
+    submitEscapingFixedFee(req, res, next);
+  },
+);
 
 
 // Make an API call with `Axios` and `middleware-axios`
