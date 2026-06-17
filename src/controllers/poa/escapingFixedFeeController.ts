@@ -50,7 +50,7 @@ export function escapingFixedFee(
   } catch (error) {
     const processedError = processError(
       error,
-      "rendering choose file upload page"
+      "submitting escaping fixed fee page"
     );
     next(processedError);
   }

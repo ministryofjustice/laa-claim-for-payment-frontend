@@ -50,7 +50,7 @@ export function multipleClientHearings(
   } catch (error) {
     const processedError = processError(
       error,
-      "rendering choose file upload page"
+      "rendering multiple client hearings page"
     );
     next(processedError);
   }
