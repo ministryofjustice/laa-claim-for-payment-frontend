@@ -8,6 +8,8 @@ export const ROUTES = {
   CHOOSE_UPLOAD: '/claims/:claimId/choose-upload',
   UPLOAD_EVIDENCE_INDIVIDUALLY: '/claims/:claimId/upload-evidence-individually',
   UPLOAD_FILE_FOR_LINE_ITEM: '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload',
+  AJAX_UPLOAD_FILE_FOR_LINE_ITEM: '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-upload',
+  AJAX_DELETE_FILE_FOR_LINE_ITEM: '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-delete',
   VIEW_CLAIM: '/claims/:claimId',
   HOW_MANY_CLIENTS_RETAINED: '/claims/:claimId/poa/how-many-clients-retained',
   POA_CLAIM_TYPE: '/claims/:claimId/poa/claim-type',

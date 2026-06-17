@@ -4,9 +4,7 @@ import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import createHttpError from "http-errors";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import type { DeleteFileRequest, MulterRequest } from "#src/types/requests.js";
-
-const BAD_REQUEST = 400;
+import { uploadService } from "#src/services/uploadService.js";
 
 /**
  * File upload page for Bill narrative.
@@ -54,10 +52,12 @@ export async function fileUploadForLineItemPage(
   }
 }
 
+
+// TODO this is not used??
 /**
  * Handles linking of evidence files for a claim line item.
  *
- * @param {MulterRequest} req Express request object containing the uploaded file.
+ * @param {Request} req Express request object containing the uploaded file.
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
  * @returns {void}
@@ -83,7 +83,7 @@ export async function linkEvidenceToLineItem(
       : [];
 
     if (evidenceIds.length > 0) {
-      const response = await claimService.linkEvidenceToLineItem(
+      const response = await uploadService.linkEvidenceToLineItem(
         req.axiosMiddleware,
         claimId,
         lineItemId,
@@ -100,90 +100,6 @@ export async function linkEvidenceToLineItem(
     res.redirect(redirectUrl);
   } catch (error) {
     next(processError(error, "linking evidence to line item"));
-  }
-}
-
-/**
- * Handles AJAX upload of evidence files for a claim line item.
- *
- * @param {MulterRequest} req Express request object containing the uploaded file.
- * @param {Response} res Express response object.
- * @param {NextFunction} next Express next function.
- * @returns {void}
- */
-export async function uploadEvidenceFile(
-  req: MulterRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
-  try {
-    const { file } = req;
-
-    if (file === undefined) {
-      res.status(BAD_REQUEST).json({
-        error: {
-          message: req.t("multiFileUpload.errors.noFileUploaded"),
-        },
-      });
-      return;
-    }
-
-    const translations = {
-      uploaded: req.t("common.uploadStatus.uploaded"),
-      uploadedMessage: req.t("multiFileUpload.uploadedMessage", {
-        filename: file.originalname,
-      }),
-    };
-
-    const response = await claimService.uploadLineItemEvidence(
-      req.axiosMiddleware,
-      Number(req.params.claimId),
-      Number(req.params.lineItemId),
-      file,
-      translations,
-    );
-
-    res.json(response.body);
-  } catch (error) {
-    next(processError(error, "uploading evidence file"));
-  }
-}
-
-/**
- * Handles AJAX deletion of uploaded evidence files.
- *
- * @param {DeleteFileRequest} req Express request object containing the file delete request body.
- * @param {Response} res Express response object.
- * @param {NextFunction} next Express next function.
- * @returns {void}
- */
-export async function deleteEvidenceFile(
-  req: DeleteFileRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
-  try {
-    // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- Using alias because "delete" is a reserved keyword.
-    const { delete: fileId } = req.body;
-    if (fileId === "") {
-      res.status(BAD_REQUEST).json({
-        error: {
-          message: req.t("multiFileUpload.errors.missingFileId"),
-        },
-      });
-      return;
-    }
-
-    const response = await claimService.unlinkEvidenceFromLineItem(
-      req.axiosMiddleware,
-      Number(req.params.claimId),
-      Number(req.params.lineItemId),
-      Number(fileId),
-    );
-
-    res.json(response);
-  } catch (error) {
-    next(error);
   }
 }
 
