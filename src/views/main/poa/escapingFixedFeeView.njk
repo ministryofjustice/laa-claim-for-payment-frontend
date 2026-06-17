@@ -7,75 +7,76 @@
 
 {% set title = t(vm.title) %}
 
-{% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+    {% block content %}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
 
-            {% set radioItems = [] %}
+                {% set radioItems = [] %}
 
-            {% for choice in vm.form.choices %}
-                {% set radioItems = (radioItems.push({
-                    value: choice.value,
-                    text: t(choice.text)
-                }), radioItems) %}
-            {% endfor %}
+                {% for choice in vm.form.choices %}
+                    {% set radioItems = (radioItems.push({
+                        value: choice.value,
+                        text: t(choice.text)
+                    }), radioItems) %}
+                {% endfor %}
 
-            {{ backLink(t) }}
+                {{ backLink(t) }}
 
-            {% if vm.form.error %}
-                {{ govukErrorSummary({
-          titleText: t("common.errorSummaryTitle"),
-          errorList: [
-          {
-              text: t(vm.form.error.text),
-              href: "#" + vm.form.fieldName
-          }
-          ]
-      }) }}
-            {% endif %}
+                {% if vm.form.error %}
+                    {{ govukErrorSummary({
+            titleText: t("common.errorSummaryTitle"),
+            errorList: [
+            {
+                text: t(vm.form.error.text),
+                href: "#" + vm.form.fieldName
+            }
+            ]
+        }) }}
+                {% endif %}
 
-            <form method="post">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+                <form method="post">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
-                <h1 class="govuk-heading-l"> {{ t('pages.escapingFixedFee.title') }}</h1>
+                    <h1 class="govuk-heading-l">
+                        {{ t('pages.escapingFixedFee.title') }}</h1>
 
-                <p class="govuk-body">
-                    {{ t('pages.escapingFixedFee.p1') }}
-                </p>
+                    <p class="govuk-body">
+                        {{ t('pages.escapingFixedFee.p1') }}
+                    </p>
 
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>{{ t('pages.escapingFixedFee.ul1') }}</li>
-                    <li>{{ t('pages.escapingFixedFee.ul2') }}</li>
-                    <li>{{ t('pages.escapingFixedFee.ul3') }}</li>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>{{ t('pages.escapingFixedFee.ul1') }}</li>
+                        <li>{{ t('pages.escapingFixedFee.ul2') }}</li>
+                        <li>{{ t('pages.escapingFixedFee.ul3') }}</li>
 
-                </ul>
+                    </ul>
 
-                <p class="govuk-body">
-                    {{ t('pages.escapingFixedFee.p2') }}
-                </p>
+                    <p class="govuk-body">
+                        {{ t('pages.escapingFixedFee.p2') }}
+                    </p>
 
-                <p class="govuk-body">
-                    {{ t('pages.escapingFixedFee.p3') }}
-                </p>
+                    <p class="govuk-body">
+                        {{ t('pages.escapingFixedFee.p3') }}
+                    </p>
 
-    {{ govukRadios({
-      name: vm.form.fieldName,
-      fieldset: {
-          legend: {
-          text: t(vm.title),
-          isPageHeading: true,
-          classes: "govuk-fieldset__legend--m"
-          }
-      },
-      errorMessage: {text: t(vm.form.error.text)} if vm.form.error ,
-      items: radioItems
-      }) }}
+                    {{ govukRadios({
+        name: vm.form.fieldName,
+        fieldset: {
+            legend: {
+            text: t(vm.title),
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--m"
+            }
+        },
+        errorMessage: {text: t(vm.form.error.text)} if vm.form.error ,
+        items: radioItems
+        }) }}
 
-                {{ govukButton({
-          text: t("common.saveAndContinue")
-      }) }}
-            </form>
+                    {{ govukButton({
+            text: t("common.saveAndContinue")
+        }) }}
+                </form>
 
+            </div>
         </div>
-    </div>
-{% endblock %}
+    {% endblock %}
