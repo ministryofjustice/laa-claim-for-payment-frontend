@@ -38,4 +38,13 @@ export abstract class BasePage {
   get heading(): Locator {
     return this.page.locator('h1');
   }
+
+  /**
+   * Gets the nth paragraph element
+   * @param {number} index The index
+   * @returns {Locator} The paragraph locator
+   */
+  getNthParagraph(index: number): Locator {
+    return this.page.locator('#main-content p').nth(index);
+  }
 }

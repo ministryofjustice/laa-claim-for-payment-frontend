@@ -1,0 +1,32 @@
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{% extends "base.njk" %}
+
+{% set title = t('pages.poa.submissionSuccessful.title') %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ govukPanel({
+        titleText: t('pages.poa.submissionSuccessful.title'),
+        text: ""
+      }) }}
+
+      <h2 class="govuk-heading-m">{{ t('pages.poa.submissionSuccessful.h2') }}</h2>
+
+      <p class="govuk-body">{{ t('pages.poa.submissionSuccessful.p1') }}</p>
+
+      <p class="govuk-body">
+        {{ t('pages.poa.submissionSuccessful.p2.1') }}
+        <a class="govuk-link" href="https://www.gov.uk/guidance/civil-processing-dates">{{ t('pages.poa.submissionSuccessful.p2.link') }}</a>
+        {{ t('pages.poa.submissionSuccessful.p2.2') }}
+      </p>
+
+      <p class="govuk-body">{{ t('pages.poa.submissionSuccessful.p3') }}</p>
+
+      <p class="govuk-body">
+        <a class="govuk-link" href="/claims/{{ claimId }}/summary">{{ t('pages.poa.submissionSuccessful.link') }}</a>
+      </p>
+    </div>
+  </div>
+{% endblock %}
