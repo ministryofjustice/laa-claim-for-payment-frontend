@@ -3,6 +3,7 @@ import { HomePage } from "./HomePage.js";
 import { ViewClaimPage } from "./ViewClaimPage.js";
 import { NotFoundPage } from "#tests/playwright/pages/NotFoundPage.js";
 import { InternalServerErrorPage } from "#tests/playwright/pages/InternalServerErrorPage.js";
+import { PoaSubmissionSuccessfulPage } from "#tests/playwright/pages/PoaSubmissionSuccessfulPage.js";
 
 /**
  * Factory class for creating page objects
@@ -50,5 +51,14 @@ export class PageFactory {
    */
   internalServerErrorPage(): InternalServerErrorPage {
     return new InternalServerErrorPage(this.page);
+  }
+
+  /**
+   * gets the successful POA submission page for test
+   * @param { number } claimId the claim id
+   * @returns { ViewClaimPage } the successful POA submission page for the given claim ID
+   */
+  poaSubmissionSuccessfulPage(claimId: number): PoaSubmissionSuccessfulPage {
+    return new PoaSubmissionSuccessfulPage(this.page, claimId);
   }
 }

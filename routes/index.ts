@@ -13,6 +13,7 @@ import { poaClaimTypePage, submitPoaClaimType } from "#src/controllers/poa/poaCl
 import { profitCostDetails, submitProfitCostDetails } from "#src/controllers/poa/profitCostDetailsController.js";
 import { multipleClientHearings, submitMultipleClientHearings } from "#src/controllers/poa/multipleClientHearingsController.js";
 import { numberOfClientsStartOfCase, submitNumberOfClientsStartOfCase } from "#src/controllers/poa/numberOfClientsStartOfCaseController.js";
+import { poaSubmissionSuccessfulPage } from "#src/controllers/poa/submissionSuccessfulController.js";
 import { escapingFixedFee, submitEscapingFixedFee } from "#src/controllers/poa/escapingFixedFeeController.js";
 
 const limiter = rateLimit({
@@ -194,6 +195,9 @@ router.post(
   },
 );
 
+router.get(ROUTES.POA_SUBMISSION_SUCCESSFUL, limiter, function(req: Request, res: Response, next: NextFunction): void {
+  poaSubmissionSuccessfulPage(req, res, next);
+});
 
 // Make an API call with `Axios` and `middleware-axios`
 // GET users from external API
