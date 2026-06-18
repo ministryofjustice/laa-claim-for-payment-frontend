@@ -4,6 +4,7 @@ export const EvidenceItemSchema = z.object({
   fileKey: z.string(),
   fileSize: z.number(),
   id: z.number(),
+  submittedOn: z.string().pipe(z.coerce.date()),
 });
 
 export type EvidenceItem = z.infer<typeof EvidenceItemSchema>;
@@ -20,7 +21,7 @@ export const LineItemSchema = z.object({
   id: z.number(),
   title: z.string(),
   category: CategorySchema,
-  date: z.string().transform(val => new Date(val)),
+  date: z.string().pipe(z.coerce.date()),
   evidenceItems: z.array(z.number()),
 });
 
@@ -28,16 +29,16 @@ export type LineItem = z.infer<typeof LineItemSchema>;
 
 export const ClaimResponseSchema = z.object({
   id: z.number(),
-  ufn: z.string().optional(),
-  providerUserId: z.string().optional(),
-  client: z.string().optional(),
-  category: z.string().optional(),
-  concluded: z.string().optional().transform(val => (val == null ?  undefined : new Date(val))),
-  feeType: z.string().optional(),
-  claimed: z.number().optional(),
-  submissionId: z.string().optional(),
-  lineItems: z.array(LineItemSchema).optional(),
-  evidence: z.array(EvidenceItemSchema).optional(),
+  ufn: z.string().nullish(),
+  providerUserId: z.string().nullish(),
+  client: z.string().nullish(),
+  category: z.string().nullish(),
+  concluded: z.string().pipe(z.coerce.date()).nullish(),
+  feeType: z.string().nullish(),
+  claimed: z.number().nullish(),
+  submissionId: z.string().nullish(),
+  lineItems: z.array(LineItemSchema).nullish(),
+  evidence: z.array(EvidenceItemSchema).nullish(),
 });
 
 export type Claim = z.infer<typeof ClaimResponseSchema>;

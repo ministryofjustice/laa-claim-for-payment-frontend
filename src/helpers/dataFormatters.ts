@@ -9,8 +9,8 @@
  * @param {Date} date Date object
  * @returns {string} Formatted date in DD/MM/YYYY format (e.g., "06/01/1986")
  */
-export function formatDate(date: Date | undefined): string {
-  if (date === undefined) {
+export function formatDate(date: Date | null | undefined): string {
+  if (date === null || date === undefined) {
     return "";
   } else {
     const day = date.toLocaleString('en-GB', { day: '2-digit' });
@@ -26,8 +26,8 @@ export function formatDate(date: Date | undefined): string {
  * @param {Date} date Date object
  * @returns {string} Formatted date in D MMMM YYYY format (e.g., "6 January 1986")
  */
-export function formatDateReadable(date: Date | undefined): string {
-  if (date === undefined) {
+export function formatDateReadable(date: Date | null | undefined): string {
+  if (date == null) {
     return "No data available";
   } else {
     return date.toLocaleDateString("en-GB", {
@@ -53,8 +53,8 @@ export function formatClaimId(value: number): string {
  * @param {number | undefined} value optional value representing the claimed amount
  * @returns {string} Transformed currency value
  */
-export function formatClaimed(value: number | undefined): string {
-  if (value === undefined) {
+export function formatClaimed(value: number | null | undefined): string {
+  if (value == null) {
     return "";
   }
   
@@ -69,8 +69,8 @@ export function formatClaimed(value: number | undefined): string {
  * @param {string | undefined} value Optional string to format
  * @returns {string} String value or empty if undefined
  */
-export function formatOptionalString(value: string | undefined): string {
-  if (value === undefined) {
+export function formatOptionalString(value: string | null | undefined): string {
+  if (value == null) {
     return "";
   }
 
