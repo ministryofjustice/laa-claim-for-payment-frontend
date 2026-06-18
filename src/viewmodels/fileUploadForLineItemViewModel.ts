@@ -1,4 +1,3 @@
-import { buildRoute, ROUTES } from "#routes/helper.js";
 import { formatDateReadable } from "#src/helpers/dataFormatters.js";
 import { Category, type Claim, type EvidenceItem, type LineItem } from "#src/types/Claim.js";
 import type { Message } from "#src/viewmodels/components/message.js";
@@ -20,7 +19,11 @@ export class FileUploadForLineItemViewModel {
    * Creates a view model containing the summary rows derived from the claim data
    * @param {Claim} claim Array of claims
    * @param {LineItem} lineItem Line item
+   * @param {string} uploadUrl url for upload
+   * @param {string} deleteUrl url for delete
+   * @param {string} saveAndContinueHref url for form submit
    */
+<<<<<<< HEAD
   constructor(claim: Claim, lineItem: LineItem) {
     const fileUploadRoute = buildRoute(ROUTES.UPLOAD_FILE_FOR_LINE_ITEM, {
       claimId: claim.id,
@@ -30,11 +33,14 @@ export class FileUploadForLineItemViewModel {
     this.uploadUrl = `${fileUploadRoute}/ajax-upload`;
     this.deleteUrl = `${fileUploadRoute}/ajax-delete`;
 
+=======
+  // eslint-disable-next-line @typescript-eslint/max-params -- ignore
+  constructor(claim: Claim, lineItem: LineItem, uploadUrl: string, deleteUrl: string, saveAndContinueHref: string) {
+    this.uploadUrl = uploadUrl;
+    this.deleteUrl = deleteUrl;
+>>>>>>> cead14f (more ajax endpoints for POA)
     this.title = FileUploadForLineItemViewModel.buildTitle(lineItem);
-
-    this.saveAndContinueHref = buildRoute(ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, {
-      claimId: claim.id,
-    });
+    this.saveAndContinueHref = saveAndContinueHref;
 
     const existingIds = new Set(lineItem.evidenceItems);
 

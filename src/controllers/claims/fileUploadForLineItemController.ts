@@ -35,7 +35,19 @@ export async function fileUploadForLineItemPage(
         return;
       }
 
-      const vm = new FileUploadForLineItemViewModel(claim, lineItem);
+      const saveAndContinueHref = buildRoute(ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, {
+        claimId: claim.id,
+      });
+      const uploadUrl = buildRoute(ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM, {
+        claimId: claim.id,
+        lineItemId: lineItem.id,
+      });
+      const deleteUrl = buildRoute(ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM, {
+        claimId: claim.id,
+        lineItemId: lineItem.id,
+      });
+
+      const vm = new FileUploadForLineItemViewModel(claim, lineItem, uploadUrl, deleteUrl, saveAndContinueHref);
 
       res.render("main/claims/fileUploadForLineItemView.njk", {
         vm,

@@ -5,6 +5,51 @@ import { uploadService } from "#src/services/uploadService.js";
 const BAD_REQUEST = 400;
 
 /**
+ * Handles AJAX upload of evidence files for a claim
+ *
+ * @param {MulterRequest} req Express request object containing the uploaded file.
+ * @param {Response} res Express response object.
+ * @param {NextFunction} next Express next function.
+ * @returns {void}
+ */
+export async function uploadEvidenceFile(
+  req: MulterRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const { file } = req;
+
+    if (file === undefined) {
+      res.status(BAD_REQUEST).json({
+        error: {
+          message: req.t("multiFileUpload.errors.noFileUploaded"),
+        },
+      });
+      return;
+    }
+
+    const translations = {
+      uploaded: req.t("common.uploadStatus.uploaded"),
+      uploadedMessage: req.t("multiFileUpload.uploadedMessage", {
+        filename: file.originalname,
+      }),
+    };
+
+    const response = await uploadService.uploadEvidence(
+      req.axiosMiddleware,
+      Number(req.params.claimId),
+      file,
+      translations,
+    );
+
+    res.json(response.body);
+  } catch (error) {
+    next(processError(error, "uploading evidence file"));
+  }
+}
+
+/**
  * Handles AJAX upload of evidence files for a claim line item.
  *
  * @param {MulterRequest} req Express request object containing the uploaded file.
@@ -58,7 +103,7 @@ export async function uploadEvidenceFileForLineItem(
  * @param {NextFunction} next Express next function.
  * @returns {void}
  */
-export async function deleteEvidenceFile(
+export async function unlinkEvidenceFileFromLineItem(
   req: DeleteFileRequest,
   res: Response,
   next: NextFunction,
@@ -87,3 +132,5 @@ export async function deleteEvidenceFile(
     next(error);
   }
 }
+
+// TODO add a delete that actually does global delete

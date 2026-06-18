@@ -13,12 +13,12 @@ import { poaClaimTypePage, submitPoaClaimType } from "#src/controllers/poa/poaCl
 import { profitCostDetails, submitProfitCostDetails } from "#src/controllers/poa/profitCostDetailsController.js";
 import { multipleClientHearings, submitMultipleClientHearings } from "#src/controllers/poa/multipleClientHearingsController.js";
 import { numberOfClientsStartOfCase, submitNumberOfClientsStartOfCase } from "#src/controllers/poa/numberOfClientsStartOfCaseController.js";
+import { unlinkEvidenceFileFromLineItem, uploadEvidenceFileForLineItem } from "#src/controllers/claims/ajaxFileUploadController.js";
 import { poaSubmissionSuccessfulPage } from "#src/controllers/poa/submissionSuccessfulController.js";
 import { escapingFixedFee, submitEscapingFixedFee } from "#src/controllers/poa/escapingFixedFeeController.js";
 import { profitCostBillLine, submitProfitCostBillLine } from "#src/controllers/poa/profitCostBillLineController.js";
 import { checkYourDetailsPage, submitYourDetails } from "#src/controllers/poa/checkDetailsController.js";
 import { expertCostDetails, submitExpertCostDetails } from "#src/controllers/poa/expertCostDetailsController.js";
-import { deleteEvidenceFile, uploadEvidenceFileForLineItem } from "#src/controllers/claims/ajaxFileUploadController.js";
 import type { AnswersCache } from "#src/services/answersCache.js";
 
 const limiter = rateLimit({
@@ -109,7 +109,7 @@ router.post(
 
 router.post(
   ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM,
-  deleteEvidenceFile,
+  unlinkEvidenceFileFromLineItem,
 )
 
 router.get(

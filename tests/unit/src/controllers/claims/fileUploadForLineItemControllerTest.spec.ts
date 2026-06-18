@@ -18,7 +18,7 @@ import { HttpError } from "http-errors";
 import { DeleteFileRequest, MulterRequest } from "#src/types/requests.js";
 import { TFunction } from "#node_modules/i18next/index.js";
 import { uploadService } from "#src/services/uploadService.js";
-import { deleteEvidenceFile, uploadEvidenceFileForLineItem } from "#src/controllers/claims/ajaxFileUploadController.js";
+import { unlinkEvidenceFileFromLineItem, uploadEvidenceFileForLineItem } from "#src/controllers/claims/ajaxFileUploadController.js";
 
 describe("View File Upload For Line Item Controller", () => {
   let res: any;
@@ -261,7 +261,7 @@ describe("View File Upload For Line Item Controller", () => {
 
       const next = sinon.stub();
 
-      await deleteEvidenceFile(req, res, next as unknown as NextFunction);
+      await unlinkEvidenceFileFromLineItem(req, res, next as unknown as NextFunction);
 
       expect(unlinkEvidenceFromLineItemStub.calledOnce).to.equal(true);
 
@@ -292,7 +292,7 @@ describe("View File Upload For Line Item Controller", () => {
 
       const next = sinon.stub();
 
-      await deleteEvidenceFile(req, res, next as unknown as NextFunction);
+      await unlinkEvidenceFileFromLineItem(req, res, next as unknown as NextFunction);
 
       expect(status.calledWith(400)).to.equal(true);
       expect(json.firstCall.args[0]).to.deep.equal({
