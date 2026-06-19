@@ -263,6 +263,18 @@
         "p2.2": "for more information.",
         "p3": "Your account will be updated.",
         "link": "Return to claim summary page"
+      },
+      "checkYourDetails": {
+        "title": "Check your details",
+        "assessmentSummary": {
+          "title": "Assess",
+          "item": "Item",
+          "cost": "Cost",
+          "totalNetClaim": "Total net claim",
+          "totalVatClaim": "Total VAT claim",
+          "poaTotalNetClaim": "POA total net claim",
+          "totalClaim": "Total claim"
+        }
       }
     }
   },

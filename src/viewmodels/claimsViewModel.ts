@@ -1,20 +1,16 @@
 import type { Claim } from "#src/types/Claim.js";
-import type { TableCell, TableHeader } from "#src/viewmodels/components/index.js";
-import {
-  formatClaimed,
-  formatClaimId,
-  formatDate,
-  formatOptionalString,
-} from "#src/helpers/index.js";
+import type { TableCell } from "#src/viewmodels/components/index.js";
+import { formatClaimed, formatClaimId, formatDate, formatOptionalString } from "#src/helpers/index.js";
 import { Pagination } from "./components/pagination.js";
 import type { PaginationMeta } from "#src/types/api-types.js";
+import { Table } from "#src/viewmodels/components/table.js";
+import { SortedTableHeader } from "#src/viewmodels/components/tableHeader.js";
 
 /**
  *
  */
 export class ClaimsTableViewModel {
-  head: TableHeader[];
-  rows: TableCell[][];
+  table: Table;
   pagination: Pagination;
 
   /**
@@ -24,7 +20,7 @@ export class ClaimsTableViewModel {
    * @param {string} href The href of the page
    */
   constructor(claims: Claim[], paginationMeta: PaginationMeta, href: string) {
-    this.head = [
+    const head: SortedTableHeader[] = [
       { text: "ID", attributes: { "aria-sort": "ascending" } },
       { text: "Client", attributes: { "aria-sort": "none" } },
       { text: "Category", attributes: { "aria-sort": "none" } },
@@ -37,7 +33,7 @@ export class ClaimsTableViewModel {
       },
     ];
 
-    this.rows = claims.map((claim) => [
+    const rows: TableCell[][] = claims.map((claim) => [
       {
         html: `<a class="govuk-link" href="/claims/${encodeURIComponent(claim.id)}">
                 ${formatClaimId(claim.id)}
@@ -59,6 +55,8 @@ export class ClaimsTableViewModel {
         classes: "govuk-table__cell--numeric",
       },
     ]);
+
+    this.table = { head, rows };
 
     this.pagination = new Pagination(
       paginationMeta.total,

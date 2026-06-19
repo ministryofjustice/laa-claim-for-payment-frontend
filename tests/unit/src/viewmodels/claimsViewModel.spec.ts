@@ -8,6 +8,7 @@ import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseDat
 import { expect } from "chai";
 import { PaginationMeta } from "#src/types/api-types.js";
 import { load } from "cheerio";
+import { SortedTableHeader } from "#src/viewmodels/components/tableHeader.js";
 
 describe("constructor()", () => {
   it("creates a series of headers", () => {
@@ -19,31 +20,34 @@ describe("constructor()", () => {
       limit: 20,
     };
 
-    const viewModel = new ClaimsTableViewModel(claims, paginationMeta, "/foo");
+    const { table: { head } } = new ClaimsTableViewModel(claims, paginationMeta, "/foo");
 
-    expect(viewModel.head[0].text).to.equal("ID");
-    expect(viewModel.head[0].attributes["aria-sort"]).to.equal("ascending");
-    expect(viewModel.head[0].classes).to.equal(undefined);
+    const [head1, head2, head3, head4, head5, head6] =
+      head as SortedTableHeader[];
 
-    expect(viewModel.head[1].text).to.equal("Client");
-    expect(viewModel.head[1].attributes["aria-sort"]).to.equal("none");
-    expect(viewModel.head[1].classes).to.equal(undefined);
+    expect(head1.text).to.equal("ID");
+    expect(head1.attributes["aria-sort"]).to.equal("ascending");
+    expect(head1.classes).to.equal(undefined);
 
-    expect(viewModel.head[2].text).to.equal("Category");
-    expect(viewModel.head[2].attributes["aria-sort"]).to.equal("none");
-    expect(viewModel.head[2].classes).to.equal(undefined);
+    expect(head2.text).to.equal("Client");
+    expect(head2.attributes["aria-sort"]).to.equal("none");
+    expect(head2.classes).to.equal(undefined);
 
-    expect(viewModel.head[3].text).to.equal("Concluded");
-    expect(viewModel.head[3].attributes["aria-sort"]).to.equal("none");
-    expect(viewModel.head[3].classes).to.equal(undefined);
+    expect(head3.text).to.equal("Category");
+    expect(head3.attributes["aria-sort"]).to.equal("none");
+    expect(head3.classes).to.equal(undefined);
 
-    expect(viewModel.head[4].text).to.equal("Fee Type");
-    expect(viewModel.head[4].attributes["aria-sort"]).to.equal("none");
-    expect(viewModel.head[4].classes).to.equal(undefined);
+    expect(head4.text).to.equal("Concluded");
+    expect(head4.attributes["aria-sort"]).to.equal("none");
+    expect(head4.classes).to.equal(undefined);
 
-    expect(viewModel.head[5].text).to.equal("Claimed");
-    expect(viewModel.head[5].attributes["aria-sort"]).to.equal("none");
-    expect(viewModel.head[5].classes).to.equal("govuk-table__header--numeric");
+    expect(head5.text).to.equal("Fee Type");
+    expect(head5.attributes["aria-sort"]).to.equal("none");
+    expect(head5.classes).to.equal(undefined);
+
+    expect(head6.text).to.equal("Claimed");
+    expect(head6.attributes["aria-sort"]).to.equal("none");
+    expect(head6.classes).to.equal("govuk-table__header--numeric");
   });
 
   it("creates a series of rows", () => {
@@ -77,7 +81,7 @@ describe("constructor()", () => {
     const viewModel = new ClaimsTableViewModel(claims, paginationMeta, "/foo");
 
     // First row
-    const firstRow = viewModel.rows[0]
+    const firstRow = viewModel.table.rows[0]
     expect(firstRow[0]).to.have.property("html").that.is.a("string");
     const $a = load(firstRow[0].html as string)("a.govuk-link");
     expect($a).to.have.length(1);
@@ -107,7 +111,7 @@ describe("constructor()", () => {
     expect(firstRow[5].classes).to.equal("govuk-table__cell--numeric");
 
     // // Second row
-    const secondRow = viewModel.rows[1]
+    const secondRow = viewModel.table.rows[1]
     expect(secondRow[0]).to.have.property("html").that.is.a("string");
     const $a2 = load(secondRow[0].html as string)("a.govuk-link");
     expect($a2).to.have.length(1);

@@ -3,8 +3,8 @@ import { Claim } from "#src/types/Claim.js";
 import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { getEnValue } from "#tests/support/i18n.js";
-import { expect, config as chaiConfig } from "chai";
-import { load, CheerioAPI } from "cheerio";
+import { config as chaiConfig, expect } from "chai";
+import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
 
 // Show full strings in diffs if something fails
@@ -24,12 +24,11 @@ describe("views/main/index.njk", () => {
   const viewModel = new ClaimsTableViewModel(claims, paginationMeta, "/foo");
 
   const context = {
-    head: viewModel.head,
-    rows: viewModel.rows,
+    table: viewModel.table,
   };
 
   beforeEach(async () => {
-    $ = await renderView('main/index.njk', context);
+    $ = await renderView("main/index.njk", context);
   });
 
   it("renders the H1", () => {
@@ -72,7 +71,7 @@ describe("views/main/index.njk", () => {
       "Category",
       "Concluded",
       "Fee Type",
-      "Claimed"
+      "Claimed",
     ]);
   });
 

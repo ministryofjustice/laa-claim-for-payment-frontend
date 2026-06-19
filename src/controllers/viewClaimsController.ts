@@ -30,8 +30,7 @@ export async function handleYourClaimsPage(
       );
 
       res.render("main/index.njk", {
-        rows: claimsTableViewModel.rows,
-        head: claimsTableViewModel.head,
+        table: claimsTableViewModel.table,
         pagination: claimsTableViewModel.pagination,
         createClaimHref: buildRoute(ROUTES.CHOOSE_UPLOAD, {
           claimId: 3, //todo test only
