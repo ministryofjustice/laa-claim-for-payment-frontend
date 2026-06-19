@@ -2,9 +2,9 @@ import { expect } from "chai";
 import { describe, it, beforeEach } from "mocha";
 import sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
-import { multipleClientHearings, submitMultipleClientHearings } from "#src/controllers/poa/multipleClientHearingsController.js";
+import { escapingFixedFee, submitEscapingFixedFee } from "#src/controllers/poa/escapingFixedFeeController.js";
 
-describe("poaClaimTypeController", () => {
+describe("escapingFixedFeeController", () => {
   let res: Response;
   let next: NextFunction;
 
@@ -21,41 +21,41 @@ describe("poaClaimTypeController", () => {
     next = sinon.stub() as unknown as NextFunction;
   });
 
-  it("renders the multiple client hearings radio question page", () => {
+  it("renders the escaping the fixed fee radio question page", () => {
     const req = {
       params: {
         claimId: "1",
       },
     } as unknown as Request;
 
-    multipleClientHearings(req, res, next);
+    escapingFixedFee(req, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
-      "main/radioQuestionPage.njk",
+      "main/poa/escapingFixedFeeView.njk",
     );
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
-    expect(renderArgs.vm.title).to.equal("pages.multipleClientHearings.title");
-    expect(renderArgs.vm.form.fieldName).to.equal("multipleClientHearings");
+    expect(renderArgs.vm.title).to.equal("pages.escapingFixedFee.question");
+    expect(renderArgs.vm.form.fieldName).to.equal("escapingFixedFee");
   });
 
-  it("redirects to escaping the standard fixed fee page when multiple client hearings answer is given", () => {
+  it("redirects to CPGFS profit cost bill line page when escaping fixed fee answer is given", () => {
     const req = {
       params: {
         claimId: "1",
       },
       body: {
-        multipleClientHearings: "yes",
+        escapingFixedFee: "yes",
       },
     } as unknown as Request;
 
-    submitMultipleClientHearings(req, res, next);
+    submitEscapingFixedFee(req, res, next);
 
     expect((res.redirect as sinon.SinonStub).calledWith(
-      "/claims/1/poa/escaping-standard-fixed-fee",
+      "/claims/1/poa/cpgfs-profit-cost-bill-line",
     )).to.equal(true);
   });
 
@@ -67,18 +67,18 @@ describe("poaClaimTypeController", () => {
       body: {},
     } as unknown as Request;
 
-    submitMultipleClientHearings(req, res, next);
+    submitEscapingFixedFee(req, res, next);
 
     expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
-      "main/radioQuestionPage.njk",
+      "main/poa/escapingFixedFeeView.njk",
     );
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
-      text: "pages.multipleClientHearings.error.empty",
+      text: "pages.escapingFixedFee.error.empty",
     });
   });
 
@@ -88,16 +88,16 @@ describe("poaClaimTypeController", () => {
         claimId: "1",
       },
       body: {
-        multpleClientHearings: "invalid",
+        escapingFixedFee: "invalid",
       },
     } as unknown as Request;
 
-    submitMultipleClientHearings(req, res, next);
+    submitEscapingFixedFee(req, res, next);
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
-      text: "pages.multipleClientHearings.error.empty",
+      text: "pages.escapingFixedFee.error.empty",
     });
 
     expect(

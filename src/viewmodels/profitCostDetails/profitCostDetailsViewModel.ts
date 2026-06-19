@@ -1,3 +1,4 @@
+import { booleanChoices } from "#src/models/booleanChoice.js";
 import {
   type ClientStatusChoice,
   clientStatusChoices,
@@ -5,11 +6,7 @@ import {
   type CourtTypeChoice,
   courtTypeChoices,
   courtTypeFieldName,
-  type FirstSolicitorChoice,
-  firstSolicitorChoices,
   firstSolicitorFieldName,
-  type TransferOfSolicitorChoice,
-  transferOfSolicitorChoices,
   transferOfSolicitorFieldName,
 } from "./profitCostDetailsFields.js";
 
@@ -60,13 +57,13 @@ export class ProfitCostDetailsViewModel {
       })),
 
       firstSolicitorFieldName,
-      firstSolicitorChoices: firstSolicitorChoices.map((choice) => ({
+      firstSolicitorChoices: booleanChoices.map((choice) => ({
         ...choice,
         checked: choice.value === params.firstSolicitorSelectedValue,
       })),
 
       transferOfSolicitorFieldName,
-      transferOfSolicitorChoices: transferOfSolicitorChoices.map((choice) => ({
+      transferOfSolicitorChoices: booleanChoices.map((choice) => ({
         ...choice,
         checked: choice.value === params.transferOfSolicitorSelectedValue,
       })),
@@ -132,28 +129,4 @@ export function isValidClientStatusChoice(
   value: unknown,
 ): value is ClientStatusChoice {
   return clientStatusChoices.some((choice) => choice.value === value);
-}
-
-/**
- * Checks whether the submitted first solicitor choice is valid.
- *
- * @param {unknown} value The submitted first solicitor choice.
- * @returns {boolean} Whether the submitted choice is valid.
- */
-export function isValidFirstSolicitorChoice(
-  value: unknown,
-): value is FirstSolicitorChoice {
-  return firstSolicitorChoices.some((choice) => choice.value === value);
-}
-
-/**
- * Checks whether the submitted transfer of solicitor choice is valid.
- *
- * @param {unknown} value The submitted transfer of solicitor choice.
- * @returns {boolean} Whether the submitted choice is valid.
- */
-export function isValidTransferOfSolicitorChoice(
-  value: unknown,
-): value is TransferOfSolicitorChoice {
-  return transferOfSolicitorChoices.some((choice) => choice.value === value);
 }
