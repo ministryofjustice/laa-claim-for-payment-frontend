@@ -6,24 +6,24 @@ import type { Request, Response, NextFunction } from "express";
 import { processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 
-const multipleClientHearingsFieldName = "multipleClientHearings" as const;
+const escapingFixedFeeFieldName = "escapingFixedFee" as const;
 
-const MultipleClientHearingsChoice = {
+const EscapingFixedFeeChoice = {
   Yes: "yes",
   No: "no",
 } as const;
 
-type MultipleClientHearingsChoice =
-  (typeof MultipleClientHearingsChoice)[keyof typeof MultipleClientHearingsChoice];
+type EscapingFixedFeeChoice =
+  (typeof EscapingFixedFeeChoice)[keyof typeof EscapingFixedFeeChoice];
 
-const multipleClientHearingsChoices = [
+const escapingFixedFeeChoices = [
   {
-    value: MultipleClientHearingsChoice.Yes,
-    text: "pages.multipleClientHearings.yes.text",
+    value: EscapingFixedFeeChoice.Yes,
+    text: "pages.escapingFixedFee.yes.text",
   },
     {
-    value: MultipleClientHearingsChoice.No,
-    text: "pages.multipleClientHearings.no.text",
+    value: EscapingFixedFeeChoice.No,
+    text: "pages.escapingFixedFee.no.text",
   }
 ] as const;
 
@@ -33,24 +33,24 @@ const multipleClientHearingsChoices = [
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
  */
-export function multipleClientHearings(
+export function escapingFixedFee(
   req: Request,
   res: Response,
   next: NextFunction
 ): void {
   try {
-    res.render("main/radioQuestionPage.njk", {
+    res.render("main/poa/escapingFixedFeeView.njk", {
       csrfToken: res.locals.csrfToken,
       vm: new RadioQuestionViewModel({
-        title: "pages.multipleClientHearings.title", 
-        fieldName: multipleClientHearingsFieldName, 
-        choices: multipleClientHearingsChoices
+        title: "pages.escapingFixedFee.question", 
+        fieldName: escapingFixedFeeFieldName, 
+        choices: escapingFixedFeeChoices
       }),
     });
   } catch (error) {
     const processedError = processError(
       error,
-      "rendering multiple client hearings page"
+      "submitting escaping fixed fee page"
     );
     next(processedError);
   }
@@ -62,26 +62,26 @@ export function multipleClientHearings(
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
  */
-export function submitMultipleClientHearings(
+export function submitEscapingFixedFee(
   req: Request,
   res: Response,
   next: NextFunction
 ): void {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[multipleClientHearingsFieldName];
+    const selectedChoice: unknown = req.body?.[escapingFixedFeeFieldName];
 
     
-    if (!isValidChoice(multipleClientHearingsChoices, selectedChoice)) {
-      res.status(400).render("main/radioQuestionPage.njk", {
+    if (!isValidChoice(escapingFixedFeeChoices, selectedChoice)) {
+      res.status(400).render("main/poa/escapingFixedFeeView.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: "pages.multipleClientHearings.title",
-          fieldName: multipleClientHearingsFieldName, 
-          choices: multipleClientHearingsChoices,
+          title: "pages.escapingFixedFee.title",
+          fieldName: escapingFixedFeeFieldName, 
+          choices: escapingFixedFeeChoices,
           selectedValue: typeof selectedChoice === "string" ? selectedChoice : undefined,
           error: {
-            text: "pages.multipleClientHearings.error.empty",
+            text: "pages.escapingFixedFee.error.empty",
           },
         }),
       });
@@ -90,13 +90,13 @@ export function submitMultipleClientHearings(
     const claimId = Number(req.params.claimId);
 
     res.redirect(buildRoute(
-            ROUTES.ESCAPING_FIXED_FEE,
+            ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
             { claimId }));
             
   } catch (error) {
     const processedError = processError(
       error,
-      "submitting how many clients retained page"
+      "submitting escaping fixed fee page"
     );
     next(processedError);
   }

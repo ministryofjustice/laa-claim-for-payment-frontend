@@ -56,7 +56,7 @@ export function howManyClientsRetained(
   } catch (error) {
     const processedError = processError(
       error,
-      "rendering choose file upload page"
+      "rendering how many clients retained page"
     );
     next(processedError);
   }

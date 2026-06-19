@@ -265,6 +265,25 @@
         "p3": "Your account will be updated.",
         "link": "Return to claim summary page"
       }
+    },
+    "escapingFixedFee": {
+      "title": "Escaping the standard fixed fee",
+      "p1": "Some cases escape the standard fixed fee. For example, cases where:",
+      "ul1": "your client is an unsuccessful joined party",
+      "ul2": "the acting solicitor has been instructed for less than 24 hours overall and their involvement in the case has concluded",
+      "ul3": "your profit costs have exceeded the escape threshold.",
+      "p2": "This is not an exhaustive list.",
+      "p3": "If we assess your claim and find that you have not escaped the standard fixed fee, you may have to repay any overpayments.",
+      "question": "Do you wish to escape the standard fixed fee?",
+      "yes": {
+        "text": "Yes"
+        },
+      "no": {
+        "text": "No"
+      },
+      "error": {
+        "empty": "Select yes if you wish to escape the standard fixed fee"
+      }
     }
   },
   "forms": {

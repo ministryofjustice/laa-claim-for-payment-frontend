@@ -18,7 +18,7 @@ import {
 import { buildRoute, ROUTES } from "#routes/helper.js";
 
 /**
- * Choose file upload journey view
+ * Profit cost details journey view
  * @param {Request} req Express request object
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
@@ -43,7 +43,7 @@ export function profitCostDetails(
 }
 
 /**
- * Submit choose file upload journey
+ * Submit profit cost details journey
  * @param {Request} req Express request object
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
