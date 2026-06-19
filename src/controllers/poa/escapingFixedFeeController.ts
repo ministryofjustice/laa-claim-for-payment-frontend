@@ -5,27 +5,9 @@ import {
 import type { Request, Response, NextFunction } from "express";
 import { processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
+import { booleanChoices } from "#src/models/booleanChoice.js";
 
 const escapingFixedFeeFieldName = "escapingFixedFee" as const;
-
-const EscapingFixedFeeChoice = {
-  Yes: "yes",
-  No: "no",
-} as const;
-
-type EscapingFixedFeeChoice =
-  (typeof EscapingFixedFeeChoice)[keyof typeof EscapingFixedFeeChoice];
-
-const escapingFixedFeeChoices = [
-  {
-    value: EscapingFixedFeeChoice.Yes,
-    text: "pages.escapingFixedFee.yes.text",
-  },
-    {
-    value: EscapingFixedFeeChoice.No,
-    text: "pages.escapingFixedFee.no.text",
-  }
-] as const;
 
 /**
  * get how many clients retained view
@@ -44,7 +26,7 @@ export function escapingFixedFee(
       vm: new RadioQuestionViewModel({
         title: "pages.escapingFixedFee.question", 
         fieldName: escapingFixedFeeFieldName, 
-        choices: escapingFixedFeeChoices
+        choices: booleanChoices
       }),
     });
   } catch (error) {
@@ -72,13 +54,13 @@ export function submitEscapingFixedFee(
     const selectedChoice: unknown = req.body?.[escapingFixedFeeFieldName];
 
     
-    if (!isValidChoice(escapingFixedFeeChoices, selectedChoice)) {
+    if (!isValidChoice(booleanChoices, selectedChoice)) {
       res.status(400).render("main/poa/escapingFixedFeeView.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
           title: "pages.escapingFixedFee.title",
           fieldName: escapingFixedFeeFieldName, 
-          choices: escapingFixedFeeChoices,
+          choices: booleanChoices,
           selectedValue: typeof selectedChoice === "string" ? selectedChoice : undefined,
           error: {
             text: "pages.escapingFixedFee.error.empty",

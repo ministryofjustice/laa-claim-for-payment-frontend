@@ -5,27 +5,9 @@ import {
 import type { Request, Response, NextFunction } from "express";
 import { processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
+import { booleanChoices } from "#src/models/booleanChoice.js";
 
 const multipleClientHearingsFieldName = "multipleClientHearings" as const;
-
-const MultipleClientHearingsChoice = {
-  Yes: "yes",
-  No: "no",
-} as const;
-
-type MultipleClientHearingsChoice =
-  (typeof MultipleClientHearingsChoice)[keyof typeof MultipleClientHearingsChoice];
-
-const multipleClientHearingsChoices = [
-  {
-    value: MultipleClientHearingsChoice.Yes,
-    text: "pages.multipleClientHearings.yes.text",
-  },
-    {
-    value: MultipleClientHearingsChoice.No,
-    text: "pages.multipleClientHearings.no.text",
-  }
-] as const;
 
 /**
  * get how many clients retained view
@@ -44,7 +26,7 @@ export function multipleClientHearings(
       vm: new RadioQuestionViewModel({
         title: "pages.multipleClientHearings.title", 
         fieldName: multipleClientHearingsFieldName, 
-        choices: multipleClientHearingsChoices
+        choices: booleanChoices
       }),
     });
   } catch (error) {
@@ -72,13 +54,13 @@ export function submitMultipleClientHearings(
     const selectedChoice: unknown = req.body?.[multipleClientHearingsFieldName];
 
     
-    if (!isValidChoice(multipleClientHearingsChoices, selectedChoice)) {
+    if (!isValidChoice(booleanChoices, selectedChoice)) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
           title: "pages.multipleClientHearings.title",
           fieldName: multipleClientHearingsFieldName, 
-          choices: multipleClientHearingsChoices,
+          choices: booleanChoices,
           selectedValue: typeof selectedChoice === "string" ? selectedChoice : undefined,
           error: {
             text: "pages.multipleClientHearings.error.empty",
