@@ -3,8 +3,6 @@ import { processError } from "#src/helpers/index.js";
 import {
   isValidClientStatusChoice,
   isValidCourtTypeChoice,
-  isValidFirstSolicitorChoice,
-  isValidTransferOfSolicitorChoice,
   ProfitCostDetailsViewModel,
   type ProfitCostDetailsViewModelParams,
 } from "#src/viewmodels/profitCostDetails/profitCostDetailsViewModel.js";
@@ -12,10 +10,10 @@ import {
   clientStatusFieldName,
   courtTypeFieldName,
   firstSolicitorFieldName,
-  TransferOfSolicitorChoice,
   transferOfSolicitorFieldName,
 } from "#src/viewmodels/profitCostDetails/profitCostDetailsFields.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
+import { BooleanChoice, isValidBooleanChoice } from "#src/models/booleanChoice.js";
 
 /**
  * Profit cost details journey view
@@ -78,13 +76,13 @@ export function submitProfitCostDetails(
       };
     }
 
-    if (!isValidFirstSolicitorChoice(selectedFirstSolicitorChoice)) {
+    if (!isValidBooleanChoice(selectedFirstSolicitorChoice)) {
       errors.firstSolicitorError = {
         text: "pages.profitCostDetails.firstSolicitor.error.empty",
       };
     }
 
-    if (!isValidTransferOfSolicitorChoice(selectedTransferOfSolicitorChoice)) {
+    if (!isValidBooleanChoice(selectedTransferOfSolicitorChoice)) {
       errors.transferOfSolicitorError = {
         text: "pages.profitCostDetails.transferOfSolicitor.error.empty",
       };
@@ -123,14 +121,14 @@ export function submitProfitCostDetails(
     const claimId = Number(req.params.claimId);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Safe to assert as TransferOfSolicitorChoice because validation has already occurred
-    const validatedTransferOfSolicitorChoice = selectedTransferOfSolicitorChoice as TransferOfSolicitorChoice;
+    const validatedTransferOfSolicitorChoice = selectedTransferOfSolicitorChoice as BooleanChoice;
 
-    const redirectByTransferOfSolicitorChoice: Record<TransferOfSolicitorChoice,string> = {
-      [TransferOfSolicitorChoice.Yes]: buildRoute(
+    const redirectByTransferOfSolicitorChoice: Record<BooleanChoice,string> = {
+      [BooleanChoice.Yes]: buildRoute(
         ROUTES.HOW_MANY_CLIENTS_RETAINED,
         { claimId },
       ),
-      [TransferOfSolicitorChoice.No]: buildRoute(
+      [BooleanChoice.No]: buildRoute(
         ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
         { claimId },
       ),

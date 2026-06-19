@@ -2,8 +2,6 @@ import { expect } from "chai";
 import {
   isValidClientStatusChoice,
   isValidCourtTypeChoice,
-  isValidFirstSolicitorChoice,
-  isValidTransferOfSolicitorChoice,
   ProfitCostDetailsViewModel,
 } from "#src/viewmodels/profitCostDetails/profitCostDetailsViewModel.js";
 
@@ -201,32 +199,6 @@ describe("ProfitCostDetailsViewModel", () => {
       expect(isValidClientStatusChoice(undefined)).to.equal(false);
       expect(isValidClientStatusChoice("")).to.equal(false);
       expect(isValidClientStatusChoice("invalid")).to.equal(false);
-    });
-  });
-
-  describe("isValidFirstSolicitorChoice()", () => {
-    it("returns true for valid choices", () => {
-      expect(isValidFirstSolicitorChoice("yes")).to.equal(true);
-      expect(isValidFirstSolicitorChoice("no")).to.equal(true);
-    });
-
-    it("returns false for invalid choices", () => {
-      expect(isValidFirstSolicitorChoice(undefined)).to.equal(false);
-      expect(isValidFirstSolicitorChoice("")).to.equal(false);
-      expect(isValidFirstSolicitorChoice("invalid")).to.equal(false);
-    });
-  });
-
-  describe("isValidTransferOfSolicitorChoice()", () => {
-    it("returns true for valid choices", () => {
-      expect(isValidTransferOfSolicitorChoice("yes")).to.equal(true);
-      expect(isValidTransferOfSolicitorChoice("no")).to.equal(true);
-    });
-
-    it("returns false for invalid choices", () => {
-      expect(isValidTransferOfSolicitorChoice(undefined)).to.equal(false);
-      expect(isValidTransferOfSolicitorChoice("")).to.equal(false);
-      expect(isValidTransferOfSolicitorChoice("invalid")).to.equal(false);
     });
   });
 });

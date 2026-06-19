@@ -203,24 +203,12 @@
       },
       "firstSolicitor": {
         "title": "Are you the first solicitor firm acting on this case?",
-        "yes": {
-          "text": "Yes"
-        },
-        "no": {
-          "text": "No"
-        },
         "error": {
           "empty": "Select yes if you are the first solicitor firm acting on this case"
         }
       },
       "transferOfSolicitor": {
         "title": "Has there been a transfer of solicitor on this case?",
-        "yes": {
-          "text": "Yes"
-        },
-        "no": {
-          "text": "No"
-        },
         "error": {
           "empty": "Select yes if there has been a transfer of solicitor on this case"
         }
@@ -228,12 +216,6 @@
     },
     "multipleClientHearings": {
       "title": "Have you attended at least one hearing where you have represented more than one client?",
-      "yes": {
-        "text": "Yes"
-        },
-      "no": {
-        "text": "No"
-      },
       "error": {
         "empty": "Select yes if you have attended at least one hearing where you have represented more than one client."
       }
@@ -274,12 +256,6 @@
       "p2": "This is not an exhaustive list.",
       "p3": "If we assess your claim and find that you have not escaped the standard fixed fee, you may have to repay any overpayments.",
       "question": "Do you wish to escape the standard fixed fee?",
-      "yes": {
-        "text": "Yes"
-        },
-      "no": {
-        "text": "No"
-      },
       "error": {
         "empty": "Select yes if you wish to escape the standard fixed fee"
       }

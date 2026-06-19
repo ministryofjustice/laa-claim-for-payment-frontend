@@ -69,42 +69,4 @@ export const clientStatusChoices = [
 
 export const firstSolicitorFieldName = "firstSolicitorChoice" as const;
 
-export const FirstSolicitorChoice = {
-  Yes: "yes",
-  No: "no",
-} as const;
-
-export type FirstSolicitorChoice =
-  (typeof FirstSolicitorChoice)[keyof typeof FirstSolicitorChoice];
-
-  export const firstSolicitorChoices = [
-  {
-    value: FirstSolicitorChoice.Yes,
-    text: "pages.profitCostDetails.firstSolicitor.yes.text",
-  },
-  {
-    value: FirstSolicitorChoice.No,
-    text: "pages.profitCostDetails.firstSolicitor.no.text",
-  },
-] as const;
-
 export const transferOfSolicitorFieldName = "transferOfSolicitorChoice" as const;
-
-export const TransferOfSolicitorChoice = {
-  Yes: "yes",
-  No: "no",
-} as const;
-
-export type TransferOfSolicitorChoice =
-  (typeof TransferOfSolicitorChoice)[keyof typeof TransferOfSolicitorChoice];
-
-export const transferOfSolicitorChoices = [
-  {
-    value: TransferOfSolicitorChoice.Yes,
-    text: "pages.profitCostDetails.transferOfSolicitor.yes.text",
-  },
-  {
-    value: TransferOfSolicitorChoice.No,
-    text: "pages.profitCostDetails.transferOfSolicitor.no.text",
-  },
-] as const;
