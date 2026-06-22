@@ -56,7 +56,14 @@ export class ClaimsTableViewModel {
       },
     ]);
 
-    this.table = { head, rows };
+    this.table = {
+      firstCellIsHeader: true,
+      head,
+      rows,
+      attributes: {
+        "data-module": "moj-sortable-table"
+      }
+    };
 
     this.pagination = new Pagination(
       paginationMeta.total,

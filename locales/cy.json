@@ -3,6 +3,7 @@
     "back": "Yn ôl",
     "change": "Newid",
     "remove": "Dileu",
+    "delete": "Delete",
     "save": "Arbed",
     "cancel": "Canslo",
     "signOut": "Arwyddo allan",
@@ -249,13 +250,37 @@
       "checkYourDetails": {
         "title": "Check your details",
         "assessmentSummary": {
-          "title": "Assess",
+          "title": "Assessment summary",
           "item": "Item",
           "cost": "Cost",
           "totalNetClaim": "Total net claim",
           "totalVatClaim": "Total VAT claim",
           "poaTotalNetClaim": "POA total net claim",
           "totalClaim": "Total claim"
+        },
+        "cya": {
+          "title": "Check your answers",
+          "profitCostDetails": {
+            "title": "Profit cost details",
+            "courtType": "Court type",
+            "clientPartyStatus": "Client party status",
+            "firstSolicitor": "First solicitor?",
+            "transferOfSolicitor": "Transfer of solicitor",
+            "clientsRetained": "Clients retained",
+            "attendedHearings": "Attended hearings?",
+            "escapedStandardFixedFee": "Escaped standard fixed fee?"
+          },
+          "profitCostBillLine": {
+            "title": "POA CPGFS profit cost bill line",
+            "date": "Date",
+            "netProfitCost": "Actual net profit cost excluding advocacy",
+            "netAdvocacyCost": "Actual net advocacy costs",
+            "doesVatApply": "Does VAT apply?",
+            "feeEarnerName": "Fee earner name"
+          },
+          "evidence": {
+            "title": "Evidence"
+          }
         }
       }
     },

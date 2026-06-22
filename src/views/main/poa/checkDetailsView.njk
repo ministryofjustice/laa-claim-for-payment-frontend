@@ -1,4 +1,5 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% extends "base.njk" %}
 
@@ -6,14 +7,16 @@
 
 {% block content %}
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column">
-      {{ govukTable({
-        caption: "Assessment summary",
-        captionClasses: "govuk-table__caption--m",
-        firstCellIsHeader: true,
-        head: vm.assessmentSummary.head,
-        rows: vm.assessmentSummary.rows
-      }) }}
+    <div class="govuk-grid-column-two-thirds">
+      {{ govukTable(vm.assessmentSummaryTable | translate) }}
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h2 class="govuk-heading-m">{{ t('pages.poa.checkYourDetails.cya.title') }}</h2>
+      {{ govukSummaryList(vm.profitCostDetailsSummaryList | translate) }}
+      {{ govukSummaryList(vm.profitCostBillLineSummaryList | translate) }}
+      {{ govukSummaryList(vm.evidenceSummaryList | translate) }}
     </div>
   </div>
 {% endblock %}

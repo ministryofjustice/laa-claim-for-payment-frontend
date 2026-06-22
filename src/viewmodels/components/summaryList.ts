@@ -1,7 +1,4 @@
-import type {
-  Message,
-  TextOrMessage,
-} from "#src/viewmodels/components/message.js";
+import type { TextOrMessage } from "#src/viewmodels/components/message.js";
 
 export interface SummaryList {
   card?: SummaryCard;
@@ -22,7 +19,7 @@ interface SummaryListRowActions {
 interface SummaryListRowActionItem {
   href: string;
   text: TextOrMessage;
-  visuallyHiddenText: Message;
+  visuallyHiddenText: TextOrMessage;
 }
 
 interface SummaryCard {
@@ -40,28 +37,82 @@ interface SummaryCard {
  * @returns {SummaryList} a summary list with card
  */
 export function buildSummaryListWithCard(
-  cardTitle: string,
+  cardTitle: TextOrMessage,
   cardId: string,
   summaryListRows: SummaryListRow[],
-  cardAction?: SummaryListRowActionItem
-): SummaryList{
+  cardAction?: SummaryListRowActionItem,
+): SummaryList {
   return {
     card: {
       title: {
-        text: {
-          key: cardTitle
-        }
+        text: cardTitle,
       },
-      actions: cardAction == null ? undefined : {
-        items: [ cardAction ]
-      },
+      actions:
+        cardAction == null
+          ? undefined
+          : {
+              items: [cardAction],
+            },
       attributes: {
-        id: cardId
-      }
+        id: cardId,
+      },
     },
     rows: summaryListRows,
     attributes: {
-      id: `${cardId}-rows`
-    }
+      id: `${cardId}-rows`,
+    },
+  };
+}
+
+/**
+ * Summary list row builder.
+ * @param {string} key row key
+ * @param {string} value row value
+ * @returns {SummaryListRow} a summary list row
+ */
+export function buildSummaryListRow(
+  key: TextOrMessage,
+  value: string,
+): SummaryListRow {
+  return {
+    key: {
+      text: key,
+    },
+    value: {
+      text: value,
+    },
+  };
+}
+
+/**
+ * Summary list row with change link builder.
+ * @param {string} key row key
+ * @param {string} value row value
+ * @param {string} href row change link href
+ * @returns {SummaryListRow} a summary list row with change link
+ */
+export function buildSummaryListRowWithChangeLink(
+  key: TextOrMessage,
+  value: string,
+  href: string,
+): SummaryListRow {
+  return {
+    key: {
+      text: key,
+    },
+    value: {
+      text: value,
+    },
+    actions: {
+      items: [
+        {
+          href,
+          text: {
+            key: "common.change",
+          },
+          visuallyHiddenText: key,
+        },
+      ],
+    },
   };
 }
