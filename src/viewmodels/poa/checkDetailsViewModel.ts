@@ -1,16 +1,6 @@
 import type { Claim } from "#src/types/Claim.js";
-import {
-  formatClaimed,
-  formatClaimId,
-  formatDate,
-  formatOptionalString,
-} from "#src/helpers/index.js";
-import type { SummaryListRow } from "../components/summaryList.js";
-import { Table } from "#src/viewmodels/components/table.js";
-import type {
-  TableCell,
-  TableHeader,
-} from "#src/viewmodels/components/index.js";
+import type { Table } from "#src/viewmodels/components/table.js";
+import type { TableCell, TableHeader } from "#src/viewmodels/components/index.js";
 
 /**
  *

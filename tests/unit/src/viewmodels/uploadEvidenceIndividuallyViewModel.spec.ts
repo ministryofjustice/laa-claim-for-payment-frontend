@@ -6,51 +6,63 @@ describe("ClaimViewModel constructor()", () => {
   it("builds the bill narrative rows", () => {
     const vm = new UploadEvidenceIndividuallyViewModel(claim5);
 
-    expect(vm.billNarrativeTasks[0].link.text).to.equal("Bill narrative");
-    expect(vm.billNarrativeTasks[0].link.href).to.equal("/claims/5/upload-evidence-individually/1/file-upload");
-    expect(vm.billNarrativeTasks[0].tag).to.deep.equal({
-      text: {
-        key: "common.uploadStatus.uploaded",
-      },
-      classes: "govuk-tag--green",
+    expect(vm.billNarrativeTaskList.idPrefix).to.equal("bill-narrative");
+    expect(vm.billNarrativeTaskList.attributes.id).to.equal("bill-narrative");
+    expect(vm.billNarrativeTaskList.items[0].title.text).to.equal("Bill narrative");
+    expect(vm.billNarrativeTaskList.items[0].href).to.equal("/claims/5/upload-evidence-individually/1/file-upload");
+    expect(vm.billNarrativeTaskList.items[0].status).to.deep.equal({
+      tag: {
+        text: {
+          key: "common.uploadStatus.uploaded",
+        },
+        classes: "govuk-tag--green",
+      }
     });
   });
 
   it("builds the work items rows", () => {
     const vm = new UploadEvidenceIndividuallyViewModel(claim5);
 
-    expect(vm.workItemsTasks[0].link.text).to.deep.equal({
+    expect(vm.workItemsTaskList.idPrefix).to.equal("work-items");
+    expect(vm.workItemsTaskList.attributes.id).to.equal("work-items");
+    expect(vm.workItemsTaskList.items[0].title.text).to.deep.equal({
       key: "common.onDate",
       args: {
         title: "Interim hearing",
         date: "20 December 2023",
       },
     });
-    expect(vm.workItemsTasks[0].link.href).to.equal("/claims/5/upload-evidence-individually/2/file-upload");
-    expect(vm.workItemsTasks[0].tag).to.deep.equal({
-      text: {
-        key: "common.uploadStatus.notUploaded",
-      },
-      classes: "govuk-tag--blue",
+    expect(vm.workItemsTaskList.items[0].href).to.equal("/claims/5/upload-evidence-individually/2/file-upload");
+    expect(vm.workItemsTaskList.items[0].status).to.deep.equal({
+      tag: {
+        text: {
+          key: "common.uploadStatus.notUploaded",
+        },
+        classes: "govuk-tag--blue",
+      }
     });
   });
 
   it("builds the disbursements rows", () => {
     const vm = new UploadEvidenceIndividuallyViewModel(claim5);
 
-    expect(vm.disbursementsTasks[0].link.text).to.deep.equal({
+    expect(vm.disbursementsTaskList.idPrefix).to.equal("disbursements");
+    expect(vm.disbursementsTaskList.attributes.id).to.equal("disbursements");
+    expect(vm.disbursementsTaskList.items[0].title.text).to.deep.equal({
       key: "common.onDate",
       args: {
         title: "Enquiry agent",
         date: "13 January 2023",
       },
     });
-    expect(vm.disbursementsTasks[0].link.href).to.equal("/claims/5/upload-evidence-individually/3/file-upload");
-    expect(vm.disbursementsTasks[0].tag).to.deep.equal({
-      text: {
-        key: "common.uploadStatus.notUploaded",
-      },
-      classes: "govuk-tag--blue",
+    expect(vm.disbursementsTaskList.items[0].href).to.equal("/claims/5/upload-evidence-individually/3/file-upload");
+    expect(vm.disbursementsTaskList.items[0].status).to.deep.equal({
+      tag: {
+        text: {
+          key: "common.uploadStatus.notUploaded",
+        },
+        classes: "govuk-tag--blue",
+      }
     });
   });
 });

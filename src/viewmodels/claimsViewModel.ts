@@ -3,8 +3,8 @@ import type { TableCell } from "#src/viewmodels/components/index.js";
 import { formatClaimed, formatClaimId, formatDate, formatOptionalString } from "#src/helpers/index.js";
 import { Pagination } from "./components/pagination.js";
 import type { PaginationMeta } from "#src/types/api-types.js";
-import { Table } from "#src/viewmodels/components/table.js";
-import { SortedTableHeader } from "#src/viewmodels/components/tableHeader.js";
+import type { Table } from "#src/viewmodels/components/table.js";
+import type { SortedTableHeader } from "#src/viewmodels/components/tableHeader.js";
 
 /**
  *

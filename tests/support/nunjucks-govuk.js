@@ -2,6 +2,7 @@
 import * as path from "path";
 import * as fs from "fs";
 import { createRequire } from "module";
+import { translate } from "#utils/nunjucksSetup.js";
 
 const require = createRequire(import.meta.url);
 const nunjucks = require("nunjucks");
@@ -40,8 +41,12 @@ export function setupNunjucksForGovUk() {
   // Minimal global your base.njk needed
   env.addGlobal("getAsset", (p) => `/assets/${p}`);
 
+  const t = (key, _args) => key;
+
   //add t for i18n content rendering
-  env.addGlobal("t", (key) => key);
+  env.addGlobal("t", t);
+
+  env.addFilter("translate", (key) => translate(key, t));
 
   return env;
 }

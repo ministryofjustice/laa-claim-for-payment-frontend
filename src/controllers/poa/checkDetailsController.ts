@@ -1,6 +1,5 @@
 import { claimService } from "#src/services/claimService.js";
 import type { NextFunction, Request, Response } from "express";
-import { ClaimViewModel } from "#src/viewmodels/claimViewModel.js";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
 

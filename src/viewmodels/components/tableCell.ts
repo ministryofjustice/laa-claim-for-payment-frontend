@@ -1,4 +1,4 @@
-import { TextOrMessage } from "#src/viewmodels/components/message.js";
+import type { TextOrMessage } from "#src/viewmodels/components/message.js";
 
 export interface TableCell {
   text?: TextOrMessage;
