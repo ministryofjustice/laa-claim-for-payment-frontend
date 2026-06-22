@@ -8,7 +8,11 @@ import { getClaimSuccessResponseData } from "#tests/assets/getClaimsResponseData
 import { ApiResponse } from "#src/types/api-types.js";
 import { Claim } from "#src/types/Claim.js";
 import { HttpError } from "http-errors";
-import { checkYourDetailsPage } from "#src/controllers/poa/checkDetailsController.js";
+import {
+  checkYourDetailsPage,
+  submitYourDetails,
+} from "#src/controllers/poa/checkDetailsController.js";
+import { ROUTES } from "#routes/helper.js";
 
 describe("Check Details Controller", () => {
   let req: Partial<Request>;
@@ -83,6 +87,19 @@ describe("Check Details Controller", () => {
       expect(next.calledOnce).to.be.true;
       expect(next.firstCall.args[0]).to.be.instanceOf(Error);
       expect(next.firstCall.args[0].message).to.include("API Error");
+    });
+
+    it("should redirect to success page with claimId", () => {
+      submitYourDetails(req as Request, res as Response, next);
+
+      const expectedRoute = ROUTES.POA_SUBMISSION_SUCCESSFUL.replace(
+        ":claimId",
+        "1",
+      );
+
+      expect(res.redirect.calledOnce).to.be.true;
+      expect(res.redirect.calledWith(expectedRoute)).to.be.true;
+      expect(next.notCalled).to.be.true;
     });
   });
 });

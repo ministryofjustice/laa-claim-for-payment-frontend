@@ -16,7 +16,10 @@ import { numberOfClientsStartOfCase, submitNumberOfClientsStartOfCase } from "#s
 import { poaSubmissionSuccessfulPage } from "#src/controllers/poa/submissionSuccessfulController.js";
 import { escapingFixedFee, submitEscapingFixedFee } from "#src/controllers/poa/escapingFixedFeeController.js";
 import { profitCostBillLine, submitProfitCostBillLine } from "#src/controllers/poa/profitCostBillLineController.js";
-import { checkYourDetailsPage } from "#src/controllers/poa/checkDetailsController.js";
+import {
+  checkYourDetailsPage,
+  submitYourDetails,
+} from "#src/controllers/poa/checkDetailsController.js";
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -206,6 +209,10 @@ router.post(
 
 router.get(ROUTES.POA_CHECK_YOUR_DETAILS, limiter, async function(req: Request, res: Response, next: NextFunction): Promise<void> {
   await checkYourDetailsPage(req, res, next);
+});
+
+router.post(ROUTES.POA_CHECK_YOUR_DETAILS, limiter, function(req: Request, res: Response, next: NextFunction): void {
+  submitYourDetails(req, res, next);
 });
 
 router.get(ROUTES.POA_SUBMISSION_SUCCESSFUL, limiter, function(req: Request, res: Response, next: NextFunction): void {

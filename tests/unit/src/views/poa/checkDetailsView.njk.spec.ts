@@ -26,6 +26,13 @@ describe("views/main/poa/checkDetailsView.njk", () => {
     expect(back).to.have.length(0);
   });
 
+  it("renders an h1", () => {
+    const h1s = $("#main-content h1");
+    expect(h1s).to.have.length(1);
+    const h1 = h1s.first();
+    expect(h1.text().trim()).to.equal("pages.poa.checkYourDetails.title");
+  });
+
   describe("Assessment summary", () => {
     it("renders the assessment summary table", () => {
       const table = $("table.govuk-table");
@@ -45,8 +52,7 @@ describe("views/main/poa/checkDetailsView.njk", () => {
 
   describe("Check your answers", () => {
     it("renders the check your answers heading", () => {
-      const heading = $("#main-content > .govuk-grid-row:last-child h2.govuk-heading-m")
-        .first();
+      const heading = $("#main-content h2").first();
 
       expect(heading.text().trim()).to.equal(
         "pages.poa.checkYourDetails.cya.title",
