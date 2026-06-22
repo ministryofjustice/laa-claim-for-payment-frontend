@@ -25,9 +25,9 @@ export async function checkYourDetailsPage(
 
       res.render("main/poa/checkDetailsView.njk", { vm });
     } else {
-      next(processApiError(response, `fetching details for user`));
+      next(processApiError(response, `fetching claim details for user`));
     }
   } catch (error) {
-    next(processError(error, `fetching details for user`));
+    next(processError(error, `fetching claim details for user`));
   }
 }
