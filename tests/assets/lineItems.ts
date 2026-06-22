@@ -3,7 +3,8 @@ import { Category, type EvidenceItem, type LineItem } from "#src/types/Claim.js"
 export const evidenceItem: EvidenceItem = {
   id: 1,
   fileKey: "evidence1.pdf",
-  fileSize: 1000
+  fileSize: 1000,
+  submittedOn: new Date("2026-06-17T14:34:01.226855Z"),
 }
 
 export const billNarrativeLineItem: LineItem = {

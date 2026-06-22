@@ -26,43 +26,43 @@ export class ClaimViewModel {
 
     rows.push({ key: { text: "Claim ID" }, value: { text: String(claim.id) } });
 
-    if (claim.ufn !== undefined && claim.ufn !== "") {
+    if (claim.ufn != null && claim.ufn !== "") {
       rows.push({ key: { text: "UFN" }, value: { text: claim.ufn } });
     }
 
-    if (claim.client !== undefined) {
+    if (claim.client != null) {
       rows.push({
         key: { text: "Client" },
         value: { text: formatOptionalString(claim.client) },
       });
     }
 
-    if (claim.category !== undefined) {
+    if (claim.category != null) {
       rows.push({
         key: { text: "Category" },
         value: { text: formatOptionalString(claim.category) },
       });
     }
 
-    if (claim.concluded !== undefined) {
+    if (claim.concluded != null) {
       rows.push({
         key: { text: "Concluded" },
-        value: { text: formatDate(new Date(claim.concluded)) },
+        value: { text: formatDate(claim.concluded) },
       });
     }
 
-    if (claim.feeType !== undefined) {
+    if (claim.feeType != null) {
       rows.push({ key: { text: "Fee type" }, value: { text: claim.feeType } });
     }
 
-    if (claim.claimed !== undefined) {
+    if (claim.claimed != null) {
       rows.push({
         key: { text: "Claimed" },
         value: { text: formatClaimed(claim.claimed) },
       });
     }
 
-    if (claim.submissionId !== undefined) {
+    if (claim.submissionId != null) {
       const href = `/submissions/${encodeURIComponent(claim.submissionId)}`;
       rows.push({
         key: { text: "Submission" },

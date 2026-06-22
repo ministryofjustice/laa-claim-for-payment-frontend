@@ -2,7 +2,7 @@ import { buildRoute, ROUTES } from "#routes/helper.js";
 import { formatDateReadable } from "#src/helpers/dataFormatters.js";
 import { Category, type Claim, type EvidenceItem, type LineItem } from "#src/types/Claim.js";
 import type { Message } from "#src/viewmodels/components/message.js";
-import type { ReusableDocument } from "#src/viewmodels/components/evidence.js";
+import type { ReusableDocument } from "#src/viewmodels/components/taskList.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 
 /**

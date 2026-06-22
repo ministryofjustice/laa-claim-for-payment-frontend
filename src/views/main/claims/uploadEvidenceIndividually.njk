@@ -1,6 +1,5 @@
 {% from "components/backLink.njk" import backLink %}
 {% from "govuk/components/task-list/macro.njk" import govukTaskList %}
-{% from "components/taskList.njk" import taskList %}
 
 {% extends "base.njk" %}
 
@@ -23,19 +22,19 @@
       <p class="govuk-body">{{ t('pages.uploadEvidenceIndividually.namingFiles.p1') }}</p>
       <p class="govuk-body">{{ t('pages.uploadEvidenceIndividually.namingFiles.p2') }}</p>
 
-      {% if vm.billNarrativeTasks.length %}
+      {% if vm.billNarrativeTaskList.items.length %}
         <h2 class="govuk-heading-m">{{ t('pages.uploadEvidenceIndividually.billNarrative.h2') }}</h2>
-        {{ taskList(t, vm.billNarrativeTasks, "bill-narrative") }}
+        {{ govukTaskList(vm.billNarrativeTaskList | translate) }}
       {% endif %}
 
-      {% if vm.workItemsTasks.length %}
+      {% if vm.workItemsTaskList.items.length %}
         <h2 class="govuk-heading-m">{{ t('pages.uploadEvidenceIndividually.workItems.h2') }}</h2>
-        {{ taskList(t, vm.workItemsTasks, "work-items") }}
+        {{ govukTaskList(vm.workItemsTaskList | translate) }}
       {% endif %}
 
-      {% if vm.disbursementsTasks.length %}
+      {% if vm.disbursementsTaskList.items.length %}
         <h2 class="govuk-heading-m">{{ t('pages.uploadEvidenceIndividually.disbursements.h2') }}</h2>
-        {{ taskList(t, vm.disbursementsTasks, "disbursements") }}
+        {{ govukTaskList(vm.disbursementsTaskList | translate) }}
       {% endif %}
 
       <div class="govuk-button-group">

@@ -2,6 +2,8 @@ import nunjucks from "nunjucks";
 import path from "node:path";
 import type { Application } from "express";
 import { getLatestBuildFile } from "./buildHelper.js";
+import type { TFunction } from "#node_modules/i18next/index.js";
+import type { Message } from "#src/viewmodels/components/message.js";
 
 /**
  * Sets up Nunjucks as the template engine for the given Express application.
@@ -45,4 +47,56 @@ export const nunjucksSetup = (app: Application): void => {
       watch: true, // Watch for changes in template files during development
     }
   );
+
+  app.use((req, res, next) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
+    const env = app.get("nunjucksEnv") as nunjucks.Environment;
+
+    // add custom filters here
+    env.addFilter("translate", (value: unknown) => translate(value, req.t));
+
+    next();
+  });
 };
+
+/**
+ * Recursive translation of object
+ * @param {unknown} value the value to resolve
+ * @param {TFunction} t the translation function
+ * @returns {unknown} the resolved object
+ */
+export function translate(value: unknown, t: TFunction): unknown {
+  if (isMessage(value)) {
+    return t(value.key, value.args);
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(v => translate(v, t));
+  }
+
+  if (value != null && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+
+    for (const [k, v] of Object.entries(value)) {
+      out[k] = translate(v, t);
+    }
+
+    return out;
+  }
+
+  return value;
+}
+
+function isMessage(value: unknown): value is Message {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
+  const record = value as Record<string, unknown>;
+
+  return (
+    typeof record.key === "string" &&
+    (record.args === undefined || typeof record.args === "object")
+  );
+}
