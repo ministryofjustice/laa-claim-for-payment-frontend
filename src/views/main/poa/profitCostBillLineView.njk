@@ -34,9 +34,9 @@
     <form method="post">
       <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
-      <h1 class="govuk-heading-xl">
+      <h2 class="govuk-heading-l">
         {{ t("pages.profitCostBillLine.title") }}
-      </h1>
+      </h2>
 
       {{ govukDateInput({
         id: "activityDate",
@@ -57,19 +57,19 @@
             name: "activityDateDay",
             value: vm.form.activityDateDay,
             classes: "govuk-input--width-2",
-            label: t("common.day")
+            label: t("pages.profitCostBillLine.activityDate.day")
           },
           {
             name: "activityDateMonth",
             value: vm.form.activityDateMonth,
             classes: "govuk-input--width-2",
-            label: t("common.month")
+            label: t("pages.profitCostBillLine.activityDate.month")
           },
           {
             name: "activityDateYear",
             value: vm.form.activityDateYear,
             classes: "govuk-input--width-4",
-            label: t("common.year")
+            label: t("pages.profitCostBillLine.activityDate.year")
           }
         ]
       }) }}
@@ -78,6 +78,7 @@
         id: "actualNetProfitCostExcludingAdvocacy",
         name: "actualNetProfitCostExcludingAdvocacy",
         value: vm.form.actualNetProfitCostExcludingAdvocacy,
+        classes: "govuk-input--width-5",
         label: {
           text: t("pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.title"),
           classes: "govuk-label--m"
@@ -95,6 +96,7 @@
         id: "actualNetAdvocacyCosts",
         name: "actualNetAdvocacyCosts",
         value: vm.form.actualNetAdvocacyCosts,
+        classes: "govuk-input--width-5",
         label: {
           text: t("pages.profitCostBillLine.actualNetAdvocacyCosts.title"),
           classes: "govuk-label--m"
