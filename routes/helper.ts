@@ -18,6 +18,7 @@ export const ROUTES = {
   ESCAPING_FIXED_FEE: '/claims/:claimId/poa/escaping-standard-fixed-fee',
   NUMBER_OF_CLIENTS_START_OF_CASE: '/claims/:claimId/poa/number-of-clients-start-of-case',
   POA_SUBMISSION_SUCCESSFUL: '/claims/:claimId/poa-submitted',
+  POA_EVIDENCE_UPLOAD: '/claims/:claimId/poa/:lineItemId/evidence-upload',
   CPGFS_PROFIT_COST_BILL_LINE: '/claims/:claimId/poa/cpgfs-profit-cost-bill-line',
 } as const;
 

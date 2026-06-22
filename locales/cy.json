@@ -259,6 +259,60 @@
       "error": {
         "empty": "Select yes if you wish to escape the standard fixed fee"
       }
+    },
+    "profitCostBillLine": {
+      "title": "POA CPGFS profit cost bill line",
+      "activityDate": {
+        "title": "Activity date",
+        "hint": "For example, 27 3 2007",
+        "day": "Day",
+        "month": "Month",
+        "year": "Year",
+        "errors": {
+          "empty": "Enter the activity date",
+          "invalid": "Activity date must be a real date",
+          "future": "Activity date must be today or in the past",
+          "incomplete": {
+            "day": "Activity date must include a day",
+            "month": "Activity date must include a month",
+            "year": "Activity date must include a year",
+            "dayAndMonth": "Activity date must include a day and month",
+            "dayAndYear": "Activity date must include a day and year",
+            "monthAndYear": "Activity date must include a month and year"
+          }
+        }
+      },
+      "actualNetProfitCostExcludingAdvocacy": {
+        "title": "Actual net profit cost excluding advocacy",
+        "errors": {
+          "empty": "Enter actual net profit cost excluding advocacy",
+          "invalid": "Actual net profit cost excluding advocacy must be a number",
+          "pence": "Actual net profit cost excluding advocacy must include pence, like 123.45 or 156.00."
+        }
+      },
+      "actualNetAdvocacyCosts": {
+        "title": "Actual net advocacy costs",
+        "errors": {
+          "empty": "Enter actual net advocacy costs",
+          "invalid": "Actual net advocacy costs must be a number",
+          "pence": "Actual net advocacy costs must include pence, like 123.45 or 156.00."
+        }
+      },
+      "vatApplies": {
+        "title": "Does VAT apply?",
+        "yes": "Yes",
+        "no": "No",
+        "errors": {
+          "empty": "Select yes if VAT applies."
+        }
+      },
+      "feeEarnerName": {
+        "title": "Fee earner name",
+        "errors": {
+          "empty": "Enter a fee earner name",
+          "invalid": "Fee earner name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
+        }
+      }
     }
   },
 
