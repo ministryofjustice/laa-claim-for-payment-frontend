@@ -11,7 +11,7 @@ export class ProfitCostBillLinePage extends BasePage {
    * @param {Page} page The Playwright page instance.
    */
   constructor(page: Page) {
-    super(page, "claims/1/poa/profit-cost-bill-line");
+    super(page, "claims/1/poa/cpgfs-profit-cost-bill-line");
   }
 
   /**

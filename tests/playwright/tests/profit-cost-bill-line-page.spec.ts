@@ -38,7 +38,7 @@ test.describe("Profit cost bill line page", () => {
     await profitCostBillLinePage.fillValidForm();
     await profitCostBillLinePage.saveAndContinueButton.click();
 
-    await expect(page).toHaveURL(/\/claims\/1\/poa\/evidence-upload$/);
+    await expect(page).toHaveURL(/\/claims\/1\/poa\/:lineItemId\/evidence-upload$/);
   });
 
   test("shows validation errors when empty form is submitted", async ({ page }) => {
