@@ -15,6 +15,7 @@ import { multipleClientHearings, submitMultipleClientHearings } from "#src/contr
 import { numberOfClientsStartOfCase, submitNumberOfClientsStartOfCase } from "#src/controllers/poa/numberOfClientsStartOfCaseController.js";
 import { poaSubmissionSuccessfulPage } from "#src/controllers/poa/submissionSuccessfulController.js";
 import { escapingFixedFee, submitEscapingFixedFee } from "#src/controllers/poa/escapingFixedFeeController.js";
+import { profitCostBillLine, submitProfitCostBillLine } from "#src/controllers/poa/profitCostBillLineController.js";
 import { checkYourDetailsPage } from "#src/controllers/poa/checkDetailsController.js";
 
 const limiter = rateLimit({
@@ -107,15 +108,6 @@ router.post(
   continueFromFileUpload,
 );
 
-
-router.get(ROUTES.HOW_MANY_CLIENTS_RETAINED, limiter, function (req: Request, res: Response, next: NextFunction): void {
-  howManyClientsRetained(req, res, next);
-});
-
-router.post(ROUTES.HOW_MANY_CLIENTS_RETAINED, limiter, function (req: Request, res: Response, next: NextFunction): void {
-  submitHowManyClientsRetained(req, res, next);
-});
-
 router.get(
   ROUTES.HOW_MANY_CLIENTS_RETAINED,
   limiter,
@@ -169,6 +161,22 @@ router.post(
   limiter,
   function (req: Request, res: Response, next: NextFunction): void {
     submitMultipleClientHearings(req, res, next);
+  },
+);
+
+router.get(
+  ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
+  limiter,
+  function (req: Request, res: Response, next: NextFunction): void {
+    profitCostBillLine(req, res, next);
+  },
+);
+
+router.post(
+  ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
+  limiter,
+  function (req: Request, res: Response, next: NextFunction): void {
+    submitProfitCostBillLine(req, res, next);
   },
 );
 

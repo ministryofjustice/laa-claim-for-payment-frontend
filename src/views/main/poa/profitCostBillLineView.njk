@@ -1,0 +1,163 @@
+{% from "components/backLink.njk" import backLink %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% extends "base.njk" %}
+
+{% set title = t(vm.title) %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {{ backLink(t) }}
+
+    {% if vm.errorList.length > 0 %}
+      {% set translatedErrorList = [] %}
+
+      {% for error in vm.errorList %}
+        {% set translatedErrorList = (translatedErrorList.push({
+          text: t(error.text),
+          href: error.href
+        }), translatedErrorList) %}
+      {% endfor %}
+
+      {{ govukErrorSummary({
+        titleText: t("common.errorSummaryTitle"),
+        errorList: translatedErrorList
+      }) }}
+    {% endif %}
+
+    <form method="post">
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+      <h1 class="govuk-heading-xl">
+        {{ t("pages.profitCostBillLine.title") }}
+      </h1>
+
+      {{ govukDateInput({
+        id: "activityDate",
+        fieldset: {
+          legend: {
+            text: t("pages.profitCostBillLine.activityDate.title"),
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        hint: {
+          text: t("pages.profitCostBillLine.activityDate.hint")
+        },
+        errorMessage: vm.form.activityDateError and {
+          text: t(vm.form.activityDateError.text)
+        },
+        items: [
+          {
+            name: "activityDateDay",
+            value: vm.form.activityDateDay,
+            classes: "govuk-input--width-2",
+            label: t("common.day")
+          },
+          {
+            name: "activityDateMonth",
+            value: vm.form.activityDateMonth,
+            classes: "govuk-input--width-2",
+            label: t("common.month")
+          },
+          {
+            name: "activityDateYear",
+            value: vm.form.activityDateYear,
+            classes: "govuk-input--width-4",
+            label: t("common.year")
+          }
+        ]
+      }) }}
+
+      {{ govukInput({
+        id: "actualNetProfitCostExcludingAdvocacy",
+        name: "actualNetProfitCostExcludingAdvocacy",
+        value: vm.form.actualNetProfitCostExcludingAdvocacy,
+        label: {
+          text: t("pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.title"),
+          classes: "govuk-label--m"
+        },
+        errorMessage: vm.form.actualNetProfitCostExcludingAdvocacyError and {
+          text: t(vm.form.actualNetProfitCostExcludingAdvocacyError.text)
+        },
+        prefix: {
+          text: "£"
+        },
+        inputmode: "decimal"
+      }) }}
+
+      {{ govukInput({
+        id: "actualNetAdvocacyCosts",
+        name: "actualNetAdvocacyCosts",
+        value: vm.form.actualNetAdvocacyCosts,
+        label: {
+          text: t("pages.profitCostBillLine.actualNetAdvocacyCosts.title"),
+          classes: "govuk-label--m"
+        },
+        errorMessage: vm.form.actualNetAdvocacyCostsError and {
+          text: t(vm.form.actualNetAdvocacyCostsError.text)
+        },
+        prefix: {
+          text: "£"
+        },
+        inputmode: "decimal"
+      }) }}
+
+      {{ govukRadios({
+        name: "vatApplies",
+        fieldset: {
+          legend: {
+            text: t("pages.profitCostBillLine.vatApplies.title"),
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        errorMessage: vm.form.vatAppliesError and {
+          text: t(vm.form.vatAppliesError.text)
+        },
+        items: [
+          {
+            value: "yes",
+            text: t("common.yes"),
+            checked: vm.form.vatApplies === "yes"
+          },
+          {
+            value: "no",
+            text: t("common.no"),
+            checked: vm.form.vatApplies === "no"
+          }
+        ]
+      }) }}
+
+      {{ govukInput({
+        id: "feeEarnerName",
+        name: "feeEarnerName",
+        value: vm.form.feeEarnerName,
+        label: {
+          text: t("pages.profitCostBillLine.feeEarnerName.title"),
+          classes: "govuk-label--m"
+        },
+        errorMessage: vm.form.feeEarnerNameError and {
+          text: t(vm.form.feeEarnerNameError.text)
+        }
+      }) }}
+
+      <div class="govuk-button-group">
+        {{ govukButton({
+          text: t("common.saveAndContinue")
+        }) }}
+
+        <a href="#" class="govuk-button govuk-button--secondary">
+          {{ t("common.saveAndComeBackLater") }}
+        </a>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+{% endblock %}

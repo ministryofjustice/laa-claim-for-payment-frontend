@@ -4753,10 +4753,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next-http-middleware@npm:3.9.3":
-  version: 3.9.3
-  resolution: "i18next-http-middleware@npm:3.9.3"
-  checksum: 10c0/20932c73ed18e89ccd20122820e9e0549103f5460f978698cc2494821264b125ec9f0c9788ece295d14cb047a3500d57b15cf0d0699b5e51efe68ef9d0191b15
+"i18next-http-middleware@npm:3.9.7":
+  version: 3.9.7
+  resolution: "i18next-http-middleware@npm:3.9.7"
+  checksum: 10c0/a018e2024783d39e7f9e408323acf4059bde5293c868e1d5adac3a0249a0f02632914554a10cfa8f7f683c2c6eb65c7e0bd4daf0fbc7881c9c286deb747cefe9
   languageName: node
   linkType: hard
 
@@ -5840,7 +5840,7 @@ __metadata:
     helmet: "npm:^8.1.0"
     http-errors: "npm:~2.0.1"
     i18next: "npm:^25.6.0"
-    i18next-http-middleware: "npm:3.9.3"
+    i18next-http-middleware: "npm:3.9.7"
     jsdom: "npm:^27.3.0"
     libphonenumber-js: "npm:^1.12.24"
     livereload: "npm:^0.10.2"
