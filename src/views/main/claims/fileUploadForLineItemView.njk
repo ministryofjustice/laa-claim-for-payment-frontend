@@ -7,11 +7,10 @@
 {%- from "govuk/components/button/macro.njk" import govukButton -%}
 {%- from "govuk/components/error-summary/macro.njk" import govukErrorSummary -%}
 {%- from "moj/components/multi-file-upload/macro.njk" import mojMultiFileUpload -%}
-{% from "components/renderTextOrMessage.njk" import renderTextOrMessage %}
 
 {% extends "base.njk" %}
 
-{% set title = renderTextOrMessage(t, vm.title) %}
+{% set title = vm.title | translate %}
 
 {% set uploadedItems = [] %}
 
@@ -111,7 +110,7 @@
       {{ backLink(t) }}
 
       <h1 class="govuk-heading-xl">
-        {{ renderTextOrMessage(t, vm.title) }}
+        {{ vm.title | translate }}
       </h1>
 
       <p class="govuk-body">
