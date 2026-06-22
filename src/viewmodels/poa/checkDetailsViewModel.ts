@@ -9,6 +9,13 @@ import {
   type SummaryListRow
 } from "#src/viewmodels/components/summaryList.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
+import { buildRoute, ROUTES } from "#routes/helper.js";
+import {
+  clientStatusFieldName,
+  courtTypeFieldName,
+  firstSolicitorFieldName,
+  transferOfSolicitorFieldName,
+} from "#src/viewmodels/profitCostDetails/profitCostDetailsFields.js";
 
 /**
  *
@@ -24,6 +31,7 @@ export class CheckDetailsViewModel {
    * @param {Claim} claim Array of claims
    */
   constructor(claim: Claim) {
+    const { id: claimId } = claim;
     this.assessmentSummaryTable = {
       caption: {
         key: "pages.poa.checkYourDetails.assessmentSummary.title"
@@ -41,37 +49,37 @@ export class CheckDetailsViewModel {
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.courtType" },
           "Circuit/district judge",
-          "#"
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${courtTypeFieldName}`
         ),
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientPartyStatus" },
           "Child",
-          "#"
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${clientStatusFieldName}`
         ),
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.firstSolicitor" },
           "Yes",
-          "#"
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${firstSolicitorFieldName}`
         ),
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.transferOfSolicitor" },
           "Yes",
-          "#"
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${transferOfSolicitorFieldName}`
         ),
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientsRetained" },
           "1",
-          "#"
+          buildRoute(ROUTES.HOW_MANY_CLIENTS_RETAINED, { claimId })
         ),
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.attendedHearings" },
           "Yes",
-          "#"
+          buildRoute(ROUTES.MULTIPLE_CLIENT_HEARINGS, { claimId })
         ),
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.escapedStandardFixedFee" },
           "No",
-          "#"
+          buildRoute(ROUTES.ESCAPING_FIXED_FEE, { claimId })
         )
       ]
     );
@@ -102,7 +110,7 @@ export class CheckDetailsViewModel {
         )
       ],
       {
-        href: "#",
+        href: buildRoute(ROUTES.CPGFS_PROFIT_COST_BILL_LINE, { claimId }),
         text: {
           key: "common.change"
         },

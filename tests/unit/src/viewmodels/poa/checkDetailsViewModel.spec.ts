@@ -3,7 +3,7 @@ import type { Claim } from "#src/types/Claim.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
 
-describe("ClaimViewModel constructor()", () => {
+describe("CheckDetailsViewModel constructor()", () => {
   it("builds the assessment summary table", () => {
     const claim: Claim = getClaimsSuccessResponseData.body!.data![0]!;
     const vm = new CheckDetailsViewModel(claim);
@@ -70,7 +70,7 @@ describe("ClaimViewModel constructor()", () => {
     ).to.deep.equal({ key: "common.change" });
     expect(
       vm.profitCostDetailsSummaryList.rows[0].actions?.items[0].href,
-    ).to.equal("#");
+    ).to.equal("/claims/1/poa/profit-cost-details#courtTypeChoice");
 
     expect(vm.profitCostDetailsSummaryList.rows[1].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientPartyStatus",
@@ -86,7 +86,7 @@ describe("ClaimViewModel constructor()", () => {
     ).to.deep.equal({ key: "common.change" });
     expect(
       vm.profitCostDetailsSummaryList.rows[1].actions?.items[0].href,
-    ).to.equal("#");
+    ).to.equal("/claims/1/poa/profit-cost-details#clientStatusChoice");
 
     expect(vm.profitCostDetailsSummaryList.rows[2].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.firstSolicitor",
@@ -100,7 +100,7 @@ describe("ClaimViewModel constructor()", () => {
     ).to.deep.equal({ key: "common.change" });
     expect(
       vm.profitCostDetailsSummaryList.rows[2].actions?.items[0].href,
-    ).to.equal("#");
+    ).to.equal("/claims/1/poa/profit-cost-details#firstSolicitorChoice");
 
     expect(vm.profitCostDetailsSummaryList.rows[3].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.transferOfSolicitor",
@@ -114,7 +114,7 @@ describe("ClaimViewModel constructor()", () => {
     ).to.deep.equal({ key: "common.change" });
     expect(
       vm.profitCostDetailsSummaryList.rows[3].actions?.items[0].href,
-    ).to.equal("#");
+    ).to.equal("/claims/1/poa/profit-cost-details#transferOfSolicitorChoice");
 
     expect(vm.profitCostDetailsSummaryList.rows[4].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientsRetained",
@@ -128,7 +128,7 @@ describe("ClaimViewModel constructor()", () => {
     ).to.deep.equal({ key: "common.change" });
     expect(
       vm.profitCostDetailsSummaryList.rows[4].actions?.items[0].href,
-    ).to.equal("#");
+    ).to.equal("/claims/1/poa/how-many-clients-retained");
 
     expect(vm.profitCostDetailsSummaryList.rows[5].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.attendedHearings",
@@ -142,7 +142,7 @@ describe("ClaimViewModel constructor()", () => {
     ).to.deep.equal({ key: "common.change" });
     expect(
       vm.profitCostDetailsSummaryList.rows[5].actions?.items[0].href,
-    ).to.equal("#");
+    ).to.equal("/claims/1/poa/multiple-client-hearings");
 
     expect(vm.profitCostDetailsSummaryList.rows[6].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.escapedStandardFixedFee",
@@ -156,7 +156,7 @@ describe("ClaimViewModel constructor()", () => {
     ).to.deep.equal({ key: "common.change" });
     expect(
       vm.profitCostDetailsSummaryList.rows[6].actions?.items[0].href,
-    ).to.equal("#");
+    ).to.equal("/claims/1/poa/escaping-standard-fixed-fee");
   });
 
   it("builds the profit cost bill line summary list", () => {
@@ -169,6 +169,12 @@ describe("ClaimViewModel constructor()", () => {
     expect(
       vm.profitCostBillLineSummaryList.card?.actions?.items.length,
     ).to.equal(1);
+    expect(
+      vm.profitCostBillLineSummaryList.card?.actions?.items[0].text
+    ).to.deep.equal({ key: "common.change" });
+    expect(
+      vm.profitCostBillLineSummaryList.card?.actions?.items[0].href
+    ).to.equal("/claims/1/poa/cpgfs-profit-cost-bill-line");
     expect(vm.profitCostBillLineSummaryList.attributes.id).to.equal(
       "profit-cost-bill-line-rows",
     );
@@ -223,6 +229,12 @@ describe("ClaimViewModel constructor()", () => {
     expect(vm.evidenceSummaryList.card?.actions?.items.length).to.equal(1);
     expect(vm.evidenceSummaryList.attributes.id).to.equal("evidence-rows");
     expect(vm.evidenceSummaryList.rows.length).to.equal(1);
+    expect(
+      vm.evidenceSummaryList.card?.actions?.items[0].text
+    ).to.deep.equal({ key: "common.change" });
+    expect(
+      vm.evidenceSummaryList.card?.actions?.items[0].href
+    ).to.equal("#");
 
     expect(vm.evidenceSummaryList.rows[0].key.text).to.equal("evidence1.pdf");
     expect(vm.evidenceSummaryList.rows[0].value.text).to.equal("1KB");
