@@ -10,7 +10,7 @@
  * @returns {string} Formatted date in DD/MM/YYYY format (e.g., "06/01/1986")
  */
 export function formatDate(date: Date | null | undefined): string {
-  if (date === null || date === undefined) {
+  if (date == null) {
     return "";
   } else {
     const day = date.toLocaleString('en-GB', { day: '2-digit' });
