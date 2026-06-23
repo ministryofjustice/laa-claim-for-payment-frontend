@@ -14,50 +14,49 @@
       {% set radioItems = [] %}
 
       {% for choice in vm.form.choices %}
-      {% set radioItems = (radioItems.push({
+        {% set radioItems = (radioItems.push({
           value: choice.value,
           text: t(choice.text),
           hint: {
-              text: t(choice.hint.text)
+            text: t(choice.hint.text)
           }
-      }), radioItems) %}
+        }), radioItems) %}
       {% endfor %}
 
       {{ backLink(t) }}
 
       {% if vm.form.error %}
-      {{ govukErrorSummary({
+        {{ govukErrorSummary({
           titleText: t("common.errorSummaryTitle"),
           errorList: [
-          {
+            {
               text: t(vm.form.error.text),
               href: "#" + vm.form.fieldName
-          }
+            }
           ]
-      }) }}
+        }) }}
       {% endif %}
 
-    <form method="post">
-      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+      <form method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
-      {{ govukRadios({
-      name: vm.form.fieldName,
-      fieldset: {
-          legend: {
-          text: t(vm.title),
-          isPageHeading: true,
-          classes: "govuk-fieldset__legend--xl"
-          }
-      },
-      errorMessage: {text: t(vm.form.error.text)} if vm.form.error ,
-      items: radioItems
-      }) }}
+        {{ govukRadios({
+          name: vm.form.fieldName,
+          fieldset: {
+            legend: {
+              text: t(vm.title),
+              isPageHeading: true,
+              classes: "govuk-fieldset__legend--l"
+            }
+          },
+          errorMessage: {text: t(vm.form.error.text)} if vm.form.error,
+          items: radioItems
+        }) }}
 
-      {{ govukButton({
+        {{ govukButton({
           text: t("common.saveAndContinue")
-      }) }}
+        }) }}
       </form>
-
     </div>
   </div>
 {% endblock %}

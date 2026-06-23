@@ -9,7 +9,7 @@
 
 {% block content %}
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column">
+    <div class="govuk-grid-column-two-thirds">
 
       {% set courtTypeRadioItems = [] %}
       {% set clientStatusRadioItems = [] %}
@@ -68,67 +68,67 @@
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
         <div class="govuk-form-group">
           {{ govukRadios({
-          name: vm.form.courtTypeFieldName,
-          fieldset: {
+            name: vm.form.courtTypeFieldName,
+            fieldset: {
               legend: {
-              text: t("pages.profitCostDetails.courtType.title"),
-              isPageHeading: false,
-              classes: "govuk-fieldset__legend--m"
+                text: t("pages.profitCostDetails.courtType.title"),
+                isPageHeading: false,
+                classes: "govuk-fieldset__legend--m"
               }
-          },
-          errorMessage: { text: t(vm.form.courtTypeError.text) } if vm.form.courtTypeError,
-          items: courtTypeRadioItems
-      }) }}
+            },
+            errorMessage: { text: t(vm.form.courtTypeError.text) } if vm.form.courtTypeError,
+            items: courtTypeRadioItems
+          }) }}
         </div>
 
         <div class="govuk-form-group">
           {{ govukRadios({
-          name: vm.form.clientStatusFieldName,
-          fieldset: {
-            legend: {
-              text: t("pages.profitCostDetails.clientStatus.title"),
-              isPageHeading: false,
-              classes: "govuk-fieldset__legend--m"
-            }
-          },
-          errorMessage: { text: t(vm.form.clientStatusError.text) } if vm.form.clientStatusError,
-          items: clientStatusRadioItems
-        }) }}
+            name: vm.form.clientStatusFieldName,
+            fieldset: {
+              legend: {
+                text: t("pages.profitCostDetails.clientStatus.title"),
+                isPageHeading: false,
+                classes: "govuk-fieldset__legend--m"
+              }
+            },
+            errorMessage: { text: t(vm.form.clientStatusError.text) } if vm.form.clientStatusError,
+            items: clientStatusRadioItems
+          }) }}
         </div>
 
         <div class="govuk-form-group">
           {{ govukRadios({
-          name: vm.form.firstSolicitorFieldName,
-          fieldset: {
-            legend: {
-              text: t("pages.profitCostDetails.firstSolicitor.title"),
-              isPageHeading: false,
-              classes: "govuk-fieldset__legend--m"
-            }
-          },
-          errorMessage: { text: t(vm.form.firstSolicitorError.text) } if vm.form.firstSolicitorError,
-          items: firstSolicitorRadioItems
-        }) }}
+            name: vm.form.firstSolicitorFieldName,
+            fieldset: {
+              legend: {
+                text: t("pages.profitCostDetails.firstSolicitor.title"),
+                isPageHeading: false,
+                classes: "govuk-fieldset__legend--m"
+              }
+            },
+            errorMessage: { text: t(vm.form.firstSolicitorError.text) } if vm.form.firstSolicitorError,
+            items: firstSolicitorRadioItems
+          }) }}
         </div>
 
         <div class="govuk-form-group">
           {{ govukRadios({
-          name: vm.form.transferOfSolicitorFieldName,
-          fieldset: {
-            legend: {
-              text: t("pages.profitCostDetails.transferOfSolicitor.title"),
-              isPageHeading: false,
-              classes: "govuk-fieldset__legend--m"
-            }
-          },
-          errorMessage: { text: t(vm.form.transferOfSolicitorError.text) } if vm.form.transferOfSolicitorError,
-          items: transferOfSolicitorRadioItems
-        }) }}
+            name: vm.form.transferOfSolicitorFieldName,
+            fieldset: {
+              legend: {
+                text: t("pages.profitCostDetails.transferOfSolicitor.title"),
+                isPageHeading: false,
+                classes: "govuk-fieldset__legend--m"
+              }
+            },
+            errorMessage: { text: t(vm.form.transferOfSolicitorError.text) } if vm.form.transferOfSolicitorError,
+            items: transferOfSolicitorRadioItems
+          }) }}
         </div>
         <div class="govuk-button-group">
           {{ govukButton({
-          text: t("common.saveAndContinue")
-      }) }}
+            text: t("common.saveAndContinue")
+          }) }}
           <a class="govuk-button govuk-button--secondary" href="#">{{ t('common.saveAndComeBackLater') }}</a>
         </div>
       </form>
