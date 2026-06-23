@@ -48,7 +48,7 @@
 
       {{ backLink(t) }}
 
-      <h1 class="govuk-heading-xl">{{ t('pages.profitCostDetails.title') }}</h1>
+      <h1 class="govuk-heading-l">{{ t('pages.profitCostDetails.title') }}</h1>
 
       {% set errors = [] %}
 
@@ -75,7 +75,7 @@
               legend: {
               text: t("pages.profitCostDetails.courtType.title"),
               isPageHeading: false,
-              classes: "govuk-fieldset__legend--l"
+              classes: "govuk-fieldset__legend--m"
               }
           },
           errorMessage: { text: t(vm.form.courtTypeError.text) } if vm.form.courtTypeError,
@@ -90,7 +90,7 @@
             legend: {
               text: t("pages.profitCostDetails.clientStatus.title"),
               isPageHeading: false,
-              classes: "govuk-fieldset__legend--l"
+              classes: "govuk-fieldset__legend--m"
             }
           },
           errorMessage: { text: t(vm.form.clientStatusError.text) } if vm.form.clientStatusError,
@@ -105,7 +105,7 @@
             legend: {
               text: t("pages.profitCostDetails.firstSolicitor.title"),
               isPageHeading: false,
-              classes: "govuk-fieldset__legend--l"
+              classes: "govuk-fieldset__legend--m"
             }
           },
           errorMessage: { text: t(vm.form.firstSolicitorError.text) } if vm.form.firstSolicitorError,
@@ -120,7 +120,7 @@
             legend: {
               text: t("pages.profitCostDetails.transferOfSolicitor.title"),
               isPageHeading: false,
-              classes: "govuk-fieldset__legend--l"
+              classes: "govuk-fieldset__legend--m"
             }
           },
           errorMessage: { text: t(vm.form.transferOfSolicitorError.text) } if vm.form.transferOfSolicitorError,
