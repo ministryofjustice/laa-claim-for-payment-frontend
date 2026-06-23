@@ -58,7 +58,7 @@ export function submitEscapingFixedFee(
       res.status(400).render("main/poa/escapingFixedFeeView.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: "pages.escapingFixedFee.title",
+          title: "pages.escapingFixedFee.question",
           fieldName: escapingFixedFeeFieldName, 
           choices: booleanChoices,
           selectedValue: typeof selectedChoice === "string" ? selectedChoice : undefined,
