@@ -4,6 +4,7 @@ import { ViewClaimPage } from "./ViewClaimPage.js";
 import { NotFoundPage } from "#tests/playwright/pages/NotFoundPage.js";
 import { InternalServerErrorPage } from "#tests/playwright/pages/InternalServerErrorPage.js";
 import { PoaSubmissionSuccessfulPage } from "#tests/playwright/pages/PoaSubmissionSuccessfulPage.js";
+import { PoaCheckDetailsPage } from "#tests/playwright/pages/PoaCheckDetailsPage.js";
 
 /**
  * Factory class for creating page objects
@@ -56,9 +57,18 @@ export class PageFactory {
   /**
    * gets the successful POA submission page for test
    * @param { number } claimId the claim id
-   * @returns { ViewClaimPage } the successful POA submission page for the given claim ID
+   * @returns { PoaSubmissionSuccessfulPage } the successful POA submission page for the given claim ID
    */
   poaSubmissionSuccessfulPage(claimId: number): PoaSubmissionSuccessfulPage {
     return new PoaSubmissionSuccessfulPage(this.page, claimId);
+  }
+
+  /**
+   * gets the POA check details page for test
+   * @param { number } claimId the claim id
+   * @returns { PoaCheckDetailsPage } the successful POA submission page for the given claim ID
+   */
+  poaCheckDetailsPage(claimId: number): PoaCheckDetailsPage {
+    return new PoaCheckDetailsPage(this.page, claimId);
   }
 }
