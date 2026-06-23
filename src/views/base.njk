@@ -45,34 +45,38 @@
     }
   }) }}
 
-  {{ govukServiceNavigation({
-    serviceName: t('common.service'),
-    serviceUrl: "#",
-    navigation: [
-      {
-        href: "#",
-        text: "Your submissions",
-        active: true
-      },
-      {
-        href: "#",
-        text: "Matter starts"
-      },
-      {
-        href: "#",
-        text: "Search"
-      }
-    ]
-  }) }}
-
-  <div class="govuk-width-container">
-    {{ govukPhaseBanner({
-      tag: {
-        text: config.SERVICE_PHASE
-      },
-      html: 'This is a new service. Help us improve it and <a class="govuk-link" href="#">give your feedback by email</a>.'
+  {% block govukServiceNavigation %}
+    {{ govukServiceNavigation({
+      serviceName: t('common.service'),
+      serviceUrl: "#",
+      navigation: [
+        {
+          href: "#",
+          text: "Your submissions",
+          active: true
+        },
+        {
+          href: "#",
+          text: "Matter starts"
+        },
+        {
+          href: "#",
+          text: "Search"
+        }
+      ]
     }) }}
-  </div>
+  {% endblock %}
+
+  {% block headerEnd %}
+    <div class="govuk-width-container">
+      {{ govukPhaseBanner({
+        tag: {
+          text: config.SERVICE_PHASE
+        },
+        html: 'This is a new service. Help us improve it and <a class="govuk-link" href="#">give your feedback by email</a>.'
+      }) }}
+    </div>
+  {% endblock %}
 {% endblock %}
 
 {% block beforeContent %}
