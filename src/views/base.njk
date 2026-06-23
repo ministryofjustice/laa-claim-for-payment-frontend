@@ -1,9 +1,11 @@
 {% extends "govuk/template.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
 {% from "moj/components/header/macro.njk" import mojHeader %}
 {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 
 {% set govukRebrand = true %}
+{% set showBackLink = showBackLink | default(false) %}
 
 {% block pageTitle %}
   {{ t('common.title', { title: title, service: t('common.service') }) }}
@@ -22,24 +24,28 @@
 {% endblock %}
 
 {% block header %}
-{{ mojHeader({
+  {{ mojHeader({
     organisationLabel: {
       text: t('common.department'),
       href: "#"
     },
     navigation: {
       label: "Account navigation",
-      items: [{
-        text: user.email,
-        href: "#",
-        active: true
-      }, {
-        text: t('common.signOut'),
-        href: "/logout"
-      }]
+      items: [
+        {
+          text: user.email,
+          href: "#",
+          active: true
+        },
+        {
+          text: t('common.signOut'),
+          href: "/logout"
+        }
+      ]
     }
   }) }}
-   {{ govukServiceNavigation({
+
+  {{ govukServiceNavigation({
     serviceName: t('common.service'),
     serviceUrl: "#",
     navigation: [
@@ -58,34 +64,45 @@
       }
     ]
   }) }}
+
+  <div class="govuk-width-container">
+    {{ govukPhaseBanner({
+      tag: {
+        text: config.SERVICE_PHASE
+      },
+      html: 'This is a new service. Help us improve it and <a class="govuk-link" href="#">give your feedback by email</a>.'
+    }) }}
+  </div>
 {% endblock %}
 
 {% block beforeContent %}
-  {{ govukPhaseBanner({
-    tag: {
-      text: config.SERVICE_PHASE
-    },
-    html: 'This is a new service. Help us improve it and <a class="govuk-link" href="#">give your feedback by email</a>.'
-  }) }}
+  <div class="govuk-!-text-align-right govuk-body-s govuk-!-margin-top-2">
+    {% if lang == "en" %}
+      <span aria-current="true">English</span>
+      |
+      <a class="govuk-link" href="?lng=cy" lang="cy" hreflang="cy" rel="alternate">
+        <span class="govuk-visually-hidden">Newid yr iaith i’r Gymraeg</span>
+        <span aria-hidden="true">Cymraeg</span>
+      </a>
+    {% else %}
+      <a class="govuk-link" href="?lng=en" lang="en" hreflang="en" rel="alternate">
+        <span class="govuk-visually-hidden">Switch language to English</span>
+        <span aria-hidden="true">English</span>
+      </a>
+      |
+      <span aria-current="true">Cymraeg</span>
+    {% endif %}
+  </div>
 
-<div class="govuk-!-text-align-right govuk-body-s govuk-!-margin-top-2">
-  {% if lang == "en" %}
-    <span aria-current="true">English</span>
-    |
-    <a class="govuk-link" href="?lng=cy" lang="cy" hreflang="cy" rel="alternate">
-      <span class="govuk-visually-hidden">Newid yr iaith i’r Gymraeg</span>
-      <span aria-hidden="true">Cymraeg</span>
-    </a>
-  {% else %}
-    <a class="govuk-link" href="?lng=en" lang="en" hreflang="en" rel="alternate">
-      <span class="govuk-visually-hidden">Switch language to English</span>
-      <span aria-hidden="true">English</span>
-    </a>
-    |
-    <span aria-current="true">Cymraeg</span>
+  {% if showBackLink %}
+    {{ govukBackLink({
+      text: t('common.back'),
+      href: "#",
+      attributes: {
+        "data-module": "back-link"
+      }
+    }) }}
   {% endif %}
-</div>
-
 {% endblock %}
 
 {% block content %}
