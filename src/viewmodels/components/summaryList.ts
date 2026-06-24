@@ -8,8 +8,13 @@ export interface SummaryList {
 
 export interface SummaryListRow {
   key: { text: TextOrMessage };
-  value: { text?: string; html?: string };
+  value: SummaryListRowValue;
   actions?: SummaryListRowActions;
+}
+
+interface SummaryListRowValue {
+  text?: TextOrMessage;
+  html?: TextOrMessage;
 }
 
 interface SummaryListRowActions {
@@ -72,15 +77,13 @@ export function buildSummaryListWithCard(
  */
 export function buildSummaryListRow(
   key: TextOrMessage,
-  value: string,
+  value: SummaryListRowValue,
 ): SummaryListRow {
   return {
     key: {
       text: key,
     },
-    value: {
-      text: value,
-    },
+    value,
   };
 }
 
@@ -93,16 +96,11 @@ export function buildSummaryListRow(
  */
 export function buildSummaryListRowWithChangeLink(
   key: TextOrMessage,
-  value: string,
+  value: SummaryListRowValue,
   href: string,
 ): SummaryListRow {
   return {
-    key: {
-      text: key,
-    },
-    value: {
-      text: value,
-    },
+    ...buildSummaryListRow(key, value),
     actions: {
       items: [
         {
