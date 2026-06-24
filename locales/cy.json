@@ -280,7 +280,8 @@
             "feeEarnerName": "Fee earner name"
           },
           "evidence": {
-            "title": "Evidence"
+            "title": "Evidence",
+            "value": "{fileSize}<br>{submittedOn}"
           }
         }
       }

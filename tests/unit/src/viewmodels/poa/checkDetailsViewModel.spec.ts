@@ -237,7 +237,10 @@ describe("CheckDetailsViewModel constructor()", () => {
     ).to.equal("#");
 
     expect(vm.evidenceSummaryList.rows[0].key.text).to.equal("evidence1.pdf");
-    expect(vm.evidenceSummaryList.rows[0].value.text).to.equal("1KB");
+    expect(vm.evidenceSummaryList.rows[0].value.html).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.evidence.value",
+      args: { fileSize: "1KB", submittedOn: "17 June 2026" },
+    });
     expect(vm.evidenceSummaryList.rows[0].actions).to.not.exist;
   });
 });

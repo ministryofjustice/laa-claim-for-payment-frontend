@@ -14,8 +14,9 @@ import {
   clientStatusFieldName,
   courtTypeFieldName,
   firstSolicitorFieldName,
-  transferOfSolicitorFieldName,
+  transferOfSolicitorFieldName
 } from "#src/viewmodels/profitCostDetails/profitCostDetailsFields.js";
+import { formatDateReadable } from "#src/helpers/dataFormatters.js";
 
 /**
  *
@@ -48,37 +49,37 @@ export class CheckDetailsViewModel {
       [
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.courtType" },
-          "Circuit/district judge",
+          { text: "Circuit/district judge" },
           `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${courtTypeFieldName}`
         ),
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientPartyStatus" },
-          "Child",
+          { text: "Child" },
           `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${clientStatusFieldName}`
         ),
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.firstSolicitor" },
-          "Yes",
+          { text: "Yes" },
           `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${firstSolicitorFieldName}`
         ),
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.transferOfSolicitor" },
-          "Yes",
+          { text: "Yes" },
           `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${transferOfSolicitorFieldName}`
         ),
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientsRetained" },
-          "1",
+          { text: "1" },
           buildRoute(ROUTES.HOW_MANY_CLIENTS_RETAINED, { claimId })
         ),
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.attendedHearings" },
-          "Yes",
+          { text: "Yes" },
           buildRoute(ROUTES.MULTIPLE_CLIENT_HEARINGS, { claimId })
         ),
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.escapedStandardFixedFee" },
-          "No",
+          { text: "No" },
           buildRoute(ROUTES.ESCAPING_FIXED_FEE, { claimId })
         )
       ]
@@ -90,23 +91,23 @@ export class CheckDetailsViewModel {
       [
         buildSummaryListRow(
           { key: "pages.poa.checkYourDetails.cya.profitCostBillLine.date" },
-          "20 December 2023"
+          { text: "20 December 2023" }
         ),
         buildSummaryListRow(
           { key: "pages.poa.checkYourDetails.cya.profitCostBillLine.netProfitCost" },
-          "£150"
+          { text: "£150" }
         ),
         buildSummaryListRow(
           { key: "pages.poa.checkYourDetails.cya.profitCostBillLine.netAdvocacyCost" },
-          "£150"
+          { text : "£150" }
         ),
         buildSummaryListRow(
           { key: "pages.poa.checkYourDetails.cya.profitCostBillLine.doesVatApply" },
-          "Yes"
+          { text: "Yes" }
         ),
         buildSummaryListRow(
           { key: "pages.poa.checkYourDetails.cya.profitCostBillLine.feeEarnerName" },
-          "Carol Spencer"
+          { text: "Carol Spencer" }
         )
       ],
       {
@@ -123,19 +124,27 @@ export class CheckDetailsViewModel {
     this.evidenceSummaryList = buildSummaryListWithCard(
       { key: "pages.poa.checkYourDetails.cya.evidence.title" },
       "evidence",
-      claim.evidence?.map((evidence: EvidenceItem): SummaryListRow => buildSummaryListRow(
-          evidence.fileKey,
-          formatFileSize(evidence.fileSize),
-        )) ?? [],
+      claim.evidence?.map(
+        (evidence: EvidenceItem): SummaryListRow =>
+          buildSummaryListRow(evidence.fileKey, {
+            html: {
+              key: "pages.poa.checkYourDetails.cya.evidence.value",
+              args: {
+                fileSize: formatFileSize(evidence.fileSize),
+                submittedOn: formatDateReadable(evidence.submittedOn)
+              }
+            },
+          }),
+      ) ?? [],
       {
         href: "#", // TODO
         text: {
-          key: "common.change"
+          key: "common.change",
         },
         visuallyHiddenText: {
-          key: "pages.poa.checkYourDetails.cya.evidence.title"
-        }
-      }
+          key: "pages.poa.checkYourDetails.cya.evidence.title",
+        },
+      },
     );
   }
 
