@@ -97,7 +97,7 @@ export function submitHowManyClientsRetained(
 
   const redirectByChoice: Record<HowManyClientsRetainedChoice, string> = {
     [HowManyClientsRetainedChoice.None]: buildRoute(
-      ROUTES.MULTIPLE_CLIENT_HEARINGS,
+      ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
       { claimId },
     ),
     [HowManyClientsRetainedChoice.One]: buildRoute(
