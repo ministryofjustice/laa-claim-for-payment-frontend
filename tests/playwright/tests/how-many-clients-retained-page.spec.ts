@@ -29,7 +29,7 @@ test.describe("How many clients retained page", () => {
     await howManyClientsRetainedPage.noneRadio.check();
     await howManyClientsRetainedPage.saveAndContinueButton.click();
 
-    await expect(page).toHaveURL(/\/claims\/1\/poa\/multiple-client-hearings$/);
+    await expect(page).toHaveURL(/\/claims\/1\/poa\/number-of-clients-start-of-case$/);
   });
 
   test("redirects to one route when One is selected", async ({ page }) => {
