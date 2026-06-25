@@ -88,7 +88,7 @@ describe("poaClaimTypeController", () => {
         claimId: "1",
       },
       body: {
-        multpleClientHearings: "invalid",
+        multipleClientHearings: "invalid",
       },
     } as unknown as Request;
 
