@@ -36,24 +36,30 @@ export class ProfitCostBillLineViewModel {
     this.title = "pages.profitCostBillLine.title";
 
     this.form = {
-      activityDateDay: getStringValue(form.activityDateDay),
-      activityDateMonth: getStringValue(form.activityDateMonth),
-      activityDateYear: getStringValue(form.activityDateYear),
-      actualNetProfitCostExcludingAdvocacy: getStringValue(
-        form.actualNetProfitCostExcludingAdvocacy,
-      ),
-      actualNetAdvocacyCosts: getStringValue(form.actualNetAdvocacyCosts),
-      vatApplies: getStringValue(form.vatApplies),
-      feeEarnerName: getStringValue(form.feeEarnerName),
-
-      activityDateError: getError(errors, "activityDate"),
-      actualNetProfitCostExcludingAdvocacyError: getError(
-        errors,
-        "actualNetProfitCostExcludingAdvocacy",
-      ),
-      actualNetAdvocacyCostsError: getError(errors, "actualNetAdvocacyCosts"),
-      vatAppliesError: getError(errors, "vatApplies"),
-      feeEarnerNameError: getError(errors, "feeEarnerName"),
+      activityDate: {
+        value: {
+          day: getStringValue(form.activityDateDay),
+          month: getStringValue(form.activityDateMonth),
+          year: getStringValue(form.activityDateYear),
+        },
+        error: getError(errors, "activityDate"),
+      },
+      actualNetProfitCostExcludingAdvocacy: {
+        value: getStringValue(form.actualNetProfitCostExcludingAdvocacy),
+        error: getError(errors, "actualNetProfitCostExcludingAdvocacy"),
+      },
+      actualNetAdvocacyCosts: {
+        value: getStringValue(form.actualNetAdvocacyCosts),
+        error: getError(errors, "actualNetAdvocacyCosts"),
+      },
+      vatApplies: {
+        value: getStringValue(form.vatApplies),
+        error: getError(errors, "vatApplies"),
+      },
+      feeEarnerName: {
+        value: getStringValue(form.feeEarnerName),
+        error: getError(errors, "feeEarnerName"),
+      },
     };
 
     this.errorSummary = getErrorSummary(errors);
