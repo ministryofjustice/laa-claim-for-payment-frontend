@@ -17,6 +17,13 @@ describe("views/main/poa/profitCostBillLineView.njk", () => {
     });
   });
 
+  it("renders a Back link", () => {
+    const back = $("a.govuk-back-link");
+
+    expect(back).to.have.length(1);
+    expect(back.text().trim()).to.equal("common.back");
+  });
+
   it("renders an h1", () => {
     const h1 = $("#main-content h1");
 
