@@ -12,7 +12,7 @@ export const ROUTES = {
   HOW_MANY_CLIENTS_RETAINED: '/claims/:claimId/poa/how-many-clients-retained',
   POA_CLAIM_TYPE: '/claims/:claimId/poa/claim-type',
   PROFIT_COST_DETAILS: '/claims/:claimId/poa/profit-cost-details',
-  EXPERT_COST_DETAILS: '/claims/:claimId/poa/expert-cost-details',
+  EXPERT_COST_DETAILS: '/claims/:claimId/poa/expert-cost-details/:expertCostId',
   NON_EXPERT_COST_DETAILS: '/claims/:claimId/poa/non-expert-disbursement',
   MULTIPLE_CLIENT_HEARINGS: '/claims/:claimId/poa/multiple-client-hearings',
   ESCAPING_FIXED_FEE: '/claims/:claimId/poa/escaping-standard-fixed-fee',

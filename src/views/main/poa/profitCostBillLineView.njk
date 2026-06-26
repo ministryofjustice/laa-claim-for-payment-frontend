@@ -12,20 +12,8 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
 
-    {% if vm.errorList.length > 0 %}
-      {% set translatedErrorList = [] %}
-
-      {% for error in vm.errorList %}
-        {% set translatedErrorList = (translatedErrorList.push({
-          text: t(error.text),
-          href: error.href
-        }), translatedErrorList) %}
-      {% endfor %}
-
-      {{ govukErrorSummary({
-        titleText: t("common.errorSummaryTitle"),
-        errorList: translatedErrorList
-      }) }}
+    {% if vm.errorSummary.errorList.length %}
+      {{ govukErrorSummary(vm.errorSummary | translate) }}
     {% endif %}
 
     <form method="post">
@@ -33,7 +21,7 @@
 
       <h1 class="govuk-heading-l">
         {{ t("pages.profitCostBillLine.title") }}
-      </h2>
+      </h1>
 
       {{ govukDateInput({
         id: "activityDate",
@@ -46,26 +34,27 @@
         hint: {
           text: t("pages.profitCostBillLine.activityDate.hint")
         },
-        errorMessage: vm.form.activityDateError and {
-          text: t(vm.form.activityDateError.text)
-        },
+        errorMessage: vm.form.activityDateError | translate,
         items: [
           {
+            id: "activityDate-day",
             name: "activityDateDay",
             value: vm.form.activityDateDay,
-            classes: "govuk-input--width-2",
+            classes: "govuk-input--width-2" + (" govuk-input--error" if "day" in (vm.form.activityDateError.fields or []) else ""),
             label: t("pages.profitCostBillLine.activityDate.day")
           },
           {
+            id: "activityDate-month",
             name: "activityDateMonth",
             value: vm.form.activityDateMonth,
-            classes: "govuk-input--width-2",
+            classes: "govuk-input--width-2" + (" govuk-input--error" if "month" in (vm.form.activityDateError.fields or []) else ""),
             label: t("pages.profitCostBillLine.activityDate.month")
           },
           {
+            id: "activityDate-year",
             name: "activityDateYear",
             value: vm.form.activityDateYear,
-            classes: "govuk-input--width-4",
+            classes: "govuk-input--width-4" + (" govuk-input--error" if "year" in (vm.form.activityDateError.fields or []) else ""),
             label: t("pages.profitCostBillLine.activityDate.year")
           }
         ]
@@ -80,9 +69,7 @@
           text: t("pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.title"),
           classes: "govuk-label--m"
         },
-        errorMessage: vm.form.actualNetProfitCostExcludingAdvocacyError and {
-          text: t(vm.form.actualNetProfitCostExcludingAdvocacyError.text)
-        },
+        errorMessage: vm.form.actualNetProfitCostExcludingAdvocacyError | translate,
         prefix: {
           text: "£"
         },
@@ -98,9 +85,7 @@
           text: t("pages.profitCostBillLine.actualNetAdvocacyCosts.title"),
           classes: "govuk-label--m"
         },
-        errorMessage: vm.form.actualNetAdvocacyCostsError and {
-          text: t(vm.form.actualNetAdvocacyCostsError.text)
-        },
+        errorMessage: vm.form.actualNetAdvocacyCostsError | translate,
         prefix: {
           text: "£"
         },
@@ -115,9 +100,7 @@
             classes: "govuk-fieldset__legend--m"
           }
         },
-        errorMessage: vm.form.vatAppliesError and {
-          text: t(vm.form.vatAppliesError.text)
-        },
+        errorMessage: vm.form.vatAppliesError | translate,
         items: [
           {
             value: "yes",
@@ -140,9 +123,7 @@
           text: t("pages.profitCostBillLine.feeEarnerName.title"),
           classes: "govuk-label--m"
         },
-        errorMessage: vm.form.feeEarnerNameError and {
-          text: t(vm.form.feeEarnerNameError.text)
-        }
+        errorMessage: vm.form.feeEarnerNameError | translate
       }) }}
 
       <div class="govuk-button-group">

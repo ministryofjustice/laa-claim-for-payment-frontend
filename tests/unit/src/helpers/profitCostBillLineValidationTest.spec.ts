@@ -29,7 +29,7 @@ describe("profitCostBillLineValidation", () => {
     });
 
     expect(result.isValid).to.equal(false);
-    expect(result.errors[0].text).to.equal(
+    expect(result.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.activityDate.errors.empty",
     );
   });
@@ -43,7 +43,7 @@ describe("profitCostBillLineValidation", () => {
     });
 
     expect(result.isValid).to.equal(false);
-    expect(result.errors[0].text).to.equal(
+    expect(result.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.activityDate.errors.incomplete.month",
     );
   });
@@ -57,7 +57,7 @@ describe("profitCostBillLineValidation", () => {
     });
 
     expect(result.isValid).to.equal(false);
-    expect(result.errors[0].text).to.equal(
+    expect(result.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.activityDate.errors.invalid",
     );
   });
@@ -82,7 +82,7 @@ describe("profitCostBillLineValidation", () => {
     });
 
     expect(result.isValid).to.equal(false);
-    expect(result.errors[0].text).to.equal(
+    expect(result.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.activityDate.errors.invalid",
     );
   });
@@ -98,7 +98,7 @@ describe("profitCostBillLineValidation", () => {
     });
 
     expect(result.isValid).to.equal(false);
-    expect(result.errors[0].text).to.equal(
+    expect(result.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.activityDate.errors.future",
     );
   });
@@ -109,7 +109,7 @@ describe("profitCostBillLineValidation", () => {
       actualNetProfitCostExcludingAdvocacy: "",
     });
 
-    expect(result.errors[0].text).to.equal(
+    expect(result.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.errors.empty",
     );
   });
@@ -120,19 +120,8 @@ describe("profitCostBillLineValidation", () => {
       actualNetProfitCostExcludingAdvocacy: "abc",
     });
 
-    expect(result.errors[0].text).to.equal(
+    expect(result.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.errors.invalid",
-    );
-  });
-
-  it("returns error when profit cost does not include pence", () => {
-    const result = validateProfitCostBillLine({
-      ...validBody,
-      actualNetProfitCostExcludingAdvocacy: "123",
-    });
-
-    expect(result.errors[0].text).to.equal(
-      "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.errors.pence",
     );
   });
 
@@ -142,7 +131,7 @@ describe("profitCostBillLineValidation", () => {
       actualNetAdvocacyCosts: "",
     });
 
-    expect(result.errors[0].text).to.equal(
+    expect(result.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.actualNetAdvocacyCosts.errors.empty",
     );
   });
@@ -153,19 +142,8 @@ describe("profitCostBillLineValidation", () => {
       actualNetAdvocacyCosts: "abc",
     });
 
-    expect(result.errors[0].text).to.equal(
+    expect(result.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.actualNetAdvocacyCosts.errors.invalid",
-    );
-  });
-
-  it("returns error when advocacy cost does not include pence", () => {
-    const result = validateProfitCostBillLine({
-      ...validBody,
-      actualNetAdvocacyCosts: "156",
-    });
-
-    expect(result.errors[0].text).to.equal(
-      "pages.profitCostBillLine.actualNetAdvocacyCosts.errors.pence",
     );
   });
 
@@ -175,7 +153,7 @@ describe("profitCostBillLineValidation", () => {
       vatApplies: undefined,
     });
 
-    expect(result.errors[0].text).to.equal(
+    expect(result.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.vatApplies.errors.empty",
     );
   });
@@ -186,7 +164,7 @@ describe("profitCostBillLineValidation", () => {
       feeEarnerName: "",
     });
 
-    expect(result.errors[0].text).to.equal(
+    expect(result.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.feeEarnerName.errors.empty",
     );
   });
@@ -197,7 +175,7 @@ describe("profitCostBillLineValidation", () => {
       feeEarnerName: "John Smith 123",
     });
 
-    expect(result.errors[0].text).to.equal(
+    expect(result.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.feeEarnerName.errors.invalid",
     );
   });

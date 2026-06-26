@@ -100,7 +100,7 @@ export function submitPoaClaimType(
       ),
       [PoaClaimTypeChoice.ExpertCost]: buildRoute(
         ROUTES.EXPERT_COST_DETAILS,
-        { claimId },
+        { claimId, expertCostId: 1 },
       ),
       [PoaClaimTypeChoice.NonExpertDisbursement]: buildRoute(
         ROUTES.NON_EXPERT_COST_DETAILS,

@@ -285,6 +285,59 @@
             "value": "{fileSize}<br>{submittedOn}"
           }
         }
+      },
+      "expertCostDetails": {
+        "title": "Expert cost",
+        "activityDate": {
+          "title": "Activity date",
+          "hint": "For example, 27 3 2007",
+          "day": "Day",
+          "month": "Month",
+          "year": "Year",
+          "errors": {
+            "empty": "Enter the activity date",
+            "invalid": "Activity date must be a real date",
+            "future": "Activity date must be today or in the past",
+            "incomplete": {
+              "day": "Activity date must include a day",
+              "month": "Activity date must include a month",
+              "year": "Activity date must include a year",
+              "dayAndMonth": "Activity date must include a day and month",
+              "dayAndYear": "Activity date must include a day and year",
+              "monthAndYear": "Activity date must include a month and year"
+            }
+          }
+        },
+        "actualNetValue": {
+          "title": "Actual net value",
+          "errors": {
+            "empty": "Enter actual net value",
+            "invalid": "Actual net value must be a number",
+            "pence": "Actual net value must include pence, like 123.45 or 156.00"
+          }
+        },
+        "vatApplies": {
+          "title": "Does VAT apply?",
+          "yes": "Yes",
+          "no": "No",
+          "errors": {
+            "empty": "Select yes if VAT applies"
+          }
+        },
+        "feeEarnerName": {
+          "title": "Fee earner name",
+          "errors": {
+            "empty": "Enter a fee earner name",
+            "invalid": "Fee earner name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
+          }
+        },
+        "description": {
+          "title": "Description",
+          "errors": {
+            "empty": "Enter a description of the expert cost",
+            "invalid": "Description must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
+          }
+        }
       }
     },
     "escapingFixedFee": {

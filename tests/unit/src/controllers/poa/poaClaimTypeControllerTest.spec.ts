@@ -80,7 +80,7 @@ describe("poaClaimTypeController", () => {
     submitPoaClaimType(req, res, next);
 
     expect((res.redirect as sinon.SinonStub).calledWith(
-      "/claims/1/poa/expert-cost-details",
+      "/claims/1/poa/expert-cost-details/1",
     )).to.equal(true);
   });
 
