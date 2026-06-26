@@ -45,7 +45,7 @@ test.describe("POA claim type page", () => {
     await poaClaimTypePage.expertCostRadio.check();
     await poaClaimTypePage.saveAndContinueButton.click();
 
-    await expect(page).toHaveURL(/\/claims\/1\/poa\/expert-cost-details$/);
+    await expect(page).toHaveURL(/\/claims\/1\/poa\/expert-cost-details\/1$/);
   });
 
   test("redirects to non expert disbursement when Non expert disbursement is selected", async ({
