@@ -144,27 +144,37 @@ describe("views/main/poa/profitCostBillLineView.njk with errors", () => {
           {
             fieldName: "activityDate",
             href: "#activityDate-day",
-            text: "pages.profitCostBillLine.activityDate.errors.empty",
+            text: {
+              key: "pages.profitCostBillLine.activityDate.errors.empty"
+            },
           },
           {
             fieldName: "actualNetProfitCostExcludingAdvocacy",
             href: "#actualNetProfitCostExcludingAdvocacy",
-            text: "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.errors.empty",
+            text: {
+              key: "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.errors.empty"
+            },
           },
           {
             fieldName: "actualNetAdvocacyCosts",
             href: "#actualNetAdvocacyCosts",
-            text: "pages.profitCostBillLine.actualNetAdvocacyCosts.errors.empty",
+            text: {
+              key: "pages.profitCostBillLine.actualNetAdvocacyCosts.errors.empty"
+            },
           },
           {
             fieldName: "vatApplies",
             href: "#vatApplies",
-            text: "pages.profitCostBillLine.vatApplies.errors.empty",
+            text: {
+              key: "pages.profitCostBillLine.vatApplies.errors.empty"
+            },
           },
           {
             fieldName: "feeEarnerName",
             href: "#feeEarnerName",
-            text: "pages.profitCostBillLine.feeEarnerName.errors.empty",
+            text: {
+              key: "pages.profitCostBillLine.feeEarnerName.errors.empty"
+            },
           },
         ],
       }),
