@@ -1,4 +1,4 @@
-import type { ProfitCostBillLineForm } from "#src/helpers/profitCostBillLineValidation.js";
+import type { ExpertCostDetailsForm } from "#src/helpers/expertCostDetailsValidation.js";
 import {
   type FieldValidationError,
   getError,
@@ -7,16 +7,17 @@ import {
 } from "#src/helpers/validation.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
 
-interface ProfitCostBillLineViewModelParams {
+export interface ExpertCostDetailsViewModelParams {
   claimId: number;
-  form?: ProfitCostBillLineForm;
+  expertCostId: number;
+  form?: ExpertCostDetailsForm;
   errors?: FieldValidationError[];
 }
 
 /**
- * View model for the POA CPGFS profit cost bill line page.
+ * View model for the POA expert cost details page.
  */
-export class ProfitCostBillLineViewModel {
+export class ExpertCostDetailsViewModel {
   readonly claimId: number;
   readonly title: string;
   readonly form;
@@ -25,15 +26,13 @@ export class ProfitCostBillLineViewModel {
   /**
    * Creates a profit cost bill line page view model.
    *
-   * @param {ProfitCostBillLineViewModelParams} params View model params.
+   * @param {ExpertCostDetailsViewModelParams} params View model params.
    */
-  constructor({
-    claimId,
-    form = {},
-    errors = [],
-  }: ProfitCostBillLineViewModelParams) {
+  constructor(params: ExpertCostDetailsViewModelParams) {
+    const { claimId, form = {}, errors = [] } = params;
+
     this.claimId = claimId;
-    this.title = "pages.profitCostBillLine.title";
+    this.title = "pages.poa.expertCostDetails.title";
 
     this.form = {
       activityDate: {
@@ -44,13 +43,9 @@ export class ProfitCostBillLineViewModel {
         },
         error: getError(errors, "activityDate"),
       },
-      actualNetProfitCostExcludingAdvocacy: {
-        value: getStringValue(form.actualNetProfitCostExcludingAdvocacy),
-        error: getError(errors, "actualNetProfitCostExcludingAdvocacy"),
-      },
-      actualNetAdvocacyCosts: {
-        value: getStringValue(form.actualNetAdvocacyCosts),
-        error: getError(errors, "actualNetAdvocacyCosts"),
+      actualNetValue: {
+        value: getStringValue(form.actualNetValue),
+        error: getError(errors, "actualNetValue"),
       },
       vatApplies: {
         value: getStringValue(form.vatApplies),
@@ -59,6 +54,10 @@ export class ProfitCostBillLineViewModel {
       feeEarnerName: {
         value: getStringValue(form.feeEarnerName),
         error: getError(errors, "feeEarnerName"),
+      },
+      description: {
+        value: getStringValue(form.description),
+        error: getError(errors, "description"),
       },
     };
 

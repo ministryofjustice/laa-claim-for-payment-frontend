@@ -20,6 +20,10 @@ import {
   checkYourDetailsPage,
   submitYourDetails,
 } from "#src/controllers/poa/checkDetailsController.js";
+import {
+  expertCostDetails,
+  submitExpertCostDetails,
+} from "#src/controllers/poa/expertCostDetailsController.js";
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -150,6 +154,22 @@ router.get(ROUTES.PROFIT_COST_DETAILS,limiter, function(req: Request, res: Respo
 router.post(ROUTES.PROFIT_COST_DETAILS, limiter, function (req: Request, res: Response, next: NextFunction): void {
   submitProfitCostDetails(req, res, next);
 });
+
+router.get(
+  ROUTES.EXPERT_COST_DETAILS,
+  limiter,
+  function (req: Request, res: Response, next: NextFunction): void {
+    expertCostDetails(req, res, next);
+  },
+);
+
+router.post(
+  ROUTES.EXPERT_COST_DETAILS,
+  limiter,
+  function (req: Request, res: Response, next: NextFunction): void {
+    submitExpertCostDetails(req, res, next);
+  },
+);
 
 router.get(
   ROUTES.MULTIPLE_CLIENT_HEARINGS,

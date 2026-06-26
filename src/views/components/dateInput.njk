@@ -1,0 +1,42 @@
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+
+{% macro dateInput(t, id, name, prefix, form) %}
+  {{ govukDateInput({
+    id: id,
+    fieldset: {
+      legend: {
+        text: t(prefix + ".title"),
+        classes: "govuk-fieldset__legend--m"
+      }
+    },
+    hint: {
+      text: t(prefix + ".hint")
+    },
+    errorMessage: form.error and {
+      text: form.error.text | translate
+    },
+    items: [
+      {
+        id: id + "-day",
+        name: name + "Day",
+        value: form.value.day,
+        classes: "govuk-input--width-2" + (" govuk-input--error" if "day" in (form.error.fields or []) else ""),
+        label: t(prefix + ".day")
+      },
+      {
+        id: id + "-month",
+        name: name + "Month",
+        value: form.value.month,
+        classes: "govuk-input--width-2" + (" govuk-input--error" if "month" in (form.error.fields or []) else ""),
+        label: t(prefix + ".month")
+      },
+      {
+        id: id + "-year",
+        name: name + "Year",
+        value: form.value.year,
+        classes: "govuk-input--width-4" + (" govuk-input--error" if "year" in (form.error.fields or []) else ""),
+        label: t(prefix + ".year")
+      }
+    ]
+  }) }}
+{% endmacro %}

@@ -1,4 +1,5 @@
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "components/dateInput.njk" import dateInput %}
+{% from "components/monetaryInput.njk" import monetaryInput %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -13,20 +14,8 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
 
-    {% if vm.errorList.length > 0 %}
-      {% set translatedErrorList = [] %}
-
-      {% for error in vm.errorList %}
-        {% set translatedErrorList = (translatedErrorList.push({
-          text: t(error.text),
-          href: error.href
-        }), translatedErrorList) %}
-      {% endfor %}
-
-      {{ govukErrorSummary({
-        titleText: t("common.errorSummaryTitle"),
-        errorList: translatedErrorList
-      }) }}
+    {% if vm.errorSummary.errorList.length %}
+      {{ govukErrorSummary(vm.errorSummary | translate) }}
     {% endif %}
 
     <form method="post">
@@ -34,79 +23,31 @@
 
       <h1 class="govuk-heading-l">
         {{ t("pages.profitCostBillLine.title") }}
-      </h2>
+      </h1>
 
-      {{ govukDateInput({
-        id: "activityDate",
-        fieldset: {
-          legend: {
-            text: t("pages.profitCostBillLine.activityDate.title"),
-            classes: "govuk-fieldset__legend--m"
-          }
-        },
-        hint: {
-          text: t("pages.profitCostBillLine.activityDate.hint")
-        },
-        errorMessage: vm.form.activityDateError and {
-          text: t(vm.form.activityDateError.text)
-        },
-        items: [
-          {
-            name: "activityDateDay",
-            value: vm.form.activityDateDay,
-            classes: "govuk-input--width-2",
-            label: t("pages.profitCostBillLine.activityDate.day")
-          },
-          {
-            name: "activityDateMonth",
-            value: vm.form.activityDateMonth,
-            classes: "govuk-input--width-2",
-            label: t("pages.profitCostBillLine.activityDate.month")
-          },
-          {
-            name: "activityDateYear",
-            value: vm.form.activityDateYear,
-            classes: "govuk-input--width-4",
-            label: t("pages.profitCostBillLine.activityDate.year")
-          }
-        ]
-      }) }}
+      {{ dateInput(
+        t,
+        "activityDate",
+        "activityDate",
+        "pages.profitCostBillLine.activityDate",
+        vm.form.activityDate
+      ) }}
 
-      {{ govukInput({
-        id: "actualNetProfitCostExcludingAdvocacy",
-        name: "actualNetProfitCostExcludingAdvocacy",
-        value: vm.form.actualNetProfitCostExcludingAdvocacy,
-        classes: "govuk-input--width-5",
-        label: {
-          text: t("pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.title"),
-          classes: "govuk-label--m"
-        },
-        errorMessage: vm.form.actualNetProfitCostExcludingAdvocacyError and {
-          text: t(vm.form.actualNetProfitCostExcludingAdvocacyError.text)
-        },
-        prefix: {
-          text: "£"
-        },
-        inputmode: "decimal"
-      }) }}
+      {{ monetaryInput(
+        t,
+        "actualNetProfitCostExcludingAdvocacy",
+        "actualNetProfitCostExcludingAdvocacy",
+        "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy",
+        vm.form.actualNetProfitCostExcludingAdvocacy
+      ) }}
 
-      {{ govukInput({
-        id: "actualNetAdvocacyCosts",
-        name: "actualNetAdvocacyCosts",
-        value: vm.form.actualNetAdvocacyCosts,
-        classes: "govuk-input--width-5",
-        label: {
-          text: t("pages.profitCostBillLine.actualNetAdvocacyCosts.title"),
-          classes: "govuk-label--m"
-        },
-        errorMessage: vm.form.actualNetAdvocacyCostsError and {
-          text: t(vm.form.actualNetAdvocacyCostsError.text)
-        },
-        prefix: {
-          text: "£"
-        },
-        inputmode: "decimal"
-      }) }}
+      {{ monetaryInput(
+        t,
+        "actualNetAdvocacyCosts",
+        "actualNetAdvocacyCosts",
+        "pages.profitCostBillLine.actualNetAdvocacyCosts",
+        vm.form.actualNetAdvocacyCosts
+      ) }}
 
       {{ govukRadios({
         name: "vatApplies",
@@ -116,19 +57,19 @@
             classes: "govuk-fieldset__legend--m"
           }
         },
-        errorMessage: vm.form.vatAppliesError and {
-          text: t(vm.form.vatAppliesError.text)
+        errorMessage: vm.form.vatApplies.error and {
+          text: vm.form.vatApplies.error.text | translate
         },
         items: [
           {
             value: "yes",
             text: t("common.yes"),
-            checked: vm.form.vatApplies === "yes"
+            checked: vm.form.vatApplies.value === "yes"
           },
           {
             value: "no",
             text: t("common.no"),
-            checked: vm.form.vatApplies === "no"
+            checked: vm.form.vatApplies.value === "no"
           }
         ]
       }) }}
@@ -136,13 +77,13 @@
       {{ govukInput({
         id: "feeEarnerName",
         name: "feeEarnerName",
-        value: vm.form.feeEarnerName,
+        value: vm.form.feeEarnerName.value,
         label: {
           text: t("pages.profitCostBillLine.feeEarnerName.title"),
           classes: "govuk-label--m"
         },
-        errorMessage: vm.form.feeEarnerNameError and {
-          text: t(vm.form.feeEarnerNameError.text)
+        errorMessage: vm.form.feeEarnerName.error and {
+          text: vm.form.feeEarnerName.error.text | translate
         }
       }) }}
 
