@@ -1,4 +1,4 @@
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "components/dateInput.njk" import dateInput %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -22,56 +22,29 @@
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
         <h1 class="govuk-heading-l">
-          {{ t("pages.poa.expertCostDetails.title") }}
+          {{ t(vm.title) }}
         </h1>
 
-        {{ govukDateInput({
-          id: "activity-date",
-          fieldset: {
-            legend: {
-              text: t("pages.poa.expertCostDetails.activityDate.title"),
-              classes: "govuk-fieldset__legend--m"
-            }
-          },
-          hint: {
-            text: t("pages.poa.expertCostDetails.activityDate.hint")
-          },
-          errorMessage: vm.form.activityDateError | translate,
-          items: [
-            {
-              id: "activity-date-day",
-              name: "activityDateDay",
-              value: vm.form.activityDateDay,
-              classes: "govuk-input--width-2" + (" govuk-input--error" if "day" in (vm.form.activityDateError.fields or []) else ""),
-              label: t("pages.poa.expertCostDetails.activityDate.day")
-            },
-            {
-              id: "activity-date-month",
-              name: "activityDateMonth",
-              value: vm.form.activityDateMonth,
-              classes: "govuk-input--width-2" + (" govuk-input--error" if "month" in (vm.form.activityDateError.fields or []) else ""),
-              label: t("pages.poa.expertCostDetails.activityDate.month")
-            },
-            {
-              id: "activity-date-year",
-              name: "activityDateYear",
-              value: vm.form.activityDateYear,
-              classes: "govuk-input--width-4" + (" govuk-input--error" if "year" in (vm.form.activityDateError.fields or []) else ""),
-              label: t("pages.poa.expertCostDetails.activityDate.year")
-            }
-          ]
-        }) }}
+        {{ dateInput(
+          t,
+          "activity-date",
+          "activityDate",
+          "pages.poa.expertCostDetails.activityDate",
+          vm.form.activityDate
+        ) }}
 
         {{ govukInput({
           id: "actual-net-value",
           name: "actualNetValue",
-          value: vm.form.actualNetValue,
+          value: vm.form.actualNet.value,
           classes: "govuk-input--width-5",
           label: {
             text: t("pages.poa.expertCostDetails.actualNetValue.title"),
             classes: "govuk-label--m"
           },
-          errorMessage: vm.form.actualNetValueError | translate,
+          errorMessage: vm.form.actualNetValue.error and {
+            text: vm.form.actualNetValue.error.text | translate
+          },
           prefix: {
             text: "£"
           },
@@ -87,17 +60,19 @@
               classes: "govuk-fieldset__legend--m"
             }
           },
-          errorMessage: vm.form.vatAppliesError | translate,
+          errorMessage: vm.form.vatApplies.error and {
+            text: vm.form.vatApplies.error.text | translate
+          },
           items: [
             {
               value: "yes",
               text: t("common.yes"),
-              checked: vm.form.vatApplies === "yes"
+              checked: vm.form.vatApplies.value === "yes"
             },
             {
               value: "no",
               text: t("common.no"),
-              checked: vm.form.vatApplies === "no"
+              checked: vm.form.vatApplies.value === "no"
             }
           ]
         }) }}
@@ -105,23 +80,27 @@
         {{ govukInput({
           id: "fee-earner-name",
           name: "feeEarnerName",
-          value: vm.form.feeEarnerName,
+          value: vm.form.feeEarnerName.value,
           label: {
             text: t("pages.poa.expertCostDetails.feeEarnerName.title"),
             classes: "govuk-label--m"
           },
-          errorMessage: vm.form.feeEarnerNameError | translate
+          errorMessage: vm.form.feeEarnerName.error and {
+            text: vm.form.feeEarnerName.error.text | translate
+          }
         }) }}
 
         {{ govukTextarea({
           id: "description",
           name: "description",
-          value: vm.form.description,
+          value: vm.form.description.value,
           label: {
             text: t("pages.poa.expertCostDetails.description.title"),
             classes: "govuk-label--m"
           },
-          errorMessage: vm.form.descriptionError | translate
+          errorMessage: vm.form.description.error and {
+            text: vm.form.description.error.text | translate
+          }
         }) }}
 
         {{ govukButton({

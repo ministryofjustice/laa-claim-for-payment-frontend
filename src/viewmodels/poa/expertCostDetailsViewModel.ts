@@ -35,19 +35,30 @@ export class ExpertCostDetailsViewModel {
     this.title = "pages.poa.expertCostDetails.title";
 
     this.form = {
-      activityDateDay: getStringValue(form.activityDateDay),
-      activityDateMonth: getStringValue(form.activityDateMonth),
-      activityDateYear: getStringValue(form.activityDateYear),
-      actualNetValue: getStringValue(form.actualNetValue),
-      vatApplies: getStringValue(form.vatApplies),
-      feeEarnerName: getStringValue(form.feeEarnerName),
-      description: getStringValue(form.description),
-
-      activityDateError: getError(errors, "activityDate"),
-      actualNetValueError: getError(errors, "actualNetValue"),
-      vatAppliesError: getError(errors, "vatApplies"),
-      feeEarnerNameError: getError(errors, "feeEarnerName"),
-      descriptionError: getError(errors, "description"),
+      activityDate: {
+        value: {
+          day: getStringValue(form.activityDateDay),
+          month: getStringValue(form.activityDateMonth),
+          year: getStringValue(form.activityDateYear),
+        },
+        error: getError(errors, "activityDate"),
+      },
+      actualNetValue: {
+        value: getStringValue(form.actualNetValue),
+        error: getError(errors, "actualNetValue"),
+      },
+      vatApplies: {
+        value: getStringValue(form.vatApplies),
+        error: getError(errors, "vatApplies"),
+      },
+      feeEarnerName: {
+        value: getStringValue(form.feeEarnerName),
+        error: getError(errors, "feeEarnerName"),
+      },
+      description: {
+        value: getStringValue(form.description),
+        error: getError(errors, "description"),
+      },
     };
 
     this.errorSummary = getErrorSummary(errors);

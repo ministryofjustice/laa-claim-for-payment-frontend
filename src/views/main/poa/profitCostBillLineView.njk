@@ -35,7 +35,9 @@
         hint: {
           text: t("pages.profitCostBillLine.activityDate.hint")
         },
-        errorMessage: vm.form.activityDateError | translate,
+        errorMessage: vm.form.activityDateError and {
+          text: vm.form.activityDateError.text | translate
+        },
         items: [
           {
             id: "activityDate-day",
@@ -70,7 +72,9 @@
           text: t("pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.title"),
           classes: "govuk-label--m"
         },
-        errorMessage: vm.form.actualNetProfitCostExcludingAdvocacyError | translate,
+        errorMessage: vm.form.actualNetProfitCostExcludingAdvocacyError and {
+          text: vm.form.actualNetProfitCostExcludingAdvocacyError.text | translate
+        },
         prefix: {
           text: "£"
         },
@@ -86,7 +90,9 @@
           text: t("pages.profitCostBillLine.actualNetAdvocacyCosts.title"),
           classes: "govuk-label--m"
         },
-        errorMessage: vm.form.actualNetAdvocacyCostsError | translate,
+        errorMessage: vm.form.actualNetAdvocacyCostsError and {
+          text: vm.form.actualNetAdvocacyCostsError.text | translate
+        },
         prefix: {
           text: "£"
         },
@@ -101,7 +107,9 @@
             classes: "govuk-fieldset__legend--m"
           }
         },
-        errorMessage: vm.form.vatAppliesError | translate,
+        errorMessage: vm.form.vatAppliesError and {
+          text: vm.form.vatAppliesError.text | translate
+        },
         items: [
           {
             value: "yes",
@@ -124,7 +132,9 @@
           text: t("pages.profitCostBillLine.feeEarnerName.title"),
           classes: "govuk-label--m"
         },
-        errorMessage: vm.form.feeEarnerNameError | translate
+        errorMessage: vm.form.feeEarnerNameError and {
+          text: vm.form.feeEarnerNameError.text | translate
+        }
       }) }}
 
       <div class="govuk-button-group">
