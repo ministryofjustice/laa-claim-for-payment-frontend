@@ -1,4 +1,5 @@
 {% from "components/dateInput.njk" import dateInput %}
+{% from "components/monetaryInput.njk" import monetaryInput %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -33,23 +34,13 @@
           vm.form.activityDate
         ) }}
 
-        {{ govukInput({
-          id: "actual-net-value",
-          name: "actualNetValue",
-          value: vm.form.actualNet.value,
-          classes: "govuk-input--width-5",
-          label: {
-            text: t("pages.poa.expertCostDetails.actualNetValue.title"),
-            classes: "govuk-label--m"
-          },
-          errorMessage: vm.form.actualNetValue.error and {
-            text: vm.form.actualNetValue.error.text | translate
-          },
-          prefix: {
-            text: "£"
-          },
-          inputmode: "decimal"
-        }) }}
+        {{ monetaryInput(
+          t,
+          "actual-net-value",
+          "actualNetValue",
+          "pages.poa.expertCostDetails.actualNetValue",
+          vm.form.actualNetValue
+        ) }}
 
         {{ govukRadios({
           idPrefix: "vat-applies",

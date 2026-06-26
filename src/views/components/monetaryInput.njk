@@ -1,0 +1,21 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+
+{% macro monetaryInput(t, id, name, prefix, form) %}
+  {{ govukInput({
+    id: id,
+    name: name,
+    value: form.value,
+    classes: "govuk-input--width-5",
+    label: {
+      text: t(prefix + ".title"),
+      classes: "govuk-label--m"
+    },
+    errorMessage: form.error and {
+      text: form.error.text | translate
+    },
+    prefix: {
+      text: "£"
+    },
+    inputmode: "decimal"
+  }) }}
+{% endmacro %}

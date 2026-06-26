@@ -1,4 +1,5 @@
 {% from "components/dateInput.njk" import dateInput %}
+{% from "components/monetaryInput.njk" import monetaryInput %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -32,41 +33,21 @@
         vm.form.activityDate
       ) }}
 
-      {{ govukInput({
-        id: "actualNetProfitCostExcludingAdvocacy",
-        name: "actualNetProfitCostExcludingAdvocacy",
-        value: vm.form.actualNetProfitCostExcludingAdvocacy.value,
-        classes: "govuk-input--width-5",
-        label: {
-          text: t("pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.title"),
-          classes: "govuk-label--m"
-        },
-        errorMessage: vm.form.actualNetProfitCostExcludingAdvocacy.error and {
-          text: vm.form.actualNetProfitCostExcludingAdvocacy.error.text | translate
-        },
-        prefix: {
-          text: "£"
-        },
-        inputmode: "decimal"
-      }) }}
+      {{ monetaryInput(
+        t,
+        "actualNetProfitCostExcludingAdvocacy",
+        "actualNetProfitCostExcludingAdvocacy",
+        "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy",
+        vm.form.actualNetProfitCostExcludingAdvocacy
+      ) }}
 
-      {{ govukInput({
-        id: "actualNetAdvocacyCosts",
-        name: "actualNetAdvocacyCosts",
-        value: vm.form.actualNetAdvocacyCosts.value,
-        classes: "govuk-input--width-5",
-        label: {
-          text: t("pages.profitCostBillLine.actualNetAdvocacyCosts.title"),
-          classes: "govuk-label--m"
-        },
-        errorMessage: vm.form.actualNetAdvocacyCosts.error and {
-          text: vm.form.actualNetAdvocacyCosts.error.text | translate
-        },
-        prefix: {
-          text: "£"
-        },
-        inputmode: "decimal"
-      }) }}
+      {{ monetaryInput(
+        t,
+        "actualNetAdvocacyCosts",
+        "actualNetAdvocacyCosts",
+        "pages.profitCostBillLine.actualNetAdvocacyCosts",
+        vm.form.actualNetAdvocacyCosts
+      ) }}
 
       {{ govukRadios({
         name: "vatApplies",
