@@ -184,7 +184,7 @@
         "otherJudge": {
           "text": "Other judge"
         },
-        "error": {
+        "errors": {
           "empty": "Select court or judge type"
         }
       },
@@ -199,19 +199,19 @@
         "parent": {
           "text": "Parent"
         },
-        "error": {
+        "errors": {
           "empty": "Select your client’s party status"
         }
       },
       "firstSolicitor": {
         "title": "Are you the first solicitor firm acting on this case?",
-        "error": {
+        "errors": {
           "empty": "Select yes if you are the first solicitor firm acting on this case"
         }
       },
       "transferOfSolicitor": {
         "title": "Has there been a transfer of solicitor on this case?",
-        "error": {
+        "errors": {
           "empty": "Select yes if there has been a transfer of solicitor on this case"
         }
       }

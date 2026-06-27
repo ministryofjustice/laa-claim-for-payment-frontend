@@ -50,17 +50,23 @@ describe("numberOfClientsStartOfCaseController", () => {
     expect(renderArgs.vm.form.choices).to.deep.equal([
       {
         value: "none",
-        text: "pages.numberOfClientsStartOfCase.none.text",
+        text: {
+          key: "pages.numberOfClientsStartOfCase.none.text"
+        },
         checked: false,
       },
       {
         value: "one",
-        text: "pages.numberOfClientsStartOfCase.one.text",
+        text: {
+          key: "pages.numberOfClientsStartOfCase.one.text"
+        },
         checked: false,
       },
       {
         value: "more-than-two",
-        text: "pages.numberOfClientsStartOfCase.moreThanTwo.text",
+        text: {
+          key: "pages.numberOfClientsStartOfCase.moreThanTwo.text"
+        },
         checked: false,
       },
     ]);
@@ -142,7 +148,9 @@ describe("numberOfClientsStartOfCaseController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
-      text: "pages.numberOfClientsStartOfCase.error.empty",
+      text: {
+        key: "pages.numberOfClientsStartOfCase.error.empty"
+      },
     });
   });
 });

@@ -1,9 +1,12 @@
+import type { Message, TextOrMessage } from "#src/viewmodels/components/message.js";
+
 export interface RadioQuestionOptions<ChoiceType> {
   value: ChoiceType;
-  text: string;
+  text: Message;
   hint?: {
-    text: string;
+    text: Message;
   };
+  checked?: boolean;
 }
 
 interface RadioQuestionViewModelParams<ChoiceType> {
@@ -12,7 +15,7 @@ interface RadioQuestionViewModelParams<ChoiceType> {
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
   selectedValue?: ChoiceType;
   error?: {
-    text: string;
+    text: Message;
   };
 }
 
@@ -22,7 +25,7 @@ interface RadioQuestionViewModelParams<ChoiceType> {
 export class RadioQuestionViewModel<ChoiceType> {
   readonly title;
   readonly choices;
-  readonly form;
+  readonly form: RadioQuestionForm<ChoiceType>;
 
   /**
    * Creates a radio question page view model.
@@ -38,16 +41,46 @@ export class RadioQuestionViewModel<ChoiceType> {
   }: RadioQuestionViewModelParams<ChoiceType>) {
     this.title = title;
     this.choices = choices;
-
-    this.form = {
+    this.form = radioQuestionForm<ChoiceType>(
       fieldName,
-      choices: choices.map((choice) => ({
-        ...choice,
-        checked: choice.value === selectedValue,
-      })),
+      choices,
+      selectedValue,
       error,
-    };
+    );
   }
+}
+
+export interface RadioQuestionForm<ChoiceType> {
+  fieldName: string;
+  choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
+  error?: {
+    text: TextOrMessage;
+  };
+}
+
+/**
+ * Radio question form builder.
+ * @param {string} fieldName field name
+ * @param {ReadonlyArray<RadioQuestionOptions>} choices radio choices
+ * @param {unknown} selectedValue selected value
+ * @param {object} error error
+ * @param {TextOrMessage} error.text error text message
+ * @returns {RadioQuestionForm} radio question form object
+ */
+export function radioQuestionForm<ChoiceType>(
+  fieldName: string,
+  choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>,
+  selectedValue?: unknown,
+  error?: { text: TextOrMessage },
+): RadioQuestionForm<ChoiceType> {
+  return {
+    fieldName,
+    choices: choices.map((choice) => ({
+      ...choice,
+      checked: choice.value === selectedValue,
+    })),
+    error,
+  };
 }
 
 /**
@@ -57,6 +90,9 @@ export class RadioQuestionViewModel<ChoiceType> {
  * @param {unknown} value The submitted choice.
  * @returns {boolean} Whether the submitted choice is valid.
  */
-export function isValidChoice<ChoiceType>(choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>, value: unknown): value is ChoiceType {
-  return  choices.some((choice) => choice.value === value);
+export function isValidChoice<ChoiceType>(
+  choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>,
+  value: unknown,
+): value is ChoiceType {
+  return choices.some((choice) => choice.value === value);
 }

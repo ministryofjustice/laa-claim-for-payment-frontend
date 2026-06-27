@@ -1,19 +1,13 @@
-import type { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { processError } from "#src/helpers/index.js";
 import {
-  isValidClientStatusChoice,
-  isValidCourtTypeChoice,
   ProfitCostDetailsViewModel,
-  type ProfitCostDetailsViewModelParams,
+  type ProfitCostDetailsViewModelParams
 } from "#src/viewmodels/profitCostDetails/profitCostDetailsViewModel.js";
-import {
-  clientStatusFieldName,
-  courtTypeFieldName,
-  firstSolicitorFieldName,
-  transferOfSolicitorFieldName,
-} from "#src/viewmodels/profitCostDetails/profitCostDetailsFields.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { BooleanChoice, isValidBooleanChoice } from "#src/models/booleanChoice.js";
+import { BooleanChoice } from "#src/models/booleanChoice.js";
+import { getForm } from "#src/helpers/validation.js";
+import { type ProfitCostDetailsForm, validateProfitCostDetails } from "#src/helpers/profitCostDetailsValidation.js";
 
 /**
  * Profit cost details journey view
@@ -52,68 +46,18 @@ export function submitProfitCostDetails(
   next: NextFunction,
 ): void {
   try {
-    /* eslint-disable @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary. */
-    const selectedCourtTypeChoice: unknown = req.body?.[courtTypeFieldName];
-    const selectedClientStatusChoice: unknown =
-      req.body?.[clientStatusFieldName];
-    const selectedFirstSolicitorChoice: unknown =
-      req.body?.[firstSolicitorFieldName];
-    const selectedTransferOfSolicitorChoice: unknown =
-      req.body?.[transferOfSolicitorFieldName];
-    /* eslint-enable @typescript-eslint/no-unsafe-member-access */
+    const form = getForm(req.body) as ProfitCostDetailsForm;
+    const validationResult = validateProfitCostDetails(form);
 
-    const errors: ProfitCostDetailsViewModelParams["error"] = {};
-
-    if (!isValidCourtTypeChoice(selectedCourtTypeChoice)) {
-      errors.courtTypeError = {
-        text: "pages.profitCostDetails.courtType.error.empty",
+    if (!validationResult.isValid) {
+      const params: ProfitCostDetailsViewModelParams = {
+        form,
+        errors: validationResult.errors
       };
-    }
 
-    if (!isValidClientStatusChoice(selectedClientStatusChoice)) {
-      errors.clientStatusError = {
-        text: "pages.profitCostDetails.clientStatus.error.empty",
-      };
-    }
-
-    if (!isValidBooleanChoice(selectedFirstSolicitorChoice)) {
-      errors.firstSolicitorError = {
-        text: "pages.profitCostDetails.firstSolicitor.error.empty",
-      };
-    }
-
-    if (!isValidBooleanChoice(selectedTransferOfSolicitorChoice)) {
-      errors.transferOfSolicitorError = {
-        text: "pages.profitCostDetails.transferOfSolicitor.error.empty",
-      };
-    }
-
-    if (Object.keys(errors).length > 0) {
       res.status(400).render("main/poa/profitCostDetailsView.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new ProfitCostDetailsViewModel({
-          courtTypeSelectedValue:
-            typeof selectedCourtTypeChoice === "string"
-              ? selectedCourtTypeChoice
-              : undefined,
-
-          clientStatusSelectedValue:
-            typeof selectedClientStatusChoice === "string"
-              ? selectedClientStatusChoice
-              : undefined,
-
-          firstSolicitorSelectedValue:
-            typeof selectedFirstSolicitorChoice === "string"
-              ? selectedFirstSolicitorChoice
-              : undefined,
-
-          transferOfSolicitorSelectedValue:
-            typeof selectedTransferOfSolicitorChoice === "string"
-              ? selectedTransferOfSolicitorChoice
-              : undefined,
-
-          error: errors,
-        }),
+        vm: new ProfitCostDetailsViewModel(params),
       });
       return;
     }
@@ -121,7 +65,7 @@ export function submitProfitCostDetails(
     const claimId = Number(req.params.claimId);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Safe to assert as TransferOfSolicitorChoice because validation has already occurred
-    const validatedTransferOfSolicitorChoice = selectedTransferOfSolicitorChoice as BooleanChoice;
+    const validatedTransferOfSolicitorChoice = form.transferOfSolicitorChoice as BooleanChoice;
 
     const redirectByTransferOfSolicitorChoice: Record<BooleanChoice,string> = {
       [BooleanChoice.Yes]: buildRoute(

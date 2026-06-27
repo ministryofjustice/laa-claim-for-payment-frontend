@@ -100,8 +100,8 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.courtTypeFieldName).to.equal("courtTypeChoice");
-      expect(renderArgs.vm.form.courtTypeChoices).to.have.length(4);
+      expect(renderArgs.vm.form.courtType.fieldName).to.equal("courtTypeChoice");
+      expect(renderArgs.vm.form.courtType.choices).to.have.length(4);
     });
 
     it("should return error when no court type is selected", async () => {
@@ -111,9 +111,9 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.courtTypeError.text).to.equal(
-        "pages.profitCostDetails.courtType.error.empty",
-      );
+      expect(renderArgs.vm.form.courtType.error.text).to.deep.equal({
+        key: "pages.profitCostDetails.courtType.errors.empty"
+      });
     });
 
     it("should return error when an invalid court type is selected", async () => {
@@ -127,9 +127,9 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.courtTypeError.text).to.equal(
-        "pages.profitCostDetails.courtType.error.empty",
-      );
+      expect(renderArgs.vm.form.courtType.error.text).to.deep.equal({
+        key: "pages.profitCostDetails.courtType.errors.empty"
+      });
     });
   });
 
@@ -139,10 +139,10 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.clientStatusFieldName).to.equal(
+      expect(renderArgs.vm.form.clientStatus.fieldName).to.equal(
         "clientStatusChoice",
       );
-      expect(renderArgs.vm.form.clientStatusChoices).to.have.length(3);
+      expect(renderArgs.vm.form.clientStatus.choices).to.have.length(3);
     });
 
     it("should return error when no client status is selected", async () => {
@@ -152,9 +152,9 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.clientStatusError.text).to.equal(
-        "pages.profitCostDetails.clientStatus.error.empty",
-      );
+      expect(renderArgs.vm.form.clientStatus.error.text).to.deep.equal({
+        key: "pages.profitCostDetails.clientStatus.errors.empty"
+      });
     });
 
     it("should return error when an invalid client status is selected", async () => {
@@ -168,9 +168,9 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.clientStatusError.text).to.equal(
-        "pages.profitCostDetails.clientStatus.error.empty",
-      );
+      expect(renderArgs.vm.form.clientStatus.error.text).to.deep.equal({
+        key: "pages.profitCostDetails.clientStatus.errors.empty"
+      });
     });
   });
 
@@ -180,10 +180,10 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.firstSolicitorFieldName).to.equal(
+      expect(renderArgs.vm.form.firstSolicitor.fieldName).to.equal(
         "firstSolicitorChoice",
       );
-      expect(renderArgs.vm.form.firstSolicitorChoices).to.have.length(2);
+      expect(renderArgs.vm.form.firstSolicitor.choices).to.have.length(2);
     });
 
     it("should return error when no first solicitor option is selected", async () => {
@@ -193,9 +193,9 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.firstSolicitorError.text).to.equal(
-        "pages.profitCostDetails.firstSolicitor.error.empty",
-      );
+      expect(renderArgs.vm.form.firstSolicitor.error.text).to.deep.equal({
+        key: "pages.profitCostDetails.firstSolicitor.errors.empty"
+      });
     });
 
     it("should return error when an invalid first solicitor option is selected", async () => {
@@ -209,9 +209,9 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.firstSolicitorError.text).to.equal(
-        "pages.profitCostDetails.firstSolicitor.error.empty",
-      );
+      expect(renderArgs.vm.form.firstSolicitor.error.text).to.deep.equal({
+        key: "pages.profitCostDetails.firstSolicitor.errors.empty"
+      });
     });
   });
 
@@ -221,10 +221,10 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.transferOfSolicitorFieldName).to.equal(
+      expect(renderArgs.vm.form.transferOfSolicitor.fieldName).to.equal(
         "transferOfSolicitorChoice",
       );
-      expect(renderArgs.vm.form.transferOfSolicitorChoices).to.have.length(2);
+      expect(renderArgs.vm.form.transferOfSolicitor.choices).to.have.length(2);
     });
 
     it("should return error when no transfer of solicitor option is selected", async () => {
@@ -234,9 +234,9 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.transferOfSolicitorError.text).to.equal(
-        "pages.profitCostDetails.transferOfSolicitor.error.empty",
-      );
+      expect(renderArgs.vm.form.transferOfSolicitor.error.text).to.deep.equal({
+        key: "pages.profitCostDetails.transferOfSolicitor.errors.empty"
+      });
     });
 
     it("should return error when an invalid transfer of solicitor option is selected", async () => {
@@ -250,9 +250,9 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.transferOfSolicitorError.text).to.equal(
-        "pages.profitCostDetails.transferOfSolicitor.error.empty",
-      );
+      expect(renderArgs.vm.form.transferOfSolicitor.error.text).to.deep.equal({
+        key: "pages.profitCostDetails.transferOfSolicitor.errors.empty"
+      });
     });
   });
 });

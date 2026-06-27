@@ -1,7 +1,10 @@
 import { expect, config as chaiConfig } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
-import { ProfitCostDetailsViewModel } from "#src/viewmodels/profitCostDetails/profitCostDetailsViewModel.js";
+import {
+  ProfitCostDetailsViewModel,
+  ProfitCostDetailsViewModelParams,
+} from "#src/viewmodels/profitCostDetails/profitCostDetailsViewModel.js";
 
 chaiConfig.truncateThreshold = 0;
 
@@ -122,14 +125,27 @@ describe("views/main/poa/profitCostDetailsView.njk", () => {
 
   describe("with errors", () => {
     beforeEach(async () => {
+      const params: ProfitCostDetailsViewModelParams = {
+        errors: [
+          {
+            fieldName: "courtTypeChoice",
+            href: "#courtTypeChoice",
+            text: {
+              key: "pages.profitCostDetails.courtType.error.empty"
+            }
+          },
+          {
+            fieldName: "clientStatusChoice",
+            href: "#clientStatusChoice",
+            text: {
+              key: "pages.profitCostDetails.clientStatus.error.empty"
+            }
+          }
+        ]
+      };
       $ = await renderView("main/poa/profitCostDetailsView.njk", {
         csrfToken: "csrf-token",
-        vm: new ProfitCostDetailsViewModel({
-          error: {
-            courtTypeError: { text: "pages.profitCostDetails.courtType.error.empty" },
-            clientStatusError: { text: "pages.profitCostDetails.clientStatus.error.empty" },
-          },
-        }),
+        vm: new ProfitCostDetailsViewModel(params),
       });
     });
 
@@ -166,4 +182,3 @@ describe("views/main/poa/profitCostDetailsView.njk", () => {
     });
   });
 });
-``

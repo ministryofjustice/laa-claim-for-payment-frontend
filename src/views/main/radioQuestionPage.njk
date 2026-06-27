@@ -10,25 +10,13 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      
-      {% set radioItems = [] %}
-
-      {% for choice in vm.form.choices %}
-        {% set radioItems = (radioItems.push({
-          value: choice.value,
-          text: t(choice.text),
-          hint: {
-            text: t(choice.hint.text)
-          }
-        }), radioItems) %}
-      {% endfor %}
 
       {% if vm.form.error %}
         {{ govukErrorSummary({
           titleText: t("common.errorSummaryTitle"),
           errorList: [
             {
-              text: t(vm.form.error.text),
+              text: vm.form.error.text | translate,
               href: "#" + vm.form.fieldName
             }
           ]
@@ -47,8 +35,10 @@
               classes: "govuk-fieldset__legend--l"
             }
           },
-          errorMessage: {text: t(vm.form.error.text)} if vm.form.error,
-          items: radioItems
+          errorMessage: vm.form.error and {
+            text: vm.form.error.text | translate
+          },
+          items: vm.form.choices | translate
         }) }}
 
         {{ govukButton({

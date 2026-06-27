@@ -78,7 +78,9 @@ describe("escapingFixedFeeController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
-      text: "pages.escapingFixedFee.error.empty",
+      text: {
+        key: "pages.escapingFixedFee.error.empty"
+      },
     });
   });
 
@@ -97,7 +99,9 @@ describe("escapingFixedFeeController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
-      text: "pages.escapingFixedFee.error.empty",
+      text: {
+        key: "pages.escapingFixedFee.error.empty"
+      },
     });
 
     expect(

@@ -1,4 +1,4 @@
-import { booleanChoices } from "#src/models/booleanChoice.js";
+import { type BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
 import {
   type ClientStatusChoice,
   clientStatusChoices,
@@ -9,26 +9,18 @@ import {
   firstSolicitorFieldName,
   transferOfSolicitorFieldName,
 } from "./profitCostDetailsFields.js";
+import type { ProfitCostDetailsForm } from "#src/helpers/profitCostDetailsValidation.js";
+import {
+  type FieldValidationError,
+  getError,
+  getErrorSummary,
+} from "#src/helpers/validation.js";
+import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
+import { radioQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
 
 export interface ProfitCostDetailsViewModelParams {
-  courtTypeSelectedValue?: string;
-  clientStatusSelectedValue?: string;
-  firstSolicitorSelectedValue?: string;
-  transferOfSolicitorSelectedValue?: string;
-  error?: {
-    courtTypeError?: {
-      text: string;
-    };
-    clientStatusError?: {
-      text: string;
-    };
-    firstSolicitorError?: {
-      text: string;
-    };
-    transferOfSolicitorError?: {
-      text: string;
-    };
-  };
+  form?: ProfitCostDetailsForm;
+  errors?: FieldValidationError[];
 }
 
 /**
@@ -36,97 +28,42 @@ export interface ProfitCostDetailsViewModelParams {
  */
 export class ProfitCostDetailsViewModel {
   readonly form;
-  readonly errorList;
+  readonly errorSummary: ErrorSummary;
 
   /**
    * Creates a choose upload page view model.
    * @param { ProfitCostDetailsViewModelParams } params The selected value and error state
    */
   constructor(params: ProfitCostDetailsViewModelParams = {}) {
+    const { form = {}, errors = [] } = params;
+
     this.form = {
-      courtTypeFieldName,
-      courtTypeChoices: courtTypeChoices.map((choice) => ({
-        ...choice,
-        checked: choice.value === params.courtTypeSelectedValue,
-      })),
-
-      clientStatusFieldName,
-      clientStatusChoices: clientStatusChoices.map((choice) => ({
-        ...choice,
-        checked: choice.value === params.clientStatusSelectedValue,
-      })),
-
-      firstSolicitorFieldName,
-      firstSolicitorChoices: booleanChoices.map((choice) => ({
-        ...choice,
-        checked: choice.value === params.firstSolicitorSelectedValue,
-      })),
-
-      transferOfSolicitorFieldName,
-      transferOfSolicitorChoices: booleanChoices.map((choice) => ({
-        ...choice,
-        checked: choice.value === params.transferOfSolicitorSelectedValue,
-      })),
-
-      courtTypeError: params.error?.courtTypeError,
-      clientStatusError: params.error?.clientStatusError,
-      firstSolicitorError: params.error?.firstSolicitorError,
-      transferOfSolicitorError: params.error?.transferOfSolicitorError,
+      courtType: radioQuestionForm<CourtTypeChoice>(
+        courtTypeFieldName,
+        courtTypeChoices,
+        form.courtTypeChoice,
+        getError(errors, courtTypeFieldName),
+      ),
+      clientStatus: radioQuestionForm<ClientStatusChoice>(
+        clientStatusFieldName,
+        clientStatusChoices,
+        form.clientStatusChoice,
+        getError(errors, clientStatusFieldName),
+      ),
+      firstSolicitor: radioQuestionForm<BooleanChoice>(
+        firstSolicitorFieldName,
+        booleanChoices,
+        form.firstSolicitorChoice,
+        getError(errors, firstSolicitorFieldName),
+      ),
+      transferOfSolicitor: radioQuestionForm<BooleanChoice>(
+        transferOfSolicitorFieldName,
+        booleanChoices,
+        form.transferOfSolicitorChoice,
+        getError(errors, transferOfSolicitorFieldName),
+      ),
     };
 
-    this.errorList = [];
-    const { error } = params;
-
-    if (error?.courtTypeError !== undefined) {
-      this.errorList.push({
-        text: error.courtTypeError.text,
-        href: `#${courtTypeFieldName}`,
-      });
-    }
-
-    if (error?.clientStatusError !== undefined) {
-      this.errorList.push({
-        text: error.clientStatusError.text,
-        href: `#${clientStatusFieldName}`,
-      });
-    }
-
-    if (error?.firstSolicitorError !== undefined) {
-      this.errorList.push({
-        text: error.firstSolicitorError.text,
-        href: `#${firstSolicitorFieldName}`,
-      });
-    }
-
-    if (error?.transferOfSolicitorError !== undefined) {
-      this.errorList.push({
-        text: error.transferOfSolicitorError.text,
-        href: `#${transferOfSolicitorFieldName}`,
-      });
-    }
+    this.errorSummary = getErrorSummary(errors);
   }
-}
-
-/**
- * Checks whether the submitted court type choice is valid.
- *
- * @param {unknown} value The submitted court type choice.
- * @returns {boolean} Whether the submitted choice is valid.
- */
-export function isValidCourtTypeChoice(
-  value: unknown,
-): value is CourtTypeChoice {
-  return courtTypeChoices.some((choice) => choice.value === value);
-}
-
-/**
- * Checks whether the submitted client status choice is valid.
- *
- * @param {unknown} value The submitted client status choice.
- * @returns {boolean} Whether the submitted choice is valid.
- */
-export function isValidClientStatusChoice(
-  value: unknown,
-): value is ClientStatusChoice {
-  return clientStatusChoices.some((choice) => choice.value === value);
 }

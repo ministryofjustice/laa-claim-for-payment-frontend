@@ -3,7 +3,11 @@
  */
 
 
-import { isValidChoice, RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
+import {
+  isValidChoice,
+  RadioQuestionOptions,
+  RadioQuestionViewModel,
+} from "#src/viewmodels/radioQuestionViewModel.js";
 import { expect } from "chai";
 
 const testFieldName = "test" as const;
@@ -16,14 +20,18 @@ const testFieldName = "test" as const;
   type TestChoice =
     (typeof TestChoice)[keyof typeof TestChoice];
 
-  const testChoices = [
+  const testChoices: RadioQuestionOptions<TestChoice>[] = [
     {
       value: TestChoice.First,
-      text: "first text",
+      text: {
+        key: "first text"
+      },
     },
       {
       value: TestChoice.Second,
-      text: "second text",
+      text: {
+        key: "second text"
+      },
     },
   ] as const;
 
@@ -50,28 +58,40 @@ describe("radioQuestionViewModel()", () => {
     expect(viewModel.form.choices).to.have.length(2);
 
     expect(viewModel.form.choices[0].value).to.equal("first");
-    expect(viewModel.form.choices[0].text).to.equal("first text");
+    expect(viewModel.form.choices[0].text).to.deep.equal({
+      key: "first text"
+    });
     expect(viewModel.form.choices[0].checked).to.equal(false);
 
     expect(viewModel.form.choices[1].value).to.equal("second");
-    expect(viewModel.form.choices[1].text).to.equal("second text");
+    expect(viewModel.form.choices[1].text).to.deep.equal({
+      key: "second text"
+    });
     expect(viewModel.form.choices[1].checked).to.equal(false);
   });
 
   it("creates the radio choices with hints", () => {
-    const testChoices = [
+    const testChoices: RadioQuestionOptions<TestChoice>[] = [
       {
         value: TestChoice.First,
-        text: "first text",
+        text: {
+          key: "first text"
+        },
         hint: {
-          text: "hint 1"
+          text: {
+            key: "hint 1"
+          }
         }
       },
         {
         value: TestChoice.Second,
-        text: "second text",
+        text: {
+          key: "second text"
+        },
         hint: {
-          text: "hint 2"
+          text: {
+            key: "hint 2"
+          }
         }
       },
     ] as const;
@@ -83,8 +103,12 @@ describe("radioQuestionViewModel()", () => {
     });
 
 
-    expect(viewModel.form.choices[0].hint?.text).to.equal("hint 1");
-    expect(viewModel.form.choices[1].hint?.text).to.equal("hint 2");
+    expect(viewModel.form.choices[0].hint?.text).to.deep.equal({
+      key: "hint 1"
+    });
+    expect(viewModel.form.choices[1].hint?.text).to.deep.equal({
+      key: "hint 2"
+    });
   });
 
   it("marks the selected choice as checked", () => {
@@ -106,11 +130,15 @@ describe("radioQuestionViewModel()", () => {
       choices: testChoices,
       selectedValue: TestChoice.First,
       error: {
-        text: "some.error.empty",
+        text: {
+          key: "some.error.empty"
+        },
       },
     });
 
-    expect(viewModel.form.error?.text).to.equal("some.error.empty");
+    expect(viewModel.form.error?.text).to.deep.equal({
+      key: "some.error.empty"
+    });
   });
 });
 

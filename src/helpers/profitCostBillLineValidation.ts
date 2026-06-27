@@ -4,7 +4,8 @@ import {
   validateBooleanInput,
   validateDateInput,
   validateMoneyInput,
-  validateStringInput,
+  validateStringInput, validationResult,
+  type ValidationResult,
 } from "#src/helpers/validation.js";
 
 export interface ProfitCostBillLineForm {
@@ -17,22 +18,17 @@ export interface ProfitCostBillLineForm {
   feeEarnerName?: unknown;
 }
 
-export interface ProfitCostBillLineValidationResult {
-  isValid: boolean;
-  errors: FieldValidationError[];
-}
-
 const FEE_EARNER_NAME_REGEX = /^[A-Za-z' -]+$/;
 
 /**
  * Validates the profit cost bill line form.
  *
  * @param {unknown} body Express request body.
- * @returns {ProfitCostBillLineValidationResult} Validation result.
+ * @returns {ValidationResult} Validation result.
  */
 export function validateProfitCostBillLine(
   body: unknown,
-): ProfitCostBillLineValidationResult {
+): ValidationResult {
   const form = getForm(body) as ProfitCostBillLineForm;
 
   const errors: FieldValidationError[] = [
@@ -53,10 +49,7 @@ export function validateProfitCostBillLine(
     ...validateFeeEarnerName(form.feeEarnerName),
   ];
 
-  return {
-    isValid: errors.length === 0,
-    errors,
-  };
+  return validationResult(errors);
 }
 
 function validateActivityDate(

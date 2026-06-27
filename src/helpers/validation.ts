@@ -1,11 +1,34 @@
 import type { Message } from "#src/viewmodels/components/message.js";
-import type { ErrorSummary, ErrorSummaryError } from "#src/viewmodels/components/errorSummary.js";
+import type {
+  ErrorSummary,
+  ErrorSummaryError,
+} from "#src/viewmodels/components/errorSummary.js";
+import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewModel.js";
 
 export interface FieldValidationError {
   fieldName: string;
   href: string;
   text: Message;
   fields?: string[];
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  errors: FieldValidationError[];
+}
+
+/**
+ * Get a validation result from a list of validation errors.
+ * @param {FieldValidationError[]} errors field validation errors
+ * @returns {ValidationResult} a validation result
+ */
+export function validationResult(
+  errors: FieldValidationError[],
+): ValidationResult {
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
 }
 
 /**
@@ -32,7 +55,7 @@ export function validateStringInput(
   fieldName: string,
   id: string,
   messagePrefix: string,
-  regex: RegExp
+  regex: RegExp,
 ): FieldValidationError[] {
   const stringValue = getStringValue(value);
 
@@ -42,7 +65,7 @@ export function validateStringInput(
         fieldName,
         href: `#${id}`,
         text: {
-          key: `${messagePrefix}.errors.empty`
+          key: `${messagePrefix}.errors.empty`,
         },
       },
     ];
@@ -54,7 +77,7 @@ export function validateStringInput(
         fieldName,
         href: `#${id}`,
         text: {
-          key: `${messagePrefix}.errors.invalid`
+          key: `${messagePrefix}.errors.invalid`,
         },
       },
     ];
@@ -77,7 +100,7 @@ export function validateBooleanInput(
   value: unknown,
   fieldName: string,
   id: string,
-  messagePrefix: string
+  messagePrefix: string,
 ): FieldValidationError[] {
   const stringValue = getStringValue(value);
 
@@ -87,7 +110,39 @@ export function validateBooleanInput(
         fieldName,
         href: `#${id}`,
         text: {
-          key: `${messagePrefix}.errors.empty`
+          key: `${messagePrefix}.errors.empty`,
+        },
+      },
+    ];
+  }
+
+  return [];
+}
+
+/**
+ * Validate radio input.
+ * @param {ReadonlyArray<RadioQuestionOptions>} choices available radio options
+ * @param {unknown} value value to validate as radio option
+ * @param {string} fieldName field name
+ * @param {string} id ID of input
+ * @param {string} messagePrefix message prefix for error messages
+ * @returns {FieldValidationError[]} field validation errors
+ */
+// eslint-disable-next-line @typescript-eslint/max-params -- ignore
+export function validateRadioInput<T>(
+  choices: ReadonlyArray<RadioQuestionOptions<T>>,
+  value: unknown,
+  fieldName: string,
+  id: string,
+  messagePrefix: string,
+): FieldValidationError[] {
+  if (!choices.some((choice) => choice.value === value)) {
+    return [
+      {
+        fieldName,
+        href: `#${id}`,
+        text: {
+          key: `${messagePrefix}.errors.empty`,
         },
       },
     ];
@@ -108,7 +163,7 @@ export function validateMoneyInput(
   value: unknown,
   fieldName: string,
   id: string,
-  messagePrefix: string
+  messagePrefix: string,
 ): FieldValidationError[] {
   const stringValue = getStringValue(value);
 
@@ -118,7 +173,7 @@ export function validateMoneyInput(
         fieldName,
         href: `#${id}`,
         text: {
-          key: `${messagePrefix}.errors.empty`
+          key: `${messagePrefix}.errors.empty`,
         },
       },
     ];
@@ -130,7 +185,7 @@ export function validateMoneyInput(
         fieldName,
         href: `#${id}`,
         text: {
-          key: `${messagePrefix}.errors.invalid`
+          key: `${messagePrefix}.errors.invalid`,
         },
       },
     ];
@@ -144,7 +199,7 @@ export function validateMoneyInput(
         fieldName,
         href: `#${id}`,
         text: {
-          key: `${messagePrefix}.errors.pence`
+          key: `${messagePrefix}.errors.pence`,
         },
       },
     ];
@@ -166,13 +221,13 @@ export function validateMoneyInput(
  */
 export function validateDateInput(
   value: {
-    day?: unknown,
-    month?: unknown,
-    year?: unknown
+    day: unknown;
+    month: unknown;
+    year: unknown;
   },
   fieldName: string,
   id: string,
-  messagePrefix: string
+  messagePrefix: string,
 ): FieldValidationError[] {
   const day = getStringValue(value.day);
   const month = getStringValue(value.month);
@@ -195,7 +250,7 @@ export function validateDateInput(
           fieldName,
           href: `#${id}-day`,
           text: {
-            key: `${messagePrefix}.errors.empty`
+            key: `${messagePrefix}.errors.empty`,
           },
           fields: ["day", "month", "year"],
         },
@@ -209,13 +264,12 @@ export function validateDateInput(
         fieldName,
         href: `#${id}-${missing[0]}`,
         text: {
-          key: `${messagePrefix}.errors.incomplete.${errorKey}`
+          key: `${messagePrefix}.errors.incomplete.${errorKey}`,
         },
         fields: missing,
       },
     ];
   }
-
 
   const NUMBERS_ONLY_REGEX = /^\d+$/;
 
@@ -229,7 +283,7 @@ export function validateDateInput(
         fieldName,
         href: `#${id}-day`,
         text: {
-          key: `${messagePrefix}.errors.invalid`
+          key: `${messagePrefix}.errors.invalid`,
         },
         fields: ["day", "month", "year"],
       },
@@ -246,7 +300,7 @@ export function validateDateInput(
         fieldName,
         href: `#${id}-day`,
         text: {
-          key: `${messagePrefix}.errors.invalid`
+          key: `${messagePrefix}.errors.invalid`,
         },
         fields: ["day", "month", "year"],
       },
@@ -259,7 +313,7 @@ export function validateDateInput(
         fieldName,
         href: `#${id}-day`,
         text: {
-          key: `${messagePrefix}.errors.future`
+          key: `${messagePrefix}.errors.future`,
         },
         fields: ["day", "month", "year"],
       },
@@ -272,7 +326,7 @@ export function validateDateInput(
 function buildMissingDateKey(parts: string[]): string {
   return parts
     .map((p, i) =>
-      i === 0 ? p : `And${p.charAt(0).toUpperCase()}${p.slice(1)}`
+      i === 0 ? p : `And${p.charAt(0).toUpperCase()}${p.slice(1)}`,
     )
     .join("");
 }

@@ -63,7 +63,9 @@ export function submitMultipleClientHearings(
           choices: booleanChoices,
           selectedValue: typeof selectedChoice === "string" ? selectedChoice : undefined,
           error: {
-            text: "pages.multipleClientHearings.error.empty",
+            text: {
+              key: "pages.multipleClientHearings.error.empty"
+            },
           },
         }),
       });

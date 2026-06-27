@@ -4,6 +4,8 @@ import {
   validateDateInput,
   validateMoneyInput,
   validateStringInput,
+  validationResult,
+  type ValidationResult,
 } from "#src/helpers/validation.js";
 
 export interface ExpertCostDetailsForm {
@@ -16,11 +18,6 @@ export interface ExpertCostDetailsForm {
   description?: unknown;
 }
 
-export interface ExpertCostDetailsValidationResult {
-  isValid: boolean;
-  errors: FieldValidationError[];
-}
-
 const FEE_EARNER_NAME_REGEX = /^[A-Za-z' -]+$/;
 const DESCRIPTION_REGEX = /^[\p{L}\p{N}\p{P}\p{Zs}\n\r]*$/u;
 
@@ -28,11 +25,11 @@ const DESCRIPTION_REGEX = /^[\p{L}\p{N}\p{P}\p{Zs}\n\r]*$/u;
  * Validates the expert cost details form.
  *
  * @param {ExpertCostDetailsForm} form The expert cost details form.
- * @returns {ExpertCostDetailsValidationResult} Validation result.
+ * @returns {ValidationResult} Validation result.
  */
 export function validateExpertCostDetails(
   form: ExpertCostDetailsForm,
-): ExpertCostDetailsValidationResult {
+): ValidationResult {
   const errors: FieldValidationError[] = [
     ...validateActivityDate(form),
     ...validateMoneyInput(
@@ -46,10 +43,7 @@ export function validateExpertCostDetails(
     ...validateDescription(form.description),
   ];
 
-  return {
-    isValid: errors.length === 0,
-    errors,
-  };
+  return validationResult(errors);
 }
 
 function validateActivityDate(
