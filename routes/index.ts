@@ -102,6 +102,13 @@ router.post(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response
 });
 
 router.post(
+  ROUTES.AJAX_UPLOAD_POA_EVIDENCE,
+  evidenceUpload.single("documents"),
+  multerErrorHandler,
+  uploadEvidenceFile,
+);
+
+router.post(
   ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM,
   evidenceUpload.single('documents'),
   multerErrorHandler,
