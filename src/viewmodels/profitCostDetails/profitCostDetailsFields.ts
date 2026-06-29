@@ -12,7 +12,7 @@ export const CourtTypeChoice = {
 export type CourtTypeChoice =
   (typeof CourtTypeChoice)[keyof typeof CourtTypeChoice];
 
-export const courtTypeChoices: Array<RadioQuestionOptions<CourtTypeChoice>> = [
+export const courtTypeChoices: ReadonlyArray<RadioQuestionOptions<CourtTypeChoice>> = [
   {
     value: CourtTypeChoice.CountyCourt,
     text: {
@@ -50,7 +50,7 @@ export const ClientStatusChoice = {
 export type ClientStatusChoice =
   (typeof ClientStatusChoice)[keyof typeof ClientStatusChoice];
 
-export const clientStatusChoices: Array<RadioQuestionOptions<ClientStatusChoice>> = [
+export const clientStatusChoices: ReadonlyArray<RadioQuestionOptions<ClientStatusChoice>> = [
   {
     value: ClientStatusChoice.Child,
     text: {

@@ -18,7 +18,7 @@ const HowManyClientsRetainedChoice = {
 type HowManyClientsRetainedChoice =
   (typeof HowManyClientsRetainedChoice)[keyof typeof HowManyClientsRetainedChoice];
 
-const howManyClientsRetainedChoices: Array<RadioQuestionOptions<HowManyClientsRetainedChoice>> =
+const howManyClientsRetainedChoices: ReadonlyArray<RadioQuestionOptions<HowManyClientsRetainedChoice>> =
   [
     {
       value: HowManyClientsRetainedChoice.None,

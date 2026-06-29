@@ -1,7 +1,4 @@
-import type {
-  Message,
-  TextOrMessage,
-} from "#src/viewmodels/components/message.js";
+import type { Message } from "#src/viewmodels/components/message.js";
 
 export interface ErrorSummary {
   titleText: Message;
@@ -9,6 +6,6 @@ export interface ErrorSummary {
 }
 
 export interface ErrorSummaryError {
-  text: TextOrMessage;
+  text: Message;
   href: string;
 }

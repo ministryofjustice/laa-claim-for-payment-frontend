@@ -18,7 +18,7 @@ const PoaClaimTypeChoice = {
 type PoaClaimTypeChoice =
   (typeof PoaClaimTypeChoice)[keyof typeof PoaClaimTypeChoice];
 
-const poaClaimTypeChoices: Array<RadioQuestionOptions<PoaClaimTypeChoice>> = [
+const poaClaimTypeChoices: ReadonlyArray<RadioQuestionOptions<PoaClaimTypeChoice>> = [
   {
     value: PoaClaimTypeChoice.ProfitCost,
     text: {

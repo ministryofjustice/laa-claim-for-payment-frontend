@@ -7,7 +7,7 @@ export const BooleanChoice = {
 
 export type BooleanChoice = (typeof BooleanChoice)[keyof typeof BooleanChoice];
 
-export const booleanChoices: Array<RadioQuestionOptions<BooleanChoice>> = [
+export const booleanChoices: ReadonlyArray<RadioQuestionOptions<BooleanChoice>> = [
   {
     value: BooleanChoice.Yes,
     text: {

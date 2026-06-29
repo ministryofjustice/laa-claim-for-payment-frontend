@@ -14,7 +14,7 @@ const NumberOfClientsStartOfCaseChoice = {
 type NumberOfClientsStartOfCaseChoice =
   (typeof NumberOfClientsStartOfCaseChoice)[keyof typeof NumberOfClientsStartOfCaseChoice];
 
-const numberOfClientsStartOfCaseChoices: Array<RadioQuestionOptions<NumberOfClientsStartOfCaseChoice>> =
+const numberOfClientsStartOfCaseChoices: ReadonlyArray<RadioQuestionOptions<NumberOfClientsStartOfCaseChoice>> =
   [
     {
       value: NumberOfClientsStartOfCaseChoice.None,

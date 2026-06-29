@@ -1,4 +1,4 @@
-import type { Message, TextOrMessage } from "#src/viewmodels/components/message.js";
+import type { Message } from "#src/viewmodels/components/message.js";
 
 export interface RadioQuestionOptions<ChoiceType> {
   value: ChoiceType;
@@ -54,7 +54,7 @@ export interface RadioQuestionForm<ChoiceType> {
   fieldName: string;
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
   error?: {
-    text: TextOrMessage;
+    text: Message;
   };
 }
 
@@ -71,7 +71,7 @@ export function radioQuestionForm<ChoiceType>(
   fieldName: string,
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>,
   selectedValue?: unknown,
-  error?: { text: TextOrMessage },
+  error?: { text: Message },
 ): RadioQuestionForm<ChoiceType> {
   return {
     fieldName,
