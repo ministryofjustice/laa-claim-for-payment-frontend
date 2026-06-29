@@ -21,8 +21,11 @@ export const ROUTES = {
   NUMBER_OF_CLIENTS_START_OF_CASE: '/claims/:claimId/poa/number-of-clients-start-of-case',
   POA_CHECK_YOUR_DETAILS: '/claims/:claimId/poa/check-details',
   POA_SUBMISSION_SUCCESSFUL: '/claims/:claimId/poa-submitted',
-  POA_EVIDENCE_UPLOAD: '/claims/:claimId/poa/:lineItemId/evidence-upload',
   CPGFS_PROFIT_COST_BILL_LINE: '/claims/:claimId/poa/cpgfs-profit-cost-bill-line',
+  POA_EVIDENCE_UPLOAD: "/claims/:claimId/poa/evidence-upload",
+  AJAX_UPLOAD_POA_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-upload",
+  AJAX_DELETE_POA_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-delete",
+  CHECK_YOUR_DETAILS: "/claims/:claimId/poa/check-your-details",
 } as const;
 
 /**

@@ -1,0 +1,146 @@
+{% from "components/backLink.njk" import backLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "moj/components/multi-file-upload/macro.njk" import mojMultiFileUpload %}
+
+{% extends "base.njk" %}
+
+{% set title = t(vm.title) %}
+
+{% set uploadedItems = [] %}
+
+{% for uploadedFile in vm.uploadedFiles %}
+
+  {% set messageHtml %}
+    <span class="moj-multi-file-upload__success">
+      <span class="uploaded-file-row">
+        <a href="#" class="govuk-link uploaded-file-name">
+          {{ uploadedFile.name }}
+        </a>
+
+        <span class="uploaded-file-size govuk-!-margin-left-2">
+          {{ uploadedFile.size }}
+        </span>
+
+        <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">
+          {{ t("common.uploadStatus.uploaded") }}
+        </strong>
+      </span>
+    </span>
+  {% endset %}
+
+  {% set uploadedItem = {
+    fileName: uploadedFile.id,
+    originalFileName: uploadedFile.name,
+    message: {
+      html: messageHtml | safe
+    },
+    deleteButton: {
+      text: t("common.delete")
+    }
+  } %}
+
+  {% set uploadedItems = (uploadedItems.push(uploadedItem), uploadedItems) %}
+
+{% endfor %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {{ backLink(t) }}
+
+    <form method="post">
+
+      <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+      <h1 class="govuk-heading-xl">
+        {{ t("pages.poaEvidenceUpload.title") }}
+      </h1>
+
+      <p class="govuk-body">
+        {{ t("pages.poaEvidenceUpload.examples") }}
+      </p>
+
+      <h2 class="govuk-heading-m">
+        {{ t("pages.poaEvidenceUpload.namingFiles.title") }}
+      </h2>
+
+      <p class="govuk-body">
+        {{ t("pages.poaEvidenceUpload.namingFiles.p1") }}
+      </p>
+
+      <p class="govuk-body">
+        {{ t("pages.poaEvidenceUpload.namingFiles.p2") }}
+      </p>
+
+      <h2 class="govuk-heading-m">
+        {{ t("pages.poaEvidenceUpload.uploadFiles.title") }}
+      </h2>
+
+      <p class="govuk-body">
+        {{ t("pages.poaEvidenceUpload.uploadFiles.maxSize") }}
+      </p>
+
+      <div
+        id="multi-file-upload-config"
+        hidden
+        data-upload-url="{{ vm.uploadUrl }}"
+        data-delete-url="{{ vm.deleteUrl }}"
+        data-upload-status-text="{{ t('multiFileUpload.uploadStatusText') }}"
+        data-dropzone-hint-text="{{ t('multiFileUpload.dropzoneHintText') }}"
+        data-dropzone-button-text="{{ t('multiFileUpload.dropzoneButtonText') }}">
+      </div>
+
+      {% set uploadHtml %}
+
+        {{ govukFileUpload({
+          id: "documents",
+          name: "documents",
+          classes: "moj-multi-file-upload__input",
+          attributes: {
+            multiple: ""
+          }
+        }) }}
+
+        {{ govukButton({
+          text: t("pages.poaEvidenceUpload.uploadFiles.uploadButton"),
+          classes: "govuk-button--secondary moj-multi-file-upload__button"
+        }) }}
+
+      {% endset %}
+
+      {{ mojMultiFileUpload({
+        uploadedFiles: {
+          heading: {
+            text: t("multiFileUpload.uploadedFiles.title")
+          },
+          items: uploadedItems
+        },
+        uploadHtml: uploadHtml
+      }) }}
+
+      <div class="govuk-button-group">
+
+        {{ govukButton({
+          text: t("common.saveAndContinue")
+        }) }}
+
+        <a
+          href="{{ vm.saveAndComeBackLaterHref }}"
+          class="govuk-button govuk-button--secondary">
+
+          {{ t("common.saveAndComeBackLater") }}
+
+        </a>
+
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

@@ -96,6 +96,47 @@ export async function uploadEvidenceFileForLineItem(
 }
 
 /**
+ * Handles AJAX deletion of claim-level evidence files.
+ *
+ * @param {DeleteFileRequest} req Express request object containing the file delete request body.
+ * @param {Response} res Express response object.
+ * @param {NextFunction} next Express next function.
+ * @returns {Promise<void>} Promise that resolves when the response has been sent.
+ */
+export async function deleteEvidenceFileFromClaim(
+  req: DeleteFileRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const {
+      body: { delete: fileId },
+      params: { claimId },
+      axiosMiddleware,
+    } = req;
+
+    if (fileId === "") {
+      res.status(BAD_REQUEST).json({
+        error: {
+          message: req.t("multiFileUpload.errors.missingFileId"),
+        },
+      });
+      return;
+    }
+
+    const response = await uploadService.deleteEvidenceFromClaim(
+      axiosMiddleware,
+      Number(claimId),
+      Number(fileId),
+    );
+
+    res.json(response);
+  } catch (error) {
+    next(processError(error, "deleting evidence file from claim"));
+  }
+}
+
+/**
  * Handles AJAX deletion of uploaded evidence files.
  *
  * @param {DeleteFileRequest} req Express request object containing the file delete request body.
@@ -132,5 +173,3 @@ export async function unlinkEvidenceFileFromLineItem(
     next(error);
   }
 }
-
-// TODO add a delete that actually does global delete

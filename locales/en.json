@@ -43,7 +43,7 @@
       "uploadFailed": "Upload failed",
       "noFileUploaded": "No file uploaded",
       "fileTooLarge": "File must not be larger than 10mb",
-      "onlyPdf": "Only PDF files can be uploaded",
+      "onlyPdf": "Only PDF, Word, RTF or TIFF files can be uploaded",
       "missingFileId": "Missing file id",
       "invalidFilePath": "Invalid file path"
     }
@@ -415,6 +415,23 @@
           "empty": "Enter a fee earner name",
           "invalid": "Fee earner name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
         }
+      }
+    },
+    "poaEvidenceUpload": {
+      "title": "Upload POA evidence",
+      "examples": "Examples of evidence include: disbursement quotes with example rates, profit costs incurred to date, attendance notes.",
+      "namingFiles": {
+        "title": "Naming files",
+        "p1": "Files often have long, meaningless names, but if you rename them to an understandable name it will make it easier for us to assess your case.",
+        "p2": "For example, interim-hearing-court-order.pdf instead of file23.pdf."
+      },
+      "uploadFiles": {
+        "title": "Upload files",
+        "maxSize": "The maximum file size is 10MB.",
+        "uploadButton": "Upload"
+      },
+      "filesAdded": {
+        "title": "Files added"
       }
     }
   },
