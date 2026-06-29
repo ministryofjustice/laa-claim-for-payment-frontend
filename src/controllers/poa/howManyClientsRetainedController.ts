@@ -55,7 +55,9 @@ export function howManyClientsRetained(
     res.render("main/radioQuestionPage.njk", {
       csrfToken: res.locals.csrfToken,
       vm: new RadioQuestionViewModel({
-        title: "pages.howManyClientsRetained.title",
+        title: {
+          key: "pages.howManyClientsRetained.title"
+        },
         fieldName: howManyClientsRetainedFieldName,
         choices: howManyClientsRetainedChoices,
       }),
@@ -96,7 +98,9 @@ export function submitHowManyClientsRetained(
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: "pages.howManyClientsRetained.title",
+          title: {
+            key: "pages.howManyClientsRetained.title"
+          },
           fieldName: howManyClientsRetainedFieldName,
           choices: howManyClientsRetainedChoices,
           selectedValue:

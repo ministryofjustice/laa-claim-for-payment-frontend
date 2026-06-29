@@ -4,30 +4,22 @@
 
 {% extends "base.njk" %}
 
-{% set title = t(vm.title) %}
+{% set title = vm.title | translate %}
 {% set showBackLink = true %}
 
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      {% if vm.form.error %}
-        {{ govukErrorSummary({
-          titleText: t("common.errorSummaryTitle"),
-          errorList: [
-            {
-              text: vm.form.error.text | translate,
-              href: "#" + vm.form.fieldName
-            }
-          ]
-        }) }}
+      {% if vm.errorSummary.errorList.length %}
+        {{ govukErrorSummary(vm.errorSummary | translate) }}
       {% endif %}
 
       <form method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
         <h1 class="govuk-heading-l">
-          {{ t('pages.escapingFixedFee.title') }}
+          {{ vm.title | translate }}
         </h1>
 
         <p class="govuk-body">
@@ -52,16 +44,16 @@
           name: vm.form.fieldName,
           fieldset: {
             legend: {
-              text: t(vm.title),
+              text: vm.title,
               isPageHeading: true,
               classes: "govuk-fieldset__legend--m"
             }
           },
           errorMessage: vm.form.error and {
-            text: vm.form.error.text | translate
+            text: vm.form.error.text
           },
-          items: vm.form.choices | translate
-        }) }}
+          items: vm.form.choices
+        } | translate) }}
 
         {{ govukButton({
           text: t("common.saveAndContinue")

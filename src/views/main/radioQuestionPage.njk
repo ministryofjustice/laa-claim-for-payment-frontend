@@ -4,7 +4,7 @@
 
 {% extends "base.njk" %}
 
-{% set title = t(vm.title) %}
+{% set title = vm.title | translate %}
 {% set showBackLink = true %}
 
 {% block content %}
@@ -22,16 +22,16 @@
           name: vm.form.fieldName,
           fieldset: {
             legend: {
-              text: t(vm.title),
+              text: vm.title,
               isPageHeading: true,
               classes: "govuk-fieldset__legend--l"
             }
           },
           errorMessage: vm.form.error and {
-            text: vm.form.error.text | translate
+            text: vm.form.error.text
           },
-          items: vm.form.choices | translate
-        }) }}
+          items: vm.form.choices
+        } | translate ) }}
 
         {{ govukButton({
           text: t("common.saveAndContinue")

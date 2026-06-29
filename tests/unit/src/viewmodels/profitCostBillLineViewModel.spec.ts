@@ -1,20 +1,19 @@
-import {
-  ExpertCostDetailsViewModel,
-  ExpertCostDetailsViewModelParams,
-} from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
 import { expect } from "chai";
+import {
+  ProfitCostBillLineViewModel,
+  ProfitCostBillLineViewModelParams,
+} from "#src/viewmodels/profitCostBillLineViewModel.js";
 
-describe("expertCostDetailsViewModel constructor", () => {
+describe("profitCostBillLineViewModel constructor", () => {
   it("constructs view model when form/errors undefined", () => {
-    const params: ExpertCostDetailsViewModelParams = {
+    const params: ProfitCostBillLineViewModelParams = {
       claimId: 1,
-      expertCostId: 1,
     };
 
-    const result = new ExpertCostDetailsViewModel(params);
+    const result = new ProfitCostBillLineViewModel(params);
 
     expect(result.claimId).to.equal(1);
-    expect(result.title).to.equal("pages.poa.expertCostDetails.title");
+    expect(result.title).to.equal("pages.profitCostBillLine.title");
     expect(result.form).to.deep.equal({
       activityDate: {
         value: {
@@ -24,7 +23,11 @@ describe("expertCostDetailsViewModel constructor", () => {
         },
         error: undefined,
       },
-      actualNetValue: {
+      actualNetProfitCostExcludingAdvocacy: {
+        value: "",
+        error: undefined,
+      },
+      actualNetAdvocacyCosts: {
         value: "",
         error: undefined,
       },
@@ -34,25 +37,21 @@ describe("expertCostDetailsViewModel constructor", () => {
           {
             value: "yes",
             text: {
-              key: "common.yes"
+              key: "common.yes",
             },
-            checked: false
+            checked: false,
           },
           {
             value: "no",
             text: {
-              key: "common.no"
+              key: "common.no",
             },
-            checked: false
-          }
+            checked: false,
+          },
         ],
         error: undefined,
       },
       feeEarnerName: {
-        value: "",
-        error: undefined,
-      },
-      description: {
         value: "",
         error: undefined,
       },
@@ -66,33 +65,32 @@ describe("expertCostDetailsViewModel constructor", () => {
   });
 
   it("constructs view model when form/errors defined", () => {
-    const params: ExpertCostDetailsViewModelParams = {
+    const params: ProfitCostBillLineViewModelParams = {
       claimId: 1,
-      expertCostId: 1,
       form: {
         activityDateDay: "1",
         activityDateMonth: "1",
         activityDateYear: "2000",
-        actualNetValue: "100",
+        actualNetProfitCostExcludingAdvocacy: "100",
+        actualNetAdvocacyCosts: "200",
         vatApplies: "yes",
         feeEarnerName: "Joe Bloggs",
-        description: "",
       },
       errors: [
         {
-          fieldName: "description",
-          href: "#description",
+          fieldName: "feeEarnerName",
+          href: "#feeEarnerName",
           text: {
-            key: "pages.poa.expertCostDetails.description.errors.empty",
+            key: "pages.profitCostBillLine.feeEarnerName.errors.empty",
           },
         },
       ],
     };
 
-    const result = new ExpertCostDetailsViewModel(params);
+    const result = new ProfitCostBillLineViewModel(params);
 
     expect(result.claimId).to.equal(1);
-    expect(result.title).to.equal("pages.poa.expertCostDetails.title");
+    expect(result.title).to.equal("pages.profitCostBillLine.title");
     expect(result.form).to.deep.equal({
       activityDate: {
         value: {
@@ -102,8 +100,12 @@ describe("expertCostDetailsViewModel constructor", () => {
         },
         error: undefined,
       },
-      actualNetValue: {
+      actualNetProfitCostExcludingAdvocacy: {
         value: "100",
+        error: undefined,
+      },
+      actualNetAdvocacyCosts: {
+        value: "200",
         error: undefined,
       },
       vatApplies: {
@@ -112,31 +114,27 @@ describe("expertCostDetailsViewModel constructor", () => {
           {
             value: "yes",
             text: {
-              key: "common.yes"
+              key: "common.yes",
             },
-            checked: true
+            checked: true,
           },
           {
             value: "no",
             text: {
-              key: "common.no"
+              key: "common.no",
             },
-            checked: false
-          }
+            checked: false,
+          },
         ],
         error: undefined,
       },
       feeEarnerName: {
         value: "Joe Bloggs",
-        error: undefined,
-      },
-      description: {
-        value: "",
         error: {
-          fieldName: "description",
-          href: "#description",
+          fieldName: "feeEarnerName",
+          href: "#feeEarnerName",
           text: {
-            key: "pages.poa.expertCostDetails.description.errors.empty",
+            key: "pages.profitCostBillLine.feeEarnerName.errors.empty",
           },
         },
       },
@@ -148,9 +146,9 @@ describe("expertCostDetailsViewModel constructor", () => {
       errorList: [
         {
           text: {
-            key: "pages.poa.expertCostDetails.description.errors.empty",
+            key: "pages.profitCostBillLine.feeEarnerName.errors.empty",
           },
-          href: "#description",
+          href: "#feeEarnerName",
         },
       ],
     });

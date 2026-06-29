@@ -42,7 +42,9 @@ describe("views/main/radioQuestionsView.njk", () => {
   ] as const;
 
   const vm = new RadioQuestionViewModel({
-      title: "Page Title",
+      title: {
+        key: "Page Title"
+      },
       fieldName: "testfieldname",
       choices: testChoices
   })
@@ -126,7 +128,9 @@ describe("views/main/radioQuestionsView.njk", () => {
     beforeEach(async () => {
 
       const vm = new RadioQuestionViewModel({
-        title: "Page Title",
+        title: {
+          key: "Page Title"
+        },
         fieldName: "testfieldname",
         choices: testChoices,
         errors: [

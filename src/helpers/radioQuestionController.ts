@@ -5,9 +5,10 @@ import {
   RadioQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
 import { validateRadioInput } from "#src/helpers/validation.js";
+import type { Message } from "#src/viewmodels/components/message.js";
 
 interface RadioQuestionControllerParams<ChoiceType extends string> {
-  title: string;
+  title: Message;
   fieldName: string;
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
   messagePrefix: string;

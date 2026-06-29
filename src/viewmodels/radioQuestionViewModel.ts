@@ -12,7 +12,7 @@ export interface RadioQuestionOptions<ChoiceType> {
 }
 
 interface RadioQuestionViewModelParams<ChoiceType> {
-  title: string;
+  title: Message;
   fieldName: string;
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
   selectedValue?: ChoiceType;
@@ -23,8 +23,8 @@ interface RadioQuestionViewModelParams<ChoiceType> {
  * View model for the Radio Questions page.
  */
 export class RadioQuestionViewModel<ChoiceType> {
-  readonly title;
-  readonly choices;
+  readonly title: Message;
+  readonly choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
   readonly form: RadioQuestionForm<ChoiceType>;
   readonly errorSummary: ErrorSummary;
 
@@ -45,8 +45,8 @@ export class RadioQuestionViewModel<ChoiceType> {
     this.form = radioQuestionForm<ChoiceType>(
       fieldName,
       choices,
+      errors,
       selectedValue,
-      getError(errors, fieldName),
     );
     this.errorSummary = getErrorSummary(errors)
   }
@@ -62,15 +62,15 @@ export interface RadioQuestionForm<ChoiceType> {
  * Radio question form builder.
  * @param {string} fieldName field name
  * @param {ReadonlyArray<RadioQuestionOptions>} choices radio choices
+ * @param {FieldValidationError[]} errors errors
  * @param {unknown} selectedValue selected value
- * @param {FieldValidationError} error error
  * @returns {RadioQuestionForm} radio question form object
  */
 export function radioQuestionForm<ChoiceType>(
   fieldName: string,
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>,
+  errors: FieldValidationError[],
   selectedValue?: unknown,
-  error?: FieldValidationError,
 ): RadioQuestionForm<ChoiceType> {
   return {
     fieldName,
@@ -78,6 +78,6 @@ export function radioQuestionForm<ChoiceType>(
       ...choice,
       checked: choice.value === selectedValue,
     })),
-    error,
+    error: getError(errors, fieldName),
   };
 }

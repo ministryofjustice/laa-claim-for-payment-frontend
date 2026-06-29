@@ -37,7 +37,9 @@ describe("radioQuestionViewModel()", () => {
 
   it("creates the form field name", () => {
     const viewModel = new RadioQuestionViewModel({
-      title: "test title",
+      title: {
+        key: "test title"
+      },
       fieldName: testFieldName,
       choices: testChoices
     });
@@ -48,7 +50,9 @@ describe("radioQuestionViewModel()", () => {
 
   it("creates the radio choices", () => {
     const viewModel = new RadioQuestionViewModel({
-      title: "test title",
+      title: {
+        key: "test title"
+      },
       fieldName: testFieldName,
       choices: testChoices
     });
@@ -95,7 +99,9 @@ describe("radioQuestionViewModel()", () => {
     ] as const;
 
     const viewModel = new RadioQuestionViewModel({
-      title: "test title",
+      title: {
+        key: "test title"
+      },
       fieldName: testFieldName,
       choices: testChoices
     });
@@ -111,7 +117,9 @@ describe("radioQuestionViewModel()", () => {
 
   it("marks the selected choice as checked", () => {
     const viewModel = new RadioQuestionViewModel({
-      title: "test title",
+      title: {
+        key: "test title"
+      },
       fieldName: testFieldName,
       choices: testChoices,
       selectedValue: TestChoice.Second,
@@ -123,7 +131,9 @@ describe("radioQuestionViewModel()", () => {
 
   it("adds an error when provided", () => {
     const viewModel = new RadioQuestionViewModel({
-      title: "test title",
+      title: {
+        key: "test title"
+      },
       fieldName: testFieldName,
       choices: testChoices,
       selectedValue: TestChoice.First,

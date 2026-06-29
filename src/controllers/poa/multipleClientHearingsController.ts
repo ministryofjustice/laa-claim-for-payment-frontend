@@ -22,7 +22,9 @@ export function multipleClientHearings(
     res.render("main/radioQuestionPage.njk", {
       csrfToken: res.locals.csrfToken,
       vm: new RadioQuestionViewModel({
-        title: "pages.multipleClientHearings.title",
+        title: {
+          key: "pages.multipleClientHearings.title"
+        },
         fieldName: multipleClientHearingsFieldName,
         choices: booleanChoices,
       }),
@@ -63,7 +65,9 @@ export function submitMultipleClientHearings(
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: "pages.multipleClientHearings.title",
+          title: {
+            key: "pages.multipleClientHearings.title"
+          },
           fieldName: multipleClientHearingsFieldName,
           choices: booleanChoices,
           selectedValue:

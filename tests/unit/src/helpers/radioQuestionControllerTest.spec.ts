@@ -9,7 +9,9 @@ describe("createRadioQuestionController", () => {
   let next: NextFunction;
 
   const controller = createRadioQuestionController({
-    title: "pages.testRadio.title",
+    title: {
+      key: "pages.testRadio.title"
+    },
     fieldName: "testRadio",
     choices: [
       {
@@ -57,7 +59,7 @@ describe("createRadioQuestionController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
-    expect(renderArgs.vm.title).to.equal("pages.testRadio.title");
+    expect(renderArgs.vm.title.key).to.equal("pages.testRadio.title");
     expect(renderArgs.vm.form.fieldName).to.equal("testRadio");
     expect(renderArgs.vm.form.choices).to.deep.equal([
       {
@@ -95,7 +97,9 @@ describe("createRadioQuestionController", () => {
     const getRedirectUrl = sinon.stub().returns("/selected-choice-page");
 
     const controllerWithRedirectStub = createRadioQuestionController({
-      title: "pages.testRadio.title",
+      title: {
+        key: "pages.testRadio.title"
+      },
       fieldName: "testRadio",
       choices: [
         {

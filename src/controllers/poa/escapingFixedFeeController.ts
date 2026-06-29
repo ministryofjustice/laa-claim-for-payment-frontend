@@ -22,7 +22,9 @@ export function escapingFixedFee(
     res.render("main/poa/escapingFixedFeeView.njk", {
       csrfToken: res.locals.csrfToken,
       vm: new RadioQuestionViewModel({
-        title: "pages.escapingFixedFee.question",
+        title: {
+          key: "pages.escapingFixedFee.question"
+        },
         fieldName: escapingFixedFeeFieldName,
         choices: booleanChoices,
       }),
@@ -63,7 +65,9 @@ export function submitEscapingFixedFee(
       res.status(400).render("main/poa/escapingFixedFeeView.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: "pages.escapingFixedFee.question",
+          title: {
+            key: "pages.escapingFixedFee.question"
+          },
           fieldName: escapingFixedFeeFieldName,
           choices: booleanChoices,
           selectedValue:

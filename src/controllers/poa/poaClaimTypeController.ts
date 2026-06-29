@@ -18,9 +18,7 @@ const PoaClaimTypeChoice = {
 type PoaClaimTypeChoice =
   (typeof PoaClaimTypeChoice)[keyof typeof PoaClaimTypeChoice];
 
-const poaClaimTypeChoices: ReadonlyArray<
-  RadioQuestionOptions<PoaClaimTypeChoice>
-> = [
+const poaClaimTypeChoices: ReadonlyArray<RadioQuestionOptions<PoaClaimTypeChoice>> = [
   {
     value: PoaClaimTypeChoice.ProfitCost,
     text: {
@@ -57,7 +55,9 @@ export function poaClaimTypePage(
     res.render("main/radioQuestionPage.njk", {
       csrfToken: res.locals.csrfToken,
       vm: new RadioQuestionViewModel({
-        title: "pages.poaClaimType.title",
+        title: {
+          key: "pages.poaClaimType.title"
+        },
         fieldName: poaClaimTypeFieldName,
         choices: poaClaimTypeChoices,
       }),
@@ -95,7 +95,9 @@ export function submitPoaClaimType(
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: "pages.poaClaimType.title",
+          title: {
+            key: "pages.poaClaimType.title"
+          },
           fieldName: poaClaimTypeFieldName,
           choices: poaClaimTypeChoices,
           selectedValue:
