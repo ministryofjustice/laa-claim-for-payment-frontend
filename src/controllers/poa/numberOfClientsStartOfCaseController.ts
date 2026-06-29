@@ -40,7 +40,7 @@ const controller = createRadioQuestionController({
   title: "pages.numberOfClientsStartOfCase.title",
   fieldName: numberOfClientsStartOfCaseFieldName,
   choices: numberOfClientsStartOfCaseChoices,
-  errorText: "pages.numberOfClientsStartOfCase.error.empty",
+  messagePrefix: "pages.numberOfClientsStartOfCase",
   renderErrorContext: "rendering number of clients start of case page",
   submitErrorContext: "submitting number of clients start of case page",
   getRedirectUrl: (req) =>

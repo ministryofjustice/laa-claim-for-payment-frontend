@@ -11,16 +11,8 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      {% if vm.form.error %}
-        {{ govukErrorSummary({
-          titleText: t("common.errorSummaryTitle"),
-          errorList: [
-            {
-              text: vm.form.error.text | translate,
-              href: "#" + vm.form.fieldName
-            }
-          ]
-        }) }}
+      {% if vm.errorSummary.errorList.length %}
+        {{ govukErrorSummary(vm.errorSummary | translate) }}
       {% endif %}
 
       <form method="post">

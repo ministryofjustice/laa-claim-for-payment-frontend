@@ -78,8 +78,10 @@ describe("escapingFixedFeeController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
+      fieldName: "escapingFixedFee",
+      href: "#escapingFixedFee",
       text: {
-        key: "pages.escapingFixedFee.error.empty"
+        key: "pages.escapingFixedFee.errors.empty"
       },
     });
   });
@@ -99,8 +101,10 @@ describe("escapingFixedFeeController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
+      fieldName: "escapingFixedFee",
+      href: "#escapingFixedFee",
       text: {
-        key: "pages.escapingFixedFee.error.empty"
+        key: "pages.escapingFixedFee.errors.empty"
       },
     });
 

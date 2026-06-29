@@ -150,7 +150,7 @@
       "moreThanTwo" : {
         "text": "2+"
       },
-      "error" : {
+      "errors" : {
         "empty" : "Select how many clients are retained"
       }
     },    
@@ -165,7 +165,7 @@
       "nonExpertDisbursement": {
         "text": "Non expert disbursement"
       },
-      "error": {
+      "errors": {
         "empty": "Select what type of POA you are claiming"
       }
     },
@@ -219,7 +219,7 @@
     },
     "multipleClientHearings": {
       "title": "Have you attended at least one hearing where you have represented more than one client?",
-      "error": {
+      "errors": {
         "empty": "Select yes if you have attended at least one hearing where you have represented more than one client."
       }
     },
@@ -234,7 +234,7 @@
       "moreThanTwo": {
         "text": "2+"
       },
-      "error": {
+      "errors": {
         "empty": "Select how many clients you had at the start of the case"
       }
     },
@@ -349,7 +349,7 @@
       "p2": "This is not an exhaustive list.",
       "p3": "If we assess your claim and find that you have not escaped the standard fixed fee, you may have to repay any overpayments.",
       "question": "Do you wish to escape the standard fixed fee?",
-      "error": {
+      "errors": {
         "empty": "Select yes if you wish to escape the standard fixed fee"
       }
     },

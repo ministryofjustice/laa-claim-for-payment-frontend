@@ -2,9 +2,7 @@
  * @description Tests for the choose file upload view model
  */
 
-
 import {
-  isValidChoice,
   RadioQuestionOptions,
   RadioQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
@@ -129,28 +127,19 @@ describe("radioQuestionViewModel()", () => {
       fieldName: testFieldName,
       choices: testChoices,
       selectedValue: TestChoice.First,
-      error: {
-        text: {
-          key: "some.error.empty"
-        },
-      },
+      errors: [
+        {
+          fieldName: testFieldName,
+          href: "#field-name",
+          text: {
+            key: "some.errors.empty"
+          },
+        }
+      ],
     });
 
     expect(viewModel.form.error?.text).to.deep.equal({
-      key: "some.error.empty"
+      key: "some.errors.empty"
     });
-  });
-});
-
-describe("isValidChoice()", () => {
-  it("returns true for valid choices", () => {
-    expect(isValidChoice(testChoices, "first")).to.equal(true);
-    expect(isValidChoice(testChoices, "second")).to.equal(true);
-  });
-
-  it("returns false for invalid choices", () => {
-    expect(isValidChoice(testChoices, undefined)).to.equal(false);
-    expect(isValidChoice(testChoices, "")).to.equal(false);
-    expect(isValidChoice(testChoices, "invalid")).to.equal(false);
   });
 });

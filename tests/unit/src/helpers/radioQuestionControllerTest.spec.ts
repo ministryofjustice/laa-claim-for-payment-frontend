@@ -25,7 +25,7 @@ describe("createRadioQuestionController", () => {
         },
       },
     ],
-    errorText: "pages.testRadio.error.empty",
+    messagePrefix: "pages.testRadio",
     renderErrorContext: "rendering test radio page",
     submitErrorContext: "submitting test radio page",
     getRedirectUrl: () => "/next-page",
@@ -105,7 +105,7 @@ describe("createRadioQuestionController", () => {
           },
         },
       ],
-      errorText: "pages.testRadio.error.empty",
+      messagePrefix: "pages.testRadio.error.empty",
       renderErrorContext: "rendering test radio page",
       submitErrorContext: "submitting test radio page",
       getRedirectUrl,
@@ -142,8 +142,10 @@ describe("createRadioQuestionController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
+      fieldName: "testRadio",
+      href: "#testRadio",
       text: {
-        key: "pages.testRadio.error.empty"
+        key: "pages.testRadio.errors.empty"
       },
     });
   });
@@ -163,8 +165,10 @@ describe("createRadioQuestionController", () => {
       (choice: { checked: boolean }) => !choice.checked,
     )).to.equal(true);
     expect(renderArgs.vm.form.error).to.deep.equal({
+      fieldName: "testRadio",
+      href: "#testRadio",
       text: {
-        key: "pages.testRadio.error.empty"
+        key: "pages.testRadio.errors.empty"
       },
     });
   });

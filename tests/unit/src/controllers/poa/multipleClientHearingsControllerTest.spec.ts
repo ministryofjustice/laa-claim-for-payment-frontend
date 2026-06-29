@@ -4,7 +4,7 @@ import sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
 import { multipleClientHearings, submitMultipleClientHearings } from "#src/controllers/poa/multipleClientHearingsController.js";
 
-describe("poaClaimTypeController", () => {
+describe("multipleClientHearingsController", () => {
   let res: Response;
   let next: NextFunction;
 
@@ -78,8 +78,10 @@ describe("poaClaimTypeController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
+      fieldName: "multipleClientHearings",
+      href: "#multipleClientHearings",
       text: {
-        key: "pages.multipleClientHearings.error.empty"
+        key: "pages.multipleClientHearings.errors.empty"
       },
     });
   });
@@ -99,8 +101,10 @@ describe("poaClaimTypeController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
+      fieldName: "multipleClientHearings",
+      href: "#multipleClientHearings",
       text: {
-        key: "pages.multipleClientHearings.error.empty"
+        key: "pages.multipleClientHearings.errors.empty"
       },
     });
 

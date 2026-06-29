@@ -106,8 +106,10 @@ describe("howManyClientsRetainedController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
+      fieldName: "howManyClientsRetained",
+      href: "#howManyClientsRetained",
       text: {
-        key: "pages.howManyClientsRetained.error.empty"
+        key: "pages.howManyClientsRetained.errors.empty"
       },
     });
   });
@@ -127,8 +129,10 @@ describe("howManyClientsRetainedController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
+      fieldName: "howManyClientsRetained",
+      href: "#howManyClientsRetained",
       text: {
-        key: "pages.howManyClientsRetained.error.empty"
+        key: "pages.howManyClientsRetained.errors.empty"
       },
     });
 
