@@ -6,7 +6,7 @@ import express from "express";
 import { viewUploadEvidenceIndividuallyPage } from "#src/controllers/claims/uploadEvidenceIndividuallyController.js";
 import { chooseFileUpload, submitChooseFileUpload } from "#src/controllers/claims/chooseUploadController.js";
 import { ROUTES, multerErrorHandler } from "./helper.js";
-import { fileUploadForLineItemPage, continueFromFileUpload } from "#src/controllers/claims/fileUploadForLineItemController.js";
+import { fileUploadForLineItemPage } from "#src/controllers/claims/fileUploadForLineItemController.js";
 import { evidenceUpload } from '#src/helpers/multerUpload.js';
 import { howManyClientsRetained, submitHowManyClientsRetained } from "#src/controllers/poa/howManyClientsRetainedController.js";
 import { poaClaimTypePage, submitPoaClaimType } from "#src/controllers/poa/poaClaimTypeController.js";

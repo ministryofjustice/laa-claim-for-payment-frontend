@@ -1,4 +1,4 @@
-import type { ReusableDocument } from "#src/viewmodels/components/evidence.js";
+import type { ReusableDocument } from "#src/viewmodels/components/taskList.js";
 import type { Message } from "#src/viewmodels/components/message.js";
 
 /**
