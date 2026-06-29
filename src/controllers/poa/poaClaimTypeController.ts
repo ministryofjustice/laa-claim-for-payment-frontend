@@ -1,11 +1,11 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processError } from "#src/helpers/index.js";
 import {
-  RadioQuestionViewModel,
-  isValidChoice,
   type RadioQuestionOptions,
+  RadioQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
+import { validateRadioInput } from "#src/helpers/validation.js";
 
 const poaClaimTypeFieldName = "poaClaimType" as const;
 
@@ -55,7 +55,9 @@ export function poaClaimTypePage(
     res.render("main/radioQuestionPage.njk", {
       csrfToken: res.locals.csrfToken,
       vm: new RadioQuestionViewModel({
-        title: "pages.poaClaimType.title",
+        title: {
+          key: "pages.poaClaimType.title"
+        },
         fieldName: poaClaimTypeFieldName,
         choices: poaClaimTypeChoices,
       }),
@@ -81,20 +83,26 @@ export function submitPoaClaimType(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedChoice: unknown = req.body?.[poaClaimTypeFieldName];
 
-    if (!isValidChoice(poaClaimTypeChoices, selectedChoice)) {
+    const validationResult = validateRadioInput(
+      poaClaimTypeChoices,
+      selectedChoice,
+      poaClaimTypeFieldName,
+      poaClaimTypeFieldName,
+      "pages.poaClaimType",
+    );
+
+    if (!validationResult.isValid) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: "pages.poaClaimType.title",
+          title: {
+            key: "pages.poaClaimType.title"
+          },
           fieldName: poaClaimTypeFieldName,
           choices: poaClaimTypeChoices,
           selectedValue:
             typeof selectedChoice === "string" ? selectedChoice : undefined,
-          error: {
-            text: {
-              key: "pages.poaClaimType.error.empty"
-            },
-          },
+          errors: validationResult.errors,
         }),
       });
       return;
@@ -116,7 +124,7 @@ export function submitPoaClaimType(
       ),
     };
 
-    res.redirect(redirectByChoice[selectedChoice]);
+    res.redirect(redirectByChoice[validationResult.value]);
   } catch (error) {
     next(processError(error, "submitting POA claim type page"));
   }

@@ -6,6 +6,8 @@ import {
   getStringValue,
 } from "#src/helpers/validation.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
+import { radioQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
+import { type BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
 
 export interface ExpertCostDetailsViewModelParams {
   claimId: number;
@@ -47,10 +49,12 @@ export class ExpertCostDetailsViewModel {
         value: getStringValue(form.actualNetValue),
         error: getError(errors, "actualNetValue"),
       },
-      vatApplies: {
-        value: getStringValue(form.vatApplies),
-        error: getError(errors, "vatApplies"),
-      },
+      vatApplies: radioQuestionForm<BooleanChoice>(
+        "vatApplies",
+        booleanChoices,
+        errors,
+        form.vatApplies,
+      ),
       feeEarnerName: {
         value: getStringValue(form.feeEarnerName),
         error: getError(errors, "feeEarnerName"),

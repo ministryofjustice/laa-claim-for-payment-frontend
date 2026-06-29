@@ -42,7 +42,9 @@ describe("views/main/radioQuestionsView.njk", () => {
   ] as const;
 
   const vm = new RadioQuestionViewModel({
-      title: "Page Title",
+      title: {
+        key: "Page Title"
+      },
       fieldName: "testfieldname",
       choices: testChoices
   })
@@ -126,15 +128,21 @@ describe("views/main/radioQuestionsView.njk", () => {
     beforeEach(async () => {
 
       const vm = new RadioQuestionViewModel({
-          title: "Page Title",
-          fieldName: "testfieldname",
-          choices: testChoices,
-          error: {
+        title: {
+          key: "Page Title"
+        },
+        fieldName: "testfieldname",
+        choices: testChoices,
+        errors: [
+          {
+            fieldName: "testfieldname",
+            href: "#testfieldname",
             text: {
-              key: "some error"
+              key: "some error",
             },
           },
-      })
+        ],
+      });
 
       $ = await renderView('main/radioQuestionPage.njk', {
         csrfToken: "csrf-token",

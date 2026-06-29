@@ -1,4 +1,7 @@
-import { type BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
+import {
+  type BooleanChoice,
+  booleanChoices,
+} from "#src/models/booleanChoice.js";
 import {
   type ClientStatusChoice,
   clientStatusChoices,
@@ -12,7 +15,6 @@ import {
 import type { ProfitCostDetailsForm } from "#src/helpers/profitCostDetailsValidation.js";
 import {
   type FieldValidationError,
-  getError,
   getErrorSummary,
 } from "#src/helpers/validation.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
@@ -41,26 +43,26 @@ export class ProfitCostDetailsViewModel {
       courtType: radioQuestionForm<CourtTypeChoice>(
         courtTypeFieldName,
         courtTypeChoices,
+        errors,
         form.courtTypeChoice,
-        getError(errors, courtTypeFieldName),
       ),
       clientStatus: radioQuestionForm<ClientStatusChoice>(
         clientStatusFieldName,
         clientStatusChoices,
+        errors,
         form.clientStatusChoice,
-        getError(errors, clientStatusFieldName),
       ),
       firstSolicitor: radioQuestionForm<BooleanChoice>(
         firstSolicitorFieldName,
         booleanChoices,
+        errors,
         form.firstSolicitorChoice,
-        getError(errors, firstSolicitorFieldName),
       ),
       transferOfSolicitor: radioQuestionForm<BooleanChoice>(
         transferOfSolicitorFieldName,
         booleanChoices,
+        errors,
         form.transferOfSolicitorChoice,
-        getError(errors, transferOfSolicitorFieldName),
       ),
     };
 

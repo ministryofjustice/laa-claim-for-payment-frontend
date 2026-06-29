@@ -1,11 +1,11 @@
 import {
-  isValidChoice,
   type RadioQuestionOptions,
   RadioQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
+import { validateRadioInput } from "#src/helpers/validation.js";
 
 const howManyClientsRetainedFieldName = "howManyClientsRetained" as const;
 
@@ -55,7 +55,9 @@ export function howManyClientsRetained(
     res.render("main/radioQuestionPage.njk", {
       csrfToken: res.locals.csrfToken,
       vm: new RadioQuestionViewModel({
-        title: "pages.howManyClientsRetained.title",
+        title: {
+          key: "pages.howManyClientsRetained.title"
+        },
         fieldName: howManyClientsRetainedFieldName,
         choices: howManyClientsRetainedChoices,
       }),
@@ -84,20 +86,26 @@ export function submitHowManyClientsRetained(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedChoice: unknown = req.body?.[howManyClientsRetainedFieldName];
 
-    if (!isValidChoice(howManyClientsRetainedChoices, selectedChoice)) {
+    const validationResult = validateRadioInput(
+      howManyClientsRetainedChoices,
+      selectedChoice,
+      howManyClientsRetainedFieldName,
+      howManyClientsRetainedFieldName,
+      "pages.howManyClientsRetained",
+    );
+
+    if (!validationResult.isValid) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: "pages.howManyClientsRetained.title",
+          title: {
+            key: "pages.howManyClientsRetained.title"
+          },
           fieldName: howManyClientsRetainedFieldName,
           choices: howManyClientsRetainedChoices,
           selectedValue:
             typeof selectedChoice === "string" ? selectedChoice : undefined,
-          error: {
-            text: {
-              key: "pages.howManyClientsRetained.error.empty"
-            },
-          },
+          errors: validationResult.errors,
         }),
       });
       return;
@@ -120,7 +128,7 @@ export function submitHowManyClientsRetained(
       ),
     };
 
-    res.redirect(redirectByChoice[selectedChoice]);
+    res.redirect(redirectByChoice[validationResult.value]);
   } catch (error) {
     const processedError = processError(
       error,

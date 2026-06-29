@@ -38,7 +38,7 @@ describe("escapingFixedFeeController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
-    expect(renderArgs.vm.title).to.equal("pages.escapingFixedFee.question");
+    expect(renderArgs.vm.title.key).to.equal("pages.escapingFixedFee.question");
     expect(renderArgs.vm.form.fieldName).to.equal("escapingFixedFee");
   });
 
@@ -78,8 +78,10 @@ describe("escapingFixedFeeController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
+      fieldName: "escapingFixedFee",
+      href: "#escapingFixedFee",
       text: {
-        key: "pages.escapingFixedFee.error.empty"
+        key: "pages.escapingFixedFee.errors.empty"
       },
     });
   });
@@ -99,8 +101,10 @@ describe("escapingFixedFeeController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
+      fieldName: "escapingFixedFee",
+      href: "#escapingFixedFee",
       text: {
-        key: "pages.escapingFixedFee.error.empty"
+        key: "pages.escapingFixedFee.errors.empty"
       },
     });
 

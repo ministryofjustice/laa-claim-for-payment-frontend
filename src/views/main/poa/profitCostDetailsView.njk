@@ -30,10 +30,10 @@
             }
           },
           errorMessage: vm.form.courtType.error and {
-            text: vm.form.courtType.error.text | translate
+            text: vm.form.courtType.error.text
           },
-          items: vm.form.courtType.choices | translate
-        }) }}
+          items: vm.form.courtType.choices
+        } | translate) }}
 
         {{ govukRadios({
           name: vm.form.clientStatus.fieldName,
@@ -45,10 +45,10 @@
             }
           },
           errorMessage: vm.form.clientStatus.error and {
-            text: vm.form.clientStatus.error.text | translate
+            text: vm.form.clientStatus.error.text
           },
-          items: vm.form.clientStatus.choices | translate
-        }) }}
+          items: vm.form.clientStatus.choices
+        } | translate) }}
 
         {{ govukRadios({
           name: vm.form.firstSolicitor.fieldName,
@@ -60,10 +60,10 @@
             }
           },
           errorMessage: vm.form.firstSolicitor.error and {
-            text: vm.form.firstSolicitor.error.text | translate
+            text: vm.form.firstSolicitor.error.text
           },
-          items: vm.form.firstSolicitor.choices | translate
-        }) }}
+          items: vm.form.firstSolicitor.choices
+        } | translate) }}
 
         {{ govukRadios({
           name: vm.form.transferOfSolicitor.fieldName,
@@ -75,10 +75,10 @@
             }
           },
           errorMessage: vm.form.transferOfSolicitor.error and {
-            text: vm.form.transferOfSolicitor.error.text | translate
+            text: vm.form.transferOfSolicitor.error.text
           },
-          items: vm.form.transferOfSolicitor.choices | translate
-        }) }}
+          items: vm.form.transferOfSolicitor.choices
+        } | translate) }}
 
         <div class="govuk-button-group">
           {{ govukButton({
