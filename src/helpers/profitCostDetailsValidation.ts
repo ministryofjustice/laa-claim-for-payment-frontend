@@ -1,12 +1,13 @@
 import {
-  type FieldValidationError,
+  combine,
   validateBooleanInput,
   validateRadioInput,
-  validationResult,
   type ValidationResult,
 } from "#src/helpers/validation.js";
 import {
+  ClientStatusChoice,
   clientStatusChoices,
+  CourtTypeChoice,
   courtTypeChoices,
 } from "#src/viewmodels/profitCostDetails/profitCostDetailsFields.js";
 
@@ -17,6 +18,13 @@ export interface ProfitCostDetailsForm {
   transferOfSolicitorChoice?: unknown;
 }
 
+export interface ProfitCostDetails {
+  courtType: CourtTypeChoice;
+  clientStatus: ClientStatusChoice;
+  firstSolicitor: boolean;
+  transferOfSolicitor: boolean;
+}
+
 /**
  * Validates the profit cost details form.
  *
@@ -25,35 +33,33 @@ export interface ProfitCostDetailsForm {
  */
 export function validateProfitCostDetails(
   form: ProfitCostDetailsForm,
-): ValidationResult {
-  const errors: FieldValidationError[] = [
-    ...validateRadioInput(
+): ValidationResult<ProfitCostDetails> {
+  return combine({
+    courtType: validateRadioInput(
       courtTypeChoices,
       form.courtTypeChoice,
       "courtTypeChoice",
       "courtTypeChoice",
       "pages.profitCostDetails.courtType",
     ),
-    ...validateRadioInput(
+    clientStatus: validateRadioInput(
       clientStatusChoices,
       form.clientStatusChoice,
       "clientStatusChoice",
       "clientStatusChoice",
       "pages.profitCostDetails.clientStatus",
     ),
-    ...validateBooleanInput(
+    firstSolicitor: validateBooleanInput(
       form.firstSolicitorChoice,
       "firstSolicitorChoice",
       "firstSolicitorChoice",
       "pages.profitCostDetails.firstSolicitor",
     ),
-    ...validateBooleanInput(
+    transferOfSolicitor: validateBooleanInput(
       form.transferOfSolicitorChoice,
       "transferOfSolicitorChoice",
       "transferOfSolicitorChoice",
       "pages.profitCostDetails.transferOfSolicitor",
     ),
-  ];
-
-  return validationResult(errors);
+  });
 }

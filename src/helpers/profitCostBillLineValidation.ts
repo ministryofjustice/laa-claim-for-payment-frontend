@@ -1,10 +1,10 @@
 import {
-  type FieldValidationError,
+  combine,
   getForm,
   validateBooleanInput,
   validateDateInput,
   validateMoneyInput,
-  validateStringInput, validationResult,
+  validateStringInput,
   type ValidationResult,
 } from "#src/helpers/validation.js";
 
@@ -18,6 +18,14 @@ export interface ProfitCostBillLineForm {
   feeEarnerName?: unknown;
 }
 
+export interface ProfitCostBillLine {
+  activityDate: Date;
+  actualNetProfitCostExcludingAdvocacy: number;
+  actualNetAdvocacyCosts: number;
+  vatApplies: boolean;
+  feeEarnerName: string;
+}
+
 const FEE_EARNER_NAME_REGEX = /^[A-Za-z' -]+$/;
 
 /**
@@ -28,33 +36,25 @@ const FEE_EARNER_NAME_REGEX = /^[A-Za-z' -]+$/;
  */
 export function validateProfitCostBillLine(
   body: unknown,
-): ValidationResult {
+): ValidationResult<ProfitCostBillLine> {
   const form = getForm(body) as ProfitCostBillLineForm;
-
-  const errors: FieldValidationError[] = [
-    ...validateActivityDate(form),
-    ...validateMoneyInput(
-      form.actualNetProfitCostExcludingAdvocacy,
-      "actualNetProfitCostExcludingAdvocacy",
-      "actualNetProfitCostExcludingAdvocacy",
-      "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy",
-    ),
-    ...validateMoneyInput(
+  return combine({
+    activityDate: validateActivityDate(form),
+    actualNetProfitCostExcludingAdvocacy:
+      validateActualNetProfitCostExcludingAdvocacy(
+        form.actualNetProfitCostExcludingAdvocacy,
+      ),
+    actualNetAdvocacyCosts: validateActualNetAdvocacyCosts(
       form.actualNetAdvocacyCosts,
-      "actualNetAdvocacyCosts",
-      "actualNetAdvocacyCosts",
-      "pages.profitCostBillLine.actualNetAdvocacyCosts",
     ),
-    ...validateVatApplies(form.vatApplies),
-    ...validateFeeEarnerName(form.feeEarnerName),
-  ];
-
-  return validationResult(errors);
+    vatApplies: validateVatApplies(form.vatApplies),
+    feeEarnerName: validateFeeEarnerName(form.feeEarnerName),
+  });
 }
 
 function validateActivityDate(
   form: ProfitCostBillLineForm,
-): FieldValidationError[] {
+): ValidationResult<Date> {
   return validateDateInput(
     {
       day: form.activityDateDay,
@@ -67,7 +67,29 @@ function validateActivityDate(
   );
 }
 
-function validateVatApplies(value: unknown): FieldValidationError[] {
+function validateActualNetProfitCostExcludingAdvocacy(
+  value: unknown,
+): ValidationResult<number> {
+  return validateMoneyInput(
+    value,
+    "actualNetProfitCostExcludingAdvocacy",
+    "actualNetProfitCostExcludingAdvocacy",
+    "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy",
+  );
+}
+
+function validateActualNetAdvocacyCosts(
+  value: unknown,
+): ValidationResult<number> {
+  return validateMoneyInput(
+    value,
+    "actualNetAdvocacyCosts",
+    "actualNetAdvocacyCosts",
+    "pages.profitCostBillLine.actualNetAdvocacyCosts",
+  );
+}
+
+function validateVatApplies(value: unknown): ValidationResult<boolean> {
   return validateBooleanInput(
     value,
     "vatApplies",
@@ -76,7 +98,7 @@ function validateVatApplies(value: unknown): FieldValidationError[] {
   );
 }
 
-function validateFeeEarnerName(value: unknown): FieldValidationError[] {
+function validateFeeEarnerName(value: unknown): ValidationResult<string> {
   return validateStringInput(
     value,
     "feeEarnerName",

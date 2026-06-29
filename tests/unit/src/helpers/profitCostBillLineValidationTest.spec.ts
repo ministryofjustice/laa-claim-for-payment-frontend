@@ -1,6 +1,10 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
 import { validateProfitCostBillLine } from "#src/helpers/profitCostBillLineValidation.js";
+import {
+  expectFailure,
+  expectSuccess,
+} from "#tests/unit/src/helpers/validationTest.spec.js";
 
 describe("profitCostBillLineValidation", () => {
   const validBody = {
@@ -16,8 +20,14 @@ describe("profitCostBillLineValidation", () => {
   it("returns valid when all fields are valid", () => {
     const result = validateProfitCostBillLine(validBody);
 
-    expect(result.isValid).to.equal(true);
-    expect(result.errors).to.deep.equal([]);
+    const success = expectSuccess(result);
+    expect(success.value.activityDate.getDate()).to.equal(27);
+    expect(success.value.activityDate.getMonth()).to.equal(2);
+    expect(success.value.activityDate.getFullYear()).to.equal(2007);
+    expect(success.value.actualNetProfitCostExcludingAdvocacy).to.equal(123.45);
+    expect(success.value.actualNetAdvocacyCosts).to.equal(156.0);
+    expect(success.value.vatApplies).to.equal(true);
+    expect(success.value.feeEarnerName).to.equal("John Smith");
   });
 
   it("returns error when activity date is empty", () => {
@@ -28,8 +38,8 @@ describe("profitCostBillLineValidation", () => {
       activityDateYear: "",
     });
 
-    expect(result.isValid).to.equal(false);
-    expect(result.errors[0].text.key).to.equal(
+    const failure = expectFailure(result);
+    expect(failure.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.activityDate.errors.empty",
     );
   });
@@ -42,8 +52,8 @@ describe("profitCostBillLineValidation", () => {
       activityDateYear: "2007",
     });
 
-    expect(result.isValid).to.equal(false);
-    expect(result.errors[0].text.key).to.equal(
+    const failure = expectFailure(result);
+    expect(failure.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.activityDate.errors.incomplete.month",
     );
   });
@@ -56,8 +66,8 @@ describe("profitCostBillLineValidation", () => {
       activityDateYear: "2025",
     });
 
-    expect(result.isValid).to.equal(false);
-    expect(result.errors[0].text.key).to.equal(
+    const failure = expectFailure(result);
+    expect(failure.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.activityDate.errors.invalid",
     );
   });
@@ -81,8 +91,8 @@ describe("profitCostBillLineValidation", () => {
       activityDateYear: "2025",
     });
 
-    expect(result.isValid).to.equal(false);
-    expect(result.errors[0].text.key).to.equal(
+    const failure = expectFailure(result);
+    expect(failure.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.activityDate.errors.invalid",
     );
   });
@@ -97,8 +107,8 @@ describe("profitCostBillLineValidation", () => {
       activityDateYear: nextYear,
     });
 
-    expect(result.isValid).to.equal(false);
-    expect(result.errors[0].text.key).to.equal(
+    const failure = expectFailure(result);
+    expect(failure.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.activityDate.errors.future",
     );
   });
@@ -109,7 +119,9 @@ describe("profitCostBillLineValidation", () => {
       actualNetProfitCostExcludingAdvocacy: "",
     });
 
-    expect(result.errors[0].text.key).to.equal(
+    const failure = expectFailure(result);
+
+    expect(failure.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.errors.empty",
     );
   });
@@ -120,7 +132,9 @@ describe("profitCostBillLineValidation", () => {
       actualNetProfitCostExcludingAdvocacy: "abc",
     });
 
-    expect(result.errors[0].text.key).to.equal(
+    const failure = expectFailure(result);
+
+    expect(failure.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.errors.invalid",
     );
   });
@@ -131,7 +145,9 @@ describe("profitCostBillLineValidation", () => {
       actualNetAdvocacyCosts: "",
     });
 
-    expect(result.errors[0].text.key).to.equal(
+    const failure = expectFailure(result);
+
+    expect(failure.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.actualNetAdvocacyCosts.errors.empty",
     );
   });
@@ -142,7 +158,9 @@ describe("profitCostBillLineValidation", () => {
       actualNetAdvocacyCosts: "abc",
     });
 
-    expect(result.errors[0].text.key).to.equal(
+    const failure = expectFailure(result);
+
+    expect(failure.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.actualNetAdvocacyCosts.errors.invalid",
     );
   });
@@ -153,7 +171,9 @@ describe("profitCostBillLineValidation", () => {
       vatApplies: undefined,
     });
 
-    expect(result.errors[0].text.key).to.equal(
+    const failure = expectFailure(result);
+
+    expect(failure.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.vatApplies.errors.empty",
     );
   });
@@ -164,7 +184,9 @@ describe("profitCostBillLineValidation", () => {
       feeEarnerName: "",
     });
 
-    expect(result.errors[0].text.key).to.equal(
+    const failure = expectFailure(result);
+
+    expect(failure.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.feeEarnerName.errors.empty",
     );
   });
@@ -175,7 +197,9 @@ describe("profitCostBillLineValidation", () => {
       feeEarnerName: "John Smith 123",
     });
 
-    expect(result.errors[0].text.key).to.equal(
+    const failure = expectFailure(result);
+
+    expect(failure.errors[0].text.key).to.equal(
       "pages.profitCostBillLine.feeEarnerName.errors.invalid",
     );
   });

@@ -5,7 +5,6 @@ import {
   type ProfitCostDetailsViewModelParams
 } from "#src/viewmodels/profitCostDetails/profitCostDetailsViewModel.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { BooleanChoice } from "#src/models/booleanChoice.js";
 import { getForm } from "#src/helpers/validation.js";
 import { type ProfitCostDetailsForm, validateProfitCostDetails } from "#src/helpers/profitCostDetailsValidation.js";
 
@@ -64,23 +63,11 @@ export function submitProfitCostDetails(
 
     const claimId = Number(req.params.claimId);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Safe to assert as TransferOfSolicitorChoice because validation has already occurred
-    const validatedTransferOfSolicitorChoice = form.transferOfSolicitorChoice as BooleanChoice;
+    const redirectUrl = validationResult.value.transferOfSolicitor
+      ? buildRoute(ROUTES.HOW_MANY_CLIENTS_RETAINED, { claimId })
+      : buildRoute(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, { claimId });
 
-    const redirectByTransferOfSolicitorChoice: Record<BooleanChoice,string> = {
-      [BooleanChoice.Yes]: buildRoute(
-        ROUTES.HOW_MANY_CLIENTS_RETAINED,
-        { claimId },
-      ),
-      [BooleanChoice.No]: buildRoute(
-        ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
-        { claimId },
-      ),
-    };
-
-    res.redirect(
-      redirectByTransferOfSolicitorChoice[validatedTransferOfSolicitorChoice],
-    );
+    res.redirect(redirectUrl);
   } catch (error) {
     const processedError = processError(
       error,
