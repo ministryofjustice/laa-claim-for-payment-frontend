@@ -63,7 +63,9 @@ export function submitEscapingFixedFee(
           choices: booleanChoices,
           selectedValue: typeof selectedChoice === "string" ? selectedChoice : undefined,
           error: {
-            text: "pages.escapingFixedFee.error.empty",
+            text: {
+              key: "pages.escapingFixedFee.error.empty"
+            },
           },
         }),
       });

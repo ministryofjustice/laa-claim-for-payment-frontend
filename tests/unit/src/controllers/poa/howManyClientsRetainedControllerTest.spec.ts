@@ -106,7 +106,9 @@ describe("howManyClientsRetainedController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
-      text: "pages.howManyClientsRetained.error.empty",
+      text: {
+        key: "pages.howManyClientsRetained.error.empty"
+      },
     });
   });
 
@@ -125,7 +127,9 @@ describe("howManyClientsRetainedController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
-      text: "pages.howManyClientsRetained.error.empty",
+      text: {
+        key: "pages.howManyClientsRetained.error.empty"
+      },
     });
 
     expect(

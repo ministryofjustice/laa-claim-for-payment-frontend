@@ -14,11 +14,15 @@ describe("createRadioQuestionController", () => {
     choices: [
       {
         value: "yes",
-        text: "pages.testRadio.yes.text",
+        text: {
+          key: "pages.testRadio.yes.text"
+        },
       },
       {
         value: "no",
-        text: "pages.testRadio.no.text",
+        text: {
+          key: "pages.testRadio.no.text"
+        },
       },
     ],
     errorText: "pages.testRadio.error.empty",
@@ -58,12 +62,16 @@ describe("createRadioQuestionController", () => {
     expect(renderArgs.vm.form.choices).to.deep.equal([
       {
         value: "yes",
-        text: "pages.testRadio.yes.text",
+        text: {
+          key: "pages.testRadio.yes.text"
+        },
         checked: false,
       },
       {
         value: "no",
-        text: "pages.testRadio.no.text",
+        text: {
+          key: "pages.testRadio.no.text"
+        },
         checked: false,
       },
     ]);
@@ -92,7 +100,9 @@ describe("createRadioQuestionController", () => {
       choices: [
         {
           value: "yes",
-          text: "pages.testRadio.yes.text",
+          text: {
+            key: "pages.testRadio.yes.text"
+          },
         },
       ],
       errorText: "pages.testRadio.error.empty",
@@ -132,7 +142,9 @@ describe("createRadioQuestionController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
-      text: "pages.testRadio.error.empty",
+      text: {
+        key: "pages.testRadio.error.empty"
+      },
     });
   });
 
@@ -148,10 +160,12 @@ describe("createRadioQuestionController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.choices.every(
-      (choice: { checked: boolean }) => choice.checked === false,
+      (choice: { checked: boolean }) => !choice.checked,
     )).to.equal(true);
     expect(renderArgs.vm.form.error).to.deep.equal({
-      text: "pages.testRadio.error.empty",
+      text: {
+        key: "pages.testRadio.error.empty"
+      },
     });
   });
 });

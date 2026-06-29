@@ -1,30 +1,30 @@
 import { expect } from "chai";
-import {
-  isValidClientStatusChoice,
-  isValidCourtTypeChoice,
-  ProfitCostDetailsViewModel,
-} from "#src/viewmodels/profitCostDetails/profitCostDetailsViewModel.js";
+import { ProfitCostDetailsViewModel } from "#src/viewmodels/profitCostDetails/profitCostDetailsViewModel.js";
+import { ProfitCostDetailsForm } from "#src/helpers/profitCostDetailsValidation.js";
 
 describe("ProfitCostDetailsViewModel", () => {
   describe("court type field", () => {
     it("creates the form field name for court type", () => {
       const vm = new ProfitCostDetailsViewModel();
 
-      expect(vm.form.courtTypeFieldName).to.equal("courtTypeChoice");
+      expect(vm.form.courtType.fieldName).to.equal("courtTypeChoice");
     });
 
     it("creates the radio choices for court type", () => {
       const vm = new ProfitCostDetailsViewModel();
 
-      expect(vm.form.courtTypeChoices).to.have.length(4);
+      expect(vm.form.courtType.choices).to.have.length(4);
     });
 
     it("marks the selected choice as checked", () => {
+      const form: ProfitCostDetailsForm = {
+        courtTypeChoice: "high-court",
+      };
       const vm = new ProfitCostDetailsViewModel({
-        courtTypeSelectedValue: "high-court",
+        form: form,
       });
 
-      const selected = vm.form.courtTypeChoices.find(
+      const selected = vm.form.courtType.choices.find(
         (c: any) => c.value === "high-court",
       );
 
@@ -33,14 +33,22 @@ describe("ProfitCostDetailsViewModel", () => {
 
     it("adds an error when provided", () => {
       const vm = new ProfitCostDetailsViewModel({
-        error: {
-          courtTypeError: { text: "error.key" },
-        },
+        errors: [
+          {
+            fieldName: "courtTypeChoice",
+            text: {
+              key: "error.key",
+            },
+            href: "#courtTypeChoice",
+          },
+        ],
       });
 
-      expect(vm.errorList).to.have.length(1);
-      expect(vm.errorList[0].text).to.equal("error.key");
-      expect(vm.errorList[0].href).to.equal("#courtTypeChoice");
+      expect(vm.errorSummary.errorList).to.have.length(1);
+      expect(vm.errorSummary.errorList[0].text).to.deep.equal({
+        key: "error.key",
+      });
+      expect(vm.errorSummary.errorList[0].href).to.equal("#courtTypeChoice");
     });
   });
 
@@ -48,21 +56,24 @@ describe("ProfitCostDetailsViewModel", () => {
     it("creates the form field name for client status", () => {
       const vm = new ProfitCostDetailsViewModel();
 
-      expect(vm.form.clientStatusFieldName).to.equal("clientStatusChoice");
+      expect(vm.form.clientStatus.fieldName).to.equal("clientStatusChoice");
     });
 
     it("creates the radio choices for client status", () => {
       const vm = new ProfitCostDetailsViewModel();
 
-      expect(vm.form.clientStatusChoices).to.have.length(3);
+      expect(vm.form.clientStatus.choices).to.have.length(3);
     });
 
     it("marks the selected choice as checked", () => {
+      const form: ProfitCostDetailsForm = {
+        clientStatusChoice: "child",
+      };
       const vm = new ProfitCostDetailsViewModel({
-        clientStatusSelectedValue: "child",
+        form: form,
       });
 
-      const selected = vm.form.clientStatusChoices.find(
+      const selected = vm.form.clientStatus.choices.find(
         (c: any) => c.value === "child",
       );
 
@@ -71,14 +82,22 @@ describe("ProfitCostDetailsViewModel", () => {
 
     it("adds an error when provided", () => {
       const vm = new ProfitCostDetailsViewModel({
-        error: {
-          clientStatusError: { text: "error.key" },
-        },
+        errors: [
+          {
+            fieldName: "clientStatusChoice",
+            text: {
+              key: "error.key",
+            },
+            href: "#clientStatusChoice",
+          },
+        ],
       });
 
-      expect(vm.errorList).to.have.length(1);
-      expect(vm.errorList[0].text).to.equal("error.key");
-      expect(vm.errorList[0].href).to.equal("#clientStatusChoice");
+      expect(vm.errorSummary.errorList).to.have.length(1);
+      expect(vm.errorSummary.errorList[0].text).to.deep.equal({
+        key: "error.key",
+      });
+      expect(vm.errorSummary.errorList[0].href).to.equal("#clientStatusChoice");
     });
   });
 
@@ -86,21 +105,24 @@ describe("ProfitCostDetailsViewModel", () => {
     it("creates the form field name for first solicitor", () => {
       const vm = new ProfitCostDetailsViewModel();
 
-      expect(vm.form.firstSolicitorFieldName).to.equal("firstSolicitorChoice");
+      expect(vm.form.firstSolicitor.fieldName).to.equal("firstSolicitorChoice");
     });
 
     it("creates the radio choices for first solicitor", () => {
       const vm = new ProfitCostDetailsViewModel();
 
-      expect(vm.form.firstSolicitorChoices).to.have.length(2);
+      expect(vm.form.firstSolicitor.choices).to.have.length(2);
     });
 
     it("marks the selected choice as checked", () => {
+      const form: ProfitCostDetailsForm = {
+        firstSolicitorChoice: "yes",
+      };
       const vm = new ProfitCostDetailsViewModel({
-        firstSolicitorSelectedValue: "yes",
+        form: form,
       });
 
-      const selected = vm.form.firstSolicitorChoices.find(
+      const selected = vm.form.firstSolicitor.choices.find(
         (c: any) => c.value === "yes",
       );
 
@@ -109,14 +131,24 @@ describe("ProfitCostDetailsViewModel", () => {
 
     it("adds an error when provided", () => {
       const vm = new ProfitCostDetailsViewModel({
-        error: {
-          firstSolicitorError: { text: "error.key" },
-        },
+        errors: [
+          {
+            fieldName: "firstSolicitorChoice",
+            text: {
+              key: "error.key",
+            },
+            href: "#firstSolicitorChoice",
+          },
+        ],
       });
 
-      expect(vm.errorList).to.have.length(1);
-      expect(vm.errorList[0].text).to.equal("error.key");
-      expect(vm.errorList[0].href).to.equal("#firstSolicitorChoice");
+      expect(vm.errorSummary.errorList).to.have.length(1);
+      expect(vm.errorSummary.errorList[0].text).to.deep.equal({
+        key: "error.key",
+      });
+      expect(vm.errorSummary.errorList[0].href).to.equal(
+        "#firstSolicitorChoice",
+      );
     });
   });
 
@@ -124,7 +156,7 @@ describe("ProfitCostDetailsViewModel", () => {
     it("creates the form field name for transfer of solicitor", () => {
       const vm = new ProfitCostDetailsViewModel();
 
-      expect(vm.form.transferOfSolicitorFieldName).to.equal(
+      expect(vm.form.transferOfSolicitor.fieldName).to.equal(
         "transferOfSolicitorChoice",
       );
     });
@@ -132,15 +164,18 @@ describe("ProfitCostDetailsViewModel", () => {
     it("creates the radio choices for transfer of solicitor", () => {
       const vm = new ProfitCostDetailsViewModel();
 
-      expect(vm.form.transferOfSolicitorChoices).to.have.length(2);
+      expect(vm.form.transferOfSolicitor.choices).to.have.length(2);
     });
 
     it("marks the selected choice as checked", () => {
+      const form: ProfitCostDetailsForm = {
+        transferOfSolicitorChoice: "yes",
+      };
       const vm = new ProfitCostDetailsViewModel({
-        transferOfSolicitorSelectedValue: "yes",
+        form: form,
       });
 
-      const selected = vm.form.transferOfSolicitorChoices.find(
+      const selected = vm.form.transferOfSolicitor.choices.find(
         (c: any) => c.value === "yes",
       );
 
@@ -148,57 +183,54 @@ describe("ProfitCostDetailsViewModel", () => {
     });
     it("adds an error when provided", () => {
       const vm = new ProfitCostDetailsViewModel({
-        error: {
-          transferOfSolicitorError: { text: "error.key" },
-        },
+        errors: [
+          {
+            fieldName: "transferOfSolicitorChoice",
+            text: {
+              key: "error.key",
+            },
+            href: "#transferOfSolicitorChoice",
+          },
+        ],
       });
 
-      expect(vm.errorList).to.have.length(1);
-      expect(vm.errorList[0].text).to.equal("error.key");
-      expect(vm.errorList[0].href).to.equal("#transferOfSolicitorChoice");
+      expect(vm.errorSummary.errorList).to.have.length(1);
+      expect(vm.errorSummary.errorList[0].text).to.deep.equal({
+        key: "error.key",
+      });
+      expect(vm.errorSummary.errorList[0].href).to.equal(
+        "#transferOfSolicitorChoice",
+      );
     });
   });
 
   it("adds multiple errors to the error list", () => {
     const vm = new ProfitCostDetailsViewModel({
-      error: {
-        courtTypeError: { text: "court.error" },
-        clientStatusError: { text: "client.error" },
-      },
+      errors: [
+        {
+          fieldName: "court",
+          href: "#",
+          text: {
+            key: "court.error",
+          },
+        },
+        {
+          fieldName: "client",
+          href: "#",
+          text: {
+            key: "client.error",
+          },
+        },
+      ],
     });
 
-    expect(vm.errorList).to.have.length(2);
+    expect(vm.errorSummary.errorList).to.have.length(2);
 
-    expect(vm.errorList[0].text).to.equal("court.error");
-    expect(vm.errorList[1].text).to.equal("client.error");
-  });
-
-  describe("isValidCourtTypeChoice()", () => {
-    it("returns true for valid choices", () => {
-      expect(isValidCourtTypeChoice("county-court")).to.equal(true);
-      expect(isValidCourtTypeChoice("high-court")).to.equal(true);
-      expect(isValidCourtTypeChoice("magistrates-court")).to.equal(true);
-      expect(isValidCourtTypeChoice("other-judge")).to.equal(true);
+    expect(vm.errorSummary.errorList[0].text).to.deep.equal({
+      key: "court.error",
     });
-
-    it("returns false for invalid choices", () => {
-      expect(isValidCourtTypeChoice(undefined)).to.equal(false);
-      expect(isValidCourtTypeChoice("")).to.equal(false);
-      expect(isValidCourtTypeChoice("invalid")).to.equal(false);
-    });
-  });
-
-  describe("isValidClientStatusChoice()", () => {
-    it("returns true for valid choices", () => {
-      expect(isValidClientStatusChoice("child")).to.equal(true);
-      expect(isValidClientStatusChoice("joined-party")).to.equal(true);
-      expect(isValidClientStatusChoice("parent")).to.equal(true);
-    });
-
-    it("returns false for invalid choices", () => {
-      expect(isValidClientStatusChoice(undefined)).to.equal(false);
-      expect(isValidClientStatusChoice("")).to.equal(false);
-      expect(isValidClientStatusChoice("invalid")).to.equal(false);
+    expect(vm.errorSummary.errorList[1].text).to.deep.equal({
+      key: "client.error",
     });
   });
 });

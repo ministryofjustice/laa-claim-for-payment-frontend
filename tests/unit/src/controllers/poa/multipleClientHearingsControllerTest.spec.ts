@@ -78,7 +78,9 @@ describe("poaClaimTypeController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
-      text: "pages.multipleClientHearings.error.empty",
+      text: {
+        key: "pages.multipleClientHearings.error.empty"
+      },
     });
   });
 
@@ -97,7 +99,9 @@ describe("poaClaimTypeController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
-      text: "pages.multipleClientHearings.error.empty",
+      text: {
+        key: "pages.multipleClientHearings.error.empty"
+      },
     });
 
     expect(

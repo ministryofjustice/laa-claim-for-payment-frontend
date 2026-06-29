@@ -1,11 +1,11 @@
 import {
-  RadioQuestionViewModel,
   isValidChoice,
+  type RadioQuestionOptions,
+  RadioQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
-import type { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-
 
 const howManyClientsRetainedFieldName = "howManyClientsRetained" as const;
 
@@ -18,20 +18,27 @@ const HowManyClientsRetainedChoice = {
 type HowManyClientsRetainedChoice =
   (typeof HowManyClientsRetainedChoice)[keyof typeof HowManyClientsRetainedChoice];
 
-const howManyClientsRetainedChoices = [
-  {
-    value: HowManyClientsRetainedChoice.None,
-    text: "pages.howManyClientsRetained.none.text",
-  },
+const howManyClientsRetainedChoices: ReadonlyArray<RadioQuestionOptions<HowManyClientsRetainedChoice>> =
+  [
     {
-    value: HowManyClientsRetainedChoice.One,
-    text: "pages.howManyClientsRetained.one.text",
-  },
+      value: HowManyClientsRetainedChoice.None,
+      text: {
+        key: "pages.howManyClientsRetained.none.text",
+      },
+    },
     {
-    value: HowManyClientsRetainedChoice.MoreThanTwo,
-    text: "pages.howManyClientsRetained.moreThanTwo.text",
-  },
-] as const;
+      value: HowManyClientsRetainedChoice.One,
+      text: {
+        key: "pages.howManyClientsRetained.one.text",
+      },
+    },
+    {
+      value: HowManyClientsRetainedChoice.MoreThanTwo,
+      text: {
+        key: "pages.howManyClientsRetained.moreThanTwo.text",
+      },
+    },
+  ];
 
 /**
  * get how many clients retained view
@@ -42,21 +49,21 @@ const howManyClientsRetainedChoices = [
 export function howManyClientsRetained(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void {
   try {
     res.render("main/radioQuestionPage.njk", {
       csrfToken: res.locals.csrfToken,
       vm: new RadioQuestionViewModel({
-        title: "pages.howManyClientsRetained.title", 
-        fieldName: howManyClientsRetainedFieldName, 
-        choices: howManyClientsRetainedChoices
+        title: "pages.howManyClientsRetained.title",
+        fieldName: howManyClientsRetainedFieldName,
+        choices: howManyClientsRetainedChoices,
       }),
     });
   } catch (error) {
     const processedError = processError(
       error,
-      "rendering how many clients retained page"
+      "rendering how many clients retained page",
     );
     next(processedError);
   }
@@ -71,7 +78,7 @@ export function howManyClientsRetained(
 export function submitHowManyClientsRetained(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
@@ -82,39 +89,42 @@ export function submitHowManyClientsRetained(
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
           title: "pages.howManyClientsRetained.title",
-          fieldName: howManyClientsRetainedFieldName, 
+          fieldName: howManyClientsRetainedFieldName,
           choices: howManyClientsRetainedChoices,
-          selectedValue: typeof selectedChoice === "string" ? selectedChoice : undefined,
+          selectedValue:
+            typeof selectedChoice === "string" ? selectedChoice : undefined,
           error: {
-            text: "pages.howManyClientsRetained.error.empty",
+            text: {
+              key: "pages.howManyClientsRetained.error.empty"
+            },
           },
         }),
       });
       return;
     }
 
-  const claimId = Number(req.params.claimId);
+    const claimId = Number(req.params.claimId);
 
-  const redirectByChoice: Record<HowManyClientsRetainedChoice, string> = {
-    [HowManyClientsRetainedChoice.None]: buildRoute(
-      ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
-      { claimId },
-    ),
-    [HowManyClientsRetainedChoice.One]: buildRoute(
-      ROUTES.MULTIPLE_CLIENT_HEARINGS,
-      { claimId },
-    ),
-    [HowManyClientsRetainedChoice.MoreThanTwo]: buildRoute(
-      ROUTES.MULTIPLE_CLIENT_HEARINGS,
-      { claimId },
-    ),
-  };
+    const redirectByChoice: Record<HowManyClientsRetainedChoice, string> = {
+      [HowManyClientsRetainedChoice.None]: buildRoute(
+        ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
+        { claimId },
+      ),
+      [HowManyClientsRetainedChoice.One]: buildRoute(
+        ROUTES.MULTIPLE_CLIENT_HEARINGS,
+        { claimId },
+      ),
+      [HowManyClientsRetainedChoice.MoreThanTwo]: buildRoute(
+        ROUTES.MULTIPLE_CLIENT_HEARINGS,
+        { claimId },
+      ),
+    };
 
     res.redirect(redirectByChoice[selectedChoice]);
   } catch (error) {
     const processedError = processError(
       error,
-      "submitting how many clients retained page"
+      "submitting how many clients retained page",
     );
     next(processedError);
   }

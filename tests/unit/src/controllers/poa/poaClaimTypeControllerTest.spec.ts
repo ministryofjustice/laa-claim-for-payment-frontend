@@ -45,7 +45,9 @@ describe("poaClaimTypeController", () => {
     expect(renderArgs.vm.form.fieldName).to.equal("poaClaimType");
     expect(renderArgs.vm.form.choices).to.deep.include({
       value: "profit-cost",
-      text: "pages.poaClaimType.profitCost.text",
+      text: {
+        key: "pages.poaClaimType.profitCost.text"
+      },
       checked: false,
     });
   });
@@ -120,7 +122,9 @@ describe("poaClaimTypeController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
-      text: "pages.poaClaimType.error.empty",
+      text: {
+        key: "pages.poaClaimType.error.empty"
+      },
     });
   });
 
@@ -139,7 +143,9 @@ describe("poaClaimTypeController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
-      text: "pages.poaClaimType.error.empty",
+      text: {
+        key: "pages.poaClaimType.error.empty"
+      },
     });
 
     expect(

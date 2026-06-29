@@ -11,62 +11,17 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      {% set courtTypeRadioItems = [] %}
-      {% set clientStatusRadioItems = [] %}
-      {% set firstSolicitorRadioItems = [] %}
-      {% set transferOfSolicitorRadioItems = [] %}
-
-      {% for choice in vm.form.courtTypeChoices %}
-        {% set courtTypeRadioItems = (courtTypeRadioItems.push({
-          value: choice.value,
-          text: t(choice.text)
-        }), courtTypeRadioItems) %}
-      {% endfor %}
-
-      {% for choice in vm.form.clientStatusChoices %}
-        {% set clientStatusRadioItems = (clientStatusRadioItems.push({
-          value: choice.value,
-          text: t(choice.text)
-        }), clientStatusRadioItems) %}
-      {% endfor %}
-
-      {% for choice in vm.form.firstSolicitorChoices %}
-        {% set firstSolicitorRadioItems = (firstSolicitorRadioItems.push({
-          value: choice.value,
-          text: t(choice.text)
-        }), firstSolicitorRadioItems) %}
-      {% endfor %}
-
-      {% for choice in vm.form.transferOfSolicitorChoices %}
-        {% set transferOfSolicitorRadioItems = (transferOfSolicitorRadioItems.push({
-          value: choice.value,
-          text: t(choice.text)
-        }), transferOfSolicitorRadioItems) %}
-      {% endfor %}
-
       <h1 class="govuk-heading-l">{{ t('pages.profitCostDetails.title') }}</h1>
 
-      {% set errors = [] %}
-
-      {% for e in vm.errorList %}
-        {% set errors = (errors.push({
-          text: t(e.text),
-          href: e.href
-        }), errors) %}
-      {% endfor %}
-
-      {% if errors.length > 0 %}
-        {{ govukErrorSummary({
-          titleText: t("common.errorSummaryTitle"),
-          errorList: errors
-        }) }}
+      {% if vm.errorSummary.errorList.length %}
+        {{ govukErrorSummary(vm.errorSummary | translate) }}
       {% endif %}
 
       <form method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
         {{ govukRadios({
-          name: vm.form.courtTypeFieldName,
+          name: vm.form.courtType.fieldName,
           fieldset: {
             legend: {
               text: t("pages.profitCostDetails.courtType.title"),
@@ -74,12 +29,14 @@
               classes: "govuk-fieldset__legend--m"
             }
           },
-          errorMessage: { text: t(vm.form.courtTypeError.text) } if vm.form.courtTypeError,
-          items: courtTypeRadioItems
+          errorMessage: vm.form.courtType.error and {
+            text: vm.form.courtType.error.text | translate
+          },
+          items: vm.form.courtType.choices | translate
         }) }}
 
         {{ govukRadios({
-          name: vm.form.clientStatusFieldName,
+          name: vm.form.clientStatus.fieldName,
           fieldset: {
             legend: {
               text: t("pages.profitCostDetails.clientStatus.title"),
@@ -87,12 +44,14 @@
               classes: "govuk-fieldset__legend--m"
             }
           },
-          errorMessage: { text: t(vm.form.clientStatusError.text) } if vm.form.clientStatusError,
-          items: clientStatusRadioItems
+          errorMessage: vm.form.clientStatus.error and {
+            text: vm.form.clientStatus.error.text | translate
+          },
+          items: vm.form.clientStatus.choices | translate
         }) }}
 
         {{ govukRadios({
-          name: vm.form.firstSolicitorFieldName,
+          name: vm.form.firstSolicitor.fieldName,
           fieldset: {
             legend: {
               text: t("pages.profitCostDetails.firstSolicitor.title"),
@@ -100,12 +59,14 @@
               classes: "govuk-fieldset__legend--m"
             }
           },
-          errorMessage: { text: t(vm.form.firstSolicitorError.text) } if vm.form.firstSolicitorError,
-          items: firstSolicitorRadioItems
+          errorMessage: vm.form.firstSolicitor.error and {
+            text: vm.form.firstSolicitor.error.text | translate
+          },
+          items: vm.form.firstSolicitor.choices | translate
         }) }}
 
         {{ govukRadios({
-          name: vm.form.transferOfSolicitorFieldName,
+          name: vm.form.transferOfSolicitor.fieldName,
           fieldset: {
             legend: {
               text: t("pages.profitCostDetails.transferOfSolicitor.title"),
@@ -113,8 +74,10 @@
               classes: "govuk-fieldset__legend--m"
             }
           },
-          errorMessage: { text: t(vm.form.transferOfSolicitorError.text) } if vm.form.transferOfSolicitorError,
-          items: transferOfSolicitorRadioItems
+          errorMessage: vm.form.transferOfSolicitor.error and {
+            text: vm.form.transferOfSolicitor.error.text | translate
+          },
+          items: vm.form.transferOfSolicitor.choices | translate
         }) }}
 
         <div class="govuk-button-group">

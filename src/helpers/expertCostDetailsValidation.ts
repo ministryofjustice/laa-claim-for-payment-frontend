@@ -1,9 +1,10 @@
 import {
-  type FieldValidationError,
+  combine,
   validateBooleanInput,
   validateDateInput,
   validateMoneyInput,
   validateStringInput,
+  type ValidationResult,
 } from "#src/helpers/validation.js";
 
 export interface ExpertCostDetailsForm {
@@ -16,9 +17,12 @@ export interface ExpertCostDetailsForm {
   description?: unknown;
 }
 
-export interface ExpertCostDetailsValidationResult {
-  isValid: boolean;
-  errors: FieldValidationError[];
+export interface ExpertCostDetails {
+  activityDate: Date;
+  actualNetValue: number;
+  vatApplies: boolean;
+  feeEarnerName: string;
+  description: string;
 }
 
 const FEE_EARNER_NAME_REGEX = /^[A-Za-z' -]+$/;
@@ -28,33 +32,23 @@ const DESCRIPTION_REGEX = /^[\p{L}\p{N}\p{P}\p{Zs}\n\r]*$/u;
  * Validates the expert cost details form.
  *
  * @param {ExpertCostDetailsForm} form The expert cost details form.
- * @returns {ExpertCostDetailsValidationResult} Validation result.
+ * @returns {ValidationResult} Validation result.
  */
 export function validateExpertCostDetails(
   form: ExpertCostDetailsForm,
-): ExpertCostDetailsValidationResult {
-  const errors: FieldValidationError[] = [
-    ...validateActivityDate(form),
-    ...validateMoneyInput(
-      form.actualNetValue,
-      "actualNetValue",
-      "actual-net-value",
-      "pages.poa.expertCostDetails.actualNetValue",
-    ),
-    ...validateVatApplies(form.vatApplies),
-    ...validateFeeEarnerName(form.feeEarnerName),
-    ...validateDescription(form.description),
-  ];
-
-  return {
-    isValid: errors.length === 0,
-    errors,
-  };
+): ValidationResult<ExpertCostDetails> {
+  return combine({
+    activityDate: validateActivityDate(form),
+    actualNetValue: validateActualNetValue(form.actualNetValue),
+    vatApplies: validateVatApplies(form.vatApplies),
+    feeEarnerName: validateFeeEarnerName(form.feeEarnerName),
+    description: validateDescription(form.description),
+  });
 }
 
 function validateActivityDate(
   form: ExpertCostDetailsForm,
-): FieldValidationError[] {
+): ValidationResult<Date> {
   return validateDateInput(
     {
       day: form.activityDateDay,
@@ -67,7 +61,16 @@ function validateActivityDate(
   );
 }
 
-function validateVatApplies(value: unknown): FieldValidationError[] {
+function validateActualNetValue(value: unknown): ValidationResult<number> {
+  return validateMoneyInput(
+    value,
+    "actualNetValue",
+    "actual-net-value",
+    "pages.poa.expertCostDetails.actualNetValue",
+  );
+}
+
+function validateVatApplies(value: unknown): ValidationResult<boolean> {
   return validateBooleanInput(
     value,
     "vatApplies",
@@ -76,7 +79,7 @@ function validateVatApplies(value: unknown): FieldValidationError[] {
   );
 }
 
-function validateFeeEarnerName(value: unknown): FieldValidationError[] {
+function validateFeeEarnerName(value: unknown): ValidationResult<string> {
   return validateStringInput(
     value,
     "feeEarnerName",
@@ -86,7 +89,7 @@ function validateFeeEarnerName(value: unknown): FieldValidationError[] {
   );
 }
 
-function validateDescription(value: unknown): FieldValidationError[] {
+function validateDescription(value: unknown): ValidationResult<string> {
   return validateStringInput(
     value,
     "description",

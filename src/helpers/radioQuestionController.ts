@@ -67,7 +67,9 @@ export function createRadioQuestionController<ChoiceType extends string>({
                   ? selectedChoice
                   : undefined,
               error: {
-                text: errorText,
+                text: {
+                  key: errorText
+                },
               },
             }),
           });

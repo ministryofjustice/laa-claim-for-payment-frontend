@@ -1,7 +1,7 @@
 import { expect, config as chaiConfig } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
-import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionOptions, RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 
 chaiConfig.truncateThreshold = 0;
 
@@ -16,19 +16,27 @@ describe("views/main/radioQuestionsView.njk", () => {
   type TestChoice =
     (typeof TestChoice)[keyof typeof TestChoice];
 
-  const testChoices = [
+  const testChoices: RadioQuestionOptions<TestChoice>[] = [
     {
       value: TestChoice.First,
-      text: "first text",
+      text: {
+        key: "first text"
+      },
       hint: {
-        text: "first hint",
+        text: {
+          key: "first hint"
+        },
       },
     },
       {
       value: TestChoice.Second,
-      text: "second text",
+      text: {
+        key: "second text"
+      },
       hint: {
-        text: "second hint",
+        text: {
+          key: "second hint"
+        },
       },
     },
   ] as const;
@@ -122,7 +130,9 @@ describe("views/main/radioQuestionsView.njk", () => {
           fieldName: "testfieldname",
           choices: testChoices,
           error: {
-            text: "some error",
+            text: {
+              key: "some error"
+            },
           },
       })
 

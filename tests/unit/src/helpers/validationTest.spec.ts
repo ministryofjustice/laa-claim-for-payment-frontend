@@ -6,7 +6,27 @@ import {
   validateDateInput,
   validateMoneyInput,
   validateStringInput,
+  ValidationFailure,
+  ValidationResult,
+  ValidationSuccess,
 } from "#src/helpers/validation.js";
+
+export function expectSuccess<T>(result: ValidationResult<T>): ValidationSuccess<T> {
+  expect(result.isValid).to.equal(true);
+  if (!result.isValid) {
+    throw new Error("Expected success but got failure");
+  }
+  return result;
+}
+
+export function expectFailure<T>(result: ValidationResult<T>): ValidationFailure {
+  expect(result.isValid).to.equal(false);
+  if (result.isValid) {
+    throw new Error("Expected failure but got success");
+  }
+  return result;
+}
+
 
 describe("getStringValue", () => {
   it("returns string", () => {
@@ -32,7 +52,7 @@ describe("getStringValue", () => {
 });
 
 describe("validateStringInput", () => {
-  it("returns empty array of errors for valid input", () => {
+  it("returns success for valid input", () => {
     const result = validateStringInput(
       "foo",
       "fieldName",
@@ -41,10 +61,12 @@ describe("validateStringInput", () => {
       /^[A-Za-z]+$/,
     );
 
-    expect(result).to.be.empty;
+    const success = expectSuccess(result);
+
+    expect(success.value).to.equal("foo");
   });
 
-  it("returns array of errors for empty input", () => {
+  it("returns failure with array of errors for empty input", () => {
     const result = validateStringInput(
       "",
       "fieldName",
@@ -53,14 +75,16 @@ describe("validateStringInput", () => {
       /^[A-Za-z]+$/,
     );
 
-    expect(result).to.have.length(1);
-    expect(result[0].fieldName).to.equal("fieldName");
-    expect(result[0].href).to.equal("#id");
-    expect(result[0].text.key).to.equal("prefix.errors.empty");
-    expect(result[0].fields).to.be.undefined;
+    const errors = expectFailure(result).errors;
+
+    expect(errors).to.have.length(1);
+    expect(errors[0].fieldName).to.equal("fieldName");
+    expect(errors[0].href).to.equal("#id");
+    expect(errors[0].text.key).to.equal("prefix.errors.empty");
+    expect(errors[0].fields).to.be.undefined;
   });
 
-  it("returns array of errors for input that fails against regex", () => {
+  it("returns failure with array of errors for input that fails against regex", () => {
     const result = validateStringInput(
       "§§§",
       "fieldName",
@@ -69,80 +93,94 @@ describe("validateStringInput", () => {
       /^[A-Za-z]+$/,
     );
 
-    expect(result).to.have.length(1);
-    expect(result[0].fieldName).to.equal("fieldName");
-    expect(result[0].href).to.equal("#id");
-    expect(result[0].text.key).to.equal("prefix.errors.invalid");
-    expect(result[0].fields).to.be.undefined;
+    const errors = expectFailure(result).errors;
+
+    expect(errors).to.have.length(1);
+    expect(errors[0].fieldName).to.equal("fieldName");
+    expect(errors[0].href).to.equal("#id");
+    expect(errors[0].text.key).to.equal("prefix.errors.invalid");
+    expect(errors[0].fields).to.be.undefined;
   });
 });
 
 describe("validateBooleanInput", () => {
-  it("returns empty array of errors for valid input", () => {
-    const inputs = ["yes", "no"];
+  it("returns success for valid yes input", () => {
+    const result = validateBooleanInput("yes", "fieldName", "id", "prefix");
 
-    inputs.forEach((input) => {
-      const result = validateBooleanInput(input, "fieldName", "id", "prefix");
+    const success = expectSuccess(result);
 
-      expect(result).to.be.empty;
-    });
+    expect(success.value).to.equal(true);
   });
 
-  it("returns array of errors for empty input", () => {
+  it("returns success for valid no input", () => {
+    const result = validateBooleanInput("no", "fieldName", "id", "prefix");
+
+    const success = expectSuccess(result);
+
+    expect(success.value).to.equal(false);
+  });
+
+  it("returns failure with array of errors for empty input", () => {
     const result = validateBooleanInput("", "fieldName", "id", "prefix");
 
-    expect(result).to.have.length(1);
-    expect(result[0].fieldName).to.equal("fieldName");
-    expect(result[0].href).to.equal("#id");
-    expect(result[0].text.key).to.equal("prefix.errors.empty");
-    expect(result[0].fields).to.be.undefined;
+    const errors = expectFailure(result).errors;
+
+    expect(errors).to.have.length(1);
+    expect(errors[0].fieldName).to.equal("fieldName");
+    expect(errors[0].href).to.equal("#id");
+    expect(errors[0].text.key).to.equal("prefix.errors.empty");
+    expect(errors[0].fields).to.be.undefined;
   });
 });
 
 describe("validateMoneyInput", () => {
-  it("returns empty array of errors for valid input", () => {
-    const inputs = ["1", "1.0", "1.00", "1.23"];
+  it("returns success for valid input", () => {
+    const result = validateMoneyInput("1.23", "fieldName", "id", "prefix");
 
-    inputs.forEach((input) => {
-      const result = validateMoneyInput(input, "fieldName", "id", "prefix");
+    const success = expectSuccess(result);
 
-      expect(result).to.be.empty;
-    });
+    expect(success.value).to.equal(1.23);
   });
 
-  it("returns array of errors for empty input", () => {
+  it("returns failure with array of errors for empty input", () => {
     const result = validateMoneyInput("", "fieldName", "id", "prefix");
 
-    expect(result).to.have.length(1);
-    expect(result[0].fieldName).to.equal("fieldName");
-    expect(result[0].href).to.equal("#id");
-    expect(result[0].text.key).to.equal("prefix.errors.empty");
-    expect(result[0].fields).to.be.undefined;
+    const errors = expectFailure(result).errors;
+
+    expect(errors).to.have.length(1);
+    expect(errors[0].fieldName).to.equal("fieldName");
+    expect(errors[0].href).to.equal("#id");
+    expect(errors[0].text.key).to.equal("prefix.errors.empty");
+    expect(errors[0].fields).to.be.undefined;
   });
 
-  it("returns array of errors for non-numeric input", () => {
+  it("returns failure with array of errors for non-numeric input", () => {
     const result = validateMoneyInput("foo", "fieldName", "id", "prefix");
 
-    expect(result).to.have.length(1);
-    expect(result[0].fieldName).to.equal("fieldName");
-    expect(result[0].href).to.equal("#id");
-    expect(result[0].text.key).to.equal("prefix.errors.invalid");
-    expect(result[0].fields).to.be.undefined;
+    const errors = expectFailure(result).errors;
+
+    expect(errors).to.have.length(1);
+    expect(errors[0].fieldName).to.equal("fieldName");
+    expect(errors[0].href).to.equal("#id");
+    expect(errors[0].text.key).to.equal("prefix.errors.invalid");
+    expect(errors[0].fields).to.be.undefined;
   });
 
-  it("returns array of errors for numeric input with too many decimal places", () => {
+  it("returns failure with array of errors for numeric input with too many decimal places", () => {
     const result = validateMoneyInput("1.123", "fieldName", "id", "prefix");
 
-    expect(result).to.have.length(1);
-    expect(result[0].fieldName).to.equal("fieldName");
-    expect(result[0].href).to.equal("#id");
-    expect(result[0].text.key).to.equal("prefix.errors.pence");
-    expect(result[0].fields).to.be.undefined;
+    const errors = expectFailure(result).errors;
+
+    expect(errors).to.have.length(1);
+    expect(errors[0].fieldName).to.equal("fieldName");
+    expect(errors[0].href).to.equal("#id");
+    expect(errors[0].text.key).to.equal("prefix.errors.pence");
+    expect(errors[0].fields).to.be.undefined;
   });
 });
 
 describe("validateDateInput", () => {
-  it("returns empty array of errors for valid input", () => {
+  it("returns success for valid input", () => {
     const result = validateDateInput(
       {
         day: "1",
@@ -154,10 +192,15 @@ describe("validateDateInput", () => {
       "prefix",
     );
 
-    expect(result).to.be.empty;
+    const success = expectSuccess(result);
+    const date = success.value;
+
+    expect(date.getFullYear()).to.equal(2000);
+    expect(date.getMonth()).to.equal(0);
+    expect(date.getDate()).to.equal(1);
   });
 
-  it("returns array of errors for empty day", () => {
+  it("returns failure with array of errors for empty day", () => {
     const result = validateDateInput(
       {
         day: "",
@@ -169,14 +212,16 @@ describe("validateDateInput", () => {
       "prefix",
     );
 
-    expect(result).to.have.length(1);
-    expect(result[0].fieldName).to.equal("fieldName");
-    expect(result[0].href).to.equal("#id-day");
-    expect(result[0].text.key).to.equal("prefix.errors.incomplete.day");
-    expect(result[0].fields).to.deep.equal(["day"]);
+    const errors = expectFailure(result).errors;
+
+    expect(errors).to.have.length(1);
+    expect(errors[0].fieldName).to.equal("fieldName");
+    expect(errors[0].href).to.equal("#id-day");
+    expect(errors[0].text.key).to.equal("prefix.errors.incomplete.day");
+    expect(errors[0].fields).to.deep.equal(["day"]);
   });
 
-  it("returns array of errors for empty month", () => {
+  it("returns failure with array of errors for empty month", () => {
     const result = validateDateInput(
       {
         day: "1",
@@ -188,14 +233,16 @@ describe("validateDateInput", () => {
       "prefix",
     );
 
-    expect(result).to.have.length(1);
-    expect(result[0].fieldName).to.equal("fieldName");
-    expect(result[0].href).to.equal("#id-month");
-    expect(result[0].text.key).to.equal("prefix.errors.incomplete.month");
-    expect(result[0].fields).to.deep.equal(["month"]);
+    const errors = expectFailure(result).errors;
+
+    expect(errors).to.have.length(1);
+    expect(errors[0].fieldName).to.equal("fieldName");
+    expect(errors[0].href).to.equal("#id-month");
+    expect(errors[0].text.key).to.equal("prefix.errors.incomplete.month");
+    expect(errors[0].fields).to.deep.equal(["month"]);
   });
 
-  it("returns array of errors for empty year", () => {
+  it("returns failure with array of errors for empty year", () => {
     const result = validateDateInput(
       {
         day: "1",
@@ -207,14 +254,16 @@ describe("validateDateInput", () => {
       "prefix",
     );
 
-    expect(result).to.have.length(1);
-    expect(result[0].fieldName).to.equal("fieldName");
-    expect(result[0].href).to.equal("#id-year");
-    expect(result[0].text.key).to.equal("prefix.errors.incomplete.year");
-    expect(result[0].fields).to.deep.equal(["year"]);
+    const errors = expectFailure(result).errors;
+
+    expect(errors).to.have.length(1);
+    expect(errors[0].fieldName).to.equal("fieldName");
+    expect(errors[0].href).to.equal("#id-year");
+    expect(errors[0].text.key).to.equal("prefix.errors.incomplete.year");
+    expect(errors[0].fields).to.deep.equal(["year"]);
   });
 
-  it("returns array of errors for empty day and month", () => {
+  it("returns failure with array of errors for empty day and month", () => {
     const result = validateDateInput(
       {
         day: "",
@@ -226,14 +275,16 @@ describe("validateDateInput", () => {
       "prefix",
     );
 
-    expect(result).to.have.length(1);
-    expect(result[0].fieldName).to.equal("fieldName");
-    expect(result[0].href).to.equal("#id-day");
-    expect(result[0].text.key).to.equal("prefix.errors.incomplete.dayAndMonth");
-    expect(result[0].fields).to.deep.equal(["day", "month"]);
+    const errors = expectFailure(result).errors;
+
+    expect(errors).to.have.length(1);
+    expect(errors[0].fieldName).to.equal("fieldName");
+    expect(errors[0].href).to.equal("#id-day");
+    expect(errors[0].text.key).to.equal("prefix.errors.incomplete.dayAndMonth");
+    expect(errors[0].fields).to.deep.equal(["day", "month"]);
   });
 
-  it("returns array of errors for empty day and year", () => {
+  it("returns failure with array of errors for empty day and year", () => {
     const result = validateDateInput(
       {
         day: "",
@@ -245,14 +296,16 @@ describe("validateDateInput", () => {
       "prefix",
     );
 
-    expect(result).to.have.length(1);
-    expect(result[0].fieldName).to.equal("fieldName");
-    expect(result[0].href).to.equal("#id-day");
-    expect(result[0].text.key).to.equal("prefix.errors.incomplete.dayAndYear");
-    expect(result[0].fields).to.deep.equal(["day", "year"]);
+    const errors = expectFailure(result).errors;
+
+    expect(errors).to.have.length(1);
+    expect(errors[0].fieldName).to.equal("fieldName");
+    expect(errors[0].href).to.equal("#id-day");
+    expect(errors[0].text.key).to.equal("prefix.errors.incomplete.dayAndYear");
+    expect(errors[0].fields).to.deep.equal(["day", "year"]);
   });
 
-  it("returns array of errors for empty month and year", () => {
+  it("returns failure with array of errors for empty month and year", () => {
     const result = validateDateInput(
       {
         day: "1",
@@ -264,14 +317,16 @@ describe("validateDateInput", () => {
       "prefix",
     );
 
-    expect(result).to.have.length(1);
-    expect(result[0].fieldName).to.equal("fieldName");
-    expect(result[0].href).to.equal("#id-month");
-    expect(result[0].text.key).to.equal("prefix.errors.incomplete.monthAndYear");
-    expect(result[0].fields).to.deep.equal(["month", "year"]);
+    const errors = expectFailure(result).errors;
+
+    expect(errors).to.have.length(1);
+    expect(errors[0].fieldName).to.equal("fieldName");
+    expect(errors[0].href).to.equal("#id-month");
+    expect(errors[0].text.key).to.equal("prefix.errors.incomplete.monthAndYear");
+    expect(errors[0].fields).to.deep.equal(["month", "year"]);
   });
 
-  it("returns array of errors for non-numeric inputs", () => {
+  it("returns failure with array of errors for non-numeric inputs", () => {
     const inputs = [
       {
         day: "foo",
@@ -298,15 +353,17 @@ describe("validateDateInput", () => {
         "prefix",
       );
 
-      expect(result).to.have.length(1);
-      expect(result[0].fieldName).to.equal("fieldName");
-      expect(result[0].href).to.equal("#id-day");
-      expect(result[0].text.key).to.equal("prefix.errors.invalid");
-      expect(result[0].fields).to.deep.equal(["day", "month", "year"]);
+      const errors = expectFailure(result).errors;
+
+      expect(errors).to.have.length(1);
+      expect(errors[0].fieldName).to.equal("fieldName");
+      expect(errors[0].href).to.equal("#id-day");
+      expect(errors[0].text.key).to.equal("prefix.errors.invalid");
+      expect(errors[0].fields).to.deep.equal(["day", "month", "year"]);
     });
   });
 
-  it("returns array of errors for invalid date", () => {
+  it("returns failure with array of errors for invalid date", () => {
     const inputs = [
       {
         day: "29",
@@ -333,15 +390,17 @@ describe("validateDateInput", () => {
         "prefix",
       );
 
-      expect(result).to.have.length(1);
-      expect(result[0].fieldName).to.equal("fieldName");
-      expect(result[0].href).to.equal("#id-day");
-      expect(result[0].text.key).to.equal("prefix.errors.invalid");
-      expect(result[0].fields).to.deep.equal(["day", "month", "year"]);
+      const errors = expectFailure(result).errors;
+
+      expect(errors).to.have.length(1);
+      expect(errors[0].fieldName).to.equal("fieldName");
+      expect(errors[0].href).to.equal("#id-day");
+      expect(errors[0].text.key).to.equal("prefix.errors.invalid");
+      expect(errors[0].fields).to.deep.equal(["day", "month", "year"]);
     });
   });
 
-  it("returns array of errors for future date", () => {
+  it("returns failure with array of errors for future date", () => {
     const today = new Date();
 
     const tomorrow = new Date(today);
@@ -358,10 +417,12 @@ describe("validateDateInput", () => {
       "prefix",
     );
 
-    expect(result).to.have.length(1);
-    expect(result[0].fieldName).to.equal("fieldName");
-    expect(result[0].href).to.equal("#id-day");
-    expect(result[0].text.key).to.equal("prefix.errors.future");
-    expect(result[0].fields).to.deep.equal(["day", "month", "year"]);
+    const errors = expectFailure(result).errors;
+
+    expect(errors).to.have.length(1);
+    expect(errors[0].fieldName).to.equal("fieldName");
+    expect(errors[0].href).to.equal("#id-day");
+    expect(errors[0].text.key).to.equal("prefix.errors.future");
+    expect(errors[0].fields).to.deep.equal(["day", "month", "year"]);
   });
 });

@@ -3,6 +3,7 @@ import { processError } from "#src/helpers/index.js";
 import {
   RadioQuestionViewModel,
   isValidChoice,
+  type RadioQuestionOptions,
 } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 
@@ -17,20 +18,26 @@ const PoaClaimTypeChoice = {
 type PoaClaimTypeChoice =
   (typeof PoaClaimTypeChoice)[keyof typeof PoaClaimTypeChoice];
 
-const poaClaimTypeChoices = [
+const poaClaimTypeChoices: ReadonlyArray<RadioQuestionOptions<PoaClaimTypeChoice>> = [
   {
     value: PoaClaimTypeChoice.ProfitCost,
-    text: "pages.poaClaimType.profitCost.text",
+    text: {
+      key: "pages.poaClaimType.profitCost.text",
+    },
   },
   {
     value: PoaClaimTypeChoice.ExpertCost,
-    text: "pages.poaClaimType.expertCost.text",
+    text: {
+      key: "pages.poaClaimType.expertCost.text",
+    },
   },
   {
     value: PoaClaimTypeChoice.NonExpertDisbursement,
-    text: "pages.poaClaimType.nonExpertDisbursement.text",
+    text: {
+      key: "pages.poaClaimType.nonExpertDisbursement.text",
+    },
   },
-] as const;
+];
 
 /**
  * Display POA claim type page.
@@ -84,7 +91,9 @@ export function submitPoaClaimType(
           selectedValue:
             typeof selectedChoice === "string" ? selectedChoice : undefined,
           error: {
-            text: "pages.poaClaimType.error.empty",
+            text: {
+              key: "pages.poaClaimType.error.empty"
+            },
           },
         }),
       });
@@ -94,14 +103,13 @@ export function submitPoaClaimType(
     const claimId = Number(req.params.claimId);
 
     const redirectByChoice: Record<PoaClaimTypeChoice, string> = {
-      [PoaClaimTypeChoice.ProfitCost]: buildRoute(
-        ROUTES.PROFIT_COST_DETAILS,
-        { claimId },
-      ),
-      [PoaClaimTypeChoice.ExpertCost]: buildRoute(
-        ROUTES.EXPERT_COST_DETAILS,
-        { claimId, expertCostId: 1 },
-      ),
+      [PoaClaimTypeChoice.ProfitCost]: buildRoute(ROUTES.PROFIT_COST_DETAILS, {
+        claimId,
+      }),
+      [PoaClaimTypeChoice.ExpertCost]: buildRoute(ROUTES.EXPERT_COST_DETAILS, {
+        claimId,
+        expertCostId: 1,
+      }),
       [PoaClaimTypeChoice.NonExpertDisbursement]: buildRoute(
         ROUTES.NON_EXPERT_COST_DETAILS,
         { claimId },

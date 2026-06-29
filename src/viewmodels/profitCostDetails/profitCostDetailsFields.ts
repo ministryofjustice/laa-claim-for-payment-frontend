@@ -1,3 +1,5 @@
+import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewModel.js";
+
 export const courtTypeFieldName = "courtTypeChoice" as const;
 
 export const CourtTypeChoice = {
@@ -10,33 +12,29 @@ export const CourtTypeChoice = {
 export type CourtTypeChoice =
   (typeof CourtTypeChoice)[keyof typeof CourtTypeChoice];
 
-export const courtTypeChoices = [
+export const courtTypeChoices: ReadonlyArray<RadioQuestionOptions<CourtTypeChoice>> = [
   {
     value: CourtTypeChoice.CountyCourt,
-    text: "pages.profitCostDetails.courtType.countyCourt.text",
-    hint: {
-      text: "pages.profitCostDetails.courtType.countyCourt.hint",
+    text: {
+      key: "pages.profitCostDetails.courtType.countyCourt.text"
     },
   },
   {
     value: CourtTypeChoice.HighCourt,
-    text: "pages.profitCostDetails.courtType.highCourt.text",
-    hint: {
-      text: "pages.profitCostDetails.courtType.highCourt.hint",
+    text: {
+      key: "pages.profitCostDetails.courtType.highCourt.text"
     },
   },
   {
     value: CourtTypeChoice.MagistratesCourt,
-    text: "pages.profitCostDetails.courtType.magistratesCourt.text",
-    hint: {
-      text: "pages.profitCostDetails.courtType.magistratesCourt.hint",
+    text: {
+      key: "pages.profitCostDetails.courtType.magistratesCourt.text"
     },
   },
   {
     value: CourtTypeChoice.OtherJudge,
-    text: "pages.profitCostDetails.courtType.otherJudge.text",
-    hint: {
-      text: "pages.profitCostDetails.courtType.otherJudge.hint",
+    text: {
+      key: "pages.profitCostDetails.courtType.otherJudge.text"
     },
   },
 ] as const;
@@ -52,21 +50,28 @@ export const ClientStatusChoice = {
 export type ClientStatusChoice =
   (typeof ClientStatusChoice)[keyof typeof ClientStatusChoice];
 
-export const clientStatusChoices = [
+export const clientStatusChoices: ReadonlyArray<RadioQuestionOptions<ClientStatusChoice>> = [
   {
     value: ClientStatusChoice.Child,
-    text: "pages.profitCostDetails.clientStatus.child.text",
+    text: {
+      key: "pages.profitCostDetails.clientStatus.child.text"
+    },
   },
   {
     value: ClientStatusChoice.JoinedParty,
-    text: "pages.profitCostDetails.clientStatus.joinedParty.text",
+    text: {
+      key: "pages.profitCostDetails.clientStatus.joinedParty.text"
+    },
   },
   {
     value: ClientStatusChoice.Parent,
-    text: "pages.profitCostDetails.clientStatus.parent.text",
+    text: {
+      key: "pages.profitCostDetails.clientStatus.parent.text"
+    },
   },
 ] as const;
 
 export const firstSolicitorFieldName = "firstSolicitorChoice" as const;
 
-export const transferOfSolicitorFieldName = "transferOfSolicitorChoice" as const;
+export const transferOfSolicitorFieldName =
+  "transferOfSolicitorChoice" as const;
