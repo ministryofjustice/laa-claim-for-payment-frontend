@@ -5,9 +5,9 @@ import {
   type ValidationResult,
 } from "#src/helpers/validation.js";
 import {
-  ClientStatusChoice,
+  type ClientStatusChoice,
   clientStatusChoices,
-  CourtTypeChoice,
+  type CourtTypeChoice,
   courtTypeChoices,
 } from "#src/viewmodels/profitCostDetails/profitCostDetailsFields.js";
 

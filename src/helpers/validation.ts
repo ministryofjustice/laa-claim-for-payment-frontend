@@ -144,7 +144,11 @@ export function validateRadioInput<T>(
   id: string,
   messagePrefix: string,
 ): ValidationResult<T> {
-  if (!choices.some((choice) => choice.value === value)) {
+  const selection: RadioQuestionOptions<T> | undefined = choices.find(
+    (choice) => choice.value === value,
+  );
+
+  if (selection == null) {
     return {
       isValid: false,
       errors: [
@@ -161,7 +165,7 @@ export function validateRadioInput<T>(
 
   return {
     isValid: true,
-    value: value as T,
+    value: selection.value,
   };
 }
 
@@ -441,16 +445,25 @@ export function getForm(body: any): object {
   return body;
 }
 
+/**
+ * Combines multiple field-level validation results into a single result object.
+ *
+ * @param {object} results - An object mapping each key of T to its ValidationResult.
+ * @returns {ValidationResult} A combined ValidationResult representing the full object.
+ */
 export function combine<T>(results: {
   [K in keyof T]: ValidationResult<T[K]>;
 }): ValidationResult<T> {
-  const value = {} as T;
+  const value: Partial<T> = {};
   const errors: FieldValidationError[] = [];
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
   for (const key of Object.keys(results) as Array<keyof T>) {
+    // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
     const result = results[key];
 
     if (result.isValid) {
+      // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
       value[key] = result.value;
     } else {
       errors.push(...result.errors);
@@ -464,8 +477,6 @@ export function combine<T>(results: {
     };
   }
 
-  return {
-    isValid: true,
-    value,
-  };
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
+  return { isValid: true, value: value as T };
 }
