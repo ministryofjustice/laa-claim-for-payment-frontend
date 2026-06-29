@@ -64,7 +64,7 @@ export interface RadioQuestionForm<ChoiceType> {
  * @param {ReadonlyArray<RadioQuestionOptions>} choices radio choices
  * @param {unknown} selectedValue selected value
  * @param {object} error error
- * @param {TextOrMessage} error.text error text message
+ * @param {Message} error.text error text message
  * @returns {RadioQuestionForm} radio question form object
  */
 export function radioQuestionForm<ChoiceType>(
