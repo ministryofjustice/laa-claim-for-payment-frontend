@@ -122,6 +122,7 @@ router.get(ROUTES.UPLOAD_FILE_FOR_LINE_ITEM, limiter, async function (
   }
 );
 
+/* POST linked evidence. */
 router.post(
   ROUTES.UPLOAD_FILE_FOR_LINE_ITEM, limiter, async function (req: Request, res: Response, next: NextFunction ): Promise<void> {
     await linkEvidenceToLineItem(req, res, next);
