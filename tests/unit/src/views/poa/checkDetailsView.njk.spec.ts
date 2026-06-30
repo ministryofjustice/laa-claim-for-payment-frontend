@@ -106,5 +106,26 @@ describe("views/main/poa/checkDetailsView.njk", () => {
         card.find(".govuk-summary-list__row")
       ).to.have.length(1);
     });
+
+
+
+
+    it("renders the expert cost bill line cards", () => {
+      const cards = $("#expert-cost-bill-line");
+
+      expect(cards.length).to.equal(2);
+
+      cards.each((_, el) => {
+        const card = $(el);
+        expect(
+          card.find(".govuk-summary-card__title").first().text().trim()
+        ).to.equal(
+          "pages.poa.checkYourDetails.cya.expertCostBillLine.title"
+        );
+        expect(
+          card.find(".govuk-summary-list__row").length
+        ).to.equal(5);
+      });
+    });
   });
 });

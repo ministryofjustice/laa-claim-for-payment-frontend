@@ -20,6 +20,11 @@
       {{ govukSummaryList(vm.profitCostBillLineSummaryList | translate) }}
       {{ govukSummaryList(vm.evidenceSummaryList | translate) }}
 
+      {% for summaryList in vm.expertCostBillLineSummaryLists %}
+        {% set index = loop.index %}
+        {{ govukSummaryList(summaryList | translate) }}
+      {% endfor %}
+
       <form method="post">
         {{ govukButton({
           text: t("common.submit")

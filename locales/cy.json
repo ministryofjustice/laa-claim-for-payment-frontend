@@ -282,6 +282,14 @@
           "evidence": {
             "title": "Evidence",
             "value": "{fileSize}<br>{submittedOn}"
+          },
+          "expertCostBillLine": {
+            "title": "Expert cost bill line",
+            "date": "Date",
+            "actualNetValue": "Actual net value",
+            "doesVatApply": "Does VAT apply?",
+            "feeEarnerName": "Fee earner name",
+            "description": "Description"
           }
         }
       },

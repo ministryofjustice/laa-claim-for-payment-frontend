@@ -38,14 +38,14 @@ interface SummaryCard {
  * @param {string} cardTitle card title
  * @param {string} cardId card ID
  * @param {SummaryListRow[]} summaryListRows summary list rows
- * @param {SummaryListRowActionItem} cardAction card action
+ * @param {SummaryListRowActionItem[]} cardActions card actions
  * @returns {SummaryList} a summary list with card
  */
 export function buildSummaryListWithCard(
   cardTitle: TextOrMessage,
   cardId: string,
   summaryListRows: SummaryListRow[],
-  cardAction?: SummaryListRowActionItem,
+  cardActions?: SummaryListRowActionItem[],
 ): SummaryList {
   return {
     card: {
@@ -53,10 +53,10 @@ export function buildSummaryListWithCard(
         text: cardTitle,
       },
       actions:
-        cardAction == null
+        cardActions == null
           ? undefined
           : {
-              items: [cardAction],
+              items: cardActions,
             },
       attributes: {
         id: cardId,
