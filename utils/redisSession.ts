@@ -34,5 +34,7 @@ export const setupRedisSession = (app: Application, redisClient: RedisClientType
         })
     )
 
-    redisClient.connect().catch(console.error)
+    if (!redisClient.isOpen) {
+        redisClient.connect().catch(console.error)
+    }
 }
