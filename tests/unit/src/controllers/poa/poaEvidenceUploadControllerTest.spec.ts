@@ -7,6 +7,7 @@ import {
   submitPoaEvidenceUpload,
 } from "#src/controllers/poa/poaEvidenceUploadController.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
+import { claimService } from "#src/services/claimService.js";
 
 describe("poaEvidenceUploadController", () => {
   let res: Response;
@@ -24,14 +25,27 @@ describe("poaEvidenceUploadController", () => {
     next = sinon.stub() as unknown as NextFunction;
   });
 
-  it("renders the POA evidence upload page", () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
+it("renders the POA evidence upload page", async () => {
+    sinon.stub(claimService, "getClaim").resolves({
+      status: "success",
+      body: {
+        id: 1,
+        evidence: [],
+      },
+    } as any);
+
     const req = {
       params: {
         claimId: "1",
       },
+      axiosMiddleware: {},
     } as unknown as Request;
 
-    poaEvidenceUploadPage(req, res, next);
+    await poaEvidenceUploadPage(req, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
