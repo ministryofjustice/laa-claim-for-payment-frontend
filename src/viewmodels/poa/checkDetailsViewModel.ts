@@ -25,6 +25,7 @@ export class CheckDetailsViewModel {
   readonly assessmentSummaryTable: Table;
   readonly profitCostDetailsSummaryList: SummaryList;
   readonly profitCostBillLineSummaryList: SummaryList;
+  readonly expertCostBillLineSummaryLists: SummaryList[] = [];
   readonly evidenceSummaryList: SummaryList;
 
   /**
@@ -110,7 +111,7 @@ export class CheckDetailsViewModel {
           { text: "Carol Spencer" }
         )
       ],
-      {
+[      {
         href: buildRoute(ROUTES.CPGFS_PROFIT_COST_BILL_LINE, { claimId }),
         text: {
           key: "common.change"
@@ -118,8 +119,100 @@ export class CheckDetailsViewModel {
         visuallyHiddenText: {
           key: "pages.poa.checkYourDetails.cya.profitCostBillLine.title"
         }
-      }
+      }]
     );
+
+    this.expertCostBillLineSummaryLists.push(buildSummaryListWithCard(
+      { key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title" },
+      'expert-cost-bill-line',
+      [
+        buildSummaryListRow(
+          { key: "pages.poa.checkYourDetails.cya.expertCostBillLine.date" },
+          { text: "20 December 2023" }
+        ),
+        buildSummaryListRow(
+          { key: "pages.poa.checkYourDetails.cya.expertCostBillLine.actualNetValue" },
+          { text: "£150" }
+        ),
+        buildSummaryListRow(
+          { key: "pages.poa.checkYourDetails.cya.expertCostBillLine.doesVatApply" },
+          { text: "Yes" }
+        ),
+        buildSummaryListRow(
+          { key: "pages.poa.checkYourDetails.cya.expertCostBillLine.feeEarnerName" },
+          { text: "Carol Spencer" }
+        ),
+        buildSummaryListRow(
+          { key: "pages.poa.checkYourDetails.cya.expertCostBillLine.description" },
+          { text: "Cost of petrol" }
+        )
+      ],
+      [
+      {
+        href: "#",
+        text: {
+          key: "common.delete"
+        },
+        visuallyHiddenText: {
+          key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title"
+        }
+      },{
+        href: buildRoute(ROUTES.EXPERT_COST_DETAILS, { claimId, expertCostId: 1 }),
+        text: {
+          key: "common.change"
+        },
+        visuallyHiddenText: {
+          key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title"
+        }
+      }
+    ]
+    ));
+
+        this.expertCostBillLineSummaryLists.push(buildSummaryListWithCard(
+      { key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title" },
+      'expert-cost-bill-line',
+      [
+        buildSummaryListRow(
+          { key: "pages.poa.checkYourDetails.cya.expertCostBillLine.date" },
+          { text: "20 December 2023" }
+        ),
+        buildSummaryListRow(
+          { key: "pages.poa.checkYourDetails.cya.expertCostBillLine.actualNetValue" },
+          { text: "£150" }
+        ),
+        buildSummaryListRow(
+          { key: "pages.poa.checkYourDetails.cya.expertCostBillLine.doesVatApply" },
+          { text: "Yes" }
+        ),
+        buildSummaryListRow(
+          { key: "pages.poa.checkYourDetails.cya.expertCostBillLine.feeEarnerName" },
+          { text: "Carol Spencer" }
+        ),
+        buildSummaryListRow(
+          { key: "pages.poa.checkYourDetails.cya.expertCostBillLine.description" },
+          { text: "Cost of petrol" }
+        )
+      ],
+      [
+      {
+        href: "#",
+        text: {
+          key: "common.delete"
+        },
+        visuallyHiddenText: {
+          key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title"
+        }
+      },{
+        href: buildRoute(ROUTES.EXPERT_COST_DETAILS, { claimId, expertCostId: 2 }),
+        text: {
+          key: "common.change"
+        },
+        visuallyHiddenText: {
+          key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title"
+        }
+      }
+    ]
+    ));
 
     this.evidenceSummaryList = buildSummaryListWithCard(
       { key: "pages.poa.checkYourDetails.cya.evidence.title" },
@@ -136,7 +229,7 @@ export class CheckDetailsViewModel {
             },
           }),
       ) ?? [],
-      {
+[      {
         href: "#", // TODO
         text: {
           key: "common.change",
@@ -144,7 +237,7 @@ export class CheckDetailsViewModel {
         visuallyHiddenText: {
           key: "pages.poa.checkYourDetails.cya.evidence.title",
         },
-      },
+      }],
     );
   }
 

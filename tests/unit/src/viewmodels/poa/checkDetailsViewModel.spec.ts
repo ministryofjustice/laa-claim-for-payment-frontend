@@ -243,4 +243,73 @@ describe("CheckDetailsViewModel constructor()", () => {
     });
     expect(vm.evidenceSummaryList.rows[0].actions).to.not.exist;
   });
+
+  it("builds the expert cost bill line summary lists", () => {
+    const claim: Claim = getClaimsSuccessResponseData.body!.data![0]!;
+    const vm = new CheckDetailsViewModel(claim);
+
+    expect(vm.expertCostBillLineSummaryLists).to.have.length(2);
+
+    const firstSummaryList = vm.expertCostBillLineSummaryLists[0];
+    const secondSummaryList = vm.expertCostBillLineSummaryLists[1];
+
+    expect(firstSummaryList.card?.title.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title",
+    });
+
+    expect(firstSummaryList.card?.actions?.items).to.have.length(2);
+
+    expect(firstSummaryList.card?.actions?.items[0].text).to.deep.equal({
+      key: "common.delete",
+    });
+    expect(firstSummaryList.card?.actions?.items[0].href).to.equal("#");
+
+    expect(firstSummaryList.card?.actions?.items[1].text).to.deep.equal({
+      key: "common.change",
+    });
+    expect(firstSummaryList.card?.actions?.items[1].href).to.equal(
+      "/claims/1/poa/expert-cost-details/1",
+    );
+
+    expect(secondSummaryList.card?.actions?.items[1].href).to.equal(
+      "/claims/1/poa/expert-cost-details/2",
+    );
+
+    expect(firstSummaryList.attributes.id).to.equal(
+      "expert-cost-bill-line-rows",
+    );
+
+    expect(firstSummaryList.rows).to.have.length(5);
+
+    expect(firstSummaryList.rows[0].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.date",
+    });
+    expect(firstSummaryList.rows[0].value.text).to.equal(
+      "20 December 2023",
+    );
+
+    expect(firstSummaryList.rows[1].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.actualNetValue",
+    });
+    expect(firstSummaryList.rows[1].value.text).to.equal("£150");
+
+    expect(firstSummaryList.rows[2].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.doesVatApply",
+    });
+    expect(firstSummaryList.rows[2].value.text).to.equal("Yes");
+
+    expect(firstSummaryList.rows[3].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.feeEarnerName",
+    });
+    expect(firstSummaryList.rows[3].value.text).to.equal(
+      "Carol Spencer",
+    );
+
+    expect(firstSummaryList.rows[4].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.description",
+    });
+    expect(firstSummaryList.rows[4].value.text).to.equal(
+      "Cost of petrol",
+    );
+  });
 });
