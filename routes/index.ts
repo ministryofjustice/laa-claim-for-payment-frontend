@@ -147,16 +147,16 @@ export const buildRouter = ({ answersCache }: RouterDependencies): Router => {
   router.get(
     ROUTES.POA_CLAIM_TYPE,
     limiter,
-    function (req, res, next): void {
-      poaClaimTypePage(req, res, next);
+    async function (req, res, next): Promise<void> {
+      await poaClaimTypePage(req, res, next, {answersCache});
     },
   );
 
   router.post(
     ROUTES.POA_CLAIM_TYPE,
     limiter,
-    function (req, res, next): void {
-      submitPoaClaimType(req, res, next);
+    async function (req, res, next): Promise<void> {
+      await submitPoaClaimType(req, res, next, {answersCache});
     },
   );
 
