@@ -37,7 +37,7 @@ const FEE_EARNER_NAME_REGEX = /^[A-Za-z' -]+$/;
 export function validateProfitCostBillLine(
   body: unknown,
 ): ValidationResult<ProfitCostBillLine> {
-  const form = getForm(body) as ProfitCostBillLineForm;
+  const form = getForm<ProfitCostBillLineForm>(body);
   return combine({
     activityDate: validateActivityDate(form),
     actualNetProfitCostExcludingAdvocacy:

@@ -218,7 +218,7 @@ export function validateMoneyInput(
     };
   }
 
-  const MONEY_REGEX = /^\d+(\.\d{1,2})?$/;
+  const MONEY_REGEX = /^\d+\.\d{2}$/;
 
   if (!MONEY_REGEX.test(stringValue)) {
     return {
@@ -436,16 +436,15 @@ export function getErrorSummary(errors: FieldValidationError[]): ErrorSummary {
 /**
  * Create form from request body.
  *
- * @param {any} body Request body.
+ * @param {unknown} body Request body.
  * @returns {object} Form object.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- ignore
-export function getForm(body: any): object {
+export function getForm<T extends object>(body: unknown): Partial<T> {
   if (typeof body !== "object" || body === null) {
     return {};
   }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- ignore
-  return body;
+
+  return body as Partial<T>;
 }
 
 /**
