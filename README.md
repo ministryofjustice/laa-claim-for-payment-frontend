@@ -258,6 +258,36 @@ Prerequisites, Docker Desktop
   docker stop {container_id}
   ```
 
+## Running Redis locally
+
+Redis is used by the application for local development when Redis-backed features are enabled.
+
+Start Redis:
+```
+yarn redis:start
+```
+
+Check Redis is running:
+```
+yarn redis:ping
+```
+Expected response:
+```
+PONG
+```
+To enable Redis locally, update .env:
+```
+REDIS_DISABLED=false
+REDIS_URL='redis://localhost:6379'
+```
+Then run the application as normal:
+```
+yarn dev
+```
+To stop Redis:
+```
+yarn redis:stop
+```
 ## Routing
 
 This template uses the built-in Express JS routing.
