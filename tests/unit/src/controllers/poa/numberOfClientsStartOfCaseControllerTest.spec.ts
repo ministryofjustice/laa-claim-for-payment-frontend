@@ -41,7 +41,7 @@ describe("numberOfClientsStartOfCaseController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
-    expect(renderArgs.vm.title).to.equal(
+    expect(renderArgs.vm.title.key).to.equal(
       "pages.numberOfClientsStartOfCase.title",
     );
     expect(renderArgs.vm.form.fieldName).to.equal(
@@ -148,8 +148,10 @@ describe("numberOfClientsStartOfCaseController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.vm.form.error).to.deep.equal({
+      fieldName: "numberOfClientsStartOfCase",
+      href: "#numberOfClientsStartOfCase",
       text: {
-        key: "pages.numberOfClientsStartOfCase.error.empty"
+        key: "pages.numberOfClientsStartOfCase.errors.empty"
       },
     });
   });

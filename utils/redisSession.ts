@@ -27,12 +27,14 @@ export const setupRedisSession = (app: Application, redisClient: RedisClientType
             resave: false,
             saveUninitialized: false,
             cookie: {
-                secure: process.env.NODE_ENV !== 'development',
+                secure: process.env.SESSION_COOKIE_SECURE !== 'false',
                 httpOnly: true,
                 maxAge: 1000 * 60 * 60 * 3,
             },
         })
     )
 
-    redisClient.connect().catch(console.error)
+    if (!redisClient.isOpen) {
+        redisClient.connect().catch(console.error)
+    }
 }

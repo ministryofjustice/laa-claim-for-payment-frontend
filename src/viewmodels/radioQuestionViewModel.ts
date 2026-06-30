@@ -1,4 +1,6 @@
 import type { Message } from "#src/viewmodels/components/message.js";
+import { type FieldValidationError, getError, getErrorSummary } from "#src/helpers/validation.js";
+import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
 
 export interface RadioQuestionOptions<ChoiceType> {
   value: ChoiceType;
@@ -10,22 +12,21 @@ export interface RadioQuestionOptions<ChoiceType> {
 }
 
 interface RadioQuestionViewModelParams<ChoiceType> {
-  title: string;
+  title: Message;
   fieldName: string;
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
   selectedValue?: ChoiceType;
-  error?: {
-    text: Message;
-  };
+  errors?: FieldValidationError[];
 }
 
 /**
  * View model for the Radio Questions page.
  */
 export class RadioQuestionViewModel<ChoiceType> {
-  readonly title;
-  readonly choices;
+  readonly title: Message;
+  readonly choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
   readonly form: RadioQuestionForm<ChoiceType>;
+  readonly errorSummary: ErrorSummary;
 
   /**
    * Creates a radio question page view model.
@@ -37,41 +38,39 @@ export class RadioQuestionViewModel<ChoiceType> {
     fieldName,
     choices,
     selectedValue,
-    error,
+    errors = [],
   }: RadioQuestionViewModelParams<ChoiceType>) {
     this.title = title;
     this.choices = choices;
     this.form = radioQuestionForm<ChoiceType>(
       fieldName,
       choices,
+      errors,
       selectedValue,
-      error,
     );
+    this.errorSummary = getErrorSummary(errors)
   }
 }
 
 export interface RadioQuestionForm<ChoiceType> {
   fieldName: string;
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
-  error?: {
-    text: Message;
-  };
+  error?: FieldValidationError;
 }
 
 /**
  * Radio question form builder.
  * @param {string} fieldName field name
  * @param {ReadonlyArray<RadioQuestionOptions>} choices radio choices
+ * @param {FieldValidationError[]} errors errors
  * @param {unknown} selectedValue selected value
- * @param {object} error error
- * @param {Message} error.text error text message
  * @returns {RadioQuestionForm} radio question form object
  */
 export function radioQuestionForm<ChoiceType>(
   fieldName: string,
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>,
+  errors: FieldValidationError[],
   selectedValue?: unknown,
-  error?: { text: Message },
 ): RadioQuestionForm<ChoiceType> {
   return {
     fieldName,
@@ -79,20 +78,6 @@ export function radioQuestionForm<ChoiceType>(
       ...choice,
       checked: choice.value === selectedValue,
     })),
-    error,
+    error: getError(errors, fieldName),
   };
-}
-
-/**
- * Checks whether the choice is valid.
- *
- * @param {ReadonlyArray<RadioQuestionOptions>} choices The available choices.
- * @param {unknown} value The submitted choice.
- * @returns {boolean} Whether the submitted choice is valid.
- */
-export function isValidChoice<ChoiceType>(
-  choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>,
-  value: unknown,
-): value is ChoiceType {
-  return choices.some((choice) => choice.value === value);
 }

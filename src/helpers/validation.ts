@@ -4,6 +4,7 @@ import type {
   ErrorSummaryError,
 } from "#src/viewmodels/components/errorSummary.js";
 import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewModel.js";
+import { BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
 
 export interface FieldValidationError {
   fieldName: string;
@@ -104,9 +105,11 @@ export function validateBooleanInput(
   id: string,
   messagePrefix: string,
 ): ValidationResult<boolean> {
-  const stringValue = getStringValue(value);
+  const selection: RadioQuestionOptions<BooleanChoice> | undefined = booleanChoices.find(
+    (choice) => choice.value === value,
+  );
 
-  if (stringValue !== "yes" && stringValue !== "no") {
+  if (selection == null) {
     return {
       isValid: false,
       errors: [
@@ -123,7 +126,7 @@ export function validateBooleanInput(
 
   return {
     isValid: true,
-    value: stringValue === "yes",
+    value: selection.value === BooleanChoice.Yes,
   };
 }
 

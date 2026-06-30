@@ -1,11 +1,9 @@
-import {
-  RadioQuestionViewModel,
-  isValidChoice,
-} from "#src/viewmodels/radioQuestionViewModel.js";
-import type { Request, Response, NextFunction } from "express";
+import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
+import type { NextFunction, Request, Response } from "express";
 import { processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { booleanChoices } from "#src/models/booleanChoice.js";
+import { validateRadioInput } from "#src/helpers/validation.js";
 
 const escapingFixedFeeFieldName = "escapingFixedFee" as const;
 
@@ -18,21 +16,23 @@ const escapingFixedFeeFieldName = "escapingFixedFee" as const;
 export function escapingFixedFee(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void {
   try {
     res.render("main/poa/escapingFixedFeeView.njk", {
       csrfToken: res.locals.csrfToken,
       vm: new RadioQuestionViewModel({
-        title: "pages.escapingFixedFee.question", 
-        fieldName: escapingFixedFeeFieldName, 
-        choices: booleanChoices
+        title: {
+          key: "pages.escapingFixedFee.question"
+        },
+        fieldName: escapingFixedFeeFieldName,
+        choices: booleanChoices,
       }),
     });
   } catch (error) {
     const processedError = processError(
       error,
-      "submitting escaping fixed fee page"
+      "submitting escaping fixed fee page",
     );
     next(processedError);
   }
@@ -47,40 +47,43 @@ export function escapingFixedFee(
 export function submitEscapingFixedFee(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedChoice: unknown = req.body?.[escapingFixedFeeFieldName];
 
-    
-    if (!isValidChoice(booleanChoices, selectedChoice)) {
+    const validationResult = validateRadioInput(
+      booleanChoices,
+      selectedChoice,
+      escapingFixedFeeFieldName,
+      escapingFixedFeeFieldName,
+      "pages.escapingFixedFee",
+    );
+
+    if (!validationResult.isValid) {
       res.status(400).render("main/poa/escapingFixedFeeView.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: "pages.escapingFixedFee.question",
-          fieldName: escapingFixedFeeFieldName, 
-          choices: booleanChoices,
-          selectedValue: typeof selectedChoice === "string" ? selectedChoice : undefined,
-          error: {
-            text: {
-              key: "pages.escapingFixedFee.error.empty"
-            },
+          title: {
+            key: "pages.escapingFixedFee.question"
           },
+          fieldName: escapingFixedFeeFieldName,
+          choices: booleanChoices,
+          selectedValue:
+            typeof selectedChoice === "string" ? selectedChoice : undefined,
+          errors: validationResult.errors,
         }),
       });
       return;
     }
     const claimId = Number(req.params.claimId);
 
-    res.redirect(buildRoute(
-            ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
-            { claimId }));
-            
+    res.redirect(buildRoute(ROUTES.CPGFS_PROFIT_COST_BILL_LINE, { claimId }));
   } catch (error) {
     const processedError = processError(
       error,
-      "submitting escaping fixed fee page"
+      "submitting escaping fixed fee page",
     );
     next(processedError);
   }

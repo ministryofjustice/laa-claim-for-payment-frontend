@@ -52,21 +52,10 @@
             }
           },
           errorMessage: vm.form.vatApplies.error and {
-            text: vm.form.vatApplies.error.text | translate
+            text: vm.form.vatApplies.error.text
           },
-          items: [
-            {
-              value: "yes",
-              text: t("common.yes"),
-              checked: vm.form.vatApplies.value === "yes"
-            },
-            {
-              value: "no",
-              text: t("common.no"),
-              checked: vm.form.vatApplies.value === "no"
-            }
-          ]
-        }) }}
+          items: vm.form.vatApplies.choices
+        } | translate) }}
 
         {{ govukInput({
           id: "fee-earner-name",
