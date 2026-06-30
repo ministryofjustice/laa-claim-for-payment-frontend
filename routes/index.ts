@@ -6,7 +6,7 @@ import express from "express";
 import { viewUploadEvidenceIndividuallyPage } from "#src/controllers/claims/uploadEvidenceIndividuallyController.js";
 import { chooseFileUpload, submitChooseFileUpload } from "#src/controllers/claims/chooseUploadController.js";
 import { ROUTES, multerErrorHandler } from "./helper.js";
-import { fileUploadForLineItemPage } from "#src/controllers/claims/fileUploadForLineItemController.js";
+import { fileUploadForLineItemPage, linkEvidenceToLineItem } from "#src/controllers/claims/fileUploadForLineItemController.js";
 import { evidenceUpload } from '#src/helpers/multerUpload.js';
 import { howManyClientsRetained, submitHowManyClientsRetained } from "#src/controllers/poa/howManyClientsRetainedController.js";
 import { poaClaimTypePage, submitPoaClaimType } from "#src/controllers/poa/poaClaimTypeController.js";
@@ -132,25 +132,45 @@ router.get(
   }
 )
 
+router.post(
+  ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
+  limiter,
+  async function (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    await linkEvidenceToLineItem(req, res, next);
+  },
+);
+
 router.get(ROUTES.POA_EVIDENCE_UPLOAD, limiter, poaEvidenceUploadPage);
 
 router.post(ROUTES.POA_EVIDENCE_UPLOAD, limiter, submitPoaEvidenceUpload);
 
 router.post(
-  ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM,
+  ROUTES.AJAX_UPLOAD_POA_EVIDENCE,
   evidenceUpload.single("documents"),
   multerErrorHandler,
   uploadEvidenceFile,
 );
 
 router.post(
-  ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM,
+  ROUTES.AJAX_DELETE_POA_EVIDENCE,
   deleteEvidenceFileFromClaim,
 );
 
-router.get(ROUTES.HOW_MANY_CLIENTS_RETAINED, limiter, function (req: Request, res: Response, next: NextFunction): void {
-  howManyClientsRetained(req, res, next);
-});
+router.post(
+  ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM,
+  evidenceUpload.single("documents"),
+  multerErrorHandler,
+  uploadEvidenceFileForLineItem,
+);
+
+router.post(
+  ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM,
+  unlinkEvidenceFileFromLineItem,
+);
 
 router.post(ROUTES.HOW_MANY_CLIENTS_RETAINED, limiter, function (req: Request, res: Response, next: NextFunction): void {
   submitHowManyClientsRetained(req, res, next);

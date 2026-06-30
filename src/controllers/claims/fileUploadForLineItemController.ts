@@ -64,8 +64,6 @@ export async function fileUploadForLineItemPage(
   }
 }
 
-
-// TODO this is not used??
 /**
  * Handles linking of evidence files for a claim line item.
  *
