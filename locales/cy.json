@@ -23,7 +23,8 @@
     "title": "{title} – {service} – GOV.UK",
     "service": "Claim for controlled work",
     "department": "Ministry of Justice",
-    "selectDocument": "Select {document}"
+    "selectDocument": "Select {document}",
+    "opensInNewTab": "opens in a new tab"
   },
   "multiFileUpload": {
     "uploadStatusText": "Uploading files, please wait",

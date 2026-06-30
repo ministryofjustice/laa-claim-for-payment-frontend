@@ -1,4 +1,5 @@
 {% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "components/link.njk" import link %}
 
 {% extends "base.njk" %}
 
@@ -18,14 +19,24 @@
 
       <p class="govuk-body">
         {{ t('pages.poa.submissionSuccessful.p2.1') }}
-        <a class="govuk-link" href="https://www.gov.uk/guidance/civil-processing-dates">{{ t('pages.poa.submissionSuccessful.p2.link') }}</a>
+        {{ link(
+          t,
+          t('pages.poa.submissionSuccessful.p2.link'),
+          "https://www.gov.uk/guidance/civil-processing-dates",
+          true
+        ) }}
         {{ t('pages.poa.submissionSuccessful.p2.2') }}
       </p>
 
       <p class="govuk-body">{{ t('pages.poa.submissionSuccessful.p3') }}</p>
 
       <p class="govuk-body">
-        <a class="govuk-link" href="/claims/{{ claimId }}/summary">{{ t('pages.poa.submissionSuccessful.link') }}</a>
+        {{ link(
+          t,
+          t('pages.poa.submissionSuccessful.link'),
+          "/claims/" + claimId + "/summary",
+          false
+        ) }}
       </p>
     </div>
   </div>

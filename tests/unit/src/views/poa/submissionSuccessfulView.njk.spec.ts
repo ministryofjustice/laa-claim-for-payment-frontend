@@ -52,8 +52,14 @@ describe("views/main/poa/submissionSuccessfulView.njk", () => {
 
     const link = p.find(".govuk-link");
     expect(link).to.have.length(1);
-    expect(link.text().trim()).to.equal("pages.poa.submissionSuccessful.p2.link");
+    expect(link.text().trim()).to.include("pages.poa.submissionSuccessful.p2.link");
     expect(link.attr("href")).to.equal("https://www.gov.uk/guidance/civil-processing-dates");
+    expect(link.attr("rel")).to.equal("noreferrer noopener");
+    expect(link.attr("target")).to.equal("_blank");
+
+    const visuallyHiddenText = link.find("span");
+    expect(visuallyHiddenText).to.have.length(1);
+    expect(visuallyHiddenText.text().trim()).to.equal("(common.opensInNewTab)")
 
     expect(p.text().trim()).to.match(
       /.*pages\.poa\.submissionSuccessful\.p2\.2$/

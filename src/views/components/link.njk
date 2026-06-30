@@ -1,0 +1,12 @@
+{% macro link(t, text, href, opensInNewTab) %}
+  {% if opensInNewTab %}
+    <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ href }}">
+      {{ text }}
+      <span class="govuk-visually-hidden">({{t('common.opensInNewTab')}})</span>
+    </a>
+  {% else %}
+    <a class="govuk-link" href="{{ href }}">
+      {{ text }}
+    </a>
+  {% endif %}
+{% endmacro %}

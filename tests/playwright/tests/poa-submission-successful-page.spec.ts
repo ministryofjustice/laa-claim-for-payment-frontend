@@ -34,11 +34,14 @@ test("page displays the correct content", async ({
   const secondParagraph = page.secondParagraph;
   await expect(secondParagraph).toBeVisible();
   await expect(secondParagraph).toHaveText(
-    "You can view the guidance on processing timescales for more information.",
+    "You can view the guidance on processing timescales (opens in a new tab) for more information.",
   );
-  await expect(secondParagraph.getByRole("link")).toHaveText(
-    "guidance on processing timescales",
+  const secondParagraphLink = secondParagraph.getByRole("link");
+  await expect(secondParagraphLink).toHaveText(
+    "guidance on processing timescales (opens in a new tab)",
   );
+  const secondParagraphLinkHiddenText = secondParagraphLink.locator("span.govuk-visually-hidden");
+  await expect(secondParagraphLinkHiddenText).toHaveText("(opens in a new tab)");
 
   const thirdParagraph = page.thirdParagraph;
   await expect(thirdParagraph).toBeVisible();
