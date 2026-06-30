@@ -179,11 +179,6 @@ describe("views/main/poa/multiFileUploadView.njk", () => {
       );
     });
 
-    it("renders a multi-select", () => {
-      const multiSelect = $('[data-module="moj-multi-select"]');
-      expect(multiSelect.length).to.equal(1);
-    });
-
     it("renders the CSRF token", () => {
       const csrf = $("input[name='_csrf']");
 

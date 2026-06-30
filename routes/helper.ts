@@ -25,7 +25,6 @@ export const ROUTES = {
   POA_EVIDENCE_UPLOAD: "/claims/:claimId/poa/evidence-upload",
   AJAX_UPLOAD_POA_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-upload",
   AJAX_DELETE_POA_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-delete",
-  CHECK_YOUR_DETAILS: "/claims/:claimId/poa/check-your-details",
 } as const;
 
 /**

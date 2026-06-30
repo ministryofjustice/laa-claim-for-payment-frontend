@@ -21,9 +21,8 @@ export function poaEvidenceUploadPage(
     const vm = new PoaEvidenceUploadViewModel({
       uploadUrl: buildRoute(ROUTES.AJAX_UPLOAD_POA_EVIDENCE, { claimId }),
       deleteUrl: buildRoute(ROUTES.AJAX_DELETE_POA_EVIDENCE, { claimId }),
-      saveAndContinueHref: buildRoute(ROUTES.CHECK_YOUR_DETAILS, { claimId }),
+      saveAndContinueHref: buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, { claimId }),
       saveAndComeBackLaterHref: "#",
-      uploadedFiles: [],
     });
 
     res.render("main/poa/poaEvidenceUploadView.njk", {
@@ -51,7 +50,7 @@ export function submitPoaEvidenceUpload(
     const claimId = Number(req.params.claimId);
 
     res.redirect(
-      buildRoute(ROUTES.CHECK_YOUR_DETAILS, {
+      buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, {
         claimId,
       }),
     );
