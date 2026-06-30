@@ -102,13 +102,6 @@ router.post(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response
 });
 
 router.post(
-  ROUTES.AJAX_UPLOAD_POA_EVIDENCE,
-  evidenceUpload.single("documents"),
-  multerErrorHandler,
-  uploadEvidenceFile,
-);
-
-router.post(
   ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM,
   evidenceUpload.single('documents'),
   multerErrorHandler,
@@ -118,28 +111,19 @@ router.post(
 router.post(
   ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM,
   unlinkEvidenceFileFromLineItem,
-)
+);
 
-router.get(
-  ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
-  limiter,
-  async function(
+router.get(ROUTES.UPLOAD_FILE_FOR_LINE_ITEM, limiter, async function (
     req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<void> {
     await fileUploadForLineItemPage(req, res, next);
   }
-)
+);
 
 router.post(
-  ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
-  limiter,
-  async function (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
+  ROUTES.UPLOAD_FILE_FOR_LINE_ITEM, limiter, async function (req: Request, res: Response, next: NextFunction ): Promise<void> {
     await linkEvidenceToLineItem(req, res, next);
   },
 );
@@ -160,22 +144,6 @@ router.post(
   deleteEvidenceFileFromClaim,
 );
 
-router.post(
-  ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM,
-  evidenceUpload.single("documents"),
-  multerErrorHandler,
-  uploadEvidenceFileForLineItem,
-);
-
-router.post(
-  ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM,
-  unlinkEvidenceFileFromLineItem,
-);
-
-router.post(ROUTES.HOW_MANY_CLIENTS_RETAINED, limiter, function (req: Request, res: Response, next: NextFunction): void {
-  submitHowManyClientsRetained(req, res, next);
-});
-
 router.get(
   ROUTES.HOW_MANY_CLIENTS_RETAINED,
   limiter,
@@ -184,13 +152,9 @@ router.get(
   },
 );
 
-router.post(
-  ROUTES.HOW_MANY_CLIENTS_RETAINED,
-  limiter,
-  function (req: Request, res: Response, next: NextFunction): void {
-    submitHowManyClientsRetained(req, res, next);
-  },
-);
+router.post(ROUTES.HOW_MANY_CLIENTS_RETAINED, limiter, function (req: Request, res: Response, next: NextFunction): void {
+  submitHowManyClientsRetained(req, res, next);
+});
 
 router.get(
   ROUTES.POA_CLAIM_TYPE,
