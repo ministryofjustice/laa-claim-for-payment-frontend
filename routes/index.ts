@@ -129,7 +129,17 @@ router.post(
   },
 );
 
-router.get(ROUTES.POA_EVIDENCE_UPLOAD, limiter, poaEvidenceUploadPage);
+router.get(
+  ROUTES.POA_EVIDENCE_UPLOAD,
+  limiter,
+  async function (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    await poaEvidenceUploadPage(req, res, next);
+  },
+);
 
 router.post(ROUTES.POA_EVIDENCE_UPLOAD, limiter, submitPoaEvidenceUpload);
 

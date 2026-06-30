@@ -229,8 +229,8 @@ export class CheckDetailsViewModel {
             },
           }),
       ) ?? [],
-[      {
-        href: "#", // TODO
+      [{
+        href: buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, { claimId }),
         text: {
           key: "common.change",
         },
