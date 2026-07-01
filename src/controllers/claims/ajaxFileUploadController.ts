@@ -4,6 +4,33 @@ import type { DeleteFileRequest, MulterRequest } from "#src/types/requests.js";
 import { uploadService } from "#src/services/uploadService.js";
 const BAD_REQUEST = 400;
 
+function validateUploadedFile(
+  req: MulterRequest,
+  res: Response,
+): Express.Multer.File | undefined {
+  const { file } = req;
+
+  if (file === undefined) {
+    res.status(BAD_REQUEST).json({
+      error: {
+        message: req.t("multiFileUpload.errors.noFileSelected"),
+      },
+    });
+    return undefined;
+  }
+
+  if (file.size === 0) {
+    res.status(BAD_REQUEST).json({
+      error: {
+        message: req.t("multiFileUpload.errors.emptyFile"),
+      },
+    });
+    return undefined;
+  }
+
+  return file;
+}
+
 /**
  * Handles AJAX upload of evidence files for a claim
  *
@@ -18,14 +45,9 @@ export async function uploadEvidenceFile(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const { file } = req;
+    const file = validateUploadedFile(req, res);
 
     if (file === undefined) {
-      res.status(BAD_REQUEST).json({
-        error: {
-          message: req.t("multiFileUpload.errors.noFileUploaded"),
-        },
-      });
       return;
     }
 
@@ -63,14 +85,9 @@ export async function uploadEvidenceFileForLineItem(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const { file } = req;
+    const file = validateUploadedFile(req, res);
 
     if (file === undefined) {
-      res.status(BAD_REQUEST).json({
-        error: {
-          message: req.t("multiFileUpload.errors.noFileUploaded"),
-        },
-      });
       return;
     }
 

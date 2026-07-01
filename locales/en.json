@@ -41,6 +41,8 @@
     },
     "errors": {
       "uploadFailed": "Upload failed",
+      "noFileSelected": "Select a piece of evidence",
+      "emptyFile": "The selected file is empty",
       "noFileUploaded": "No file uploaded",
       "fileTooLarge": "File must not be larger than 10mb",
       "onlyPdf": "Only PDF, Word, RTF or TIFF files can be uploaded",

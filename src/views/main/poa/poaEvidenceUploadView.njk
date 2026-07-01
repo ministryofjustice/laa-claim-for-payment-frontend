@@ -48,6 +48,10 @@
 
 {% block content %}
 
+{% if vm.errorSummary.errorList.length %}
+  {{ govukErrorSummary(vm.errorSummary | translate) }}
+{% endif %}
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
 

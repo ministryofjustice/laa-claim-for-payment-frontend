@@ -57,19 +57,49 @@ export async function poaEvidenceUploadPage(
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
  */
-export function submitPoaEvidenceUpload(
+export async function submitPoaEvidenceUpload(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   try {
     const claimId = Number(req.params.claimId);
+    const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
-    res.redirect(
-      buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, {
-        claimId,
-      }),
-    );
+    if (response.status !== "success") {
+      next(processApiError(response, "fetching POA evidence upload details"));
+      return;
+    }
+
+    const uploadedFiles = response.body.evidence ?? [];
+
+    if (uploadedFiles.length === 0) {
+      const vm = new PoaEvidenceUploadViewModel({
+        uploadUrl: buildRoute(ROUTES.AJAX_UPLOAD_POA_EVIDENCE, { claimId }),
+        deleteUrl: buildRoute(ROUTES.AJAX_DELETE_POA_EVIDENCE, { claimId }),
+        saveAndContinueHref: buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, {
+          claimId,
+        }),
+        saveAndComeBackLaterHref: "#",
+        errors: [
+          {
+            fieldName: "documents",
+            href: "#documents",
+            text: {
+              key: "multiFileUpload.errors.noFileSelected",
+            },
+          },
+        ],
+      });
+
+      res.status(400).render("main/poa/poaEvidenceUploadView.njk", {
+        csrfToken: res.locals.csrfToken,
+        vm,
+      });
+      return;
+    }
+
+    res.redirect(buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, { claimId }));
   } catch (error) {
     next(processError(error, "submitting POA evidence upload page"));
   }

@@ -111,7 +111,7 @@ export class CheckDetailsViewModel {
           { text: "Carol Spencer" }
         )
       ],
-[      {
+      [{
         href: buildRoute(ROUTES.CPGFS_PROFIT_COST_BILL_LINE, { claimId }),
         text: {
           key: "common.change"
@@ -147,8 +147,7 @@ export class CheckDetailsViewModel {
           { text: "Cost of petrol" }
         )
       ],
-      [
-      {
+      [{
         href: "#",
         text: {
           key: "common.delete"
@@ -164,11 +163,10 @@ export class CheckDetailsViewModel {
         visuallyHiddenText: {
           key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title"
         }
-      }
-    ]
+      }]
     ));
 
-        this.expertCostBillLineSummaryLists.push(buildSummaryListWithCard(
+    this.expertCostBillLineSummaryLists.push(buildSummaryListWithCard(
       { key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title" },
       'expert-cost-bill-line',
       [
@@ -193,8 +191,7 @@ export class CheckDetailsViewModel {
           { text: "Cost of petrol" }
         )
       ],
-      [
-      {
+      [{
         href: "#",
         text: {
           key: "common.delete"
@@ -210,8 +207,7 @@ export class CheckDetailsViewModel {
         visuallyHiddenText: {
           key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title"
         }
-      }
-    ]
+      }]
     ));
 
     this.evidenceSummaryList = buildSummaryListWithCard(
