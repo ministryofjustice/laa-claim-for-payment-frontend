@@ -171,16 +171,16 @@ export const buildRouter = ({ answersCache }: RouterDependencies): Router => {
   router.get(
     ROUTES.EXPERT_COST_DETAILS,
     limiter,
-    function (req: Request, res: Response, next: NextFunction): void {
-      expertCostDetails(req, res, next);
+    async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+      await expertCostDetails(req, res, next, {answersCache});
     },
   );
 
   router.post(
     ROUTES.EXPERT_COST_DETAILS,
     limiter,
-    function (req: Request, res: Response, next: NextFunction): void {
-      submitExpertCostDetails(req, res, next);
+    async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+      await submitExpertCostDetails(req, res, next, {answersCache});
     },
   );
 

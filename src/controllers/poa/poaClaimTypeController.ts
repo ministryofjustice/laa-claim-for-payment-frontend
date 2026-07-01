@@ -1,5 +1,6 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processError } from "#src/helpers/index.js";
+import { z } from "zod";
 import {
   type RadioQuestionOptions,
   RadioQuestionViewModel,
@@ -9,7 +10,8 @@ import { validateRadioInput } from "#src/helpers/validation.js";
 import type { AnswersCache } from "#src/services/answersCache.js";
 
 const poaClaimTypeFieldName = "poaClaimType" as const;
-const poaClaimTypeCacheKey = "poa-claim-type";
+const poaClaimTypeCacheKey = (claimId: number): string =>
+  `${claimId}:poa-claim-type`;
 
 const PoaClaimTypeChoice = {
   ProfitCost: "profit-cost",
@@ -57,20 +59,23 @@ export async function poaClaimTypePage(
   dependencies: { answersCache: AnswersCache },
 ): Promise<void> {
   try {
+    const claimId = Number(req.params.claimId);
 
-    const cachedAnswer = await dependencies.answersCache.get<{
-      poaClaimType?: string;
-    }>(req.sessionID, poaClaimTypeCacheKey);
+    const cachedAnswer = await dependencies.answersCache.get(
+      req.sessionID,
+      poaClaimTypeCacheKey(claimId),
+      z.string(),
+    );
 
     res.render("main/radioQuestionPage.njk", {
       csrfToken: res.locals.csrfToken,
       vm: new RadioQuestionViewModel({
         title: {
-          key: "pages.poaClaimType.title"
+          key: "pages.poaClaimType.title",
         },
         fieldName: poaClaimTypeFieldName,
         choices: poaClaimTypeChoices,
-        selectedValue: cachedAnswer?.poaClaimType,
+        selectedValue: cachedAnswer,
       }),
     });
   } catch (error) {
@@ -94,7 +99,6 @@ export async function submitPoaClaimType(
   dependencies: { answersCache: AnswersCache },
 ): Promise<void> {
   try {
-
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedChoice: unknown = req.body?.[poaClaimTypeFieldName];
 
@@ -111,7 +115,7 @@ export async function submitPoaClaimType(
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
           title: {
-            key: "pages.poaClaimType.title"
+            key: "pages.poaClaimType.title",
           },
           fieldName: poaClaimTypeFieldName,
           choices: poaClaimTypeChoices,
@@ -123,12 +127,13 @@ export async function submitPoaClaimType(
       return;
     }
 
-    await dependencies.answersCache.set(req.sessionID, poaClaimTypeCacheKey, {
-      [poaClaimTypeFieldName]: validationResult.value,
-    });
-
-
     const claimId = Number(req.params.claimId);
+
+    await dependencies.answersCache.set(
+      req.sessionID,
+      poaClaimTypeCacheKey(claimId),
+      validationResult.value,
+    );
 
     const redirectByChoice: Record<PoaClaimTypeChoice, string> = {
       [PoaClaimTypeChoice.ProfitCost]: buildRoute(ROUTES.PROFIT_COST_DETAILS, {

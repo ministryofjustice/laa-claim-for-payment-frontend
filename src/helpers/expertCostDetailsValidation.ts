@@ -6,6 +6,7 @@ import {
   validateStringInput,
   type ValidationResult,
 } from "#src/helpers/validation.js";
+import { z } from "zod";
 
 export interface ExpertCostDetailsForm {
   activityDateDay?: unknown;
@@ -17,13 +18,15 @@ export interface ExpertCostDetailsForm {
   description?: unknown;
 }
 
-export interface ExpertCostDetails {
-  activityDate: Date;
-  actualNetValue: number;
-  vatApplies: boolean;
-  feeEarnerName: string;
-  description: string;
-}
+export const ExpertCostDetailsSchema = z.object({
+  activityDate: z.string().pipe(z.coerce.date()),
+  actualNetValue: z.number(),
+  vatApplies: z.boolean(),
+  feeEarnerName: z.string(),
+  description: z.string(),
+});
+
+export type ExpertCostDetails = z.infer<typeof ExpertCostDetailsSchema>;
 
 const FEE_EARNER_NAME_REGEX = /^[A-Za-z' -]+$/;
 const DESCRIPTION_REGEX = /^[\p{L}\p{N}\p{P}\p{Zs}\n\r]*$/u;
