@@ -68,14 +68,30 @@ it("renders the POA evidence upload page", async () => {
     expect(renderArgs.vm.saveAndComeBackLaterHref).to.equal("#");
   });
 
-  it("redirects to check your details on submit", () => {
+  it("redirects to check your details on submit", async () => {
+    sinon.stub(claimService, "getClaim").resolves({
+      status: "success",
+      body: {
+        id: 1,
+        evidence: [
+          {
+            id: 123,
+            fileKey: "sample.pdf",
+            fileSize: 1024,
+            submittedOn: new Date(),
+          },
+        ],
+      },
+    } as any);
+
     const req = {
       params: {
         claimId: "1",
       },
+      axiosMiddleware: {},
     } as unknown as Request;
 
-    submitPoaEvidenceUpload(req, res, next);
+    await submitPoaEvidenceUpload(req, res, next);
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
@@ -84,5 +100,36 @@ it("renders the POA evidence upload page", async () => {
         }),
       ),
     ).to.equal(true);
+  });
+
+  it("renders with an error when no evidence has been uploaded", async () => {
+    sinon.stub(claimService, "getClaim").resolves({
+      status: "success",
+      body: {
+        id: 1,
+        evidence: [],
+      },
+    } as any);
+
+    (res.status as unknown) = sinon.stub().returns(res);
+
+    const req = {
+      params: {
+        claimId: "1",
+      },
+      axiosMiddleware: {},
+    } as unknown as Request;
+
+    await submitPoaEvidenceUpload(req, res, next);
+
+    expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
+    expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
+
+    const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
+
+    expect(renderArgs.vm.errorSummary.errorList).to.have.length(1);
+    expect(renderArgs.vm.errorSummary.errorList[0].text.key).to.equal(
+      "multiFileUpload.errors.noFileSelected",
+    );
   });
 });

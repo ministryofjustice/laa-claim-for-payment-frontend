@@ -218,7 +218,7 @@ describe("View File Upload For Line Item Controller", () => {
       expect(status.calledWith(400)).to.equal(true);
       expect(json.firstCall.args[0]).to.deep.equal({
         error: {
-          message: "multiFileUpload.errors.noFileUploaded",
+          message: "multiFileUpload.errors.noFileSelected",
         },
       });
       expect(next.called).to.equal(false);

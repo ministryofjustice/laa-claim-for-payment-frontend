@@ -41,7 +41,7 @@
     },
     "errors": {
       "uploadFailed": "Upload failed",
-      "noFileSelected": "Select a piece of evidence",
+      "noFileSelected": "You must upload evidence before you can continue",
       "emptyFile": "The selected file is empty",
       "noFileUploaded": "No file uploaded",
       "fileTooLarge": "File must not be larger than 10mb",
