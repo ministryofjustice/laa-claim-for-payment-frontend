@@ -11,11 +11,10 @@ import {
   validateExpertCostDetails,
 } from "#src/helpers/expertCostDetailsValidation.js";
 import { getForm } from "#src/helpers/validation.js";
-import type { AnswersCache } from "#src/services/answersCache.js";
+import type { AnswersCache, Path } from "#src/services/answersCache.js";
 
-// TODO - indexes shift after removal so this will not work
-const key = (claimId: number, expertCostId: number): string =>
-  `${claimId}:expert-cost[${expertCostId}]`;
+const path = (expertCostId: number): Path =>
+  ["poa", "expertCosts", expertCostId - 1];
 
 /**
  * Display POA expert cost details page.
@@ -38,7 +37,8 @@ export async function expertCostDetails(
 
     const cachedAnswer = await dependencies.answersCache.get(
       req.sessionID,
-      key(claimId, expertCostId),
+      claimId,
+      path(expertCostId),
       ExpertCostDetailsSchema,
     );
 
@@ -107,7 +107,8 @@ export async function submitExpertCostDetails(
 
     await dependencies.answersCache.set(
       req.sessionID,
-      key(claimId, expertCostId),
+      claimId,
+      path(expertCostId),
       validationResult.value,
     );
 

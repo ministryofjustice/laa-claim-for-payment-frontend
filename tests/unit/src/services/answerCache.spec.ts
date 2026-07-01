@@ -3,115 +3,140 @@ import sinon from "sinon";
 import { buildAnswersCache } from "#src/services/answersCache.js";
 import { z } from "zod";
 
+const sessionId = "session-123";
+const claimId = 1;
+
 describe("answersCache", () => {
   const redisClient = {
-    get: sinon.stub(),
-    set: sinon.stub(),
+    json: {
+      get: sinon.stub(),
+      set: sinon.stub(),
+      arrAppend: sinon.stub(),
+      arrLen: sinon.stub(),
+    },
+    expire: sinon.stub(),
     del: sinon.stub(),
   };
 
   beforeEach(() => {
-    redisClient.get.reset();
-    redisClient.set.reset();
+    sinon.resetHistory();
+
+    redisClient.json.get.reset();
+    redisClient.json.set.reset();
+    redisClient.json.arrAppend.reset();
+    redisClient.json.arrLen.reset();
+    redisClient.expire.reset();
     redisClient.del.reset();
   });
 
-  it("stores answers as JSON with a TTL", async () => {
-    const answersCache = buildAnswersCache(redisClient as never);
+  it("sets a simple object value", async () => {
+    const cache = buildAnswersCache(redisClient as never);
 
-    const answers = {
-      fieldOne: "value",
-      fieldTwo: ["a", "b"],
-    };
+    await cache.set(sessionId, claimId, ["poa"], { field: "value" });
 
-    await answersCache.set("session-123", "claim-details", answers);
+    expect(redisClient.json.set.called).to.equal(true);
+    expect(redisClient.expire.calledOnce).to.equal(true);
 
-    expect(
-      redisClient.set.calledOnceWithExactly(
-        "answers:session-123:claim-details",
-        JSON.stringify(answers),
-        {
-          EX: 60 * 60 * 3,
-        },
-      ),
-    ).to.equal(true);
+    const [key1, path1, value1] = redisClient.json.set.firstCall.args;
+
+    expect(key1).to.equal("answers:session-123:1");
+    expect(path1).to.equal("$");
+    expect(value1).to.deep.equal({});
+
+    const [key2, path2, value2] = redisClient.json.set.secondCall.args;
+
+    expect(key2).to.equal("answers:session-123:1");
+    expect(path2).to.equal("$.poa");
+    expect(value2).to.deep.equal({ field: "value" });
   });
 
-  it("returns parsed cached string", async () => {
-    const answer = "value";
+  it("gets and parses a primitive value", async () => {
+    const cache = buildAnswersCache(redisClient as never);
 
-    redisClient.get.resolves(JSON.stringify(answer));
+    redisClient.json.get.resolves(["expert-cost"]);
 
-    const answersCache = buildAnswersCache(redisClient as never);
-
-    const result = await answersCache.get(
-      "session-123",
-      "claim-details",
+    const result = await cache.get(
+      sessionId,
+      claimId,
+      ["poa", "claimType"],
       z.string(),
     );
 
-    expect(
-      redisClient.get.calledOnceWithExactly(
-        "answers:session-123:claim-details",
-      ),
-    ).to.equal(true);
-
-    expect(result).to.equal(answer);
+    expect(redisClient.json.get.calledOnce).to.equal(true);
+    expect(result).to.equal("expert-cost");
   });
 
-  it("returns parsed cached object", async () => {
-    const answer = {
-      fieldOne: "value",
-      fieldTwo: 1
-    };
+  it("returns null when JSON path is missing", async () => {
+    const cache = buildAnswersCache(redisClient as never);
 
-    redisClient.get.resolves(JSON.stringify(answer));
+    redisClient.json.get.resolves([]);
 
-    const schema = z.object({
-      fieldOne: z.string(),
-      fieldTwo: z.number(),
-    });
-
-    const answersCache = buildAnswersCache(redisClient as never);
-
-    const result = await answersCache.get(
-      "session-123",
-      "claim-details",
-      schema,
-    );
-
-    expect(
-      redisClient.get.calledOnceWithExactly(
-        "answers:session-123:claim-details",
-      ),
-    ).to.equal(true);
-
-    expect(result).to.deep.equal(answer);
-  });
-
-  it("returns null when there are no cached answers", async () => {
-    redisClient.get.resolves(null);
-
-    const answersCache = buildAnswersCache(redisClient as never);
-
-    const result = await answersCache.get(
-      "session-123",
-      "claim-details",
+    const result = await cache.get(
+      sessionId,
+      claimId,
+      ["does", "not", "exist"],
       z.string(),
     );
 
     expect(result).to.equal(null);
   });
 
-  it("clears cached answers", async () => {
-    const answersCache = buildAnswersCache(redisClient as never);
+  it("sets array element using ARRAPPEND when index is new", async () => {
+    const cache = buildAnswersCache(redisClient as never);
 
-    await answersCache.clear("session-123", "claim-details");
+    redisClient.json.get.resolves([]);
+
+    await cache.set(sessionId, claimId, ["poa", "expertCost", 0], {
+      amount: 100,
+    });
+
+    expect(redisClient.json.arrAppend.calledOnce).to.equal(true);
+
+    const [key, path, value] = redisClient.json.arrAppend.firstCall.args;
+
+    expect(key).to.equal("answers:session-123:1");
+    expect(path).to.equal("$.poa.expertCost");
+    expect(value).to.deep.equal({ amount: 100 });
+  });
+
+  it("overwrites existing array element using JSON.SET", async () => {
+    const cache = buildAnswersCache(redisClient as never);
+
+    redisClient.json.get
+      .onFirstCall()
+      .resolves([{}])
+      .onSecondCall()
+      .resolves([{ amount: 100 }]);
+
+    await cache.set(sessionId, claimId, ["poa", "expertCost", 0], {
+      amount: 200,
+    });
+
+    expect(redisClient.json.set.called).to.equal(true);
+  });
+
+  it("clears cached document", async () => {
+    const cache = buildAnswersCache(redisClient as never);
+
+    await cache.clear(sessionId, claimId);
 
     expect(
-      redisClient.del.calledOnceWithExactly(
-        "answers:session-123:claim-details",
-      ),
+      redisClient.del.calledOnceWithExactly("answers:session-123:1"),
     ).to.equal(true);
+  });
+
+  it("validates with Zod on get", async () => {
+    const cache = buildAnswersCache(redisClient as never);
+
+    redisClient.json.get.resolves(["123"]);
+
+    const result = await cache.get(
+      sessionId,
+      claimId,
+      ["poa", "amount"],
+      z.coerce.number(),
+    );
+
+    expect(result).to.equal(123);
   });
 });
