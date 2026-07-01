@@ -34,14 +34,12 @@ export const set = async (
   value: RedisJSON,
 ): Promise<void> => {
   let redisPath = "$";
-
   for (let i = 0; i < path.length; i += 1) {
     const lastIteration = i === path.length - 1;
     // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
-    const pathSegment = path[i];
-
-    if (typeof pathSegment === "number") {
-      const index = pathSegment;
+    const segment = path[i];
+    if (typeof segment === "number") {
+      const index = segment;
       let length = await getArrayLength(redisClient, key, redisPath);
       if (length == null) {
         await redisClient.json.set(key, redisPath, []);
@@ -50,7 +48,6 @@ export const set = async (
       if (index > length) {
         break;
       }
-
       const updatedRedisPath = redisPath + `[${index}]`;
       if (await exists(redisClient, key, updatedRedisPath)) {
         if (lastIteration) {
@@ -65,18 +62,11 @@ export const set = async (
       }
       redisPath = updatedRedisPath;
     } else {
-      redisPath += `.${pathSegment}`;
+      redisPath += `.${segment}`;
       if (lastIteration) {
         await redisClient.json.set(key, redisPath, value);
       } else {
-        await redisClient.json.set(
-          key,
-          redisPath,
-          {},
-          {
-            NX: true,
-          },
-        );
+        await redisClient.json.set(key, redisPath, {}, { NX: true });
       }
     }
   }
@@ -91,14 +81,7 @@ export const createKeyIfNonePresent = async (
   redisClient: RedisClientType,
   key: string,
 ): Promise<void> => {
-  await redisClient.json.set(
-    key,
-    "$",
-    {},
-    {
-      NX: true,
-    },
-  );
+  await redisClient.json.set(key, "$", {}, { NX: true });
 };
 
 const exists = async (
@@ -112,12 +95,14 @@ const exists = async (
  * @param {Path} path Path of individual path segments
  * @returns {string} the redis path
  */
-export const toRedisPath = (path: Path): string => "$" +
-    path
-      .map((segment) =>
-        typeof segment === "number" ? `[${segment}]` : `.${segment}`,
-      )
-      .join("");
+export const toRedisPath = (path: Path): string => {
+  const redisPath = path
+    .map((segment) =>
+      typeof segment === "number" ? `[${segment}]` : `.${segment}`,
+    )
+    .join("");
+  return `$${redisPath}`;
+};
 
 const getArrayLength = async (
   redisClient: RedisClientType,
