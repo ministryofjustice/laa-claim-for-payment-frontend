@@ -101,7 +101,7 @@ describe("answersCache integration tests", () => {
         z.object({
           amount: z.number(),
           description: z.string(),
-        })
+        }),
       ),
     );
 
@@ -271,5 +271,88 @@ describe("answersCache integration tests", () => {
         },
       ],
     });
+  });
+
+  it("removes value from a path", async () => {
+    const schema = z.string();
+
+    await cache.set(sessionId, claimId, ["field"], "value");
+
+    const firstGet = await cache.get(sessionId, claimId, ["field"], schema);
+
+    expect(firstGet).to.not.be.null;
+
+    const result = await cache.remove(sessionId, claimId, ["field"]);
+
+    expect(result).to.equal(true);
+
+    const secondGet = await cache.get(sessionId, claimId, ["field"], schema);
+
+    expect(secondGet).to.be.null;
+  });
+
+  it("removes field from an object", async () => {
+    const schema = z.object({
+      field1: z.string().optional(),
+      field2: z.string(),
+    });
+
+    await cache.set(sessionId, claimId, ["obj"], {
+      field1: "foo",
+      field2: "bar",
+    });
+
+    const firstGet = await cache.get(sessionId, claimId, ["obj"], schema);
+
+    expect(firstGet).to.not.be.null;
+
+    const result = await cache.remove(sessionId, claimId, [
+      "obj",
+      "field1",
+    ]);
+
+    expect(result).to.equal(true);
+
+    const secondGet = await cache.get(sessionId, claimId, ["obj"], schema);
+
+    expect(secondGet).to.deep.equal({
+      field2: "bar",
+    });
+  });
+
+  it("removes element from an array", async () => {
+    const schema = z.array(
+      z.object({
+        field: z.string(),
+      })
+    );
+
+    await cache.set(sessionId, claimId, ["array"], [
+      {
+        field: "value1",
+      },
+      {
+        field: "value2",
+      }
+    ]);
+
+    const firstGet = await cache.get(sessionId, claimId, ["array"], schema);
+
+    expect(firstGet).to.not.be.null;
+
+    const result = await cache.remove(sessionId, claimId, [
+      "array",
+      0,
+    ]);
+
+    expect(result).to.equal(true);
+
+    const secondGet = await cache.get(sessionId, claimId, ["array"], schema);
+
+    expect(secondGet).to.deep.equal([
+      {
+        field: "value2",
+      }
+    ]);
   });
 });

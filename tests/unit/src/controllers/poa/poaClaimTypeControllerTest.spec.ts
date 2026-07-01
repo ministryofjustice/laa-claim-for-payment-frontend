@@ -29,6 +29,7 @@ describe("poaClaimTypeController", () => {
     answersCache = {
       get: sinon.stub().resolves(null),
       set: sinon.stub().resolves(),
+      remove: sinon.stub().resolves(),
       clear: sinon.stub().resolves(),
     };
   });

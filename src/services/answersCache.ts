@@ -55,7 +55,21 @@ export const buildAnswersCache = (
     await redisClient.expire(key, ANSWERS_CACHE_TTL_SECONDS);
   },
 
-  clear: async (sessionId, claimId): Promise<void> => {
+  remove: async (
+    sessionId: string,
+    claimId: number,
+    path: Path,
+  ): Promise<boolean> => {
+    const key = getAnswersCacheKey(sessionId, claimId);
+
+    const count = await redisClient.json.del(key, {
+      path: toRedisPath(path),
+    });
+
+    return count > 0;
+  },
+
+  clear: async (sessionId: string, claimId: number): Promise<void> => {
     await redisClient.del(getAnswersCacheKey(sessionId, claimId));
   },
 });
@@ -74,6 +88,8 @@ export interface AnswersCache {
     path: Path,
     value: RedisJSON,
   ) => Promise<void>;
+
+  remove: (sessionId: string, claimId: number, path: Path) => Promise<boolean>;
 
   clear: (sessionId: string, claimId: number) => Promise<void>;
 }
