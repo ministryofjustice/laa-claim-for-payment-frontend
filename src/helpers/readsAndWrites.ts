@@ -131,7 +131,7 @@ const getArrayLength = async (
   return normalizeRedisResponse(response);
 };
 
-const normalizeRedisResponse = <T>(value: T | T[] | null): T | null => {
+const normalizeRedisResponse = <T,>(value: T | T[] | null): T | null => {
   if (value == null || (Array.isArray(value) && value.length === 0)) {
     return null;
   }
