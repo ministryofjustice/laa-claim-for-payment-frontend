@@ -3,10 +3,19 @@ import { processError } from "#src/helpers/index.js";
 import type { NextFunction, Request, Response } from "express";
 import {
   ExpertCostDetailsViewModel,
-  type ExpertCostDetailsViewModelParams
+  type ExpertCostDetailsViewModelParams,
 } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
-import { type ExpertCostDetailsForm, validateExpertCostDetails } from "#src/helpers/expertCostDetailsValidation.js";
+import {
+  type ExpertCostDetailsForm,
+  ExpertCostDetailsSchema,
+  validateExpertCostDetails,
+} from "#src/helpers/expertCostDetailsValidation.js";
 import { getForm } from "#src/helpers/validation.js";
+import type { AnswersCache } from "#src/services/answersCache.js";
+
+// TODO - indexes shift after removal so this will not work
+const key = (claimId: number, expertCostId: number): string =>
+  `${claimId}:expert-cost[${expertCostId}]`;
 
 /**
  * Display POA expert cost details page.
@@ -14,19 +23,40 @@ import { getForm } from "#src/helpers/validation.js";
  * @param {Request} req Express request object.
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
+ * @param {{ answersCache: AnswersCache }} dependencies Controller dependencies.
+ * @param {AnswersCache} dependencies.answersCache Cache used for storing journey answers.
  */
-export function expertCostDetails(
+export async function expertCostDetails(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+  dependencies: { answersCache: AnswersCache },
+): Promise<void> {
   try {
     const claimId = Number(req.params.claimId);
     const expertCostId = Number(req.params.expertCostId);
 
+    const cachedAnswer = await dependencies.answersCache.get(
+      req.sessionID,
+      key(claimId, expertCostId),
+      ExpertCostDetailsSchema,
+    );
+
     const params: ExpertCostDetailsViewModelParams = {
       claimId,
       expertCostId,
+      form:
+        cachedAnswer == null
+          ? {}
+          : {
+              activityDateDay: cachedAnswer.activityDate.getDate().toString(),
+              activityDateMonth: (cachedAnswer.activityDate.getMonth() + 1).toString(),
+              activityDateYear: cachedAnswer.activityDate.getFullYear().toString(),
+              actualNetValue: cachedAnswer.actualNetValue.toString(),
+              vatApplies: cachedAnswer.vatApplies ? "yes" : "no",
+              feeEarnerName: cachedAnswer.feeEarnerName,
+              description: cachedAnswer.description,
+            },
     };
 
     res.render("main/poa/expertCostDetailsView.njk", {
@@ -44,12 +74,15 @@ export function expertCostDetails(
  * @param {Request} req Express request object.
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
+ * @param {{ answersCache: AnswersCache }} dependencies Controller dependencies.
+ * @param {AnswersCache} dependencies.answersCache Cache used for storing journey answers.
  */
-export function submitExpertCostDetails(
+export async function submitExpertCostDetails(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+  dependencies: { answersCache: AnswersCache },
+): Promise<void> {
   try {
     const claimId = Number(req.params.claimId);
     const expertCostId = Number(req.params.expertCostId);
@@ -62,7 +95,7 @@ export function submitExpertCostDetails(
         claimId,
         expertCostId,
         form,
-        errors: validationResult.errors
+        errors: validationResult.errors,
       };
 
       res.status(400).render("main/poa/expertCostDetailsView.njk", {
@@ -71,6 +104,12 @@ export function submitExpertCostDetails(
       });
       return;
     }
+
+    await dependencies.answersCache.set(
+      req.sessionID,
+      key(claimId, expertCostId),
+      validationResult.value,
+    );
 
     // TODO - redirect to the 'add another work item' page
     res.redirect(
