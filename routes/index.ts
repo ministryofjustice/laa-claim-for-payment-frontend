@@ -170,16 +170,16 @@ router.post(ROUTES.HOW_MANY_CLIENTS_RETAINED, limiter, function (req: Request, r
 router.get(
   ROUTES.POA_CLAIM_TYPE,
   limiter,
-  function (req, res, next): void {
-    poaClaimTypePage(req, res, next);
+  async function (req, res, next): Promise<void> {
+    await poaClaimTypePage(req, res, next, {answersCache});
   },
 );
 
 router.post(
   ROUTES.POA_CLAIM_TYPE,
   limiter,
-  function (req, res, next): void {
-    submitPoaClaimType(req, res, next);
+  async function (req, res, next): Promise<void> {
+    await submitPoaClaimType(req, res, next, {answersCache});
   },
 );
 
@@ -194,16 +194,16 @@ router.post(ROUTES.PROFIT_COST_DETAILS, limiter, function (req: Request, res: Re
 router.get(
   ROUTES.EXPERT_COST_DETAILS,
   limiter,
-  function (req: Request, res: Response, next: NextFunction): void {
-    expertCostDetails(req, res, next);
+  async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+    await expertCostDetails(req, res, next, {answersCache});
   },
 );
 
 router.post(
   ROUTES.EXPERT_COST_DETAILS,
   limiter,
-  function (req: Request, res: Response, next: NextFunction): void {
-    submitExpertCostDetails(req, res, next);
+  async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+    await submitExpertCostDetails(req, res, next, {answersCache});
   },
 );
 
@@ -277,24 +277,24 @@ router.get(ROUTES.POA_SUBMISSION_SUCCESSFUL, limiter, function(req: Request, res
 
 // Make an API call with `Axios` and `middleware-axios`
 // GET users from external API
-router.get(
-  "/users",
-  limiter,
-  async function (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
-    try {
-      // Use the Axios instance attached to the request object
-      const response = await req.axiosMiddleware.get(
-        "https://jsonplaceholder.typicode.com/users",
-      );
-      res.json(response.data);
-    } catch (error) {
-      next(error);
-    }
-  )
+  router.get(
+    "/users",
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      try {
+        // Use the Axios instance attached to the request object
+        const response = await req.axiosMiddleware.get(
+          "https://jsonplaceholder.typicode.com/users",
+        );
+        res.json(response.data);
+      } catch (error) {
+        next(error);
+      }
+  });
 
   /* POST linked evidence. */
   router.post(ROUTES.UPLOAD_FILE_FOR_LINE_ITEM, limiter, async function (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -310,11 +310,6 @@ router.get(
   router.post(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response, next: NextFunction): void {
     submitChooseFileUpload(req, res, next);
   });
-
-  router.post(
-    '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload',
-    continueFromFileUpload,
-  );
 
   router.get(
     ROUTES.HOW_MANY_CLIENTS_RETAINED,
