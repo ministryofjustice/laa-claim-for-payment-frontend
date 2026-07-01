@@ -30,6 +30,7 @@ export const setupRedisSession = (app: Application, redisClient: RedisClientType
                 secure: process.env.SESSION_COOKIE_SECURE !== 'false',
                 httpOnly: true,
                 maxAge: 1000 * 60 * 60 * 3,
+                sameSite: 'lax'
             },
         })
     )
