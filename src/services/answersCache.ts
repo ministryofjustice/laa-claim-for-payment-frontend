@@ -1,11 +1,6 @@
 import type { RedisClientType, RedisJSON } from "redis";
 import type { z } from "zod";
-import {
-  createKeyIfNonePresent,
-  get,
-  set,
-  toRedisPath,
-} from "#src/helpers/readsAndWrites.js";
+import { get, set } from "#src/helpers/readsAndWrites.js";
 
 const ANSWERS_CACHE_TTL_SECONDS = 60 * 60 * 3;
 
@@ -47,8 +42,6 @@ export const buildAnswersCache = (
     value: RedisJSON,
   ): Promise<void> => {
     const key = getAnswersCacheKey(sessionId, claimId);
-
-    await createKeyIfNonePresent(redisClient, key);
 
     await set(redisClient, key, path, value);
 
@@ -93,3 +86,12 @@ export interface AnswersCache {
 
   clear: (sessionId: string, claimId: number) => Promise<void>;
 }
+
+const toRedisPath = (path: Path): string => (
+    "$" +
+    path
+      .map((segment) =>
+        typeof segment === "number" ? `[${segment}]` : `.${segment}`,
+      )
+      .join("")
+  );

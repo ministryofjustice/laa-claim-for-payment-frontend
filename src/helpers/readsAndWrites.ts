@@ -34,6 +34,7 @@ export const set = async (
   value: RedisJSON,
 ): Promise<void> => {
   let redisPath = "$";
+  await redisClient.json.set(key, redisPath, {}, { NX: true });
   for (let i = 0; i < path.length; i += 1) {
     const lastIteration = i === path.length - 1;
     // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
@@ -72,37 +73,11 @@ export const set = async (
   }
 };
 
-/**
- * Creates an empty object for the given redis key if none exists already.
- * @param {RedisClientType} redisClient Redis client used to store cached answers.
- * @param {string} key Object key
- */
-export const createKeyIfNonePresent = async (
-  redisClient: RedisClientType,
-  key: string,
-): Promise<void> => {
-  await redisClient.json.set(key, "$", {}, { NX: true });
-};
-
 const exists = async (
   redisClient: RedisClientType,
   key: string,
   path: string,
 ): Promise<boolean> => (await get(redisClient, key, path)) != null;
-
-/**
- * Converts array of path segments to a redis path.
- * @param {Path} path Path of individual path segments
- * @returns {string} the redis path
- */
-export const toRedisPath = (path: Path): string => {
-  const redisPath = path
-    .map((segment) =>
-      typeof segment === "number" ? `[${segment}]` : `.${segment}`,
-    )
-    .join("");
-  return `$${redisPath}`;
-};
 
 const getArrayLength = async (
   redisClient: RedisClientType,
