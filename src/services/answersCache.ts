@@ -1,11 +1,10 @@
 import type { RedisClientType } from "redis";
+import type { z } from "zod";
 
 const ANSWERS_CACHE_TTL_SECONDS = 60 * 60 * 3;
 
-const getAnswersCacheKey = (
-  sessionId: string,
-  journeyKey: string,
-): string => `answers:${sessionId}:${journeyKey}`;
+const getAnswersCacheKey = (sessionId: string, journeyKey: string): string =>
+  `answers:${sessionId}:${journeyKey}`;
 
 /**
  * Builds a Redis-backed answers cache.
@@ -16,19 +15,23 @@ const getAnswersCacheKey = (
 export const buildAnswersCache = (
   redisClient: RedisClientType,
 ): AnswersCache => ({
-    get: async <T,>( sessionId: string, journeyKey: string): Promise<T | null> => {
-    const value = await redisClient.get(getAnswersCacheKey(sessionId, journeyKey));
+  get: async <T extends z.ZodType>(
+    sessionId: string,
+    journeyKey: string,
+    schema: T,
+  ): Promise<z.infer<T> | null> => {
+    const value = await redisClient.get(
+      getAnswersCacheKey(sessionId, journeyKey),
+    );
 
     if (value === null) {
       return null;
     }
 
-
     try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Redis stores JSON strings, so callers provide the expected deserialised type.
-        return JSON.parse(value) as unknown as T;
+      return schema.parse(JSON.parse(value));
     } catch {
-        return null;
+      return null;
     }
   },
 
@@ -52,7 +55,11 @@ export const buildAnswersCache = (
 });
 
 export interface AnswersCache {
-  get: <T>(sessionId: string, journeyKey: string) => Promise<T | null>;
+  get: <T extends z.ZodType>(
+    sessionId: string,
+    journeyKey: string,
+    schema: T,
+  ) => Promise<z.infer<T> | null>;
   set: (
     sessionId: string,
     journeyKey: string,
