@@ -165,6 +165,45 @@ describe("profitCostBillLineValidation", () => {
     );
   });
 
+  it("returns error when profit cost does not include pence", () => {
+    const result = validateProfitCostBillLine({
+      ...validBody,
+      actualNetProfitCostExcludingAdvocacy: "123",
+    });
+
+    const failure = expectFailure(result);
+
+    expect(failure.errors[0].text.key).to.equal(
+      "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.errors.pence",
+    );
+  });
+
+  it("returns error when advocacy cost does not include pence", () => {
+    const result = validateProfitCostBillLine({
+      ...validBody,
+      actualNetAdvocacyCosts: "156",
+    });
+
+    const failure = expectFailure(result);
+
+    expect(failure.errors[0].text.key).to.equal(
+      "pages.profitCostBillLine.actualNetAdvocacyCosts.errors.pence",
+    );
+  });
+
+  it("returns error when profit cost only has one decimal place", () => {
+    const result = validateProfitCostBillLine({
+      ...validBody,
+      actualNetProfitCostExcludingAdvocacy: "123.4",
+    });
+
+    const failure = expectFailure(result);
+
+    expect(failure.errors[0].text.key).to.equal(
+      "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.errors.pence",
+    );
+  });
+
   it("returns error when VAT is not selected", () => {
     const result = validateProfitCostBillLine({
       ...validBody,

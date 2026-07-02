@@ -1,6 +1,7 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processError } from "#src/helpers/index.js";
-import { validateProfitCostBillLine } from "#src/helpers/profitCostBillLineValidation.js";
+import { validateProfitCostBillLine, type ProfitCostBillLineForm } from "#src/helpers/profitCostBillLineValidation.js";
+import { getForm } from "#src/helpers/validation.js";
 import { ProfitCostBillLineViewModel } from "#src/viewmodels/profitCostBillLineViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 
@@ -45,12 +46,14 @@ export function submitProfitCostBillLine(
   try {
     const claimId = Number(req.params.claimId);
     const validationResult = validateProfitCostBillLine(req.body);
+    const form = getForm<ProfitCostBillLineForm>(req.body);
 
     if (!validationResult.isValid) {
       res.status(400).render("main/poa/profitCostBillLineView.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new ProfitCostBillLineViewModel({
           claimId,
+          form,
           errors: validationResult.errors,
         }),
       });
