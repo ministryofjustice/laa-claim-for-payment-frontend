@@ -10,13 +10,13 @@ import {
 } from "#src/viewmodels/components/summaryList.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
+import { formatDateReadable } from "#src/helpers/dataFormatters.js";
 import {
   clientStatusFieldName,
   courtTypeFieldName,
   firstSolicitorFieldName,
-  transferOfSolicitorFieldName
-} from "#src/viewmodels/profitCostDetails/profitCostDetailsFields.js";
-import { formatDateReadable } from "#src/helpers/dataFormatters.js";
+  transferOfSolicitorFieldName,
+} from "#src/controllers/poa/profitCostDetailsController.js";
 
 /**
  *
