@@ -9,16 +9,16 @@ import {
   linkLineItemToEvidenceResponseData,
 } from "#tests/assets/getClaimsResponseData.js";
 import {
-  deleteEvidenceFile,
   fileUploadForLineItemPage,
   linkEvidenceToLineItem,
-  uploadEvidenceFile,
 } from "#src/controllers/claims/fileUploadForLineItemController.js";
 import { AjaxUploadResponse, ApiResponse } from "#src/types/api-types.js";
 import { Claim } from "#src/types/Claim.js";
 import { HttpError } from "http-errors";
 import { DeleteFileRequest, MulterRequest } from "#src/types/requests.js";
 import { TFunction } from "#node_modules/i18next/index.js";
+import { uploadService } from "#src/services/uploadService.js";
+import { unlinkEvidenceFileFromLineItem, uploadEvidenceFileForLineItem } from "#src/controllers/claims/ajaxFileUploadController.js";
 
 describe("View File Upload For Line Item Controller", () => {
   let res: any;
@@ -47,13 +47,13 @@ describe("View File Upload For Line Item Controller", () => {
     next = sinon.stub();
 
     getClaimStub = sinon.stub(claimService, "getClaim");
-    linkEvidenceStub = sinon.stub(claimService, "linkEvidenceToLineItem");
+    linkEvidenceStub = sinon.stub(uploadService, "linkEvidenceToLineItem");
     uploadLineItemEvidenceStub = sinon.stub(
-      claimService,
+      uploadService,
       "uploadLineItemEvidence",
     );
     unlinkEvidenceFromLineItemStub = sinon.stub(
-      claimService,
+      uploadService,
       "unlinkEvidenceFromLineItem",
     );
   });
@@ -186,7 +186,7 @@ describe("View File Upload For Line Item Controller", () => {
 
       const next = sinon.stub();
 
-      await uploadEvidenceFile(req, res, next as unknown as NextFunction);
+      await uploadEvidenceFileForLineItem(req, res, next as unknown as NextFunction);
 
       expect(uploadLineItemEvidenceStub.calledOnce).to.equal(true);
 
@@ -213,12 +213,12 @@ describe("View File Upload For Line Item Controller", () => {
 
       const next = sinon.stub();
 
-      await uploadEvidenceFile(req, res, next as unknown as NextFunction);
+      await uploadEvidenceFileForLineItem(req, res, next as unknown as NextFunction);
 
       expect(status.calledWith(400)).to.equal(true);
       expect(json.firstCall.args[0]).to.deep.equal({
         error: {
-          message: "multiFileUpload.errors.noFileUploaded",
+          message: "multiFileUpload.errors.noFileSelected",
         },
       });
       expect(next.called).to.equal(false);
@@ -261,7 +261,7 @@ describe("View File Upload For Line Item Controller", () => {
 
       const next = sinon.stub();
 
-      await deleteEvidenceFile(req, res, next as unknown as NextFunction);
+      await unlinkEvidenceFileFromLineItem(req, res, next as unknown as NextFunction);
 
       expect(unlinkEvidenceFromLineItemStub.calledOnce).to.equal(true);
 
@@ -292,7 +292,7 @@ describe("View File Upload For Line Item Controller", () => {
 
       const next = sinon.stub();
 
-      await deleteEvidenceFile(req, res, next as unknown as NextFunction);
+      await unlinkEvidenceFileFromLineItem(req, res, next as unknown as NextFunction);
 
       expect(status.calledWith(400)).to.equal(true);
       expect(json.firstCall.args[0]).to.deep.equal({
