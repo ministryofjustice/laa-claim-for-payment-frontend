@@ -1,7 +1,7 @@
 import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
-import { ProfitCostBillLineViewModel } from "#src/viewmodels/profitCostBillLineViewModel.js";
+import { ProfitCostBillLineViewModel } from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
 
 chaiConfig.truncateThreshold = 0;
 

@@ -1,22 +1,11 @@
-import {
-  type RadioQuestionOptions,
-  RadioQuestionViewModel,
-} from "#src/viewmodels/radioQuestionViewModel.js";
+import { type RadioQuestionOptions, RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { validateRadioInput } from "#src/helpers/validation.js";
+import { HowManyClientsRetainedChoice } from "#src/types/poa.js";
 
 const howManyClientsRetainedFieldName = "howManyClientsRetained" as const;
-
-const HowManyClientsRetainedChoice = {
-  None: "none",
-  One: "one",
-  MoreThanTwo: "more-than-two",
-} as const;
-
-type HowManyClientsRetainedChoice =
-  (typeof HowManyClientsRetainedChoice)[keyof typeof HowManyClientsRetainedChoice];
 
 const howManyClientsRetainedChoices: ReadonlyArray<RadioQuestionOptions<HowManyClientsRetainedChoice>> =
   [

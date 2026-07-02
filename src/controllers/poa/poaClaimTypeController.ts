@@ -1,22 +1,17 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processError } from "#src/helpers/index.js";
+import { z } from "zod";
 import {
   type RadioQuestionOptions,
   RadioQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { validateRadioInput } from "#src/helpers/validation.js";
+import type { AnswersCache } from "#src/services/answersCache.js";
+import { type Poa, PoaClaimTypeChoice } from "#src/types/poa.js";
 
 const poaClaimTypeFieldName = "poaClaimType" as const;
-
-const PoaClaimTypeChoice = {
-  ProfitCost: "profit-cost",
-  ExpertCost: "expert-cost",
-  NonExpertDisbursement: "non-expert-disbursement",
-} as const;
-
-type PoaClaimTypeChoice =
-  (typeof PoaClaimTypeChoice)[keyof typeof PoaClaimTypeChoice];
+const path: ["poa", keyof Poa] = ["poa", "type"];
 
 const poaClaimTypeChoices: ReadonlyArray<RadioQuestionOptions<PoaClaimTypeChoice>> = [
   {
@@ -45,21 +40,34 @@ const poaClaimTypeChoices: ReadonlyArray<RadioQuestionOptions<PoaClaimTypeChoice
  * @param {Request} req Express request object.
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
+ * @param {{ answersCache: AnswersCache }} dependencies Controller dependencies.
+ * @param {AnswersCache} dependencies.answersCache Cache used for storing journey answers.
  */
-export function poaClaimTypePage(
+export async function poaClaimTypePage(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+  dependencies: { answersCache: AnswersCache },
+): Promise<void> {
   try {
+    const claimId = Number(req.params.claimId);
+
+    const cachedAnswer = await dependencies.answersCache.get(
+      req.sessionID,
+      claimId,
+      path,
+      z.string(),
+    );
+
     res.render("main/radioQuestionPage.njk", {
       csrfToken: res.locals.csrfToken,
       vm: new RadioQuestionViewModel({
         title: {
-          key: "pages.poaClaimType.title"
+          key: "pages.poaClaimType.title",
         },
         fieldName: poaClaimTypeFieldName,
         choices: poaClaimTypeChoices,
+        selectedValue: cachedAnswer,
       }),
     });
   } catch (error) {
@@ -73,12 +81,15 @@ export function poaClaimTypePage(
  * @param {Request} req Express request object.
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
+ * @param {{ answersCache: AnswersCache }} dependencies Controller dependencies.
+ * @param {AnswersCache} dependencies.answersCache Cache used for storing journey answers.
  */
-export function submitPoaClaimType(
+export async function submitPoaClaimType(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+  dependencies: { answersCache: AnswersCache },
+): Promise<void> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedChoice: unknown = req.body?.[poaClaimTypeFieldName];
@@ -96,7 +107,7 @@ export function submitPoaClaimType(
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
           title: {
-            key: "pages.poaClaimType.title"
+            key: "pages.poaClaimType.title",
           },
           fieldName: poaClaimTypeFieldName,
           choices: poaClaimTypeChoices,
@@ -109,6 +120,13 @@ export function submitPoaClaimType(
     }
 
     const claimId = Number(req.params.claimId);
+
+    await dependencies.answersCache.set(
+      req.sessionID,
+      claimId,
+      path,
+      validationResult.value,
+    );
 
     const redirectByChoice: Record<PoaClaimTypeChoice, string> = {
       [PoaClaimTypeChoice.ProfitCost]: buildRoute(ROUTES.PROFIT_COST_DETAILS, {

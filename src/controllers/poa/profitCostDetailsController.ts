@@ -3,10 +3,12 @@ import { processError } from "#src/helpers/index.js";
 import {
   ProfitCostDetailsViewModel,
   type ProfitCostDetailsViewModelParams
-} from "#src/viewmodels/profitCostDetails/profitCostDetailsViewModel.js";
+} from "#src/viewmodels/poa/profitCostDetailsViewModel.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { getForm } from "#src/helpers/validation.js";
 import { type ProfitCostDetailsForm, validateProfitCostDetails } from "#src/helpers/profitCostDetailsValidation.js";
+import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewModel.js";
+import { ClientStatusChoice, CourtTypeChoice } from "#src/types/poa.js";
 
 /**
  * Profit cost details journey view
@@ -76,3 +78,56 @@ export function submitProfitCostDetails(
     next(processedError);
   }
 }
+
+export const courtTypeFieldName = "courtTypeChoice" as const;
+export const clientStatusFieldName = "clientStatusChoice" as const;
+export const firstSolicitorFieldName = "firstSolicitorChoice" as const;
+export const transferOfSolicitorFieldName = "transferOfSolicitorChoice" as const;
+
+export const courtTypeChoices: ReadonlyArray<RadioQuestionOptions<CourtTypeChoice>> = [
+  {
+    value: CourtTypeChoice.CountyCourt,
+    text: {
+      key: "pages.profitCostDetails.courtType.countyCourt.text"
+    },
+  },
+  {
+    value: CourtTypeChoice.HighCourt,
+    text: {
+      key: "pages.profitCostDetails.courtType.highCourt.text"
+    },
+  },
+  {
+    value: CourtTypeChoice.MagistratesCourt,
+    text: {
+      key: "pages.profitCostDetails.courtType.magistratesCourt.text"
+    },
+  },
+  {
+    value: CourtTypeChoice.OtherJudge,
+    text: {
+      key: "pages.profitCostDetails.courtType.otherJudge.text"
+    },
+  },
+] as const;
+
+export const clientStatusChoices: ReadonlyArray<RadioQuestionOptions<ClientStatusChoice>> = [
+  {
+    value: ClientStatusChoice.Child,
+    text: {
+      key: "pages.profitCostDetails.clientStatus.child.text"
+    },
+  },
+  {
+    value: ClientStatusChoice.JoinedParty,
+    text: {
+      key: "pages.profitCostDetails.clientStatus.joinedParty.text"
+    },
+  },
+  {
+    value: ClientStatusChoice.Parent,
+    text: {
+      key: "pages.profitCostDetails.clientStatus.parent.text"
+    },
+  },
+] as const;
