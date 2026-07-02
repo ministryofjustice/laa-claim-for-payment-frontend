@@ -2,16 +2,6 @@ import {
   type BooleanChoice,
   booleanChoices,
 } from "#src/models/booleanChoice.js";
-import {
-  type ClientStatusChoice,
-  clientStatusChoices,
-  clientStatusFieldName,
-  type CourtTypeChoice,
-  courtTypeChoices,
-  courtTypeFieldName,
-  firstSolicitorFieldName,
-  transferOfSolicitorFieldName,
-} from "./profitCostDetailsFields.js";
 import type { ProfitCostDetailsForm } from "#src/helpers/profitCostDetailsValidation.js";
 import {
   type FieldValidationError,
@@ -19,6 +9,15 @@ import {
 } from "#src/helpers/validation.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
 import { radioQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
+import {
+  clientStatusChoices,
+  clientStatusFieldName,
+  courtTypeChoices,
+  courtTypeFieldName,
+  firstSolicitorFieldName,
+  transferOfSolicitorFieldName,
+} from "#src/controllers/poa/profitCostDetailsController.js";
+import type { ClientStatusChoice, CourtTypeChoice } from "#src/types/poa.js";
 
 export interface ProfitCostDetailsViewModelParams {
   form?: ProfitCostDetailsForm;

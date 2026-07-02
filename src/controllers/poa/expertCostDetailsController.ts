@@ -7,11 +7,11 @@ import {
 } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
 import {
   type ExpertCostDetailsForm,
-  ExpertCostDetailsSchema,
   validateExpertCostDetails,
 } from "#src/helpers/expertCostDetailsValidation.js";
 import { getForm } from "#src/helpers/validation.js";
 import type { AnswersCache, Path } from "#src/services/answersCache.js";
+import { ExpertCostDetailsSchema } from "#src/types/poa.js";
 
 const path = (expertCostId: number): Path =>
   ["poa", "expertCosts", expertCostId - 1];

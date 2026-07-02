@@ -8,7 +8,7 @@ import {
   submitExpertCostDetails,
 } from "#src/controllers/poa/expertCostDetailsController.js";
 import type { AnswersCache } from "#src/services/answersCache.js";
-import { ExpertCostDetailsSchema } from "#src/helpers/expertCostDetailsValidation.js";
+import { ExpertCostDetailsSchema } from "#src/types/poa.js";
 
 describe("expertCostDetailsController", () => {
   let res: Response;
