@@ -14,7 +14,7 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
   describe("with no reusable documents", () => {
     const viewModel = new FileUploadForLineItemViewModel(
       claim1,
-      billNarrativeLineItem,
+      billNarrativeLineItem, "/upload", "/delete", "/continue"
     );
 
     beforeEach(async () => {
@@ -114,11 +114,11 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
       expect(config).to.have.length(1);
 
       expect(config.attr("data-upload-url")).to.equal(
-        "/claims/1/upload-evidence-individually/1/file-upload/ajax-upload",
+        "/upload",
       );
 
       expect(config.attr("data-delete-url")).to.equal(
-        "/claims/1/upload-evidence-individually/1/file-upload/ajax-delete",
+        "/delete",
       );
     });
 
@@ -143,7 +143,7 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
       );
 
       expect(button.attr("href")).to.equal(
-        "/claims/1/upload-evidence-individually",
+        "/continue",
       );
     });
 
@@ -160,7 +160,7 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
       );
 
       expect(button.attr("href")).to.equal(
-        "/claims/1/upload-evidence-individually",
+        "/continue",
       );
     });
 
@@ -175,7 +175,7 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
   describe("with reusable documents", () => {
     let $: CheerioAPI;
 
-    const viewModel = new FileUploadForLineItemViewModel(claim1, workItemLineItem1);
+    const viewModel = new FileUploadForLineItemViewModel(claim1, workItemLineItem1, "/upload", "/delete", "/continue");
 
     beforeEach(async () => {
       $ = await renderView('main/claims/fileUploadForLineItemView.njk', {
@@ -212,7 +212,7 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
 
     const viewModel = new FileUploadForLineItemViewModel(
       claim3,
-      workItemLineItem1,
+      workItemLineItem1, "/upload", "/delete", "/continue"
     );
 
     beforeEach(async () => {
@@ -242,7 +242,7 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
 
     const viewModel = new FileUploadForLineItemViewModel(
       claim2,
-      billNarrativeLineItem,
+      billNarrativeLineItem, "/upload", "/delete", "/continue"
     );
 
     beforeEach(async () => {

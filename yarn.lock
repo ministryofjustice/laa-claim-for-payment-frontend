@@ -56,10 +56,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.27.6":
-  version: 7.28.4
-  resolution: "@babel/runtime@npm:7.28.4"
-  checksum: 10/6c9a70452322ea80b3c9b2a412bcf60771819213a67576c8cec41e88a95bb7bf01fc983754cda35dc19603eef52df22203ccbf7777b9d6316932f9fb77c25163
+"@babel/runtime@npm:^7.29.2":
+  version: 7.29.7
+  resolution: "@babel/runtime@npm:7.29.7"
+  checksum: 10/9883b4951787779fd382b121f22f92966d85f19434841f65fb00b2dfec232107e139683f47c6f252891826ad8ee18317b46c3a0e4819116a9885f47b46d7126a
   languageName: node
   linkType: hard
 
@@ -4746,17 +4746,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next@npm:^25.6.0":
-  version: 25.6.1
-  resolution: "i18next@npm:25.6.1"
+"i18next@npm:^25.10.10":
+  version: 25.10.10
+  resolution: "i18next@npm:25.10.10"
   dependencies:
-    "@babel/runtime": "npm:^7.27.6"
+    "@babel/runtime": "npm:^7.29.2"
   peerDependencies:
-    typescript: ^5
+    typescript: ^5 || ^6
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/a4622a0dc37eed0ae79f8814cae8dcf8206b011e618f109a1497815364d293b5c80e177722cfbcd2577aca8a163af861ff142012bc2957240cd2efc65e57805c
+  checksum: 10/ee4f6ba360902a2f0550cfeef234c9e68a67487b575d204e89bdf2f2db647934aa3900a39c64174b9201a8979e455d0bf8f56b57934c34fc8f9aa3b430cb152d
   languageName: node
   linkType: hard
 
@@ -5393,10 +5393,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libphonenumber-js@npm:^1.12.24":
-  version: 1.12.26
-  resolution: "libphonenumber-js@npm:1.12.26"
-  checksum: 10/7009043eafbc239c1c7ad019ade886605c456cfb207f16d6c276608eb3ab49383431023842fb60329f0884cbf88af79aaffba212337854516e903ca40a64f4ff
+"libphonenumber-js@npm:^1.13.6":
+  version: 1.13.7
+  resolution: "libphonenumber-js@npm:1.13.7"
+  checksum: 10/927823125be1252aea58f551f031026f42e5745b53974289334b5f09c7149371d29157d09d856b75227c9c124aa43b395f66ea9ab038abbc92814c7bed4b0d40
   languageName: node
   linkType: hard
 
@@ -5825,10 +5825,10 @@ __metadata:
     govuk-frontend: "npm:^5.13.0"
     helmet: "npm:^8.1.0"
     http-errors: "npm:~2.0.1"
-    i18next: "npm:^25.6.0"
+    i18next: "npm:^25.10.10"
     i18next-http-middleware: "npm:3.9.7"
     jsdom: "npm:^27.3.0"
-    libphonenumber-js: "npm:^1.12.24"
+    libphonenumber-js: "npm:^1.13.6"
     livereload: "npm:^0.10.2"
     middleware-axios: "npm:^3.0.0"
     mocha: "npm:^11.7.3"
@@ -5852,7 +5852,7 @@ __metadata:
     tsx: "npm:^4.21.0"
     typescript: "npm:^5.9.3"
     validator: "npm:^13.15.22"
-    zod: "npm:^4.1.13"
+    zod: "npm:^4.4.3"
   languageName: unknown
   linkType: soft
 
@@ -8444,9 +8444,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^4.1.13":
-  version: 4.2.1
-  resolution: "zod@npm:4.2.1"
-  checksum: 10/f21d106ce31e0f24040aa13b13fdd1300fcc8119622b28ca1b1b726ff70b75190dbcfeb927d34f19174683afa298e5df4d806f622abe9b037a0aadb9cdef6443
+"zod@npm:^4.4.3":
+  version: 4.4.3
+  resolution: "zod@npm:4.4.3"
+  checksum: 10/804b9a42aa8f35f2b3c5a8dff906291cb749115f83ee2afe3576d70b5b5c53c965365c7f4967690647a9c54af9838ff232a85ff9577a0a36c44b68bc6cdefe36
   languageName: node
   linkType: hard
