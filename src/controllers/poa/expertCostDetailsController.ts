@@ -10,11 +10,14 @@ import {
   validateExpertCostDetails,
 } from "#src/helpers/expertCostDetailsValidation.js";
 import { getForm } from "#src/helpers/validation.js";
-import type { AnswersCache, Path } from "#src/services/answersCache.js";
-import { ExpertCostDetailsSchema } from "#src/types/poa.js";
+import type { AnswersCache } from "#src/services/answersCache.js";
+import { ExpertCostDetailsSchema, type ExpertCostPoa } from "#src/types/poa.js";
 
-const path = (expertCostId: number): Path =>
-  ["poa", "expertCosts", expertCostId - 1];
+const path = (expertCostId: number): ["poa", keyof ExpertCostPoa, number] => [
+  "poa",
+  "details",
+  expertCostId - 1,
+];
 
 /**
  * Display POA expert cost details page.
@@ -50,8 +53,12 @@ export async function expertCostDetails(
           ? {}
           : {
               activityDateDay: cachedAnswer.activityDate.getDate().toString(),
-              activityDateMonth: (cachedAnswer.activityDate.getMonth() + 1).toString(),
-              activityDateYear: cachedAnswer.activityDate.getFullYear().toString(),
+              activityDateMonth: (
+                cachedAnswer.activityDate.getMonth() + 1
+              ).toString(),
+              activityDateYear: cachedAnswer.activityDate
+                .getFullYear()
+                .toString(),
               actualNetValue: cachedAnswer.actualNetValue.toString(),
               vatApplies: cachedAnswer.vatApplies ? "yes" : "no",
               feeEarnerName: cachedAnswer.feeEarnerName,

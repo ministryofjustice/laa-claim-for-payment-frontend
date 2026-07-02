@@ -50,7 +50,7 @@ describe("expertCostDetailsController", () => {
 
     expect(args[0]).to.equal("session-123");
     expect(args[1]).to.equal(1);
-    expect(args[2]).to.deep.equal(["poa", "expertCosts", 0]);
+    expect(args[2]).to.deep.equal(["poa", "details", 0]);
     expect(args[3]).to.equal(ExpertCostDetailsSchema);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
@@ -87,7 +87,7 @@ describe("expertCostDetailsController", () => {
     expect((answersCache.set as sinon.SinonStub).firstCall.args).to.deep.equal([
       "session-123",
       1,
-      ["poa", "expertCosts", 0],
+      ["poa", "details", 0],
       {
         activityDate: new Date(2007, 2, 27),
         actualNetValue: 123.45,

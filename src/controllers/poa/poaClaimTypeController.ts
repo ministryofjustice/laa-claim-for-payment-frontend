@@ -8,10 +8,10 @@ import {
 import type { NextFunction, Request, Response } from "express";
 import { validateRadioInput } from "#src/helpers/validation.js";
 import type { AnswersCache } from "#src/services/answersCache.js";
-import { PoaClaimTypeChoice } from "#src/types/poa.js";
+import { type Poa, PoaClaimTypeChoice } from "#src/types/poa.js";
 
 const poaClaimTypeFieldName = "poaClaimType" as const;
-const path = ["poa", "claimType"];
+const path: ["poa", keyof Poa] = ["poa", "type"];
 
 const poaClaimTypeChoices: ReadonlyArray<RadioQuestionOptions<PoaClaimTypeChoice>> = [
   {
