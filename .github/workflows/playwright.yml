@@ -42,7 +42,7 @@ jobs:
           key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('**/yarn.lock') }}
 
       - name: Run Playwright tests
-        run: yarn playwright test
+        run: yarn test:e2e
         env:
           CI: true
           PLAYWRIGHT_TRACING: "on" # Enable tracing for all tests
@@ -59,7 +59,8 @@ jobs:
           RATE_LIMIT_MAX: "100"
           RATE_WINDOW_MS: "900000"
           AUTH_ENABLED: "false" # Disable auth for testing
-          REDIS_DISABLED: "true" # Disable Redis for testing
+          REDIS_DISABLED: "false"
+          REDIS_URL: "redis://localhost:6379"
       - name: Upload trace artifacts
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f #v7.0.0

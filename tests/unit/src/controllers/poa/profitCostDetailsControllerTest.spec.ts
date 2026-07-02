@@ -3,12 +3,14 @@ import { expect } from "chai";
 import * as sinon from "sinon";
 import type { Request, Response } from "express";
 import {
+  clientStatusFieldName,
+  courtTypeFieldName,
+  firstSolicitorFieldName,
   profitCostDetails,
   submitProfitCostDetails,
+  transferOfSolicitorFieldName,
 } from "#src/controllers/poa/profitCostDetailsController.js";
-import { next } from "#node_modules/cheerio/dist/esm/api/traversing.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { courtTypeFieldName, clientStatusFieldName, firstSolicitorFieldName, transferOfSolicitorFieldName } from "#src/viewmodels/profitCostDetails/profitCostDetailsFields.js";
 
 describe("Profit cost details controller", () => {
   let req: Partial<Request>;

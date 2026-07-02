@@ -9,7 +9,6 @@ import {
   setupLocaleMiddleware,
   setupMiddlewares,
 } from "#middleware/index.js";
-import session from "express-session";
 import {
   axiosMiddleware,
   buildRedisClient,
@@ -22,12 +21,13 @@ import {
   setupRedisSession,
 } from "#utils/index.js";
 import config from "#config.js";
-import indexRouter from "#routes/index.js";
+import { buildRouter } from "#routes/index.js";
 import livereload from "connect-livereload";
 import { requiresAuth } from "#utils/openidSetup.js";
 import { initializeI18nextSync } from "./scripts/helpers/i18nLoader.js";
 import { initRedis } from "#utils/redisClient.js";
 import createHttpError from "http-errors";
+import { buildAnswersCache } from "./services/answersCache.js";
 
 const TRUST_FIRST_PROXY = 1;
 const SUCCESSFUL_REQUEST = 200;
@@ -41,19 +41,21 @@ const SUCCESSFUL_REQUEST = 200;
 const createApp = async (): Promise<express.Application> => {
   // Initialise i18next synchronously before setting up the app
   initializeI18nextSync();
-
+  
   const app = express();
 
   // Set up common middleware for handling cookies, body parsing, etc.
   setupMiddlewares(app);
 
   if (config.redis === undefined) {
-    app.use(session(config.session));
-  } else {
-    const redisClient = buildRedisClient(config.redis);
-    await initRedis(redisClient);
-    setupRedisSession(app, redisClient);
+    throw new Error("Redis config is required when answers cache is enabled");
   }
+
+  const redisClient = buildRedisClient(config.redis);
+  await initRedis(redisClient);
+  setupRedisSession(app, redisClient);
+
+  const answersCache = buildAnswersCache(redisClient);
 
   app.use(axiosMiddleware);
 
@@ -129,6 +131,7 @@ const createApp = async (): Promise<express.Application> => {
     res.status(SUCCESSFUL_REQUEST).send("Healthy");
   });
 
+  const indexRouter = buildRouter({ answersCache });
   // Register the main router
   app.use("/", requiresAuth(), injectUser, indexRouter);
 

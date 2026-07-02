@@ -7,10 +7,13 @@ import {
   expertCostDetails,
   submitExpertCostDetails,
 } from "#src/controllers/poa/expertCostDetailsController.js";
+import type { AnswersCache } from "#src/services/answersCache.js";
+import { ExpertCostDetailsSchema } from "#src/types/poa.js";
 
 describe("expertCostDetailsController", () => {
   let res: Response;
   let next: NextFunction;
+  let answersCache: AnswersCache;
 
   beforeEach(() => {
     res = {
@@ -23,17 +26,32 @@ describe("expertCostDetailsController", () => {
     } as unknown as Response;
 
     next = sinon.stub() as unknown as NextFunction;
+
+    answersCache = {
+      get: sinon.stub().resolves(null),
+      set: sinon.stub().resolves(),
+      remove: sinon.stub().resolves(),
+      clear: sinon.stub().resolves(),
+    };
   });
 
-  it("renders the page", () => {
+  it("renders the page", async () => {
     const req = {
+      sessionID: "session-123",
       params: {
         claimId: "1",
         expertCostId: "1",
       },
     } as unknown as Request;
 
-    expertCostDetails(req, res, next);
+    await expertCostDetails(req, res, next, { answersCache });
+
+    const args = (answersCache.get as sinon.SinonStub).firstCall.args;
+
+    expect(args[0]).to.equal("session-123");
+    expect(args[1]).to.equal(1);
+    expect(args[2]).to.deep.equal(["poa", "details", 0]);
+    expect(args[3]).to.equal(ExpertCostDetailsSchema);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -45,8 +63,9 @@ describe("expertCostDetailsController", () => {
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
   });
 
-  it("redirects to POA evidence upload when form is valid", () => {
+  it("redirects to POA evidence upload when form is valid", async () => {
     const req = {
+      sessionID: "session-123",
       params: {
         claimId: "1",
         expertCostId: "1",
@@ -62,7 +81,21 @@ describe("expertCostDetailsController", () => {
       },
     } as unknown as Request;
 
-    submitExpertCostDetails(req, res, next);
+    await submitExpertCostDetails(req, res, next, { answersCache });
+
+    expect((answersCache.set as sinon.SinonStub).calledOnce).to.equal(true);
+    expect((answersCache.set as sinon.SinonStub).firstCall.args).to.deep.equal([
+      "session-123",
+      1,
+      ["poa", "details", 0],
+      {
+        activityDate: new Date(2007, 2, 27),
+        actualNetValue: 123.45,
+        vatApplies: true,
+        feeEarnerName: "John Smith",
+        description: "Lorem ipsum",
+      },
+    ]);
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
@@ -73,15 +106,18 @@ describe("expertCostDetailsController", () => {
     ).to.be.true;
   });
 
-  it("rerenders with 400 when form is invalid", () => {
+  it("rerenders with 400 when form is invalid", async () => {
     const req = {
+      sessionID: "session-123",
       params: {
         claimId: "1",
       },
       body: {},
     } as unknown as Request;
 
-    submitExpertCostDetails(req, res, next);
+    await submitExpertCostDetails(req, res, next, { answersCache });
+
+    expect((answersCache.set as sinon.SinonStub).called).to.equal(false);
 
     expect((res.status as sinon.SinonStub).calledWith(400)).to.be.true;
     expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
