@@ -53,12 +53,8 @@ export async function expertCostDetails(
           ? {}
           : {
               activityDateDay: cachedAnswer.activityDate.getDate().toString(),
-              activityDateMonth: (
-                cachedAnswer.activityDate.getMonth() + 1
-              ).toString(),
-              activityDateYear: cachedAnswer.activityDate
-                .getFullYear()
-                .toString(),
+              activityDateMonth: (cachedAnswer.activityDate.getMonth() + 1).toString(),
+              activityDateYear: cachedAnswer.activityDate.getFullYear().toString(),
               actualNetValue: cachedAnswer.actualNetValue.toString(),
               vatApplies: cachedAnswer.vatApplies ? "yes" : "no",
               feeEarnerName: cachedAnswer.feeEarnerName,
