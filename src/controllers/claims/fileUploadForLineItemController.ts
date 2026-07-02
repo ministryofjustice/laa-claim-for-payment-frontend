@@ -112,25 +112,3 @@ export async function linkEvidenceToLineItem(
     next(processError(error, "linking evidence to line item"));
   }
 }
-
-/**
- * Handles the continue action after uploading evidence files.
- *
- * @param {Request} req Express request object.
- * @param {Response} res Express response object.
- * @param {NextFunction} next Express next function.
- * @returns {void}
- */
-export function continueFromFileUpload(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
-  try {
-    const claimId = Number(req.params.claimId);
-
-    res.redirect(`/claims/${claimId}`);
-  } catch (error) {
-    next(error);
-  }
-}
