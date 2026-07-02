@@ -1,18 +1,10 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { createRadioQuestionController } from "#src/helpers/radioQuestionController.js";
 import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewModel.js";
+import { NumberOfClientsStartOfCaseChoice } from "#src/types/poa.js";
 
 const numberOfClientsStartOfCaseFieldName =
   "numberOfClientsStartOfCase" as const;
-
-const NumberOfClientsStartOfCaseChoice = {
-  None: "none",
-  One: "one",
-  MoreThanTwo: "more-than-two",
-} as const;
-
-type NumberOfClientsStartOfCaseChoice =
-  (typeof NumberOfClientsStartOfCaseChoice)[keyof typeof NumberOfClientsStartOfCaseChoice];
 
 const numberOfClientsStartOfCaseChoices: ReadonlyArray<RadioQuestionOptions<NumberOfClientsStartOfCaseChoice>> =
   [

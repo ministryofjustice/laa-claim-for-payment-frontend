@@ -36,6 +36,9 @@ jobs:
       - name: Run Mocha unit tests
         run: yarn coverage
 
+      - name: Run Mocha integration tests
+        run: yarn test:integration
+
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f #v7.0.0

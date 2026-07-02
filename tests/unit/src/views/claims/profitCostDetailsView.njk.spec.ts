@@ -4,7 +4,7 @@ import { renderView } from "#tests/unit/src/views/base/renderView.js";
 import {
   ProfitCostDetailsViewModel,
   ProfitCostDetailsViewModelParams,
-} from "#src/viewmodels/profitCostDetails/profitCostDetailsViewModel.js";
+} from "#src/viewmodels/poa/profitCostDetailsViewModel.js";
 
 chaiConfig.truncateThreshold = 0;
 
