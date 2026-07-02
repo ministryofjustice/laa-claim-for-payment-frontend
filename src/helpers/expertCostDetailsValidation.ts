@@ -6,6 +6,7 @@ import {
   validateStringInput,
   type ValidationResult,
 } from "#src/helpers/validation.js";
+import type { ExpertCostDetails } from "#src/types/poa.js";
 
 export interface ExpertCostDetailsForm {
   activityDateDay?: unknown;
@@ -15,14 +16,6 @@ export interface ExpertCostDetailsForm {
   vatApplies?: unknown;
   feeEarnerName?: unknown;
   description?: unknown;
-}
-
-export interface ExpertCostDetails {
-  activityDate: Date;
-  actualNetValue: number;
-  vatApplies: boolean;
-  feeEarnerName: string;
-  description: string;
 }
 
 const FEE_EARNER_NAME_REGEX = /^[A-Za-z' -]+$/;

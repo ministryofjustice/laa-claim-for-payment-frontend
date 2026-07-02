@@ -7,6 +7,7 @@ import {
   validateStringInput,
   type ValidationResult,
 } from "#src/helpers/validation.js";
+import type { ProfitCostBillLine } from "#src/types/poa.js";
 
 export interface ProfitCostBillLineForm {
   activityDateDay?: unknown;
@@ -16,14 +17,6 @@ export interface ProfitCostBillLineForm {
   actualNetAdvocacyCosts?: unknown;
   vatApplies?: unknown;
   feeEarnerName?: unknown;
-}
-
-export interface ProfitCostBillLine {
-  activityDate: Date;
-  actualNetProfitCostExcludingAdvocacy: number;
-  actualNetAdvocacyCosts: number;
-  vatApplies: boolean;
-  feeEarnerName: string;
 }
 
 const FEE_EARNER_NAME_REGEX = /^[A-Za-z' -]+$/;

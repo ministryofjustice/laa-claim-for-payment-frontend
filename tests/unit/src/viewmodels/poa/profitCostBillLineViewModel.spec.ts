@@ -2,7 +2,7 @@ import { expect } from "chai";
 import {
   ProfitCostBillLineViewModel,
   ProfitCostBillLineViewModelParams,
-} from "#src/viewmodels/profitCostBillLineViewModel.js";
+} from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
 
 describe("profitCostBillLineViewModel constructor", () => {
   it("constructs view model when form/errors undefined", () => {
