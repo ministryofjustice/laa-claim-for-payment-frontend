@@ -19,8 +19,9 @@
     "generate:api": "openapi-ts",
     "tsc": "tsc --noEmit",
     "build:ts": "tsc",
-    "test": "yarn test:unit && yarn test:e2e",
-    "test:unit": "mocha",
+    "test": "yarn test:unit && yarn test:integration && yarn test:e2e",
+    "test:unit": "mocha --config .mocharc.json",
+    "test:integration": "yarn redis:start && mocha --config .mocharc.integration.json && yarn redis:stop",
     "test:e2e": "./scripts/run-playwright.sh",
     "coverage": "TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS='--import ts-node/esm' c8 mocha -r tsconfig-paths/register 'tests/unit/**/*.spec.ts'",
     "redis:start": "docker compose up -d redis",
@@ -31,7 +32,7 @@
     "node": "24.10.0"
   },
   "dependencies": {
-    "@hey-api/openapi-ts": "0.95.0",
+    "@hey-api/openapi-ts": "^0.99.0",
     "@ministryofjustice/frontend": "^7.1.0",
     "axios": "1.16.1",
     "body-parser": "^2.2.2",

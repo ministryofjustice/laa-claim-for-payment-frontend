@@ -30,6 +30,7 @@ describe("expertCostDetailsController", () => {
     answersCache = {
       get: sinon.stub().resolves(null),
       set: sinon.stub().resolves(),
+      remove: sinon.stub().resolves(),
       clear: sinon.stub().resolves(),
     };
   });
@@ -48,8 +49,9 @@ describe("expertCostDetailsController", () => {
     const args = (answersCache.get as sinon.SinonStub).firstCall.args;
 
     expect(args[0]).to.equal("session-123");
-    expect(args[1]).to.equal("1:expert-cost[1]");
-    expect(args[2]).to.equal(ExpertCostDetailsSchema);
+    expect(args[1]).to.equal(1);
+    expect(args[2]).to.deep.equal(["poa", "expertCosts", 0]);
+    expect(args[3]).to.equal(ExpertCostDetailsSchema);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -84,7 +86,8 @@ describe("expertCostDetailsController", () => {
     expect((answersCache.set as sinon.SinonStub).calledOnce).to.equal(true);
     expect((answersCache.set as sinon.SinonStub).firstCall.args).to.deep.equal([
       "session-123",
-      "1:expert-cost[1]",
+      1,
+      ["poa", "expertCosts", 0],
       {
         activityDate: new Date(2007, 2, 27),
         actualNetValue: 123.45,

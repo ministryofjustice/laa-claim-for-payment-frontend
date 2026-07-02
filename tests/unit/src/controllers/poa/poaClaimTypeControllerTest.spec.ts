@@ -29,6 +29,7 @@ describe("poaClaimTypeController", () => {
     answersCache = {
       get: sinon.stub().resolves(null),
       set: sinon.stub().resolves(),
+      remove: sinon.stub().resolves(),
       clear: sinon.stub().resolves(),
     };
   });
@@ -46,8 +47,9 @@ describe("poaClaimTypeController", () => {
     const args = (answersCache.get as sinon.SinonStub).firstCall.args;
 
     expect(args[0]).to.equal("session-123");
-    expect(args[1]).to.equal("1:poa-claim-type");
-    expect(args[2]).to.be.instanceOf(z.ZodString);
+    expect(args[1]).to.equal(1);
+    expect(args[2]).to.deep.equal(["poa", "claimType"]);
+    expect(args[3]).to.be.instanceOf(z.ZodString);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -84,7 +86,8 @@ describe("poaClaimTypeController", () => {
     expect((answersCache.set as sinon.SinonStub).calledOnce).to.equal(true);
     expect((answersCache.set as sinon.SinonStub).firstCall.args).to.deep.equal([
       "session-123",
-      "1:poa-claim-type",
+      1,
+      ["poa", "claimType"],
       "profit-cost",
     ]);
 
@@ -110,7 +113,8 @@ describe("poaClaimTypeController", () => {
     expect((answersCache.set as sinon.SinonStub).calledOnce).to.equal(true);
     expect((answersCache.set as sinon.SinonStub).firstCall.args).to.deep.equal([
       "session-123",
-      "1:poa-claim-type",
+      1,
+      ["poa", "claimType"],
       "expert-cost",
     ]);
 
@@ -136,7 +140,8 @@ describe("poaClaimTypeController", () => {
     expect((answersCache.set as sinon.SinonStub).calledOnce).to.equal(true);
     expect((answersCache.set as sinon.SinonStub).firstCall.args).to.deep.equal([
       "session-123",
-      "1:poa-claim-type",
+      1,
+      ["poa", "claimType"],
       "non-expert-disbursement",
     ]);
 

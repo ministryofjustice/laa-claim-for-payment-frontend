@@ -10,8 +10,7 @@ import { validateRadioInput } from "#src/helpers/validation.js";
 import type { AnswersCache } from "#src/services/answersCache.js";
 
 const poaClaimTypeFieldName = "poaClaimType" as const;
-const poaClaimTypeCacheKey = (claimId: number): string =>
-  `${claimId}:poa-claim-type`;
+const path = ["poa", "claimType"];
 
 const PoaClaimTypeChoice = {
   ProfitCost: "profit-cost",
@@ -63,7 +62,8 @@ export async function poaClaimTypePage(
 
     const cachedAnswer = await dependencies.answersCache.get(
       req.sessionID,
-      poaClaimTypeCacheKey(claimId),
+      claimId,
+      path,
       z.string(),
     );
 
@@ -131,7 +131,8 @@ export async function submitPoaClaimType(
 
     await dependencies.answersCache.set(
       req.sessionID,
-      poaClaimTypeCacheKey(claimId),
+      claimId,
+      path,
       validationResult.value,
     );
 
