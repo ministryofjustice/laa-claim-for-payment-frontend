@@ -8,6 +8,8 @@ export const ROUTES = {
   CHOOSE_UPLOAD: '/claims/:claimId/choose-upload',
   UPLOAD_EVIDENCE_INDIVIDUALLY: '/claims/:claimId/upload-evidence-individually',
   UPLOAD_FILE_FOR_LINE_ITEM: '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload',
+  AJAX_UPLOAD_FILE_FOR_LINE_ITEM: '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-upload',
+  AJAX_DELETE_FILE_FOR_LINE_ITEM: '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-delete',
   VIEW_CLAIM: '/claims/:claimId',
   HOW_MANY_CLIENTS_RETAINED: '/claims/:claimId/poa/how-many-clients-retained',
   POA_CLAIM_TYPE: '/claims/:claimId/poa/claim-type',
@@ -19,8 +21,10 @@ export const ROUTES = {
   NUMBER_OF_CLIENTS_START_OF_CASE: '/claims/:claimId/poa/number-of-clients-start-of-case',
   POA_CHECK_YOUR_DETAILS: '/claims/:claimId/poa/check-details',
   POA_SUBMISSION_SUCCESSFUL: '/claims/:claimId/poa-submitted',
-  POA_EVIDENCE_UPLOAD: '/claims/:claimId/poa/:lineItemId/evidence-upload',
   CPGFS_PROFIT_COST_BILL_LINE: '/claims/:claimId/poa/cpgfs-profit-cost-bill-line',
+  POA_EVIDENCE_UPLOAD: "/claims/:claimId/poa/evidence-upload",
+  AJAX_UPLOAD_POA_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-upload",
+  AJAX_DELETE_POA_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-delete",
 } as const;
 
 /**
