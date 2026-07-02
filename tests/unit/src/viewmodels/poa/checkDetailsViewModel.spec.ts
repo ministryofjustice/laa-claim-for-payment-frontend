@@ -234,7 +234,7 @@ describe("CheckDetailsViewModel constructor()", () => {
     ).to.deep.equal({ key: "common.change" });
     expect(
       vm.evidenceSummaryList.card?.actions?.items[0].href
-    ).to.equal("#");
+    ).to.equal("/claims/1/poa/evidence-upload");
 
     expect(vm.evidenceSummaryList.rows[0].key.text).to.equal("evidence1.pdf");
     expect(vm.evidenceSummaryList.rows[0].value.html).to.deep.equal({
