@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ProfitCostDetailsViewModel } from "#src/viewmodels/profitCostDetails/profitCostDetailsViewModel.js";
+import { ProfitCostDetailsViewModel } from "#src/viewmodels/poa/profitCostDetailsViewModel.js";
 import { ProfitCostDetailsForm } from "#src/helpers/profitCostDetailsValidation.js";
 
 describe("ProfitCostDetailsViewModel", () => {

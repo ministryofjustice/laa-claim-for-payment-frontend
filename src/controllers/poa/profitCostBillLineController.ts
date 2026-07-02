@@ -1,7 +1,7 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processError } from "#src/helpers/index.js";
 import { validateProfitCostBillLine } from "#src/helpers/profitCostBillLineValidation.js";
-import { ProfitCostBillLineViewModel } from "#src/viewmodels/profitCostBillLineViewModel.js";
+import { ProfitCostBillLineViewModel } from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 
 /**

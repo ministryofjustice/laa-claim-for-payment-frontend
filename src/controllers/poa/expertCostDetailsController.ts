@@ -7,14 +7,17 @@ import {
 } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
 import {
   type ExpertCostDetailsForm,
-  ExpertCostDetailsSchema,
   validateExpertCostDetails,
 } from "#src/helpers/expertCostDetailsValidation.js";
 import { getForm } from "#src/helpers/validation.js";
-import type { AnswersCache, Path } from "#src/services/answersCache.js";
+import type { AnswersCache } from "#src/services/answersCache.js";
+import { ExpertCostDetailsSchema, type ExpertCostPoa } from "#src/types/poa.js";
 
-const path = (expertCostId: number): Path =>
-  ["poa", "expertCosts", expertCostId - 1];
+const path = (expertCostId: number): ["poa", keyof ExpertCostPoa, number] => [
+  "poa",
+  "details",
+  expertCostId - 1,
+];
 
 /**
  * Display POA expert cost details page.
