@@ -63,7 +63,7 @@
     "openid-client": "6.8.1",
     "prom-client": "^15.1.3",
     "redis": "^5.12.1",
-    "validator": "^13.15.22",
+    "validator": "^13.15.35",
     "zod": "^4.4.3"
   },
   "devDependencies": {
