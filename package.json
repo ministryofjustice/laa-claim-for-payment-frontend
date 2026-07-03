@@ -42,7 +42,7 @@
     "cookie-parser": "~1.4.6",
     "csrf-sync": "^4.2.1",
     "debug": "~4.4.3",
-    "dotenv": "^17.2.3",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-prom-bundle": "^8.0.0",
     "express-rate-limit": "^8.3.1",
