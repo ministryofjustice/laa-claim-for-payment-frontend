@@ -91,24 +91,42 @@ describe("views/main/poa/checkDetailsView.njk", () => {
       ).to.have.length(5);
     });
 
-    it("renders the evidence card", () => {
-      const card = $("#evidence");
+    describe("with evidence", () => {
+      it("renders the evidence card", () => {
+        const card = $("#evidence");
 
-      expect(card).to.have.length(1);
+        expect(card).to.have.length(1);
 
-      expect(
-        card.find(".govuk-summary-card__title").text().trim(),
-      ).to.equal(
-        "pages.poa.checkYourDetails.cya.evidence.title",
-      );
+        expect(
+          card.find(".govuk-summary-card__title").text().trim(),
+        ).to.equal(
+          "pages.poa.checkYourDetails.cya.evidence.title",
+        );
 
-      expect(
-        card.find(".govuk-summary-list__row")
-      ).to.have.length(1);
+        expect(
+          card.find(".govuk-summary-list__row")
+        ).to.have.length(1);
+      });
     });
 
+    describe("without evidence", () => {
 
+      const claim: Claim = getClaimsSuccessResponseData.body?.data![2]!;
 
+      const viewModel = new CheckDetailsViewModel(claim);
+
+      beforeEach(async () => {
+        $ = await renderView("main/poa/checkDetailsView.njk", {
+          vm: viewModel,
+        });
+      });
+
+      it("doesn't render the evidence card", () => {
+        const card = $("#evidence");
+
+        expect(card).to.have.length(0);
+      });
+    });
 
     it("renders the expert cost bill line cards", () => {
       const cards = $("#expert-cost-bill-line");

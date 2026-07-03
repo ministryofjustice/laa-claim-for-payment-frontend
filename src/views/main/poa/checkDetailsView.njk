@@ -18,11 +18,14 @@
       <h2 class="govuk-heading-m">{{ t('pages.poa.checkYourDetails.cya.title') }}</h2>
       {{ govukSummaryList(vm.profitCostDetailsSummaryList | translate) }}
       {{ govukSummaryList(vm.profitCostBillLineSummaryList | translate) }}
-      {{ govukSummaryList(vm.evidenceSummaryList | translate) }}
 
       {% for summaryList in vm.expertCostBillLineSummaryLists %}
         {{ govukSummaryList(summaryList | translate) }}
       {% endfor %}
+
+      {% if vm.evidenceSummaryList.rows.length %}
+        {{ govukSummaryList(vm.evidenceSummaryList | translate) }}
+      {% endif %}
 
       <form method="post">
         {{ govukButton({
