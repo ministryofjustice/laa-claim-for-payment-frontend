@@ -1,12 +1,13 @@
 import { expect, test } from "../fixtures/index.js";
 import { NumberOfClientsStartOfCasePage } from "#tests/playwright/pages/NumberOfClientsStartOfCasePage.js";
+import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("Number of clients start of case page", () => {
   test("displays the number of clients start of case page", async ({
     page,
     checkAccessibility,
   }) => {
-    const numberOfClientsPage = new NumberOfClientsStartOfCasePage(page);
+    const numberOfClientsPage = new NumberOfClientsStartOfCasePage(page, claim1Id);
 
     await numberOfClientsPage.navigate();
     await numberOfClientsPage.waitForLoad();
@@ -21,7 +22,7 @@ test.describe("Number of clients start of case page", () => {
   });
 
   test("shows validation error when no option is selected", async ({ page }) => {
-    const numberOfClientsPage = new NumberOfClientsStartOfCasePage(page);
+    const numberOfClientsPage = new NumberOfClientsStartOfCasePage(page, claim1Id);
 
     await numberOfClientsPage.navigate();
     await numberOfClientsPage.waitForLoad();
@@ -34,7 +35,7 @@ test.describe("Number of clients start of case page", () => {
   test("redirects to multiple client hearings when 0 is selected", async ({
     page,
   }) => {
-    const numberOfClientsPage = new NumberOfClientsStartOfCasePage(page);
+    const numberOfClientsPage = new NumberOfClientsStartOfCasePage(page, claim1Id);
 
     await numberOfClientsPage.navigate();
     await numberOfClientsPage.waitForLoad();
@@ -42,13 +43,15 @@ test.describe("Number of clients start of case page", () => {
     await numberOfClientsPage.zeroRadio.check();
     await numberOfClientsPage.saveAndContinueButton.click();
 
-    await expect(page).toHaveURL(/\/claims\/1\/poa\/multiple-client-hearings$/);
+    await expect(page).toHaveURL(
+      new RegExp(`/claims/${claim1Id}/poa/multiple-client-hearings$`)
+    );
   });
 
   test("redirects to multiple client hearings when 1 is selected", async ({
     page,
   }) => {
-    const numberOfClientsPage = new NumberOfClientsStartOfCasePage(page);
+    const numberOfClientsPage = new NumberOfClientsStartOfCasePage(page, claim1Id);
 
     await numberOfClientsPage.navigate();
     await numberOfClientsPage.waitForLoad();
@@ -56,13 +59,15 @@ test.describe("Number of clients start of case page", () => {
     await numberOfClientsPage.oneRadio.check();
     await numberOfClientsPage.saveAndContinueButton.click();
 
-    await expect(page).toHaveURL(/\/claims\/1\/poa\/multiple-client-hearings$/);
+    await expect(page).toHaveURL(
+      new RegExp(`/claims/${claim1Id}/poa/multiple-client-hearings$`)
+    );
   });
 
   test("redirects to multiple client hearings when 2+ is selected", async ({
     page,
   }) => {
-    const numberOfClientsPage = new NumberOfClientsStartOfCasePage(page);
+    const numberOfClientsPage = new NumberOfClientsStartOfCasePage(page, claim1Id);
 
     await numberOfClientsPage.navigate();
     await numberOfClientsPage.waitForLoad();
@@ -70,6 +75,8 @@ test.describe("Number of clients start of case page", () => {
     await numberOfClientsPage.twoPlusRadio.check();
     await numberOfClientsPage.saveAndContinueButton.click();
 
-    await expect(page).toHaveURL(/\/claims\/1\/poa\/multiple-client-hearings$/);
+    await expect(page).toHaveURL(
+      new RegExp(`/claims/${claim1Id}/poa/multiple-client-hearings$`)
+    );
   });
 });

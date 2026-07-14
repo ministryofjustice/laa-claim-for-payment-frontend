@@ -2,6 +2,7 @@ import type { NextFunction, Response } from "express";
 import { processError } from "#src/helpers/index.js";
 import type { DeleteFileRequest, MulterRequest } from "#src/types/requests.js";
 import { uploadService } from "#src/services/uploadService.js";
+import { UUID } from "uuidv7";
 const BAD_REQUEST = 400;
 
 function validateUploadedFile(
@@ -60,7 +61,7 @@ export async function uploadEvidenceFile(
 
     const response = await uploadService.uploadEvidence(
       req.axiosMiddleware,
-      Number(req.params.claimId),
+      UUID.parse(req.params.claimId),
       file,
       translations,
     );
@@ -100,8 +101,8 @@ export async function uploadEvidenceFileForLineItem(
 
     const response = await uploadService.uploadLineItemEvidence(
       req.axiosMiddleware,
-      Number(req.params.claimId),
-      Number(req.params.lineItemId),
+      UUID.parse(req.params.claimId),
+      UUID.parse(req.params.lineItemId),
       file,
       translations,
     );
@@ -143,8 +144,8 @@ export async function deleteEvidenceFileFromClaim(
 
     const response = await uploadService.deleteEvidenceFromClaim(
       axiosMiddleware,
-      Number(claimId),
-      Number(fileId),
+      UUID.parse(claimId),
+      UUID.parse(fileId),
     );
 
     res.json(response);
@@ -180,9 +181,9 @@ export async function unlinkEvidenceFileFromLineItem(
 
     const response = await uploadService.unlinkEvidenceFromLineItem(
       req.axiosMiddleware,
-      Number(req.params.claimId),
-      Number(req.params.lineItemId),
-      Number(fileId),
+      UUID.parse(req.params.claimId),
+      UUID.parse(req.params.lineItemId),
+      UUID.parse(fileId),
     );
 
     res.json(response);

@@ -3,16 +3,20 @@ import {
   ProfitCostBillLineViewModel,
   ProfitCostBillLineViewModelParams,
 } from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
+import { V7Generator } from "uuidv7";
 
 describe("profitCostBillLineViewModel constructor", () => {
+
+  const claimId = new V7Generator().generate();
+
   it("constructs view model when form/errors undefined", () => {
     const params: ProfitCostBillLineViewModelParams = {
-      claimId: 1,
+      claimId: claimId,
     };
 
     const result = new ProfitCostBillLineViewModel(params);
 
-    expect(result.claimId).to.equal(1);
+    expect(result.claimId).to.equal(claimId.toString());
     expect(result.title).to.equal("pages.profitCostBillLine.title");
     expect(result.form).to.deep.equal({
       activityDate: {
@@ -66,7 +70,7 @@ describe("profitCostBillLineViewModel constructor", () => {
 
   it("constructs view model when form/errors defined", () => {
     const params: ProfitCostBillLineViewModelParams = {
-      claimId: 1,
+      claimId: claimId,
       form: {
         activityDateDay: "1",
         activityDateMonth: "1",
@@ -89,7 +93,7 @@ describe("profitCostBillLineViewModel constructor", () => {
 
     const result = new ProfitCostBillLineViewModel(params);
 
-    expect(result.claimId).to.equal(1);
+    expect(result.claimId).to.equal(claimId.toString());
     expect(result.title).to.equal("pages.profitCostBillLine.title");
     expect(result.form).to.deep.equal({
       activityDate: {

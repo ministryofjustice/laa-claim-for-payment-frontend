@@ -33,7 +33,7 @@ export async function handleYourClaimsPage(
         table: claimsTableViewModel.table,
         pagination: claimsTableViewModel.pagination,
         createClaimHref: buildRoute(ROUTES.CHOOSE_UPLOAD, {
-          claimId: 3, //todo test only
+          claimId: "019f5c43-d9f0-732e-88b2-1ca29c6c41de", //todo test only
         }),
       });
     } else {

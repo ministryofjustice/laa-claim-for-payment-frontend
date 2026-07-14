@@ -3,6 +3,10 @@ import { FileUploadForLineItemPage } from "#tests/playwright/pages/FileUploadFor
 import path from "path";
 import os from "os";
 import fs from "fs";
+import {
+  claim1Id,
+  lineItemId,
+} from "#tests/playwright/factories/handlers/api.js";
 
 test("upload a file then delete the file", async ({
   page,
@@ -10,7 +14,7 @@ test("upload a file then delete the file", async ({
 }) => {
   const fileName = "test.pdf";
 
-  const fileUploadForLineItemPage = new FileUploadForLineItemPage(page);
+  const fileUploadForLineItemPage = new FileUploadForLineItemPage(page, claim1Id, lineItemId);
 
   await fileUploadForLineItemPage.navigate();
   await fileUploadForLineItemPage.waitForLoad();

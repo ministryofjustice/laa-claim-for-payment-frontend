@@ -15,6 +15,7 @@ import type { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js"
 import config from "../../config.js";
 import { escapeHtml } from "#src/helpers/escapehtml.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
+import type { UUID } from "uuidv7";
 
 interface UploadServiceDeps {
   createClient: typeof createClient;
@@ -43,18 +44,18 @@ class UploadService {
    * Link an array of evidence IDs to the given line item ID.
    *
    * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
-   * @param {number} claimId - Claim identifier.
-   * @param {number} lineItemId - Line item identifier.
-   * @param {number[]} evidenceIds - Evidence identifiers.
+   * @param {UUID} claimId - Claim identifier.
+   * @param {UUID} lineItemId - Line item identifier.
+   * @param {UUID[]} evidenceIds - Evidence identifiers.
    * @param {UploadServiceDeps} deps - Service dependencies used to create the client and call the generated API.
    * @returns {Promise<ApiResponse<null>>} Null response in app response format.
    */
   // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   static async linkEvidenceToLineItem(
     axiosMiddleware: AxiosInstanceWrapper,
-    claimId: number,
-    lineItemId: number,
-    evidenceIds: number[],
+    claimId: UUID,
+    lineItemId: UUID,
+    evidenceIds: UUID[],
     deps: UploadServiceDeps = defaultDeps,
   ): Promise<ApiResponse<null>> {
     const apiClient = deps.createClient({
@@ -67,10 +68,10 @@ class UploadService {
       await deps.linkEvidenceToLineItem({
         client: apiClient,
         path: {
-          claimId,
-          lineItemId,
+          claimId: claimId.toString(),
+          lineItemId: lineItemId.toString(),
         },
-        body: evidenceIds,
+        body: evidenceIds.map(evidenceId => evidenceId.toString()),
       });
 
       return {
@@ -97,7 +98,7 @@ class UploadService {
   // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   static async uploadEvidence(
     axiosMiddleware: AxiosInstanceWrapper,
-    claimId: number,
+    claimId: UUID,
     file: Express.Multer.File,
     translations: {
       uploaded: string;
@@ -120,7 +121,7 @@ class UploadService {
       const response = await deps.uploadClaimEvidence({
         client: apiClient,
         path: {
-          claimId,
+          claimId: claimId.toString(),
         },
         body: {
           documents: new File([arrayBuffer], file.originalname, {
@@ -152,7 +153,7 @@ class UploadService {
               </span>`,
           },
           file: {
-            filename: String(response.data.evidenceId),
+            filename: response.data.evidenceId,
             originalname: file.originalname,
           },
         },
@@ -166,8 +167,8 @@ class UploadService {
    * Uploads evidence for a claim line item and returns a response for the multi-file upload component.
    *
    * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.   
-   * @param {number} claimId - Claim identifier.
-   * @param {number} lineItemId - Line item identifier.
+   * @param {UUID} claimId - Claim identifier.
+   * @param {UUID} lineItemId - Line item identifier.
    * @param {object} file Uploaded file from multer.
    * @param {object} translations Translations.
    * @param {string} translations.uploaded Translation for uploaded message.
@@ -178,8 +179,8 @@ class UploadService {
   // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   static async uploadLineItemEvidence(
     axiosMiddleware: AxiosInstanceWrapper,
-    claimId: number,
-    lineItemId: number,
+    claimId: UUID,
+    lineItemId: UUID,
     file: Express.Multer.File,
     translations: {
       uploaded: string;
@@ -202,8 +203,8 @@ class UploadService {
       const response = await deps.uploadLineItemEvidence({
         client: apiClient,
         path: {
-          claimId,
-          lineItemId,
+          claimId: claimId.toString(),
+          lineItemId: lineItemId.toString(),
         },
         body: {
           documents: new File([arrayBuffer], file.originalname, {
@@ -235,7 +236,7 @@ class UploadService {
               </span>`,
           },
           file: {
-            filename: String(response.data.evidenceId),
+            filename: response.data.evidenceId,
             originalname: file.originalname,
           },
         },
@@ -248,19 +249,19 @@ class UploadService {
   /**
    * Unlink evidence from a line item.
    *
-   * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.   * @param {number} claimId Claim ID.
-   * @param {number} claimId - Claim identifier.
-   * @param {number} lineItemId - Line item identifier.
-   * @param {number} evidenceId - Evidence identifier.
+   * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
+   * @param {UUID} claimId - Claim identifier.
+   * @param {UUID} lineItemId - Line item identifier.
+   * @param {UUID} evidenceId - Evidence identifier.
    * @param {UploadServiceDeps} deps - Service dependencies used to create the client and call the generated API.
    * @returns {Promise<ApiResponse<null>>} Null response in app response format.
    */
   // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   static async unlinkEvidenceFromLineItem(
     axiosMiddleware: AxiosInstanceWrapper,
-    claimId: number,
-    lineItemId: number,
-    evidenceId: number,
+    claimId: UUID,
+    lineItemId: UUID,
+    evidenceId: UUID,
     deps: UploadServiceDeps = defaultDeps,
   ): Promise<ApiResponse<null>> {
     try {
@@ -273,9 +274,9 @@ class UploadService {
       await deps.unlinkEvidenceFromLineItem({
         client: apiClient,
         path: {
-          claimId,
-          lineItemId,
-          evidenceId,
+          claimId: claimId.toString(),
+          lineItemId: lineItemId.toString(),
+          evidenceId: evidenceId.toString(),
         },
       });
 
@@ -292,15 +293,15 @@ class UploadService {
   * Delete evidence from a claim.
   *
   * @param {AxiosInstanceWrapper} axiosMiddleware Wrapped Axios client from request middleware.
-  * @param {number} claimId Claim identifier.
-  * @param {number} evidenceId Evidence identifier.
+  * @param {UUID} claimId Claim identifier.
+  * @param {UUID} evidenceId Evidence identifier.
   * @param {UploadServiceDeps} deps Service dependencies used to create the client and call the generated API.
   * @returns {Promise<ApiResponse<null>>} Null response in app response format.
   */
   static async deleteEvidenceFromClaim(
   axiosMiddleware: AxiosInstanceWrapper,
-  claimId: number,
-  evidenceId: number,
+  claimId: UUID,
+  evidenceId: UUID,
   deps: UploadServiceDeps = defaultDeps,
   ): Promise<ApiResponse<null>> {
     try {
@@ -313,8 +314,8 @@ class UploadService {
       await deps.deleteEvidenceFromClaim({
         client: apiClient,
         path: {
-          claimId,
-          evidenceId,
+          claimId: claimId.toString(),
+          evidenceId: evidenceId.toString(),
         },
       });
 

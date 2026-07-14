@@ -12,6 +12,7 @@ import {
 import { getForm } from "#src/helpers/validation.js";
 import type { AnswersCache } from "#src/services/answersCache.js";
 import { ExpertCostDetailsSchema, type ExpertCostPoa } from "#src/types/poa.js";
+import { UUID } from "uuidv7";
 
 const path = (expertCostId: number): ["poa", keyof ExpertCostPoa, number] => [
   "poa",
@@ -35,7 +36,7 @@ export async function expertCostDetails(
   dependencies: { answersCache: AnswersCache },
 ): Promise<void> {
   try {
-    const claimId = Number(req.params.claimId);
+    const claimId = UUID.parse(req.params.claimId);
     const expertCostId = Number(req.params.expertCostId);
 
     const cachedAnswer = await dependencies.answersCache.get(
@@ -87,7 +88,7 @@ export async function submitExpertCostDetails(
   dependencies: { answersCache: AnswersCache },
 ): Promise<void> {
   try {
-    const claimId = Number(req.params.claimId);
+    const claimId = UUID.parse(req.params.claimId);
     const expertCostId = Number(req.params.expertCostId);
 
     const form = getForm(req.body) as ExpertCostDetailsForm;

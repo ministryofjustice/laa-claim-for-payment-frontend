@@ -9,11 +9,14 @@ import {
 } from "#src/controllers/poa/expertCostDetailsController.js";
 import type { AnswersCache } from "#src/services/answersCache.js";
 import { ExpertCostDetailsSchema } from "#src/types/poa.js";
+import { V7Generator } from "uuidv7";
 
 describe("expertCostDetailsController", () => {
   let res: Response;
   let next: NextFunction;
   let answersCache: AnswersCache;
+
+  const claimId = new V7Generator().generate();
 
   beforeEach(() => {
     res = {
@@ -39,7 +42,7 @@ describe("expertCostDetailsController", () => {
     const req = {
       sessionID: "session-123",
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
         expertCostId: "1",
       },
     } as unknown as Request;
@@ -49,7 +52,7 @@ describe("expertCostDetailsController", () => {
     const args = (answersCache.get as sinon.SinonStub).firstCall.args;
 
     expect(args[0]).to.equal("session-123");
-    expect(args[1]).to.equal(1);
+    expect(args[1]).to.deep.equal(claimId);
     expect(args[2]).to.deep.equal(["poa", "details", 0]);
     expect(args[3]).to.equal(ExpertCostDetailsSchema);
 
@@ -67,7 +70,7 @@ describe("expertCostDetailsController", () => {
     const req = {
       sessionID: "session-123",
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
         expertCostId: "1",
       },
       body: {
@@ -86,7 +89,7 @@ describe("expertCostDetailsController", () => {
     expect((answersCache.set as sinon.SinonStub).calledOnce).to.equal(true);
     expect((answersCache.set as sinon.SinonStub).firstCall.args).to.deep.equal([
       "session-123",
-      1,
+      claimId,
       ["poa", "details", 0],
       {
         activityDate: new Date(2007, 2, 27),
@@ -100,7 +103,7 @@ describe("expertCostDetailsController", () => {
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
         buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, {
-          claimId: 1,
+          claimId: claimId,
         }),
       ),
     ).to.be.true;
@@ -110,7 +113,7 @@ describe("expertCostDetailsController", () => {
     const req = {
       sessionID: "session-123",
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {},
     } as unknown as Request;

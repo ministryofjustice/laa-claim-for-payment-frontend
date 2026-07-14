@@ -1,22 +1,22 @@
 import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
-import { Claim } from "#src/types/Claim.js";
-import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
-import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
 import {
   ExpertCostDetailsViewModel,
   ExpertCostDetailsViewModelParams,
 } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
+import { V7Generator } from "uuidv7";
 
 chaiConfig.truncateThreshold = 0;
 
 describe("views/main/poa/expertCostDetailsView.njk", () => {
   let $: CheerioAPI;
 
+  const claimId = new V7Generator().generate();
+
   describe("view with no errors", () => {
     const params: ExpertCostDetailsViewModelParams = {
-      claimId: 1,
+      claimId: claimId,
       expertCostId: 1,
     };
 
@@ -79,7 +79,7 @@ describe("views/main/poa/expertCostDetailsView.njk", () => {
 
   describe("view with errors", () => {
     const params: ExpertCostDetailsViewModelParams = {
-      claimId: 1,
+      claimId: claimId,
       expertCostId: 1,
       form: {
         activityDateDay: "",

@@ -9,6 +9,7 @@ import type { NextFunction, Request, Response } from "express";
 import { validateRadioInput } from "#src/helpers/validation.js";
 import type { AnswersCache } from "#src/services/answersCache.js";
 import { type Poa, PoaClaimTypeChoice } from "#src/types/poa.js";
+import { UUID } from "uuidv7";
 
 const poaClaimTypeFieldName = "poaClaimType" as const;
 const path: ["poa", keyof Poa] = ["poa", "type"];
@@ -50,7 +51,7 @@ export async function poaClaimTypePage(
   dependencies: { answersCache: AnswersCache },
 ): Promise<void> {
   try {
-    const claimId = Number(req.params.claimId);
+    const claimId = UUID.parse(req.params.claimId);
 
     const cachedAnswer = await dependencies.answersCache.get(
       req.sessionID,
@@ -119,7 +120,7 @@ export async function submitPoaClaimType(
       return;
     }
 
-    const claimId = Number(req.params.claimId);
+    const claimId = UUID.parse(req.params.claimId);
 
     await dependencies.answersCache.set(
       req.sessionID,

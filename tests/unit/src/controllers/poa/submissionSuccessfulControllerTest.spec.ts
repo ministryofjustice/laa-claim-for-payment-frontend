@@ -4,18 +4,21 @@ import * as sinon from "sinon";
 import type { Request, Response } from "express";
 import "#utils/axiosSetup.js";
 import { poaSubmissionSuccessfulPage } from "#src/controllers/poa/submissionSuccessfulController.js";
+import { V7Generator } from "uuidv7";
 
-describe("View Claim Controller", () => {
+describe("Submission Successful Controller", () => {
   let req: Partial<Request>;
   let res: any;
   let next: any;
   let renderStub: sinon.SinonStub;
 
+  const claimId = new V7Generator().generate();
+
   beforeEach(() => {
     req = {
       axiosMiddleware: {} as any,
-      path: "/claims/1/poa-submitted",
-      params: { claimId: "1" },
+      path: `/claims/${claimId}/poa-submitted`,
+      params: { claimId: claimId.toString() },
     };
 
     renderStub = sinon.stub();

@@ -10,12 +10,17 @@ import {
 import type { MulterRequest } from "#src/types/requests.js";
 import { uploadService } from "#src/services/uploadService.js";
 import type { TFunction } from "#node_modules/i18next/index.js";
+import { V7Generator } from "uuidv7";
 
 describe("ajaxFileUploadController", () => {
   let res: Response;
   let next: NextFunction;
 
   const mockT: TFunction = ((key: string) => key) as TFunction;
+
+  const claimId = new V7Generator().generate();
+  const lineItemId = new V7Generator().generate();
+  const evidenceId = new V7Generator().generate();
 
   beforeEach(() => {
     res = {
@@ -37,7 +42,7 @@ describe("ajaxFileUploadController", () => {
     beforeEach(() => {
       req = {
         params: {
-          claimId: "1",
+          claimId: claimId.toString(),
         },
         t: mockT,
       } as unknown as MulterRequest;
@@ -89,7 +94,7 @@ describe("ajaxFileUploadController", () => {
             messageHtml: "<span>Uploaded</span>",
           },
           file: {
-            filename: "1",
+            filename: evidenceId.toString(),
             originalname: "evidence.pdf",
           },
         },
@@ -109,7 +114,7 @@ describe("ajaxFileUploadController", () => {
 
       expect(uploadEvidenceStub.calledOnce).to.equal(true);
       expect(uploadEvidenceStub.calledWith(req.axiosMiddleware)).to.equal(true);
-      expect(uploadEvidenceStub.firstCall.args[1]).to.equal(1);
+      expect(uploadEvidenceStub.firstCall.args[1]).to.deep.equal(claimId);
       expect(uploadEvidenceStub.firstCall.args[2]).to.equal(req.file);
 
       expect((res.json as sinon.SinonStub).calledOnce).to.equal(true);
@@ -129,8 +134,8 @@ describe("ajaxFileUploadController", () => {
     beforeEach(() => {
       req = {
         params: {
-          claimId: "1",
-          lineItemId: "2",
+          claimId: claimId.toString(),
+          lineItemId: lineItemId.toString(),
         },
         t: mockT,
       } as unknown as MulterRequest;
@@ -185,7 +190,7 @@ describe("ajaxFileUploadController", () => {
             messageHtml: "<span>Uploaded</span>",
           },
           file: {
-            filename: "1",
+            filename: evidenceId.toString(),
             originalname: "evidence.pdf",
           },
         },
@@ -194,7 +199,7 @@ describe("ajaxFileUploadController", () => {
       uploadLineItemEvidenceStub.resolves(mockApiResponse);
 
       req.file = {
-        filename: "abc123",
+        filename: evidenceId.toString(),
         originalname: "evidence.pdf",
         size: 12345,
         mimetype: "application/pdf",
@@ -207,8 +212,8 @@ describe("ajaxFileUploadController", () => {
       expect(uploadLineItemEvidenceStub.calledWith(req.axiosMiddleware)).to.equal(
         true,
       );
-      expect(uploadLineItemEvidenceStub.firstCall.args[1]).to.equal(1);
-      expect(uploadLineItemEvidenceStub.firstCall.args[2]).to.equal(2);
+      expect(uploadLineItemEvidenceStub.firstCall.args[1]).to.deep.equal(claimId);
+      expect(uploadLineItemEvidenceStub.firstCall.args[2]).to.deep.equal(lineItemId);
       expect(uploadLineItemEvidenceStub.firstCall.args[3]).to.equal(req.file);
 
       expect((res.json as sinon.SinonStub).calledOnce).to.equal(true);

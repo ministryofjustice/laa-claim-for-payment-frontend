@@ -5,6 +5,7 @@ import { processApiError, processError } from "#src/helpers/index.js";
 import createHttpError from "http-errors";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { uploadService } from "#src/services/uploadService.js";
+import { UUID } from "uuidv7";
 
 /**
  * File upload page for Bill narrative.
@@ -20,18 +21,18 @@ export async function fileUploadForLineItemPage(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = Number(req.params.claimId);
-    const lineItemId = Number(req.params.lineItemId);
+    const claimId = UUID.parse(req.params.claimId);
+    const lineItemId = UUID.parse(req.params.lineItemId);
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {
       const { body: claim } = response;
       const { lineItems } = claim;
 
-      const lineItem = lineItems?.find((item) => item.id === lineItemId);
+      const lineItem = lineItems?.find((item) => item.id === lineItemId.toString());
 
       if (lineItem === undefined) {
-        next(new createHttpError.NotFound(`Line item ${lineItemId} not found`));
+        next(new createHttpError.NotFound(`Line item ${lineItemId.toString()} not found`));
         return;
       }
 
@@ -78,18 +79,18 @@ export async function linkEvidenceToLineItem(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = Number(req.params.claimId);
-    const lineItemId = Number(req.params.lineItemId);
+    const claimId = UUID.parse(req.params.claimId);
+    const lineItemId = UUID.parse(req.params.lineItemId);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const documents: unknown = req.body?.documents;
 
-    const evidenceIds: number[] = Array.isArray(documents)
+    const evidenceIds: UUID[] = Array.isArray(documents)
       ? documents
           .filter((id): id is string => typeof id === "string")
           .map((id) => id.trim())
           .filter(Boolean)
-          .map(Number)
+          .map(id => UUID.parse(id))
       : [];
 
     if (evidenceIds.length > 0) {

@@ -6,10 +6,13 @@ import {
   howManyClientsRetained,
   submitHowManyClientsRetained,
 } from "#src/controllers/poa/howManyClientsRetainedController.js";
+import { V7Generator } from "uuidv7";
 
 describe("howManyClientsRetainedController", () => {
   let res: Response;
   let next: NextFunction;
+
+  const claimId = new V7Generator().generate();
 
   beforeEach(() => {
     res = {
@@ -27,7 +30,7 @@ describe("howManyClientsRetainedController", () => {
   it("renders the page", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
     } as unknown as Request;
 
@@ -48,7 +51,7 @@ describe("howManyClientsRetainedController", () => {
   it("redirects to number of clients at start of case when answer is 0", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {
         howManyClientsRetained: "none",
@@ -59,7 +62,7 @@ describe("howManyClientsRetainedController", () => {
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        "/claims/1/poa/number-of-clients-start-of-case",
+        `/claims/${claimId.toString()}/poa/number-of-clients-start-of-case`,
       ),
     ).to.be.true;
   });
@@ -70,7 +73,7 @@ describe("howManyClientsRetainedController", () => {
     selections.forEach((selection: string) => {
       const req = {
         params: {
-          claimId: "1",
+          claimId: claimId.toString(),
         },
         body: {
           howManyClientsRetained: selection,
@@ -81,7 +84,7 @@ describe("howManyClientsRetainedController", () => {
 
       expect(
         (res.redirect as sinon.SinonStub).calledWith(
-          "/claims/1/poa/multiple-client-hearings",
+          `/claims/${claimId.toString()}/poa/multiple-client-hearings`,
         ),
       ).to.be.true;
     });
@@ -90,7 +93,7 @@ describe("howManyClientsRetainedController", () => {
   it("re-renders the page with an error when no option is selected", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {},
     } as unknown as Request;
@@ -117,7 +120,7 @@ describe("howManyClientsRetainedController", () => {
   it("re-renders the page with an error when an invalid option is selected", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {
         howManyClientsRetained: "invalid",

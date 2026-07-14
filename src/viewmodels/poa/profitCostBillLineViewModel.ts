@@ -8,9 +8,10 @@ import {
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
 import { radioQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
 import { type BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
+import type { UUID } from "uuidv7";
 
 export interface ProfitCostBillLineViewModelParams {
-  claimId: number;
+  claimId: UUID;
   form?: ProfitCostBillLineForm;
   errors?: FieldValidationError[];
 }
@@ -19,7 +20,7 @@ export interface ProfitCostBillLineViewModelParams {
  * View model for the POA CPGFS profit cost bill line page.
  */
 export class ProfitCostBillLineViewModel {
-  readonly claimId: number;
+  readonly claimId: string;
   readonly title: string;
   readonly form;
   readonly errorSummary: ErrorSummary;
@@ -34,7 +35,7 @@ export class ProfitCostBillLineViewModel {
     form = {},
     errors = [],
   }: ProfitCostBillLineViewModelParams) {
-    this.claimId = claimId;
+    this.claimId = claimId.toString();
     this.title = "pages.profitCostBillLine.title";
 
     this.form = {

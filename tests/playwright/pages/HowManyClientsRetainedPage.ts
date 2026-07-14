@@ -1,5 +1,6 @@
 import type { Locator, Page } from "@playwright/test";
 import { BasePage } from "#tests/playwright/pages/BasePage.js";
+import type { UUID } from "uuidv7";
 
 /**
  * Page object for the how many clients retained page.
@@ -9,9 +10,10 @@ export class HowManyClientsRetainedPage extends BasePage {
    * Creates a page object.
    *
    * @param {Page} page The Playwright page instance.
+   * @param {UUID} claimId The claim ID.
    */
-  constructor(page: Page) {
-    super(page, "claims/1/poa/how-many-clients-retained");
+  constructor(page: Page, claimId: UUID) {
+    super(page, `claims/${claimId.toString()}/poa/how-many-clients-retained`);
   }
 
   /**

@@ -9,6 +9,7 @@ import { getClaimSuccessResponseData } from "#tests/assets/getClaimsResponseData
 import { ApiResponse } from "#src/types/api-types.js";
 import { Claim } from "#src/types/Claim.js";
 import { HttpError } from "http-errors";
+import { V7Generator } from "uuidv7";
 
 describe("View Claim Controller", () => {
   let req: Partial<Request>;
@@ -18,11 +19,13 @@ describe("View Claim Controller", () => {
   let statusStub: sinon.SinonStub;
   let claimServiceStub: sinon.SinonStub;
 
+  const claimId = new V7Generator().generate();
+
   beforeEach(() => {
     req = {
       axiosMiddleware: {} as any,
-      path: "/claims/1",
-      params: { claimId: "1" }
+      path: `/claims/${claimId}`,
+      params: { claimId: claimId.toString() }
     };
 
     renderStub = sinon.stub();

@@ -11,6 +11,7 @@ import {
   transferOfSolicitorFieldName,
 } from "#src/controllers/poa/profitCostDetailsController.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
+import { V7Generator } from "uuidv7";
 
 describe("Profit cost details controller", () => {
   let req: Partial<Request>;
@@ -20,11 +21,13 @@ describe("Profit cost details controller", () => {
   let statusStub: sinon.SinonStub;
   let redirectStub: sinon.SinonStub;
 
+  const claimId = new V7Generator().generate();
+
   beforeEach(() => {
     req = {
       body: {},
       path: "/poa/profit-cost",
-      params: { claimId: "1" },
+      params: { claimId: claimId.toString() },
     };
 
     renderStub = sinon.stub();
@@ -70,7 +73,7 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
     const expectedRoute = buildRoute(
       ROUTES.HOW_MANY_CLIENTS_RETAINED,
-      { claimId: 1 },
+      { claimId: claimId },
     );
 
     expect(redirectStub.calledWith(expectedRoute)).to.be.true;
@@ -90,7 +93,7 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
     const expectedRoute = buildRoute(
       ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
-      { claimId: 1 },
+      { claimId: claimId },
     );
 
     expect(redirectStub.calledWith(expectedRoute)).to.be.true;

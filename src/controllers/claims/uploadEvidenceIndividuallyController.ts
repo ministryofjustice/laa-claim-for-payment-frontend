@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { UploadEvidenceIndividuallyViewModel } from "#src/viewmodels/uploadEvidenceIndividuallyViewModel.js";
 import { claimService } from "#src/services/claimService.js";
 import { processApiError, processError } from "#src/helpers/index.js";
+import { UUID } from "uuidv7";
 
 /**
  * Handle upload evidence individually view
@@ -16,7 +17,7 @@ export async function viewUploadEvidenceIndividuallyPage(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = Number(req.params.claimId);
+    const claimId = UUID.parse(req.params.claimId);
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {

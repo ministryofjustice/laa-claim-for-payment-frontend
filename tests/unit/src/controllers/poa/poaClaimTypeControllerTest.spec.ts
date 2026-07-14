@@ -8,11 +8,14 @@ import {
 } from "#src/controllers/poa/poaClaimTypeController.js";
 import type { AnswersCache } from "#src/services/answersCache.js";
 import { z } from "zod";
+import { V7Generator } from "uuidv7";
 
 describe("poaClaimTypeController", () => {
   let res: Response;
   let next: NextFunction;
   let answersCache: AnswersCache;
+
+  const claimId = new V7Generator().generate();
 
   beforeEach(() => {
     res = {
@@ -38,7 +41,7 @@ describe("poaClaimTypeController", () => {
     const req = {
       sessionID: "session-123",
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
     } as unknown as Request;
 
@@ -47,7 +50,7 @@ describe("poaClaimTypeController", () => {
     const args = (answersCache.get as sinon.SinonStub).firstCall.args;
 
     expect(args[0]).to.equal("session-123");
-    expect(args[1]).to.equal(1);
+    expect(args[1]).to.deep.equal(claimId);
     expect(args[2]).to.deep.equal(["poa", "type"]);
     expect(args[3]).to.be.instanceOf(z.ZodString);
 
@@ -74,7 +77,7 @@ describe("poaClaimTypeController", () => {
     const req = {
       sessionID: "session-123",
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {
         poaClaimType: "profit-cost",
@@ -86,14 +89,14 @@ describe("poaClaimTypeController", () => {
     expect((answersCache.set as sinon.SinonStub).calledOnce).to.equal(true);
     expect((answersCache.set as sinon.SinonStub).firstCall.args).to.deep.equal([
       "session-123",
-      1,
+      claimId,
       ["poa", "type"],
       "profit-cost",
     ]);
 
     expect((res.redirect as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.redirect as sinon.SinonStub).firstCall.args).to.deep.equal([
-      "/claims/1/poa/profit-cost-details",
+      `/claims/${claimId.toString()}/poa/profit-cost-details`,
     ]);
   });
 
@@ -101,7 +104,7 @@ describe("poaClaimTypeController", () => {
     const req = {
       sessionID: "session-123",
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {
         poaClaimType: "expert-cost",
@@ -113,14 +116,14 @@ describe("poaClaimTypeController", () => {
     expect((answersCache.set as sinon.SinonStub).calledOnce).to.equal(true);
     expect((answersCache.set as sinon.SinonStub).firstCall.args).to.deep.equal([
       "session-123",
-      1,
+      claimId,
       ["poa", "type"],
       "expert-cost",
     ]);
 
     expect((res.redirect as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.redirect as sinon.SinonStub).firstCall.args).to.deep.equal([
-      "/claims/1/poa/expert-cost-details/1",
+      `/claims/${claimId}/poa/expert-cost-details/1`,
     ]);
   });
 
@@ -128,7 +131,7 @@ describe("poaClaimTypeController", () => {
     const req = {
       sessionID: "session-123",
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {
         poaClaimType: "non-expert-disbursement",
@@ -140,14 +143,14 @@ describe("poaClaimTypeController", () => {
     expect((answersCache.set as sinon.SinonStub).calledOnce).to.equal(true);
     expect((answersCache.set as sinon.SinonStub).firstCall.args).to.deep.equal([
       "session-123",
-      1,
+      claimId,
       ["poa", "type"],
       "non-expert-disbursement",
     ]);
 
     expect((res.redirect as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.redirect as sinon.SinonStub).firstCall.args).to.deep.equal([
-      "/claims/1/poa/non-expert-disbursement",
+      `/claims/${claimId}/poa/non-expert-disbursement`,
     ]);
   });
 
@@ -155,7 +158,7 @@ describe("poaClaimTypeController", () => {
     const req = {
       sessionID: "session-123",
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {},
     } as unknown as Request;
@@ -184,7 +187,7 @@ describe("poaClaimTypeController", () => {
     const req = {
       sessionID: "session-123",
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {
         poaClaimType: "something-invalid",

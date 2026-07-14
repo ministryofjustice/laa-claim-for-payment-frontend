@@ -2,9 +2,10 @@ import { expect } from "chai";
 import sinon from "sinon";
 import { buildAnswersCache } from "#src/services/answersCache.js";
 import { z } from "zod";
+import { V7Generator } from "uuidv7";
 
 const sessionId = "session-123";
-const claimId = 1;
+const claimId = new V7Generator().generate();
 
 describe("answersCache", () => {
   const redisClient = {
@@ -39,13 +40,13 @@ describe("answersCache", () => {
 
     const [key1, path1, value1] = redisClient.json.set.firstCall.args;
 
-    expect(key1).to.equal("answers:session-123:1");
+    expect(key1).to.equal(`answers:${sessionId}:${claimId.toString()}`);
     expect(path1).to.equal("$");
     expect(value1).to.deep.equal({});
 
     const [key2, path2, value2] = redisClient.json.set.secondCall.args;
 
-    expect(key2).to.equal("answers:session-123:1");
+    expect(key2).to.equal(`answers:${sessionId}:${claimId.toString()}`);
     expect(path2).to.equal("$.poa");
     expect(value2).to.deep.equal({ field: "value" });
   });
@@ -94,7 +95,7 @@ describe("answersCache", () => {
 
     const [key, path, value] = redisClient.json.arrAppend.firstCall.args;
 
-    expect(key).to.equal("answers:session-123:1");
+    expect(key).to.equal(`answers:${sessionId}:${claimId.toString()}`);
     expect(path).to.equal("$.poa.expertCost");
     expect(value).to.deep.equal({ amount: 100 });
   });
@@ -121,7 +122,7 @@ describe("answersCache", () => {
     await cache.clear(sessionId, claimId);
 
     expect(
-      redisClient.del.calledOnceWithExactly("answers:session-123:1"),
+      redisClient.del.calledOnceWithExactly(`answers:${sessionId}:${claimId.toString()}`),
     ).to.equal(true);
   });
 

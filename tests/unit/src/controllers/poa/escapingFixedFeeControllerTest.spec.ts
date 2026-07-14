@@ -3,10 +3,13 @@ import { describe, it, beforeEach } from "mocha";
 import sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
 import { escapingFixedFee, submitEscapingFixedFee } from "#src/controllers/poa/escapingFixedFeeController.js";
+import { V7Generator } from "uuidv7";
 
 describe("escapingFixedFeeController", () => {
   let res: Response;
   let next: NextFunction;
+
+  const claimId = new V7Generator().generate();
 
   beforeEach(() => {
     res = {
@@ -24,7 +27,7 @@ describe("escapingFixedFeeController", () => {
   it("renders the escaping the fixed fee radio question page", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
     } as unknown as Request;
 
@@ -45,7 +48,7 @@ describe("escapingFixedFeeController", () => {
   it("redirects to CPGFS profit cost bill line page when escaping fixed fee answer is given", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {
         escapingFixedFee: "yes",
@@ -55,14 +58,14 @@ describe("escapingFixedFeeController", () => {
     submitEscapingFixedFee(req, res, next);
 
     expect((res.redirect as sinon.SinonStub).calledWith(
-      "/claims/1/poa/cpgfs-profit-cost-bill-line",
+      `/claims/${claimId.toString()}/poa/cpgfs-profit-cost-bill-line`,
     )).to.equal(true);
   });
 
   it("rerenders the radio question page with an error when no option is selected", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {},
     } as unknown as Request;
@@ -89,7 +92,7 @@ describe("escapingFixedFeeController", () => {
   it("rerenders with selected invalid string preserved when invalid option is submitted", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {
         escapingFixedFee: "invalid",

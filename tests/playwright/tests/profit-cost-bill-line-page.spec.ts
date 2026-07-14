@@ -1,12 +1,13 @@
 import { expect, test } from "../fixtures/index.js";
 import { ProfitCostBillLinePage } from "#tests/playwright/pages/ProfitCostBillLinePage.js";
+import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("Profit cost bill line page", () => {
   test("displays the profit cost bill line page", async ({
     page,
     checkAccessibility,
   }) => {
-    const profitCostBillLinePage = new ProfitCostBillLinePage(page);
+    const profitCostBillLinePage = new ProfitCostBillLinePage(page, claim1Id);
 
     await profitCostBillLinePage.navigate();
     await profitCostBillLinePage.waitForLoad();
@@ -30,7 +31,7 @@ test.describe("Profit cost bill line page", () => {
   test("redirects to POA evidence upload when valid form is submitted", async ({
     page,
   }) => {
-    const profitCostBillLinePage = new ProfitCostBillLinePage(page);
+    const profitCostBillLinePage = new ProfitCostBillLinePage(page, claim1Id);
 
     await profitCostBillLinePage.navigate();
     await profitCostBillLinePage.waitForLoad();
@@ -38,11 +39,13 @@ test.describe("Profit cost bill line page", () => {
     await profitCostBillLinePage.fillValidForm();
     await profitCostBillLinePage.saveAndContinueButton.click();
 
-    await expect(page).toHaveURL(/\/claims\/1\/poa\/evidence-upload$/);
+    await expect(page).toHaveURL(
+      new RegExp(`/claims/${claim1Id}/poa/evidence-upload$`)
+    );
   });
 
   test("shows validation errors when empty form is submitted", async ({ page }) => {
-    const profitCostBillLinePage = new ProfitCostBillLinePage(page);
+    const profitCostBillLinePage = new ProfitCostBillLinePage(page, claim1Id);
 
     await profitCostBillLinePage.navigate();
     await profitCostBillLinePage.waitForLoad();

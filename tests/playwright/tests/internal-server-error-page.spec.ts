@@ -1,7 +1,8 @@
 import { test, expect } from '../fixtures/index.js';
+import { claim2Id } from "#tests/playwright/factories/handlers/api.js";
 
 test('internal server error page should have the correct title', async ({ page }) => {
-	const response = await page.goto('/claims/2');
+	const response = await page.goto(`/claims/${claim2Id}`);
 
   if (!response) {
     throw new Error('No response returned from page.goto');

@@ -1,5 +1,6 @@
 import type { Locator, Page } from "@playwright/test";
 import { BasePage } from "#tests/playwright/pages/BasePage.js";
+import { claim2Id } from "#tests/playwright/factories/handlers/api.js";
 
 /**
  * Page object for the internal server error page
@@ -11,7 +12,7 @@ export class InternalServerErrorPage extends BasePage {
    * @param {Page} page - The Playwright page instance
    */
   constructor(page: Page) {
-    super(page, `claims/2`);
+    super(page, `claims/${claim2Id.toString()}`);
   }
 
   /**

@@ -2,11 +2,14 @@ import { expect } from "chai";
 import sinon from "sinon";
 import { claimService } from "#src/services/claimService.js";
 import { ApiError } from "#src/types/api-types.js";
+import { V7Generator } from "uuidv7";
 
 describe("Claim Service", () => {
   afterEach(() => {
     sinon.restore();
   });
+
+  const claimId = new V7Generator().generate();
 
   describe("getClaims", () => {
     it("returns success with paginated claims data", async () => {
@@ -16,7 +19,7 @@ describe("Claim Service", () => {
           data: {
             claims: [
               {
-                id: 1,
+                id: claimId.toString(),
                 ufn: "UFN-1",
                 providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
                 client: "Jane Doe",
@@ -24,7 +27,6 @@ describe("Claim Service", () => {
                 concluded: "2026-03-12",
                 feeType: "Fixed",
                 claimed: 123.45,
-                submissionId: "3fa85f64-5717-4567-b3fc-2c963f66afa7",
               },
             ],
             page: 2,
@@ -53,7 +55,7 @@ describe("Claim Service", () => {
       });
       expect(result.body?.data).to.deep.equal([
         {
-          id: 1,
+          id: claimId.toString(),
           ufn: "UFN-1",
           providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
           client: "Jane Doe",
@@ -61,7 +63,6 @@ describe("Claim Service", () => {
           concluded: new Date("2026-03-12"),
           feeType: "Fixed",
           claimed: 123.45,
-          submissionId: "3fa85f64-5717-4567-b3fc-2c963f66afa7",
         },
       ]);
     });
@@ -144,7 +145,7 @@ describe("Claim Service", () => {
         getClaims: sinon.stub(),
         getClaim: sinon.stub().resolves({
           data: {
-            id: 123,
+            id: claimId.toString(),
             ufn: "UFN-123",
             providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
             client: "Jane Doe",
@@ -152,7 +153,6 @@ describe("Claim Service", () => {
             concluded: "2024-01-02T10:00:00Z",
             feeType: "Fixed",
             claimed: 4500,
-            submissionId: "sub-1",
           },
         }),
         linkEvidenceToLineItem: sinon.stub(),
@@ -160,13 +160,13 @@ describe("Claim Service", () => {
 
       const result = await claimService.getClaim(
         { axiosInstance: {} } as any,
-        123,
+        claimId,
         deps as any
       );
 
       expect(result.status).to.equal("success");
       expect(result.body).to.deep.equal({
-        id: 123,
+        id: claimId.toString(),
         ufn: "UFN-123",
         providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
         client: "Jane Doe",
@@ -174,7 +174,6 @@ describe("Claim Service", () => {
         concluded: new Date("2024-01-02T10:00:00Z"),
         feeType: "Fixed",
         claimed: 4500,
-        submissionId: "sub-1",
       });
     });
 
@@ -201,7 +200,7 @@ describe("Claim Service", () => {
 
       const result = await claimService.getClaim(
         { axiosInstance: {} } as any,
-        123,
+        claimId,
         deps as any
       ) as ApiError;
 
@@ -220,7 +219,7 @@ describe("Claim Service", () => {
 
       const result = await claimService.getClaim(
         { axiosInstance: {} } as any,
-        999,
+        claimId,
         deps as any
       );
 
@@ -241,7 +240,7 @@ describe("Claim Service", () => {
 
       const result = await claimService.getClaim(
         { axiosInstance: {} } as any,
-        123,
+        claimId,
         deps as any
       );
 

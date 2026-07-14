@@ -1,5 +1,6 @@
 import type { Page, Locator } from '@playwright/test';
 import { BasePage } from "#tests/playwright/pages/BasePage.js";
+import type { UUID } from "uuidv7";
 
 /**
  * Page object for the choose upload page.
@@ -10,9 +11,10 @@ export class ChooseUploadPage extends BasePage {
    * Creates a choose upload page object.
    *
    * @param {Page} page The Playwright page instance.
+   * @param {UUID} claimId The claim ID.
    */
-  constructor(page: Page) {
-    super(page, 'claims/1/choose-upload');
+  constructor(page: Page, claimId: UUID) {
+    super(page, `claims/${claimId.toString()}/choose-upload`);
   }
 
   /**

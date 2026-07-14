@@ -7,10 +7,13 @@ import {
   submitProfitCostBillLine,
 } from "#src/controllers/poa/profitCostBillLineController.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
+import { V7Generator } from "uuidv7";
 
 describe("profitCostBillLineController", () => {
   let res: Response;
   let next: NextFunction;
+
+  const claimId = new V7Generator().generate();
 
   beforeEach(() => {
     res = {
@@ -28,7 +31,7 @@ describe("profitCostBillLineController", () => {
   it("renders the profit cost bill line page", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
     } as unknown as Request;
 
@@ -48,7 +51,7 @@ describe("profitCostBillLineController", () => {
   it("redirects to POA evidence upload when form is valid", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {
         activityDateDay: "27",
@@ -66,7 +69,7 @@ describe("profitCostBillLineController", () => {
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
         buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, {
-          claimId: 1,
+          claimId: claimId,
         }),
       ),
     ).to.equal(true);
@@ -75,7 +78,7 @@ describe("profitCostBillLineController", () => {
   it("rerenders with 400 when form is invalid", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {},
     } as unknown as Request;

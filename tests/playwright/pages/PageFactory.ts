@@ -5,6 +5,7 @@ import { NotFoundPage } from "#tests/playwright/pages/NotFoundPage.js";
 import { InternalServerErrorPage } from "#tests/playwright/pages/InternalServerErrorPage.js";
 import { PoaSubmissionSuccessfulPage } from "#tests/playwright/pages/PoaSubmissionSuccessfulPage.js";
 import { PoaCheckDetailsPage } from "#tests/playwright/pages/PoaCheckDetailsPage.js";
+import type { UUID } from "uuidv7";
 
 /**
  * Factory class for creating page objects
@@ -30,10 +31,10 @@ export class PageFactory {
 
   /**
    * gets the view claim page for test
-   * @param { number } id the claim id
+   * @param { UUID } id the claim id
    * @returns { ViewClaimPage } the claim page for given id
    */
-  viewClaimPage(id: number): ViewClaimPage {
+  viewClaimPage(id: UUID): ViewClaimPage {
     return new ViewClaimPage(this.page, id);
   }
 
@@ -56,19 +57,19 @@ export class PageFactory {
 
   /**
    * gets the successful POA submission page for test
-   * @param { number } claimId the claim id
+   * @param { UUID } claimId the claim id
    * @returns { PoaSubmissionSuccessfulPage } the successful POA submission page for the given claim ID
    */
-  poaSubmissionSuccessfulPage(claimId: number): PoaSubmissionSuccessfulPage {
+  poaSubmissionSuccessfulPage(claimId: UUID): PoaSubmissionSuccessfulPage {
     return new PoaSubmissionSuccessfulPage(this.page, claimId);
   }
 
   /**
    * gets the POA check details page for test
-   * @param { number } claimId the claim id
+   * @param { UUID } claimId the claim id
    * @returns { PoaCheckDetailsPage } the successful POA submission page for the given claim ID
    */
-  poaCheckDetailsPage(claimId: number): PoaCheckDetailsPage {
+  poaCheckDetailsPage(claimId: UUID): PoaCheckDetailsPage {
     return new PoaCheckDetailsPage(this.page, claimId);
   }
 }

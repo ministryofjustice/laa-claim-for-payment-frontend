@@ -1,6 +1,7 @@
 import type { Page, Locator } from '@playwright/test';
 import { BasePage } from "#tests/playwright/pages/BasePage.js";
 import { expect } from "#tests/playwright/fixtures/index.js";
+import type { UUID } from "uuidv7";
 
 /**
  * Page object for the choose upload page.
@@ -10,9 +11,11 @@ export class FileUploadForLineItemPage extends BasePage {
    * Creates a page object.
    *
    * @param {Page} page The Playwright page instance.
+   * @param {UUID} claimId The claim ID.
+   * @param {UUID} lineItemId The line item ID.
    */
-  constructor(page: Page) {
-    super(page, "claims/1/upload-evidence-individually/1/file-upload");
+  constructor(page: Page, claimId: UUID, lineItemId: UUID) {
+    super(page, `claims/${claimId.toString()}/upload-evidence-individually/${lineItemId.toString()}/file-upload`);
   }
 
   /**

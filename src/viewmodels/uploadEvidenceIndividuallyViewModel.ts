@@ -74,7 +74,7 @@ export class UploadEvidenceIndividuallyViewModel {
     })) ?? [];
   }
 
-  private static buildStatus(evidenceItems: number[]): TaskListItemStatus {
+  private static buildStatus(evidenceItems: string[]): TaskListItemStatus {
     const status = evidenceItems.length > 0 ?  UploadStatus.Uploaded : UploadStatus.NotUploaded
     return {
       tag: {

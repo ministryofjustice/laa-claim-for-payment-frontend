@@ -3,6 +3,7 @@ import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
+import { UUID } from "uuidv7";
 
 /**
  * Handle claim view with API data
@@ -17,7 +18,7 @@ export async function checkYourDetailsPage(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = Number(req.params.claimId);
+    const claimId = UUID.parse(req.params.claimId);
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {
