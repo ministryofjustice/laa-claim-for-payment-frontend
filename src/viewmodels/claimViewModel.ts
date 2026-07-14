@@ -20,10 +20,10 @@ export class ClaimViewModel {
    */
   constructor(claim: Claim) {
     this.title = "TODO";
-    this.amendLink = `/claim/${claim.id.toString()}/amend`;
+    this.amendLink = `/claim/${claim.id}/amend`;
     const rows: SummaryListRow[] = [];
 
-    rows.push({ key: { text: "Claim ID" }, value: { text: claim.id.toString() } });
+    rows.push({ key: { text: "Claim ID" }, value: { text: claim.id } });
 
     if (claim.ufn != null && claim.ufn !== "") {
       rows.push({ key: { text: "UFN" }, value: { text: claim.ufn } });

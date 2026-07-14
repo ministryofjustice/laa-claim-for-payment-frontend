@@ -14,7 +14,7 @@ describe("ClaimResponseSchema", () => {
         escaped: true,
       });
 
-      expect(result.id).to.deep.equal(id);
+      expect(result.id).to.deep.equal(id.toString());
     });
 
     it("fails to parse a uuid4 ", () => {

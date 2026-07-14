@@ -52,8 +52,8 @@ describe("ClaimsViewModel constructor()", () => {
   });
 
   it("creates a series of rows", () => {
-    const claim1Id = new V7Generator().generate();
-    const claim2Id = new V7Generator().generate();
+    const claim1Id = new V7Generator().generate().toString();
+    const claim2Id = new V7Generator().generate().toString();
 
     const claims: Claim[] = [
       {
@@ -145,7 +145,7 @@ describe("ClaimsViewModel constructor()", () => {
 
   it("paginates the data", () => {
     const claim: Claim = {
-      id: new V7Generator().generate(),
+      id: new V7Generator().generate().toString(),
       client: "Giordano",
       category: "Family",
       concluded: new Date("2025-03-18"),

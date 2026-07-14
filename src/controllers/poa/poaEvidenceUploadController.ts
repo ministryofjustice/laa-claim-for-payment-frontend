@@ -30,7 +30,7 @@ export async function poaEvidenceUploadPage(
 
     const uploadedFiles: ReusableDocument[] =
       response.body.evidence?.map((evidence) => ({
-        id: evidence.id.toString(),
+        id: evidence.id,
         name: evidence.fileKey,
         size: formatFileSize(evidence.fileSize),
       })) ?? [];

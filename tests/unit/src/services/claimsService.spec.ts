@@ -55,7 +55,7 @@ describe("Claim Service", () => {
       });
       expect(result.body?.data).to.deep.equal([
         {
-          id: claimId,
+          id: claimId.toString(),
           ufn: "UFN-1",
           providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
           client: "Jane Doe",
@@ -166,7 +166,7 @@ describe("Claim Service", () => {
 
       expect(result.status).to.equal("success");
       expect(result.body).to.deep.equal({
-        id: claimId,
+        id: claimId.toString(),
         ufn: "UFN-123",
         providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
         client: "Jane Doe",

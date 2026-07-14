@@ -29,7 +29,7 @@ export async function fileUploadForLineItemPage(
       const { body: claim } = response;
       const { lineItems } = claim;
 
-      const lineItem = lineItems?.find((item) => item.id.toString() === lineItemId.toString());
+      const lineItem = lineItems?.find((item) => item.id === lineItemId.toString());
 
       if (lineItem === undefined) {
         next(new createHttpError.NotFound(`Line item ${lineItemId.toString()} not found`));

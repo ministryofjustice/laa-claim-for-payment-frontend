@@ -41,18 +41,18 @@ export class FileUploadForLineItemViewModel {
     this.title = FileUploadForLineItemViewModel.buildTitle(lineItem);
     this.saveAndContinueHref = saveAndContinueHref;
 
-    const existingIds = new Set(lineItem.evidenceItems.map(evidenceItem => evidenceItem.toString()));
+    const existingIds = new Set(lineItem.evidenceItems);
 
     this.reusableDocuments =
       claim.evidence
-        ?.filter((evidence) => !existingIds.has(evidence.id.toString()))
+        ?.filter((evidence) => !existingIds.has(evidence.id))
         .map((evidence) =>
           FileUploadForLineItemViewModel.buildReusableDocument(evidence),
         ) ?? [];
 
     this.uploadedFiles =
       claim.evidence
-        ?.filter((evidence) => existingIds.has(evidence.id.toString()))
+        ?.filter((evidence) => existingIds.has(evidence.id))
         .map((evidence) =>
           FileUploadForLineItemViewModel.buildReusableDocument(evidence),
         ) ?? [];
@@ -62,7 +62,7 @@ export class FileUploadForLineItemViewModel {
     evidence: EvidenceItem,
   ): ReusableDocument {
     return {
-      id: evidence.id.toString(),
+      id: evidence.id,
       name: evidence.fileKey,
       size: formatFileSize(evidence.fileSize),
     };

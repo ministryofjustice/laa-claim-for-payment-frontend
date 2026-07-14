@@ -1,8 +1,7 @@
 import { z } from "zod";
-import { UUID } from "uuidv7";
 
 export const EvidenceItemSchema = z.object({
-  id: z.uuidv7().transform(val => UUID.parse(val)),
+  id: z.uuidv7(),
   fileKey: z.string(),
   fileSize: z.number(),
   submittedOn: z.string().pipe(z.coerce.date()),
@@ -19,17 +18,17 @@ export enum Category {
 export const CategorySchema = z.enum(Category);
 
 export const LineItemSchema = z.object({
-  id: z.uuidv7().transform(val => UUID.parse(val)),
+  id: z.uuidv7(),
   title: z.string(),
   category: CategorySchema,
   date: z.string().pipe(z.coerce.date()),
-  evidenceItems: z.array(z.uuidv7()).transform(x => x.map(val => UUID.parse(val))),
+  evidenceItems: z.array(z.uuidv7()),
 });
 
 export type LineItem = z.infer<typeof LineItemSchema>;
 
 export const ClaimResponseSchema = z.object({
-  id: z.uuidv7().transform(val => UUID.parse(val)),
+  id: z.uuidv7(),
   ufn: z.string().nullish(),
   providerUserId: z.string().nullish(),
   client: z.string().nullish(),
