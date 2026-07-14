@@ -4,6 +4,7 @@ import { processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { booleanChoices } from "#src/models/booleanChoice.js";
 import { validateRadioInput } from "#src/helpers/validation.js";
+import {UUID} from "uuidv7";
 
 const escapingFixedFeeFieldName = "escapingFixedFee" as const;
 
@@ -77,7 +78,7 @@ export function submitEscapingFixedFee(
       });
       return;
     }
-    const claimId = Number(req.params.claimId);
+    const claimId = UUID.parse(req.params.claimId);
 
     res.redirect(buildRoute(ROUTES.CPGFS_PROFIT_COST_BILL_LINE, { claimId }));
   } catch (error) {

@@ -33,13 +33,13 @@ export class ClaimsTableViewModel {
       },
     ];
 
-    const rows: TableCell[][] = claims.map((claim) => [
+    const rows: TableCell[][] = claims.map((claim, number) => [
       {
-        html: `<a class="govuk-link" href="/claims/${encodeURIComponent(claim.id)}">
-                ${formatClaimId(claim.id)}
+        html: `<a class="govuk-link" href="/claims/${encodeURIComponent(claim.id.toString())}">
+                ${formatClaimId(number + 1)}
                 <span class="govuk-visually-hidden"> – view claim</span>
               </a>`,
-        attributes: { "data-sort-value": claim.id }
+        attributes: { "data-sort-value": claim.id.toString() }
       },
       { text: formatOptionalString(claim.client) },
       { text: formatOptionalString(claim.category) },

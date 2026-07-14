@@ -1,7 +1,8 @@
 import { expect, test } from "../fixtures/index.js";
+import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test("page should have the correct title", async ({ page }) => {
-  await page.goto("/claims/1/poa-submitted");
+  await page.goto(`/claims/${claim1Id}/poa-submitted`);
 
   await expect(page).toHaveTitle(
     "Payment on account submitted – Claim for controlled work – GOV.UK",
@@ -12,7 +13,7 @@ test("page displays the correct content", async ({
   pages,
   checkAccessibility,
 }) => {
-  const page = pages.poaSubmissionSuccessfulPage(1);
+  const page = pages.poaSubmissionSuccessfulPage(claim1Id);
 
   await page.navigate();
   await page.waitForLoad();

@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import { HttpError } from 'http-errors';
 import multer from 'multer';
 import type { MulterRequest } from "#src/types/requests.js";
+import type { UUID } from "uuidv7";
 
 export const ROUTES = {
   CLAIMS: '/',
@@ -36,7 +37,7 @@ export const ROUTES = {
  */
 export function buildRoute(
   route: string,
-  params: Record<string, string | number>
+  params: Record<string, string | number | UUID>
 ): string {
   return Object.entries(params).reduce(
     (path, [key, value]) =>

@@ -4,6 +4,7 @@ import { processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { validateRadioInput } from "#src/helpers/validation.js";
 import { HowManyClientsRetainedChoice } from "#src/types/poa.js";
+import { UUID } from "uuidv7";
 
 const howManyClientsRetainedFieldName = "howManyClientsRetained" as const;
 
@@ -100,7 +101,7 @@ export function submitHowManyClientsRetained(
       return;
     }
 
-    const claimId = Number(req.params.claimId);
+    const claimId = UUID.parse(req.params.claimId);
 
     const redirectByChoice: Record<HowManyClientsRetainedChoice, string> = {
       [HowManyClientsRetainedChoice.None]: buildRoute(

@@ -8,9 +8,10 @@ import {
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
 import { radioQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
 import { type BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
+import type { UUID } from "uuidv7";
 
 export interface ExpertCostDetailsViewModelParams {
-  claimId: number;
+  claimId: UUID;
   expertCostId: number;
   form?: ExpertCostDetailsForm;
   errors?: FieldValidationError[];
@@ -20,7 +21,7 @@ export interface ExpertCostDetailsViewModelParams {
  * View model for the POA expert cost details page.
  */
 export class ExpertCostDetailsViewModel {
-  readonly claimId: number;
+  readonly claimId: string;
   readonly title: string;
   readonly form;
   readonly errorSummary: ErrorSummary;
@@ -33,7 +34,7 @@ export class ExpertCostDetailsViewModel {
   constructor(params: ExpertCostDetailsViewModelParams) {
     const { claimId, form = {}, errors = [] } = params;
 
-    this.claimId = claimId;
+    this.claimId = claimId.toString();
     this.title = "pages.poa.expertCostDetails.title";
 
     this.form = {

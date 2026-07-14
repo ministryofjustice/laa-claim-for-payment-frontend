@@ -5,6 +5,7 @@ import { buildRoute, ROUTES } from "#routes/helper.js";
 import { Category, type Claim, type LineItem } from "#src/types/Claim.js";
 import { formatDateReadable } from "#src/helpers/dataFormatters.js";
 import type { Message } from "./components/message.js";
+import type { UUID } from "uuidv7";
 
 /**
  *
@@ -74,7 +75,7 @@ export class UploadEvidenceIndividuallyViewModel {
     })) ?? [];
   }
 
-  private static buildStatus(evidenceItems: number[]): TaskListItemStatus {
+  private static buildStatus(evidenceItems: UUID[]): TaskListItemStatus {
     const status = evidenceItems.length > 0 ?  UploadStatus.Uploaded : UploadStatus.NotUploaded
     return {
       tag: {

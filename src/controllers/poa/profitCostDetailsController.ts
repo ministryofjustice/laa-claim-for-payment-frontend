@@ -9,6 +9,7 @@ import { getForm } from "#src/helpers/validation.js";
 import { type ProfitCostDetailsForm, validateProfitCostDetails } from "#src/helpers/profitCostDetailsValidation.js";
 import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewModel.js";
 import { ClientStatusChoice, CourtTypeChoice } from "#src/types/poa.js";
+import { UUID } from "uuidv7";
 
 /**
  * Profit cost details journey view
@@ -63,7 +64,7 @@ export function submitProfitCostDetails(
       return;
     }
 
-    const claimId = Number(req.params.claimId);
+    const claimId = UUID.parse(req.params.claimId);
 
     const redirectUrl = validationResult.value.transferOfSolicitor
       ? buildRoute(ROUTES.HOW_MANY_CLIENTS_RETAINED, { claimId })

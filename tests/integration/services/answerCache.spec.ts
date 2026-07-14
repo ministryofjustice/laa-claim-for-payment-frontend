@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { createClient, RedisClientType } from "redis";
 import { z } from "zod";
 import { buildAnswersCache } from "#src/services/answersCache.js";
+import { V7Generator } from "uuidv7";
 
 const redis = createClient({
   url: "redis://localhost:6379",
@@ -10,7 +11,7 @@ const redis = createClient({
 const cache = buildAnswersCache(redis as RedisClientType);
 
 const sessionId = "test-session";
-const claimId = 123;
+const claimId = new V7Generator().generate();
 
 describe("answersCache integration tests", () => {
   beforeEach(async () => {

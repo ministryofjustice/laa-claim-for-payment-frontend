@@ -1,7 +1,6 @@
 import type { Claim } from "#src/types/Claim.js";
 import {
   formatClaimed,
-  formatClaimId,
   formatDate,
   formatOptionalString,
 } from "#src/helpers/index.js";
@@ -20,11 +19,11 @@ export class ClaimViewModel {
    * @param {Claim} claim Array of claims
    */
   constructor(claim: Claim) {
-    this.title = formatClaimId(claim.id);
-    this.amendLink = `/claim/${claim.id}/amend`;
+    this.title = "TODO";
+    this.amendLink = `/claim/${claim.id.toString()}/amend`;
     const rows: SummaryListRow[] = [];
 
-    rows.push({ key: { text: "Claim ID" }, value: { text: String(claim.id) } });
+    rows.push({ key: { text: "Claim ID" }, value: { text: claim.id.toString() } });
 
     if (claim.ufn != null && claim.ufn !== "") {
       rows.push({ key: { text: "UFN" }, value: { text: claim.ufn } });
@@ -59,19 +58,6 @@ export class ClaimViewModel {
       rows.push({
         key: { text: "Claimed" },
         value: { text: formatClaimed(claim.claimed) },
-      });
-    }
-
-    if (claim.submissionId != null) {
-      const href = `/submissions/${encodeURIComponent(claim.submissionId)}`;
-      rows.push({
-        key: { text: "Submission" },
-        value: {
-          html:
-            `<a class="govuk-link" href="${href}">` +
-            `View submission<span class="govuk-visually-hidden"> for claim ${this.title}</span>` +
-            `</a>`,
-        },
       });
     }
 

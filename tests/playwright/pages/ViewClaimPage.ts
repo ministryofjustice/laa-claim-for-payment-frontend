@@ -1,5 +1,6 @@
 import type { Locator, Page } from "@playwright/test";
 import { BasePage } from "#tests/playwright/pages/BasePage.js";
+import type { UUID } from "uuidv7";
 
 /**
  * Page object for the view claim page
@@ -9,10 +10,10 @@ export class ViewClaimPage extends BasePage {
   /**
    * Creates a new view claim page object
    * @param {Page} page - The Playwright page instance
-   * @param {number} id - the claim id
+   * @param {UUID} id - the claim id
    */
-  constructor(page: Page, id: number) {
-    super(page, `claims/${id}`);
+  constructor(page: Page, id: UUID) {
+    super(page, `claims/${id.toString()}`);
   }
 
   /**

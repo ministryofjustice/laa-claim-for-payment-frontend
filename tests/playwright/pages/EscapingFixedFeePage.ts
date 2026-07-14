@@ -1,5 +1,6 @@
 import type { Locator, Page } from "@playwright/test";
 import { BasePage } from "#tests/playwright/pages/BasePage.js";
+import type { UUID } from "#node_modules/uuidv7/dist/index.js";
 
 /**
  * Page object for escaping the fixed fee page.
@@ -9,9 +10,10 @@ export class EscapingFixedFeePage extends BasePage {
    * Creates a page object.
    *
    * @param {Page} page The Playwright page instance.
+   * @param {UUID} claimId The claim ID.
    */
-  constructor(page: Page) {
-    super(page, "claims/1/poa/escaping-standard-fixed-fee");
+  constructor(page: Page, claimId: UUID) {
+    super(page, `claims/${claimId.toString()}/poa/escaping-standard-fixed-fee`);
   }
 
   /**

@@ -4,6 +4,8 @@ import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import { claimService } from "#src/services/claimService.js";
 import { PoaEvidenceUploadViewModel } from "#src/viewmodels/profitCostDetails/profitCostDetailsEvidenceUploadViewModel.js";
 import type { NextFunction, Request, Response } from "express";
+import { UUID } from "uuidv7";
+import type { ReusableDocument } from "#src/viewmodels/components/taskList.js";
 
 /**
  * Display POA evidence upload page.
@@ -18,7 +20,7 @@ export async function poaEvidenceUploadPage(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = Number(req.params.claimId);
+    const claimId = UUID.parse(req.params.claimId);
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
      if (response.status !== "success") {
@@ -26,9 +28,9 @@ export async function poaEvidenceUploadPage(
       return;
     }
 
-    const uploadedFiles =
+    const uploadedFiles: ReusableDocument[] =
       response.body.evidence?.map((evidence) => ({
-        id: evidence.id,
+        id: evidence.id.toString(),
         name: evidence.fileKey,
         size: formatFileSize(evidence.fileSize),
       })) ?? [];
@@ -63,7 +65,7 @@ export async function submitPoaEvidenceUpload(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = Number(req.params.claimId);
+    const claimId = UUID.parse(req.params.claimId);
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
     if (response.status !== "success") {

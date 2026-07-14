@@ -1,7 +1,11 @@
 import { expect } from "chai";
 import { PoaEvidenceUploadViewModel } from "#src/viewmodels/profitCostDetails/profitCostDetailsEvidenceUploadViewModel.js";
+import { V7Generator } from "uuidv7";
 
 describe("PoaEvidenceUploadViewModel constructor()", () => {
+
+  const evidenceId = new V7Generator().generate();
+
   it("builds the POA evidence upload view model", () => {
     const vm = new PoaEvidenceUploadViewModel({
       uploadUrl: "/upload",
@@ -26,7 +30,7 @@ describe("PoaEvidenceUploadViewModel constructor()", () => {
       saveAndComeBackLaterHref: "#",
       uploadedFiles: [
         {
-          id: 1,
+          id: evidenceId.toString(),
           name: "evidence.pdf",
           size: "1KB",
         },
@@ -35,7 +39,7 @@ describe("PoaEvidenceUploadViewModel constructor()", () => {
 
     expect(vm.uploadedFiles).to.deep.equal([
       {
-        id: 1,
+        id: evidenceId.toString(),
         name: "evidence.pdf",
         size: "1KB",
       },

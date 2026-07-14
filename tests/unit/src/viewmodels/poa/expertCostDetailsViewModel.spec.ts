@@ -3,17 +3,21 @@ import {
   ExpertCostDetailsViewModelParams,
 } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
 import { expect } from "chai";
+import { V7Generator } from "uuidv7";
 
 describe("expertCostDetailsViewModel constructor", () => {
+
+  const claimId = new V7Generator().generate();
+
   it("constructs view model when form/errors undefined", () => {
     const params: ExpertCostDetailsViewModelParams = {
-      claimId: 1,
+      claimId: claimId,
       expertCostId: 1,
     };
 
     const result = new ExpertCostDetailsViewModel(params);
 
-    expect(result.claimId).to.equal(1);
+    expect(result.claimId).to.equal(claimId.toString());
     expect(result.title).to.equal("pages.poa.expertCostDetails.title");
     expect(result.form).to.deep.equal({
       activityDate: {
@@ -67,7 +71,7 @@ describe("expertCostDetailsViewModel constructor", () => {
 
   it("constructs view model when form/errors defined", () => {
     const params: ExpertCostDetailsViewModelParams = {
-      claimId: 1,
+      claimId: claimId,
       expertCostId: 1,
       form: {
         activityDateDay: "1",
@@ -91,7 +95,7 @@ describe("expertCostDetailsViewModel constructor", () => {
 
     const result = new ExpertCostDetailsViewModel(params);
 
-    expect(result.claimId).to.equal(1);
+    expect(result.claimId).to.equal(claimId.toString());
     expect(result.title).to.equal("pages.poa.expertCostDetails.title");
     expect(result.form).to.deep.equal({
       activityDate: {

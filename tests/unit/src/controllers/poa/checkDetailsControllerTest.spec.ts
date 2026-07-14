@@ -13,6 +13,7 @@ import {
   submitYourDetails,
 } from "#src/controllers/poa/checkDetailsController.js";
 import { ROUTES } from "#routes/helper.js";
+import { V7Generator } from "uuidv7";
 
 describe("Check Details Controller", () => {
   let req: Partial<Request>;
@@ -22,11 +23,13 @@ describe("Check Details Controller", () => {
   let statusStub: sinon.SinonStub;
   let claimServiceStub: sinon.SinonStub;
 
+  const claimId = new V7Generator().generate();
+
   beforeEach(() => {
     req = {
       axiosMiddleware: {} as any,
-      path: "/claims/1/poa-check-details",
-      params: { claimId: "1" },
+      path: `/claims/${claimId.toString()}/poa-check-details`,
+      params: { claimId: claimId.toString() },
     };
 
     renderStub = sinon.stub();
@@ -94,7 +97,7 @@ describe("Check Details Controller", () => {
 
       const expectedRoute = ROUTES.POA_SUBMISSION_SUCCESSFUL.replace(
         ":claimId",
-        "1",
+        claimId.toString(),
       );
 
       expect(res.redirect.calledOnce).to.be.true;

@@ -3,10 +3,13 @@ import { describe, it, beforeEach } from "mocha";
 import sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
 import { multipleClientHearings, submitMultipleClientHearings } from "#src/controllers/poa/multipleClientHearingsController.js";
+import { V7Generator } from "uuidv7";
 
 describe("multipleClientHearingsController", () => {
   let res: Response;
   let next: NextFunction;
+
+  const claimId = new V7Generator().generate();
 
   beforeEach(() => {
     res = {
@@ -24,7 +27,7 @@ describe("multipleClientHearingsController", () => {
   it("renders the multiple client hearings radio question page", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
     } as unknown as Request;
 
@@ -45,7 +48,7 @@ describe("multipleClientHearingsController", () => {
   it("redirects to escaping the standard fixed fee page when multiple client hearings answer is given", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {
         multipleClientHearings: "yes",
@@ -55,14 +58,14 @@ describe("multipleClientHearingsController", () => {
     submitMultipleClientHearings(req, res, next);
 
     expect((res.redirect as sinon.SinonStub).calledWith(
-      "/claims/1/poa/escaping-standard-fixed-fee",
+      `/claims/${claimId.toString()}/poa/escaping-standard-fixed-fee`,
     )).to.equal(true);
   });
 
   it("rerenders the radio question page with an error when no option is selected", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {},
     } as unknown as Request;
@@ -89,7 +92,7 @@ describe("multipleClientHearingsController", () => {
   it("rerenders with selected invalid string preserved when invalid option is submitted", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {
         multipleClientHearings: "invalid",

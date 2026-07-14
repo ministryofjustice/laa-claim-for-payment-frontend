@@ -6,10 +6,13 @@ import {
   numberOfClientsStartOfCase,
   submitNumberOfClientsStartOfCase,
 } from "#src/controllers/poa/numberOfClientsStartOfCaseController.js";
+import { V7Generator } from "uuidv7";
 
 describe("numberOfClientsStartOfCaseController", () => {
   let res: Response;
   let next: NextFunction;
+
+  const claimId = new V7Generator().generate();
 
   beforeEach(() => {
     res = {
@@ -27,7 +30,7 @@ describe("numberOfClientsStartOfCaseController", () => {
   it("renders the number of clients start of case radio question page", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
     } as unknown as Request;
 
@@ -75,7 +78,7 @@ describe("numberOfClientsStartOfCaseController", () => {
   it("redirects to multiple client hearings when 0 is selected", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {
         numberOfClientsStartOfCase: "none",
@@ -86,7 +89,7 @@ describe("numberOfClientsStartOfCaseController", () => {
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        "/claims/1/poa/multiple-client-hearings",
+        `/claims/${claimId.toString()}/poa/multiple-client-hearings`,
       ),
     ).to.equal(true);
   });
@@ -94,7 +97,7 @@ describe("numberOfClientsStartOfCaseController", () => {
   it("redirects to multiple client hearings when 1 is selected", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {
         numberOfClientsStartOfCase: "one",
@@ -105,7 +108,7 @@ describe("numberOfClientsStartOfCaseController", () => {
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        "/claims/1/poa/multiple-client-hearings",
+        `/claims/${claimId.toString()}/poa/multiple-client-hearings`,
       ),
     ).to.equal(true);
   });
@@ -113,7 +116,7 @@ describe("numberOfClientsStartOfCaseController", () => {
   it("redirects to multiple client hearings when 2+ is selected", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {
         numberOfClientsStartOfCase: "more-than-two",
@@ -124,7 +127,7 @@ describe("numberOfClientsStartOfCaseController", () => {
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        "/claims/1/poa/multiple-client-hearings",
+        `/claims/${claimId.toString()}/poa/multiple-client-hearings`,
       ),
     ).to.equal(true);
   });
@@ -132,7 +135,7 @@ describe("numberOfClientsStartOfCaseController", () => {
   it("rerenders with an error when no option is selected", () => {
     const req = {
       params: {
-        claimId: "1",
+        claimId: claimId.toString(),
       },
       body: {},
     } as unknown as Request;

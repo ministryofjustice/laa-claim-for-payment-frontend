@@ -2,8 +2,11 @@ import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
 import { ProfitCostBillLineViewModel } from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
+import { V7Generator } from "uuidv7";
 
 chaiConfig.truncateThreshold = 0;
+
+const claimId = new V7Generator().generate();
 
 describe("views/main/poa/profitCostBillLineView.njk", () => {
   let $: CheerioAPI;
@@ -12,7 +15,7 @@ describe("views/main/poa/profitCostBillLineView.njk", () => {
     $ = await renderView("main/poa/profitCostBillLineView.njk", {
       csrfToken: "test-csrf-token",
       vm: new ProfitCostBillLineViewModel({
-        claimId: 1,
+        claimId: claimId,
       }),
     });
   });
@@ -130,7 +133,7 @@ describe("views/main/poa/profitCostBillLineView.njk with errors", () => {
     $ = await renderView("main/poa/profitCostBillLineView.njk", {
       csrfToken: "test-csrf-token",
       vm: new ProfitCostBillLineViewModel({
-        claimId: 1,
+        claimId: claimId,
         form: {
           activityDateDay: "",
           activityDateMonth: "",
@@ -228,7 +231,7 @@ describe("views/main/poa/profitCostBillLineView.njk with errors", () => {
     $ = await renderView("main/poa/profitCostBillLineView.njk", {
       csrfToken: "test-csrf-token",
       vm: new ProfitCostBillLineViewModel({
-        claimId: 1,
+        claimId: claimId,
         form: {
           activityDateDay: "27",
           activityDateMonth: "3",

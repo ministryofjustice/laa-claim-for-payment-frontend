@@ -3,6 +3,7 @@ import { processError } from "#src/helpers/index.js";
 import { validateProfitCostBillLine } from "#src/helpers/profitCostBillLineValidation.js";
 import { ProfitCostBillLineViewModel } from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
 import type { NextFunction, Request, Response } from "express";
+import { UUID } from "uuidv7";
 
 /**
  * Display POA CPGFS profit cost bill line page.
@@ -17,7 +18,7 @@ export function profitCostBillLine(
   next: NextFunction,
 ): void {
   try {
-    const claimId = Number(req.params.claimId);
+    const claimId = UUID.parse(req.params.claimId);
 
     res.render("main/poa/profitCostBillLineView.njk", {
       csrfToken: res.locals.csrfToken,
@@ -43,7 +44,7 @@ export function submitProfitCostBillLine(
   next: NextFunction,
 ): void {
   try {
-    const claimId = Number(req.params.claimId);
+    const claimId = UUID.parse(req.params.claimId);
     const validationResult = validateProfitCostBillLine(req.body);
 
     if (!validationResult.isValid) {

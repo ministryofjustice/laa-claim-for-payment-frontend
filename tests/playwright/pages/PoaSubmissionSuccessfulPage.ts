@@ -1,5 +1,6 @@
 import type { Locator, Page } from "@playwright/test";
 import { BasePage } from "#tests/playwright/pages/BasePage.js";
+import type { UUID } from "uuidv7";
 
 /**
  * Page object for the POA successful submission page.
@@ -9,10 +10,10 @@ export class PoaSubmissionSuccessfulPage extends BasePage {
    * Creates a page object.
    *
    * @param {Page} page The Playwright page instance.
-   * @param {number} claimId The claim ID
+   * @param {UUID} claimId The claim ID.
    */
-  constructor(page: Page, claimId: number) {
-    super(page, `claims/${claimId}/poa-submitted`);
+  constructor(page: Page, claimId: UUID) {
+    super(page, `claims/${claimId.toString()}/poa-submitted`);
   }
 
   /**

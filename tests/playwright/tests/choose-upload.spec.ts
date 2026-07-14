@@ -1,8 +1,9 @@
 import { test, expect } from '../fixtures/index.js';
 import { ChooseUploadPage } from '../pages/ChooseUpload.js';
+import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test('choose upload page displays radio options', async ({ page, checkAccessibility }) => {
-  const chooseUploadPage = new ChooseUploadPage(page);
+  const chooseUploadPage = new ChooseUploadPage(page, claim1Id);
 
   await chooseUploadPage.navigate();
   await chooseUploadPage.waitForLoad();
@@ -33,7 +34,7 @@ test('choose upload page displays radio options', async ({ page, checkAccessibil
 });
 
 test('choose upload page shows an error when no option is selected', async ({ page, checkAccessibility }) => {
-  const chooseUploadPage = new ChooseUploadPage(page);
+  const chooseUploadPage = new ChooseUploadPage(page, claim1Id);
 
   await chooseUploadPage.navigate();
   await chooseUploadPage.submit();
@@ -52,7 +53,7 @@ test('choose upload page shows an error when no option is selected', async ({ pa
 });
 
 test('choose upload page redirects when all at once is selected', async ({ page }) => {
-  const chooseUploadPage = new ChooseUploadPage(page);
+  const chooseUploadPage = new ChooseUploadPage(page, claim1Id);
 
   await chooseUploadPage.navigate();
   await chooseUploadPage.chooseAllAtOnce();
@@ -62,11 +63,13 @@ test('choose upload page redirects when all at once is selected', async ({ page 
 });
 
 test('choose upload page redirects when associated to line items is selected', async ({ page }) => {
-  const chooseUploadPage = new ChooseUploadPage(page);
+  const chooseUploadPage = new ChooseUploadPage(page, claim1Id);
 
   await chooseUploadPage.navigate();
   await chooseUploadPage.chooseAssociatedToLineItems();
   await chooseUploadPage.submit();
 
-  await expect(page).toHaveURL("http://localhost:3000/claims/1/upload-evidence-individually");
+  await expect(page).toHaveURL(
+    new RegExp(`/claims/${claim1Id}/upload-evidence-individually$`)
+  );
 });

@@ -1,11 +1,12 @@
 import type { RedisClientType, RedisJSON } from "redis";
 import type { z } from "zod";
 import { get, set } from "#src/helpers/readsAndWrites.js";
+import type { UUID } from "uuidv7";
 
 const ANSWERS_CACHE_TTL_SECONDS = 60 * 60 * 3;
 
-const getAnswersCacheKey = (sessionId: string, claimId: number): string =>
-  `answers:${sessionId}:${claimId}`;
+const getAnswersCacheKey = (sessionId: string, claimId: UUID): string =>
+  `answers:${sessionId}:${claimId.toString()}`;
 
 export type Path = Array<string | number>;
 
@@ -20,7 +21,7 @@ export const buildAnswersCache = (
 ): AnswersCache => ({
   get: async <T extends z.ZodType>(
     sessionId: string,
-    claimId: number,
+    claimId: UUID,
     path: Path,
     schema: T,
   ): Promise<z.infer<T> | null> => {
@@ -37,7 +38,7 @@ export const buildAnswersCache = (
 
   set: async (
     sessionId: string,
-    claimId: number,
+    claimId: UUID,
     path: Path,
     value: RedisJSON,
   ): Promise<void> => {
@@ -50,7 +51,7 @@ export const buildAnswersCache = (
 
   remove: async (
     sessionId: string,
-    claimId: number,
+    claimId: UUID,
     path: Path,
   ): Promise<boolean> => {
     const key = getAnswersCacheKey(sessionId, claimId);
@@ -62,7 +63,7 @@ export const buildAnswersCache = (
     return count > 0;
   },
 
-  clear: async (sessionId: string, claimId: number): Promise<void> => {
+  clear: async (sessionId: string, claimId: UUID): Promise<void> => {
     await redisClient.del(getAnswersCacheKey(sessionId, claimId));
   },
 });
@@ -70,21 +71,21 @@ export const buildAnswersCache = (
 export interface AnswersCache {
   get: <T extends z.ZodType>(
     sessionId: string,
-    claimId: number,
+    claimId: UUID,
     path: Path,
     schema: T,
   ) => Promise<z.infer<T> | null>;
 
   set: (
     sessionId: string,
-    claimId: number,
+    claimId: UUID,
     path: Path,
     value: RedisJSON,
   ) => Promise<void>;
 
-  remove: (sessionId: string, claimId: number, path: Path) => Promise<boolean>;
+  remove: (sessionId: string, claimId: UUID, path: Path) => Promise<boolean>;
 
-  clear: (sessionId: string, claimId: number) => Promise<void>;
+  clear: (sessionId: string, claimId: UUID) => Promise<void>;
 }
 
 const toRedisPath = (path: Path): string => (

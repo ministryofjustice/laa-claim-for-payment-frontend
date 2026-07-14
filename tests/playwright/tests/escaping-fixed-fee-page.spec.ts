@@ -1,12 +1,13 @@
 import { expect, test } from "../fixtures/index.js";
 import { EscapingFixedFeePage } from "#tests/playwright/pages/EscapingFixedFeePage.js";
+import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("Escaping the fixed fee page", () => {
   test("displays the escaping the fixed fee page", async ({
     page,
     checkAccessibility,
   }) => {
-    const escapingFixedFeePage = new EscapingFixedFeePage(page);
+    const escapingFixedFeePage = new EscapingFixedFeePage(page, claim1Id);
 
     await escapingFixedFeePage.navigate();
     await escapingFixedFeePage.waitForLoad();
@@ -23,7 +24,7 @@ test.describe("Escaping the fixed fee page", () => {
     page,
     checkAccessibility,
   }) => {
-    const escapingFixedFeePage = new EscapingFixedFeePage(page);
+    const escapingFixedFeePage = new EscapingFixedFeePage(page, claim1Id);
 
     await escapingFixedFeePage.navigate();
     await escapingFixedFeePage.waitForLoad();
@@ -65,7 +66,7 @@ test.describe("Escaping the fixed fee page", () => {
   test("redirects to CPGFS profit cost bill line page route when Yes is selected", async ({
     page,
   }) => {
-    const escapingFixedFeePage = new EscapingFixedFeePage(page);
+    const escapingFixedFeePage = new EscapingFixedFeePage(page, claim1Id);
 
     await escapingFixedFeePage.navigate();
     await escapingFixedFeePage.waitForLoad();
@@ -74,14 +75,14 @@ test.describe("Escaping the fixed fee page", () => {
     await escapingFixedFeePage.saveAndContinueButton.click();
 
     await expect(page).toHaveURL(
-      /\/claims\/1\/poa\/cpgfs-profit-cost-bill-line$/,
+      new RegExp(`/claims/${claim1Id}/poa/cpgfs-profit-cost-bill-line$`)
     );
   });
 
   test("redirects to CPGFS profit cost bill line page route when No is selected", async ({
     page,
   }) => {
-    const escapingFixedFeePage = new EscapingFixedFeePage(page);
+    const escapingFixedFeePage = new EscapingFixedFeePage(page, claim1Id);
 
     await escapingFixedFeePage.navigate();
     await escapingFixedFeePage.waitForLoad();
@@ -90,7 +91,7 @@ test.describe("Escaping the fixed fee page", () => {
     await escapingFixedFeePage.saveAndContinueButton.click();
 
     await expect(page).toHaveURL(
-      /\/claims\/1\/poa\/cpgfs-profit-cost-bill-line$/,
+      new RegExp(`/claims/${claim1Id}/poa/cpgfs-profit-cost-bill-line$`)
     );
   });
 });

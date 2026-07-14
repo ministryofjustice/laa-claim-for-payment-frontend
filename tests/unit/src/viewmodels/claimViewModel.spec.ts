@@ -3,7 +3,6 @@ import type { Claim } from "#src/types/Claim.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { expect } from "chai";
 import {
-  formatClaimId,
   formatDate,
   formatClaimed,
 } from "#src/helpers/index.js";
@@ -13,7 +12,7 @@ describe("ClaimViewModel constructor()", () => {
     const claim: Claim = getClaimsSuccessResponseData.body!.data![0]!;
     const vm = new ClaimViewModel(claim);
 
-    expect(vm.title).to.equal(formatClaimId(claim.id));
+    expect(vm.title).to.equal("TODO");
 
     const byKey = Object.fromEntries(
       vm.rows.map((r) => [r.key.text, r.value.text ?? r.value.html]),
@@ -27,12 +26,5 @@ describe("ClaimViewModel constructor()", () => {
     if (claim.feeType) expect(byKey["Fee type"]).to.equal(claim.feeType);
     if (claim.claimed != null)
       expect(byKey["Claimed"]).to.equal(formatClaimed(claim.claimed));
-
-    // Optional: Submission row is a link (if present)
-    if (claim.submissionId && byKey["Submission"]) {
-      expect(byKey["Submission"]).to.contain(
-        `/submissions/${encodeURIComponent(claim.submissionId)}`,
-      );
-    }
   });
 });

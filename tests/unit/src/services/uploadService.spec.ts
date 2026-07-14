@@ -2,24 +2,31 @@ import { expect } from "chai";
 import sinon from "sinon";
 import { ApiError } from "#src/types/api-types.js";
 import { uploadService } from "#src/services/uploadService.js";
+import { V7Generator } from "uuidv7";
 
 describe("Upload Service", () => {
   afterEach(() => {
     sinon.restore();
   });
 
+  const claimId = new V7Generator().generate();
+  const lineItemId = new V7Generator().generate();
+  const evidence1Id = new V7Generator().generate();
+  const evidence2Id = new V7Generator().generate();
+  const evidence3Id = new V7Generator().generate();
+
   describe("uploadEvidence", () => {
     it("returns success", async () => {
       const mockApiResponse = {
         data: {
           type: 'success',
-          evidenceId: 3,
+          evidenceId: evidence1Id.toString(),
           file: {
-            filename: 'evidence.pdf',
+            filename: evidence1Id.toString(),
             originalname: 'evidence.pdf',
             filesize: 12345,
           },
-          message: "File uploaded with ID: 3",
+          message: `File uploaded with ID: ${evidence1Id.toString()}`,
         }
       };
 
@@ -42,7 +49,7 @@ describe("Upload Service", () => {
 
       const result = await uploadService.uploadEvidence(
         { axiosInstance: {} } as any,
-        1,
+        claimId,
         file,
         translations,
         deps as any
@@ -50,7 +57,7 @@ describe("Upload Service", () => {
 
       expect(result.status).to.equal("success");
       expect(result.body?.file).to.deep.equal({
-        filename: '3',
+        filename: evidence1Id.toString(),
         originalname: 'evidence.pdf',
       });
       expect(result.body?.success.messageText).to.equal('evidence.pdf uploaded');
@@ -63,13 +70,13 @@ describe("Upload Service", () => {
       const mockApiResponse = {
         data: {
           type: 'success',
-          evidenceId: 3,
+          evidenceId: evidence1Id.toString(),
           file: {
             filename: '<script>.pdf',
             originalname: '<script>.pdf',
             filesize: 12345,
           },
-          message: "File uploaded with ID: 3 and linked to line item: 2",
+          message: `File uploaded with ID: ${evidence1Id} and linked to line item: ${lineItemId}`,
         }
       };
 
@@ -92,7 +99,7 @@ describe("Upload Service", () => {
 
       const result = await uploadService.uploadEvidence(
         { axiosInstance: {} } as any,
-        1,
+        claimId,
         file,
         translations,
         deps as any
@@ -110,7 +117,7 @@ describe("Upload Service", () => {
             status: 404,
             data: {
               detail: "Resource not found",
-              instance: "/api/v1/claims/1/upload-evidence",
+              instance: `/api/v1/claims/${claimId}/upload-evidence`,
               status: 404,
               title: "Not found",
               correlationId: "b7d7c91f-950a-43f6-a8de-ffb37f1001c1",
@@ -134,7 +141,7 @@ describe("Upload Service", () => {
 
       const result = await uploadService.uploadEvidence(
         { axiosInstance: {} } as any,
-        1,
+        claimId,
         file,
         translations,
         deps as any
@@ -165,7 +172,7 @@ describe("Upload Service", () => {
 
       const result = await uploadService.uploadEvidence(
         { axiosInstance: {} } as any,
-        1,
+        claimId,
         file,
         translations,
         deps as any
@@ -188,9 +195,13 @@ describe("Upload Service", () => {
 
       const result = await uploadService.linkEvidenceToLineItem(
         { axiosInstance: {} } as any,
-        1,
-        2,
-        [3, 4, 5],
+        claimId,
+        lineItemId,
+        [
+          evidence1Id,
+          evidence2Id,
+          evidence3Id
+        ],
         deps as any
       );
 
@@ -209,7 +220,7 @@ describe("Upload Service", () => {
             status: 404,
             data: {
               detail: "Resource not found",
-              instance: "/api/v1/claims/1/line-items/2/evidence",
+              instance: `/api/v1/claims/${claimId}/line-items/${lineItemId}/evidence`,
               status: 404,
               title: "Not found",
               correlationId: "b7d7c91f-950a-43f6-a8de-ffb37f1001c1",
@@ -221,9 +232,13 @@ describe("Upload Service", () => {
 
       const result = await uploadService.linkEvidenceToLineItem(
         { axiosInstance: {} } as any,
-        1,
-        2,
-        [3, 4, 5],
+        claimId,
+        lineItemId,
+        [
+          evidence1Id,
+          evidence2Id,
+          evidence3Id
+        ],
         deps as any
       ) as ApiError;
 
@@ -242,9 +257,13 @@ describe("Upload Service", () => {
 
       const result = await uploadService.linkEvidenceToLineItem(
         { axiosInstance: {} } as any,
-        1,
-        2,
-        [3, 4, 5],
+        claimId,
+        lineItemId,
+        [
+          evidence1Id,
+          evidence2Id,
+          evidence3Id
+        ],
         deps as any
       );
 
@@ -259,13 +278,13 @@ describe("Upload Service", () => {
       const mockApiResponse = {
         data: {
           type: 'success',
-          evidenceId: 3,
+          evidenceId: evidence3Id.toString(),
           file: {
-            filename: 'evidence.pdf',
+            filename: evidence3Id.toString(),
             originalname: 'evidence.pdf',
             filesize: 12345,
           },
-          message: "File uploaded with ID: 3 and linked to line item: 2",
+          message: `File uploaded with ID: ${evidence3Id.toString()} and linked to line item: ${lineItemId.toString()}`,
         }
       };
 
@@ -291,8 +310,8 @@ describe("Upload Service", () => {
 
       const result = await uploadService.uploadLineItemEvidence(
         { axiosInstance: {} } as any,
-        1,
-        2,
+        claimId,
+        lineItemId,
         file,
         translations,
         deps as any
@@ -300,7 +319,7 @@ describe("Upload Service", () => {
 
       expect(result.status).to.equal("success");
       expect(result.body?.file).to.deep.equal({
-        filename: '3',
+        filename: evidence3Id.toString(),
         originalname: 'evidence.pdf',
       });
       expect(result.body?.success.messageText).to.equal('evidence.pdf uploaded');
@@ -313,13 +332,13 @@ describe("Upload Service", () => {
       const mockApiResponse = {
         data: {
           type: 'success',
-          evidenceId: 3,
+          evidenceId: evidence1Id.toString(),
           file: {
             filename: '<script>.pdf',
             originalname: '<script>.pdf',
             filesize: 12345,
           },
-          message: "File uploaded with ID: 3 and linked to line item: 2",
+          message: `File uploaded with ID: ${evidence1Id} and linked to line item: ${lineItemId}`,
         }
       };
 
@@ -345,8 +364,8 @@ describe("Upload Service", () => {
 
       const result = await uploadService.uploadLineItemEvidence(
         { axiosInstance: {} } as any,
-        1,
-        2,
+        claimId,
+        lineItemId,
         file,
         translations,
         deps as any
@@ -367,7 +386,7 @@ describe("Upload Service", () => {
             status: 404,
             data: {
               detail: "Resource not found",
-              instance: "/api/v1/claims/1/line-items/2/upload-evidence",
+              instance: `/api/v1/claims/${claimId}/line-items/${lineItemId}/upload-evidence`,
               status: 404,
               title: "Not found",
               correlationId: "b7d7c91f-950a-43f6-a8de-ffb37f1001c1",
@@ -391,8 +410,8 @@ describe("Upload Service", () => {
 
       const result = await uploadService.uploadLineItemEvidence(
         { axiosInstance: {} } as any,
-        1,
-        2,
+        claimId,
+        lineItemId,
         file,
         translations,
         deps as any
@@ -426,8 +445,8 @@ describe("Upload Service", () => {
 
       const result = await uploadService.uploadLineItemEvidence(
         { axiosInstance: {} } as any,
-        1,
-        2,
+        claimId,
+        lineItemId,
         file,
         translations,
         deps as any

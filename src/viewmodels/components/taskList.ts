@@ -18,7 +18,7 @@ export interface TaskListItemStatus {
 }
 
 export interface ReusableDocument {
-  id: number;
+  id: string;
   name: string;
   size: string;
 }

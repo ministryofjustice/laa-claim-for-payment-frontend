@@ -5851,6 +5851,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     tsx: "npm:^4.21.0"
     typescript: "npm:^5.9.3"
+    uuidv7: "npm:^1.2.1"
     validator: "npm:^13.15.22"
     zod: "npm:^4.4.3"
   languageName: unknown
@@ -8108,6 +8109,15 @@ __metadata:
   version: 1.0.2
   resolution: "util-deprecate@npm:1.0.2"
   checksum: 10/474acf1146cb2701fe3b074892217553dfcf9a031280919ba1b8d651a068c9b15d863b7303cb15bd00a862b498e6cf4ad7b4a08fb134edd5a6f7641681cb54a2
+  languageName: node
+  linkType: hard
+
+"uuidv7@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "uuidv7@npm:1.2.1"
+  bin:
+    uuidv7: cli.js
+  checksum: 10/189cba8b6629f99bfd361fb71599daea132bdb24d0c64f2b28849aa8c9ae12bdec562539de79d922d9fb8ebd7cd5c9f43be9824d7b07a31d27cba7208b648a1b
   languageName: node
   linkType: hard
 

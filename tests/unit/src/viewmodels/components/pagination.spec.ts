@@ -6,7 +6,7 @@ import { expect } from "chai";
 import { Pagination } from "#src/viewmodels/components/pagination.js";
 import { InvalidPageError } from "#src/types/errors.js";
 
-describe("constructor()", () => {
+describe("Pagination constructor()", () => {
   const href = "/foo";
 
   it("creates a pagination model when no results", () => {
