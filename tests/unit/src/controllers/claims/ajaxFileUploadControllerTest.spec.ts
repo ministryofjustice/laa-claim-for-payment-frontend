@@ -2,7 +2,6 @@ import { expect } from "chai";
 import { afterEach, beforeEach, describe, it } from "mocha";
 import sinon from "sinon";
 import type { NextFunction, Response } from "express";
-import "#utils/axiosSetup.js";
 import {
   uploadEvidenceFile,
   uploadEvidenceFileForLineItem,

@@ -122,6 +122,10 @@ Branch naming conventions are 'CLAIM-ticketNumber-optionalInfo'. Including the t
     ```shell
     yarn coverage
     ```
+    
+  - To run tests with an IDE configuration, ensure the Mocha template has the following environment variables:
+    - `TS_NODE_PROJECT=./tsconfig.test.json`
+    - `TS_NODE_FILES=true`
 
 - E2E Testing
 

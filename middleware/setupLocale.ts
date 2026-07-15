@@ -4,7 +4,6 @@
  */
 
 import type { Request, Response, NextFunction } from 'express';
-import type { ExpressLocaleLoader } from '#src/scripts/helpers/index.js';
 
 /**
  * Express middleware to inject locale data into template locals
@@ -20,15 +19,4 @@ export function setupLocaleMiddleware(req: Request, res: Response, next: NextFun
   req.locale = { t: req.t };
 
   next();
-}
-
-/**
- * Type augmentation for Express Request to include locale data
- */
-declare global {
-  namespace Express {
-    interface Request {
-      locale: ExpressLocaleLoader;
-    }
-  }
 }

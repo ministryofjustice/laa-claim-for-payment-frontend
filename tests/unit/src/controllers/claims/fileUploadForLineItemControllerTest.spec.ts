@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, it } from "mocha";
 import { expect } from "chai";
 import * as sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
-import "#utils/axiosSetup.js";
 import { claimService } from "#src/services/claimService.js";
 import {
   getClaimSuccessResponseData,
