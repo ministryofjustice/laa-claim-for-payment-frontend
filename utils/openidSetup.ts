@@ -1,4 +1,4 @@
-// utils/oidc.ts
+// utils/openidSetup.ts
 import type { Application, Request, Response, NextFunction } from 'express';
 import { allowInsecureRequests, authorizationCodeGrant, buildAuthorizationUrl, calculatePKCECodeChallenge, ClientSecretPost, type Configuration, discovery, randomPKCECodeVerifier, randomState, type TokenEndpointResponse } from 'openid-client';
 import { constants as Http } from 'node:http2';
@@ -12,12 +12,6 @@ export interface SessionOIDC {
   redirect_uri?: string;
   tokens?: TokenEndpointResponse;
   userinfo?: Record<string, unknown>;
-}
-
-declare module 'express-session' {
-  interface SessionData {
-    oidc?: SessionOIDC;
-  }
 }
 
 const IdTokenSchema = z.object({

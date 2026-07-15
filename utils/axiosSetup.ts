@@ -1,5 +1,5 @@
 // middleware/axios.ts
-import { type AxiosInstanceWrapper, create } from 'middleware-axios';
+import { create } from 'middleware-axios';
 import axios, { type AxiosResponse, type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import type { Request, Response, NextFunction } from 'express';
 import {refreshTokenGrant, type TokenEndpointResponse} from 'openid-client';
@@ -7,17 +7,7 @@ import { constants as Http } from 'node:http2';
 import { getConfig } from './openidSetup.js';
 import { getRequiredEnv } from '#utils/envHelper.js';
 
-
 const DEFAULT_TIMEOUT = 5000;
-
-declare global {
-  namespace Express {
-    interface Request {
-      axiosMiddleware: AxiosInstanceWrapper;
-    }
-  }
-}
-
 
 /**
  * Middleware to attach an Axios instance to the request object.

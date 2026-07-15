@@ -9,9 +9,5 @@
 		"tsx"
 	],
 	"spec": "tests/unit/**/*.spec.ts",
-	"reporter": "list",
-	"node-env": {
-		"TS_NODE_PROJECT": "./tsconfig.test.json",
-		"TS_NODE_TRANSPILE_ONLY": "true"
-	}
+	"reporter": "list"
 }

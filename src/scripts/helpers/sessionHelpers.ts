@@ -1,12 +1,5 @@
 import type { Request } from 'express';
 
-// Extend the Express session interface to support dynamic namespaces
-declare module 'express-session' {
-  interface SessionData extends Record<string, Record<string, string> | string | undefined> {
-    // This allows both specific properties and dynamic namespace access
-  }
-}
-
 /**
  * Store a hash of key-value pairs in the session under a specific namespace
  * @param {Request} req Express request with session
