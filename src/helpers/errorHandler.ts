@@ -85,6 +85,9 @@ function extractErrorMessage(error: unknown): string {
 export function processError(error: unknown, context: string): Error {
   const message = extractErrorMessage(error);
   devError(`Error ${context}: ${message}`);
+  if (error instanceof SyntaxError) {
+    return new createHttpError.BadRequest(message);
+  }
   return new Error(message, { cause: error });
 }
 

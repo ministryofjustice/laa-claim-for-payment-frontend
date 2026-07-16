@@ -83,6 +83,21 @@ describe("View Claim Controller", () => {
       expect(next.firstCall.args[0].message).to.include("not found");
     });
 
+    it("should return 400 when claim ID is not a UUID", async () => {
+      req = {
+        path: "/claims/not-a-uuid",
+        params: { claimId: "not-a-uuid" }
+      };
+
+      await viewClaimPage(req as Request, res as Response, next);
+
+      expect(claimServiceStub.notCalled).to.be.true;
+
+      expect(next.calledOnce).to.be.true;
+      expect(next.firstCall.args[0]).to.be.instanceOf(HttpError);
+      expect(next.firstCall.args[0].status).to.equal(400);
+    });
+
     it("should delegate API errors to Express error handling middleware with user-friendly message", async () => {
       // Arrange
       const error = new Error("API Error");

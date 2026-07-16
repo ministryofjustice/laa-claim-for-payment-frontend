@@ -12,6 +12,7 @@ import sinon from "sinon";
 import { ApiError } from "#src/types/api-types.js";
 import { AxiosError } from "axios";
 import { ApiErrorResponse } from "#src/generated/claim-api/index.js";
+import { HttpError } from "http-errors";
 
 describe("errorHandler", () => {
   beforeEach(() => {
@@ -46,6 +47,14 @@ describe("errorHandler", () => {
       assert(result instanceof Error);
       assert.strictEqual(result.message, "{\"foo\":\"bar\"}");
       assert.strictEqual(result.cause, inputError);
+    });
+
+    it("returns 400 Error when syntax error", () => {
+      const inputError = new SyntaxError("could not parse UUID string");
+      const result = processError(inputError, "doing something");
+      assert(result instanceof HttpError);
+      assert.strictEqual(result.message, "could not parse UUID string");
+      assert.strictEqual(result.status, 400);
     });
   });
 
