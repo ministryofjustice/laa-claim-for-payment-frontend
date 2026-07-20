@@ -85,7 +85,6 @@ export async function handleYourClaimsActionPage(
         return;
       }
       next(processApiError(response, "Creating draft claim"));
-      
     }
   }
 }

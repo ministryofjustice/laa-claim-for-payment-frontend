@@ -3,6 +3,7 @@ import sinon from "sinon";
 import { claimService } from "#src/services/claimService.js";
 import { ApiError } from "#src/types/api-types.js";
 import { UUID, V7Generator } from "uuidv7";
+import { Claim } from "#src/types/Claim.js";
 
 describe("Claim Service", () => {
   afterEach(() => {
@@ -35,8 +36,6 @@ describe("Claim Service", () => {
             totalPages: 1,
           },
         }),
-        getClaim: sinon.stub(),
-        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaims(
@@ -79,8 +78,6 @@ describe("Claim Service", () => {
             },
           },
         }),
-        getClaim: sinon.stub(),
-        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaims(
@@ -99,8 +96,6 @@ describe("Claim Service", () => {
       const deps = {
         createClient: sinon.stub().returns({}),
         getClaims: sinon.stub().rejects(new Error("boom")),
-        getClaim: sinon.stub(),
-        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaims(
@@ -121,8 +116,6 @@ describe("Claim Service", () => {
         getClaims: sinon.stub().resolves({
           data: { foo: "bar" },
         }),
-        getClaim: sinon.stub(),
-        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaims(
@@ -142,7 +135,6 @@ describe("Claim Service", () => {
     it("returns success with a claim", async () => {
       const deps = {
         createClient: sinon.stub().returns({}),
-        getClaims: sinon.stub(),
         getClaim: sinon.stub().resolves({
           data: {
             id: claimId.toString(),
@@ -155,7 +147,6 @@ describe("Claim Service", () => {
             claimed: 4500,
           },
         }),
-        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaim(
@@ -175,12 +166,19 @@ describe("Claim Service", () => {
         feeType: "Fixed",
         claimed: 4500,
       });
+
+      sinon.assert.calledWith(
+        deps.getClaim,
+        sinon.match({
+          path: { claimId: claimId.toString() },
+          query: { status: "SUBMITTED" },
+        }),
+      );
     });
 
     it("returns error for a non-200 response", async () => {
       const deps = {
         createClient: sinon.stub().returns({}),
-        getClaims: sinon.stub(),
         getClaim: sinon.stub().rejects({
           isAxiosError: true,
           response: {
@@ -195,7 +193,6 @@ describe("Claim Service", () => {
             },
           },
         }),
-        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaim(
@@ -212,9 +209,7 @@ describe("Claim Service", () => {
     it("returns error shape when the API call fails", async () => {
       const deps = {
         createClient: sinon.stub().returns({}),
-        getClaims: sinon.stub(),
         getClaim: sinon.stub().rejects(new Error("boom")),
-        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaim(
@@ -231,14 +226,124 @@ describe("Claim Service", () => {
     it("returns error shape when the response shape is invalid", async () => {
       const deps = {
         createClient: sinon.stub().returns({}),
-        getClaims: sinon.stub(),
         getClaim: sinon.stub().resolves({
           data: { invalid: true },
         }),
-        linkEvidenceToLineItem: sinon.stub(),
       };
 
       const result = await claimService.getClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        deps as any
+      );
+
+      expect(result.status).to.equal("error");
+      expect(result.message).to.be.a("string").and.not.empty;
+      expect(result).to.not.have.property("body");
+    });
+  });
+
+  describe("getDraftClaim", () => {
+    it("returns success with a claim", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaim: sinon.stub().resolves({
+          data: {
+            id: claimId.toString(),
+            ufn: "UFN-123",
+            providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
+            client: "Jane Doe",
+            category: "Something",
+            concluded: "2024-01-02T10:00:00Z",
+            feeType: "Fixed",
+            claimed: 4500,
+          },
+        }),
+      };
+
+      const result = await claimService.getDraftClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        deps as any
+      );
+
+      expect(result.status).to.equal("success");
+      expect(result.body).to.deep.equal({
+        id: claimId.toString(),
+        ufn: "UFN-123",
+        providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
+        client: "Jane Doe",
+        category: "Something",
+        concluded: new Date("2024-01-02T10:00:00Z"),
+        feeType: "Fixed",
+        claimed: 4500,
+      });
+
+      sinon.assert.calledWith(
+        deps.getClaim,
+        sinon.match({
+          path: { claimId: claimId.toString() },
+          query: { status: "DRAFT" },
+        }),
+      );
+    });
+
+    it("returns error for a non-200 response", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaim: sinon.stub().rejects({
+          isAxiosError: true,
+          response: {
+            status: 404,
+            data: {
+              detail: "Resource not found",
+              instance: "/api/v1/claims/123",
+              status: 404,
+              title: "Not found",
+              correlationId: "b7d7c91f-950a-43f6-a8de-ffb37f1001c1",
+              errorCode: "NOT_FOUND",
+            },
+          },
+        }),
+      };
+
+      const result = await claimService.getDraftClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        deps as any
+      ) as ApiError;
+
+      expect(result.status).to.equal("error");
+      expect(result.statusCode).to.equal(404);
+      expect(result.message).to.equal("Resource not found");
+    });
+
+    it("returns error shape when the API call fails", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaim: sinon.stub().rejects(new Error("boom")),
+      };
+
+      const result = await claimService.getDraftClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        deps as any
+      );
+
+      expect(result.status).to.equal("error");
+      expect(result.message).to.be.a("string").and.not.empty;
+      expect(result).to.not.have.property("body");
+    });
+
+    it("returns error shape when the response shape is invalid", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getClaim: sinon.stub().resolves({
+          data: { invalid: true },
+        }),
+      };
+
+      const result = await claimService.getDraftClaim(
         { axiosInstance: {} } as any,
         claimId,
         deps as any
@@ -406,6 +511,101 @@ describe("Claim Service", () => {
         status: "error",
         statusCode: 500,
         message: "Response did not contain headers"
+      });
+    });
+  });
+
+  describe("updateClaim", () => {
+
+    const claim: Claim = {
+      id: claimId.toString(),
+      ufn: "ufn",
+    };
+
+    it("returns success", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        updateClaim: sinon.stub().resolves(null),
+      };
+
+      const result = await claimService.updateClaim(
+        { axiosInstance: {} } as any,
+        claim,
+        deps as any
+      );
+
+      expect(result).to.deep.equal({
+        status: "success",
+        body: null
+      });
+
+      sinon.assert.calledWith(
+        deps.updateClaim,
+        sinon.match({
+          path: { id: claimId.toString() },
+          query: { status: "DRAFT" },
+          body: {
+            ufn: "ufn",
+            client: "",
+          },
+        }),
+      );
+    });
+
+    it("returns error for a non-200 response", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        updateClaim: sinon.stub().rejects({
+          isAxiosError: true,
+          response: {
+            status: 400,
+            data: {
+              detail: "Request validation failed.",
+              instance: "/api/v1/claims/019f7fd6-c3d1-7706-b518-6bdd409550c1",
+              status: 400,
+              title: "Invalid request",
+              correlationId: "431063e8-a19a-4991-bc76-78232c54b8e2",
+              errorCode: "VALIDATION_FAILED",
+              fieldErrors: [
+                {
+                  field: "client",
+                  message: "must not be null"
+                }
+              ]
+            },
+          },
+        }),
+      };
+
+      const result = await claimService.updateClaim(
+        { axiosInstance: {} } as any,
+        claim,
+        deps as any
+      ) as ApiError;
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 400,
+        message: "Request validation failed."
+      });
+    });
+
+    it("returns error shape when the API call fails", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        updateClaim: sinon.stub().rejects(new Error("boom")),
+      };
+
+      const result = await claimService.updateClaim(
+        { axiosInstance: {} } as any,
+        claim,
+        deps as any
+      );
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 500,
+        message: "boom"
       });
     });
   });
