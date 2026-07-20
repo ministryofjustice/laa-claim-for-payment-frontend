@@ -2,7 +2,7 @@ import { expect } from "chai";
 import sinon from "sinon";
 import { claimService } from "#src/services/claimService.js";
 import { ApiError } from "#src/types/api-types.js";
-import { V7Generator } from "uuidv7";
+import { UUID, V7Generator } from "uuidv7";
 
 describe("Claim Service", () => {
   afterEach(() => {
@@ -250,4 +250,163 @@ describe("Claim Service", () => {
     });
   });
 
+  describe("createClaim", () => {
+    it("returns success with a location header", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        createClaim: sinon.stub().resolves({
+          headers: {
+            location: "/api/v1/claims/019f7f1a-0bd5-74c4-87b9-2bb69c0f0cd1?status=DRAFT",
+          },
+        }),
+      };
+
+      const result = await claimService.createClaim(
+        { axiosInstance: {} } as any,
+        deps as any
+      );
+
+      expect(result).to.deep.equal({
+        status: "success",
+        body: UUID.parse("019f7f1a-0bd5-74c4-87b9-2bb69c0f0cd1")
+      });
+    });
+
+    it("returns error for a non-200 response", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        createClaim: sinon.stub().rejects({
+          isAxiosError: true,
+          response: {
+            status: 400,
+            data: {
+              detail: "Request validation failed.",
+              instance: "/api/v1/claims",
+              status: 400,
+              title: "Invalid request",
+              correlationId: "15b62600-b665-4eb2-a6d7-f436fe8a4cf5",
+              errorCode: "VALIDATION_FAILED",
+              fieldErrors: [
+                {
+                  field: "client",
+                  message: "must not be null"
+                }
+              ]
+            },
+          },
+        }),
+      };
+
+      const result = await claimService.createClaim(
+        { axiosInstance: {} } as any,
+        deps as any
+      ) as ApiError;
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 400,
+        message: "Request validation failed."
+      });
+    });
+
+    it("returns error shape when the API call fails", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        createClaim: sinon.stub().rejects(new Error("boom")),
+      };
+
+      const result = await claimService.createClaim(
+        { axiosInstance: {} } as any,
+        deps as any
+      );
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 500,
+        message: "boom"
+      });
+    });
+
+    it("returns error shape when the location header is unexpected shape", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        createClaim: sinon.stub().resolves({
+          headers: {
+            location: "foo",
+          },
+        }),
+      };
+
+      const result = await claimService.createClaim(
+        { axiosInstance: {} } as any,
+        deps as any
+      );
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 500,
+        message: "Invalid Location header"
+      });
+    });
+
+    it("returns error shape when the location header doesn't contain uuid", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        createClaim: sinon.stub().resolves({
+          headers: {
+            location: "/api/v1/claims/foo?status=DRAFT",
+          },
+        }),
+      };
+
+      const result = await claimService.createClaim(
+        { axiosInstance: {} } as any,
+        deps as any
+      );
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 500,
+        message: "could not parse UUID string"
+      });
+    });
+
+    it("returns error shape when the location header is missing", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        createClaim: sinon.stub().resolves({
+          headers: {},
+        }),
+      };
+
+      const result = await claimService.createClaim(
+        { axiosInstance: {} } as any,
+        deps as any
+      );
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 500,
+        message: "Missing Location header"
+      });
+    });
+
+    it("returns error shape when the headers are missing", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        createClaim: sinon.stub().resolves({}),
+      };
+
+      const result = await claimService.createClaim(
+        { axiosInstance: {} } as any,
+        deps as any
+      );
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 500,
+        message: "Response did not contain headers"
+      });
+    });
+  });
 });

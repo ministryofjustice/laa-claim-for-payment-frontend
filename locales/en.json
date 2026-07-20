@@ -69,7 +69,12 @@
   },
   "pages": {
     "home": {
-      "title": "Your Claims"
+      "title": "Your Claims",
+      "actions": {
+        "import": "Import claim",
+        "create": "Create a new claim",
+        "poa": "Payment on account"
+      }
     },
     "claims" : {
       "title": "English"

@@ -17,15 +17,20 @@ import { describe, it, beforeEach, afterEach } from "mocha";
 import { expect } from "chai";
 import * as sinon from "sinon";
 import type { Request, Response, NextFunction } from "express";
-// Import to get global type declarations for axiosMiddleware
-import "#utils/axiosSetup.js";
 import { claimService } from "#src/services/claimService.js";
-import { handleYourClaimsPage } from "#src/controllers/viewClaimsController.js";
+import {
+  handleYourClaimsActionPage,
+  handleYourClaimsPage,
+} from "#src/controllers/viewClaimsController.js";
 // Import mock claims response data for testing
-import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
+import {
+  getClaimsSuccessResponseData,
+  linkLineItemToEvidenceResponseData,
+} from "#tests/assets/getClaimsResponseData.js";
 import { ApiResponse, Paginated } from "#src/types/api-types.js";
 import { Claim } from "#src/types/Claim.js";
 import { HttpError } from "http-errors";
+import { UUID } from "uuidv7";
 
 describe("view Claims Controller", () => {
   let req: Partial<Request>;
@@ -33,7 +38,8 @@ describe("view Claims Controller", () => {
   let next: any;
   let renderStub: sinon.SinonStub;
   let statusStub: sinon.SinonStub;
-  let claimServiceStub: sinon.SinonStub;
+  let getClaimsStub: sinon.SinonStub;
+  let createClaimStub: sinon.SinonStub;
 
   beforeEach(() => {
     req = {
@@ -56,7 +62,8 @@ describe("view Claims Controller", () => {
     next = sinon.stub();
 
     // Stub the API service
-    claimServiceStub = sinon.stub(claimService, "getClaims");
+    getClaimsStub = sinon.stub(claimService, "getClaims");
+    createClaimStub = sinon.stub(claimService, "createClaim");
   });
 
   afterEach(() => {
@@ -68,14 +75,14 @@ describe("view Claims Controller", () => {
       // Arrange
       const mockApiResponse = getClaimsSuccessResponseData;
 
-      claimServiceStub.resolves(mockApiResponse);
+      getClaimsStub.resolves(mockApiResponse);
 
       // Act
       await handleYourClaimsPage(req as Request, res as Response, next);
 
       // Assert
-      expect(claimServiceStub.calledOnce).to.be.true;
-      expect(claimServiceStub.calledWith(req.axiosMiddleware)).to.be.true;
+      expect(getClaimsStub.calledOnce).to.be.true;
+      expect(getClaimsStub.calledWith(req.axiosMiddleware)).to.be.true;
       expect(renderStub.calledWith("main/index.njk")).to.be.true;
     });
 
@@ -97,7 +104,7 @@ describe("view Claims Controller", () => {
         status: "success",
       };
 
-      claimServiceStub.resolves(mockApiResponse);
+      getClaimsStub.resolves(mockApiResponse);
 
       // Act
       await handleYourClaimsPage(req as Request, res as Response, next);
@@ -112,13 +119,13 @@ describe("view Claims Controller", () => {
         statusCode: 404,
         message: "not found"
       };
-      claimServiceStub.resolves(mockApiResponse);
+      getClaimsStub.resolves(mockApiResponse);
 
       await handleYourClaimsPage(req as Request, res as Response, next);
 
       // Assert
-      expect(claimServiceStub.calledOnce).to.be.true;
-      expect(claimServiceStub.calledWith(req.axiosMiddleware)).to.be.true;
+      expect(getClaimsStub.calledOnce).to.be.true;
+      expect(getClaimsStub.calledWith(req.axiosMiddleware)).to.be.true;
       expect(next.calledOnce).to.be.true;
       expect(next.firstCall.args[0]).to.be.instanceOf(HttpError);
       expect(next.firstCall.args[0].message).to.include("not found");
@@ -127,7 +134,7 @@ describe("view Claims Controller", () => {
     it("should delegate API errors to Express error handling middleware with user-friendly message", async () => {
       // Arrange
       const error = new Error("API Error");
-      claimServiceStub.rejects(error);
+      getClaimsStub.rejects(error);
 
       // Act
       await handleYourClaimsPage(req as Request, res as Response, next);
@@ -136,6 +143,46 @@ describe("view Claims Controller", () => {
       expect(next.calledOnce).to.be.true;
       expect(next.firstCall.args[0]).to.be.instanceOf(Error);
       expect(next.firstCall.args[0].message).to.include("API Error");
+    });
+
+    it("should redirect to non-existent page when 'Import claim' button clicked", async () => {
+      req.body = {
+        action: "import",
+      };
+
+      await handleYourClaimsActionPage(req as Request, res as Response, next);
+
+      expect(renderStub.called).to.be.false;
+      expect(res.redirect.calledWith("/import")).to.be.true;
+    });
+
+    it("should redirect to 'How do you want to upload your evidence?' when 'Create a new claim' button clicked", async () => {
+      req.body = {
+        action: "create",
+      };
+
+      await handleYourClaimsActionPage(req as Request, res as Response, next);
+
+      expect(renderStub.called).to.be.false;
+      expect(res.redirect.calledWith("/claims/019f5c43-d9f0-732e-88b2-1ca29c6c41de/choose-upload")).to.be.true;
+    });
+
+    it("should redirect to 'What type of POA are you claiming?' when 'Payment on account' button clicked", async () => {
+      req.body = {
+        action: "poa",
+      };
+
+      const mockApiResponse = {
+        status: "success",
+        body: UUID.parse("019f7f1a-0bd5-74c4-87b9-2bb69c0f0cd1")
+      };
+
+      createClaimStub.resolves(mockApiResponse);
+
+      await handleYourClaimsActionPage(req as Request, res as Response, next);
+
+      expect(renderStub.called).to.be.false;
+      expect(res.redirect.calledWith("/claims/019f7f1a-0bd5-74c4-87b9-2bb69c0f0cd1/poa/claim-type")).to.be.true;
     });
   });
 });

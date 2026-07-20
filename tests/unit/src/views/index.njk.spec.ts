@@ -39,12 +39,22 @@ describe("views/main/index.njk", () => {
     // expect(cyValue).to.equal("eich hawliadau");
   });
 
-  it("renders the create claim buttons", () => {
-    const importButton = $(".govuk-button").first().text().trim();
-    const createButton = $(".govuk-button--secondary").text().trim();
+  it("renders the action buttons", () => {
+    const importButton = $(".govuk-button").first();
+    const createButton = $(".govuk-button--secondary").eq(0);
+    const poaButton = $(".govuk-button--secondary").eq(1);
 
-    expect(importButton).to.equal("Import claim");
-    expect(createButton).to.equal("Create a new claim");
+    expect(importButton.text().trim()).to.equal("pages.home.actions.import");
+    expect(importButton.attr("name")).to.equal("action");
+    expect(importButton.attr("value")).to.equal("import");
+
+    expect(createButton.text().trim()).to.equal("pages.home.actions.create");
+    expect(createButton.attr("name")).to.equal("action");
+    expect(createButton.attr("value")).to.equal("create");
+
+    expect(poaButton.text().trim()).to.equal("pages.home.actions.poa");
+    expect(poaButton.attr("name")).to.equal("action");
+    expect(poaButton.attr("value")).to.equal("poa");
   });
 
   it("renders the sub navigation", () => {

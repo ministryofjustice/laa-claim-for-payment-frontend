@@ -16,3 +16,7 @@ export type DeleteFileRequest = Request<
 interface WithTranslation {
   t: i18next.TFunction;
 }
+
+export interface ViewClaimsActionRequest {
+  action: "create" | "import" | "poa";
+}
