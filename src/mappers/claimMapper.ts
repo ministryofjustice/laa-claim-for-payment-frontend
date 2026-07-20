@@ -1,4 +1,4 @@
-import { Claim } from "#src/types/Claim.js";
+import type { Claim } from "#src/types/Claim.js";
 import type { ClaimRequestBody } from "#src/generated/claim-api/index.js";
 
 /**

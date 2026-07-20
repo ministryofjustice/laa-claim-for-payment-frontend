@@ -10,7 +10,7 @@ import type { ApiResponse, Paginated } from "#src/types/api-types.js";
 import type { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
 import {
   Claim,
-  ClaimDto,
+  type ClaimDto,
   ClaimResponseSchema,
   ClaimsResponseSchema,
 } from "#src/types/Claim.js";
@@ -161,11 +161,7 @@ class ClaimService {
       throwOnError: true,
     });
 
-    // TODO - make UFN and client nullable when updating Claim model
-    const body: ClaimRequestBody = {
-      ufn: "BLAH",
-      client: "BLAH",
-    };
+    const body: ClaimRequestBody = {};
 
     try {
       const response = await deps.createClaim({

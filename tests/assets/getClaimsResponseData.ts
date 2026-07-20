@@ -1,5 +1,5 @@
 import type { ApiResponse, Paginated } from "#src/types/api-types.js";
-import { Claim, ClaimDto } from "#src/types/Claim.js";
+import { Claim, type ClaimDto } from "#src/types/Claim.js";
 import { claim1, claim2, claim3, claim4 } from "./claim.js";
 
 export const getClaimSuccessResponseData: ApiResponse<Claim> = {

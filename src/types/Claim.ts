@@ -55,21 +55,50 @@ export const ClaimsResponseSchema = z.object({
   totalPages: z.number(),
 });
 
+/**
+ * Wrapper class for claim DTO.
+ */
 export class Claim {
-  constructor(private data: ClaimDto) {}
+  /**
+   * Constructor for the claim wrapper class.
+   *
+   * @param {ClaimDto} data claim DTO data
+   */
+  constructor(private readonly data: ClaimDto) {}
 
+  /**
+   * Gets the underlying claim DTO.
+   *
+   * @returns {ClaimDto} the underlying claim DTO.
+   */
   get value(): ClaimDto {
     return this.data;
   }
 
-  get id() {
+  /**
+   * Gets the claim ID.
+   *
+   * @returns {string} the claim ID.
+   */
+  get id(): string {
     return this.data.id;
   }
 
-  get type() {
+  /**
+   * Gets the claim type.
+   *
+   * @returns {ClaimType | null | undefined} the claim type.
+   */
+  get type(): ClaimType | null | undefined {
     return this.data.type;
   }
 
+  /**
+   * Sets the claim type.
+   *
+   * @param {ClaimType | null | undefined} type claim type
+   * @returns {Claim} updated claim
+   */
   setType(type: ClaimType | null | undefined): this {
     this.data.type = type;
     // cleanup logic here

@@ -27,6 +27,7 @@ export async function fileUploadForLineItemPage(
 
     if (response.status === "success") {
       const { body: claim } = response;
+      // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
       const { lineItems } = claim.value;
 
       const lineItem = lineItems?.find((item) => item.id === lineItemId.toString());
