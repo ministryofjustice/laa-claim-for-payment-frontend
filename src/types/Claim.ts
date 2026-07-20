@@ -15,12 +15,16 @@ export enum Category {
   DISBURSEMENT = "Disbursement",
 }
 
-export const CategorySchema = z.enum(Category);
+export enum ClaimType {
+  PROFIT_COST = 'PROFIT_COST',
+  EXPERT_COST = 'EXPERT_COST',
+  NON_EXPERT_DISBURSEMENT = 'NON_EXPERT_DISBURSEMENT',
+}
 
 export const LineItemSchema = z.object({
   id: z.uuidv7(),
   title: z.string(),
-  category: CategorySchema,
+  category: z.enum(Category),
   date: z.string().pipe(z.coerce.date()),
   evidenceItems: z.array(z.uuidv7()),
 });
@@ -29,6 +33,7 @@ export type LineItem = z.infer<typeof LineItemSchema>;
 
 export const ClaimResponseSchema = z.object({
   id: z.uuidv7(),
+  type: z.enum(ClaimType).nullish(),
   ufn: z.string().nullish(),
   providerUserId: z.string().nullish(),
   client: z.string().nullish(),
@@ -40,7 +45,7 @@ export const ClaimResponseSchema = z.object({
   evidence: z.array(EvidenceItemSchema).nullish(),
 });
 
-export type Claim = z.infer<typeof ClaimResponseSchema>;
+export type ClaimDto = z.infer<typeof ClaimResponseSchema>;
 
 export const ClaimsResponseSchema = z.object({
   claims: z.array(ClaimResponseSchema),
@@ -49,3 +54,25 @@ export const ClaimsResponseSchema = z.object({
   total: z.number(),
   totalPages: z.number(),
 });
+
+export class Claim {
+  constructor(private data: ClaimDto) {}
+
+  get value(): ClaimDto {
+    return this.data;
+  }
+
+  get id() {
+    return this.data.id;
+  }
+
+  get type() {
+    return this.data.type;
+  }
+
+  setType(type: ClaimType | null | undefined): this {
+    this.data.type = type;
+    // cleanup logic here
+    return this;
+  }
+}

@@ -13,6 +13,7 @@ import { DeleteFileRequest } from "#src/types/requests.js";
 import { TFunction } from "#node_modules/i18next/index.js";
 import { deleteEvidenceFileFromClaim } from "#src/controllers/claims/ajaxFileUploadController.js";
 import { uploadService } from "#src/services/uploadService.js";
+import { Claim } from "#src/types/Claim.js";
 
 describe("poaEvidenceUploadController", () => {
   let res: any;
@@ -68,10 +69,10 @@ describe("poaEvidenceUploadController", () => {
     it("renders the POA evidence upload page", async () => {
       getClaimStub.resolves({
         status: "success",
-        body: {
-          id: claimId,
+        body: new Claim({
+          id: claimId.toString(),
           evidence: [],
-        },
+        }),
       });
 
       await poaEvidenceUploadPage(req as Request, res, next);
@@ -113,17 +114,17 @@ describe("poaEvidenceUploadController", () => {
     it("redirects to check your details on submit", async () => {
       getClaimStub.resolves({
         status: "success",
-        body: {
-          id: claimId,
+        body: new Claim({
+          id: claimId.toString(),
           evidence: [
             {
-              id: evidenceId,
+              id: evidenceId.toString(),
               fileKey: "sample.pdf",
               fileSize: 1024,
               submittedOn: new Date(),
             },
           ],
-        },
+        }),
       } as any);
 
       await submitPoaEvidenceUpload(req as Request, res, next);
@@ -140,10 +141,10 @@ describe("poaEvidenceUploadController", () => {
     it("renders with an error when no evidence has been uploaded", async () => {
       getClaimStub.resolves({
         status: "success",
-        body: {
-          id: claimId,
+        body: new Claim({
+          id: claimId.toString(),
           evidence: [],
-        },
+        }),
       } as any);
 
       (res.status as unknown) = sinon.stub().returns(res);

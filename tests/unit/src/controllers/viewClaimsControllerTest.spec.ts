@@ -28,7 +28,7 @@ import {
   linkLineItemToEvidenceResponseData,
 } from "#tests/assets/getClaimsResponseData.js";
 import { ApiResponse, Paginated } from "#src/types/api-types.js";
-import { Claim } from "#src/types/Claim.js";
+import { ClaimDto } from "#src/types/Claim.js";
 import { HttpError } from "http-errors";
 import { UUID } from "uuidv7";
 
@@ -92,7 +92,7 @@ describe("view Claims Controller", () => {
 
       req.query!.page = invalidPage.toString();
 
-      const mockApiResponse: ApiResponse<Paginated<Claim>> = {
+      const mockApiResponse: ApiResponse<Paginated<ClaimDto>> = {
         body:{
           data: getClaimsSuccessResponseData.body?.data!,
           meta: {

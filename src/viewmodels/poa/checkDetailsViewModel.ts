@@ -1,4 +1,4 @@
-import type { Claim, EvidenceItem } from "#src/types/Claim.js";
+import type { ClaimDto, EvidenceItem } from "#src/types/Claim.js";
 import type { Table } from "#src/viewmodels/components/table.js";
 import type { TableCell, TableHeader } from "#src/viewmodels/components/index.js";
 import {
@@ -30,9 +30,9 @@ export class CheckDetailsViewModel {
 
   /**
    * Creates a view model containing the summary rows derived from the claim data
-   * @param {Claim} claim Array of claims
+   * @param {ClaimDto} claim Array of claims
    */
-  constructor(claim: Claim) {
+  constructor(claim: ClaimDto) {
     const { id: claimId } = claim;
     this.assessmentSummaryTable = {
       caption: {

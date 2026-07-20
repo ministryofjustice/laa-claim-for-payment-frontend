@@ -3,7 +3,7 @@
  */
 
 import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
-import { Claim } from "#src/types/Claim.js";
+import { ClaimDto } from "#src/types/Claim.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { expect } from "chai";
 import { PaginationMeta } from "#src/types/api-types.js";
@@ -13,7 +13,7 @@ import { V7Generator } from "uuidv7";
 
 describe("ClaimsViewModel constructor()", () => {
   it("creates a series of headers", () => {
-    const claims: Claim[] = getClaimsSuccessResponseData.body?.data!;
+    const claims: ClaimDto[] = getClaimsSuccessResponseData.body?.data!;
 
     const paginationMeta: PaginationMeta = {
       total: 11,
@@ -55,7 +55,7 @@ describe("ClaimsViewModel constructor()", () => {
     const claim1Id = new V7Generator().generate().toString();
     const claim2Id = new V7Generator().generate().toString();
 
-    const claims: Claim[] = [
+    const claims: ClaimDto[] = [
       {
         id: claim1Id,
         client: "Giordano",
@@ -144,7 +144,7 @@ describe("ClaimsViewModel constructor()", () => {
   });
 
   it("paginates the data", () => {
-    const claim: Claim = {
+    const claim: ClaimDto = {
       id: new V7Generator().generate().toString(),
       client: "Giordano",
       category: "Family",
@@ -153,7 +153,7 @@ describe("ClaimsViewModel constructor()", () => {
       claimed: 234.56,
     };
 
-    const claims: Claim[] = new Array(100).fill(claim);
+    const claims: ClaimDto[] = new Array(100).fill(claim);
 
     const paginationMeta: PaginationMeta = {
       total: 100,

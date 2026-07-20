@@ -7,7 +7,7 @@ import "#utils/axiosSetup.js";
 import { viewUploadEvidenceIndividuallyPage } from "#src/controllers/claims/uploadEvidenceIndividuallyController.js";
 import { getClaimSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { ApiResponse } from "#src/types/api-types.js";
-import { Claim } from "#src/types/Claim.js";
+import { ClaimDto } from "#src/types/Claim.js";
 import { HttpError } from "http-errors";
 import { V7Generator } from "uuidv7";
 
@@ -65,7 +65,7 @@ describe("Upload Evidence Individually controller test", () => {
     });
 
     it("should redirect to appropriate page when no claim is returned", async () => {
-      const mockApiResponse: ApiResponse<Claim> = {
+      const mockApiResponse: ApiResponse<ClaimDto> = {
         status: "error",
         statusCode: 404,
         message: "not found"

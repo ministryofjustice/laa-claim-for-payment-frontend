@@ -6,7 +6,7 @@ import "#utils/axiosSetup.js";
 import { claimService } from "#src/services/claimService.js";
 import { getClaimSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { ApiResponse } from "#src/types/api-types.js";
-import { Claim } from "#src/types/Claim.js";
+import { ClaimDto } from "#src/types/Claim.js";
 import { HttpError } from "http-errors";
 import {
   checkYourDetailsPage,
@@ -64,7 +64,7 @@ describe("Check Details Controller", () => {
     });
 
     it("should redirect to appropriate page when no claim is returned", async () => {
-      const mockApiResponse: ApiResponse<Claim> = {
+      const mockApiResponse: ApiResponse<ClaimDto> = {
         status: "error",
         statusCode: 500,
         message: "not found",

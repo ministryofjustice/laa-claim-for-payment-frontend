@@ -184,7 +184,7 @@ router.get(
   ROUTES.POA_CLAIM_TYPE,
   limiter,
   async function (req, res, next): Promise<void> {
-    await poaClaimTypePage(req, res, next, {answersCache});
+    await poaClaimTypePage(req, res, next);
   },
 );
 
@@ -192,7 +192,7 @@ router.post(
   ROUTES.POA_CLAIM_TYPE,
   limiter,
   async function (req, res, next): Promise<void> {
-    await submitPoaClaimType(req, res, next, {answersCache});
+    await submitPoaClaimType(req, res, next);
   },
 );
 
@@ -337,22 +337,6 @@ router.get(ROUTES.POA_SUBMISSION_SUCCESSFUL, limiter, function(req: Request, res
     limiter,
     function (req: Request, res: Response, next: NextFunction): void {
       submitHowManyClientsRetained(req, res, next);
-    },
-  );
-
-  router.get(
-    ROUTES.POA_CLAIM_TYPE,
-    limiter,
-    async function (req, res, next): Promise<void> {
-      await poaClaimTypePage(req, res, next, {answersCache});
-    },
-  );
-
-  router.post(
-    ROUTES.POA_CLAIM_TYPE,
-    limiter,
-    async function (req, res, next): Promise<void> {
-      await submitPoaClaimType(req, res, next, {answersCache});
     },
   );
 

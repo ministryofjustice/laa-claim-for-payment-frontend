@@ -1,4 +1,4 @@
-import { Claim } from "#src/types/Claim.js";
+import { ClaimDto } from "#src/types/Claim.js";
 import { ClaimViewModel } from "#src/viewmodels/claimViewModel.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { expect, config as chaiConfig } from "chai";
@@ -11,7 +11,7 @@ chaiConfig.truncateThreshold = 0;
 describe("views/main/claims/view.njk", () => {
   let $: CheerioAPI;
 
-  const claim: Claim = getClaimsSuccessResponseData.body?.data![0]!;
+  const claim: ClaimDto = getClaimsSuccessResponseData.body?.data![0]!;
 
   const viewModel = new ClaimViewModel(claim);
 

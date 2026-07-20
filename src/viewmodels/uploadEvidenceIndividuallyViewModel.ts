@@ -2,7 +2,7 @@ import type { TaskList, TaskListItem, TaskListItemStatus } from "#src/viewmodels
 import { UploadStatus } from "#src/models/uploadStatus.js";
 import { UploadStatusTagClass } from "#src/viewmodels/components/status.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { Category, type Claim, type LineItem } from "#src/types/Claim.js";
+import { Category, type ClaimDto, type LineItem } from "#src/types/Claim.js";
 import { formatDateReadable } from "#src/helpers/dataFormatters.js";
 import type { Message } from "./components/message.js";
 
@@ -16,9 +16,9 @@ export class UploadEvidenceIndividuallyViewModel {
 
 /**
  * Creates a view model containing the task lists data.
- * @param {Claim} claim claim object
+ * @param {ClaimDto} claim claim object
  */
-  constructor(claim: Claim) {
+  constructor(claim: ClaimDto) {
     this.billNarrativeTaskList = {
       idPrefix: "bill-narrative",
       items: UploadEvidenceIndividuallyViewModel.buildBillNarrativeTasks(claim),
@@ -52,7 +52,7 @@ export class UploadEvidenceIndividuallyViewModel {
     };
   }
 
-  private static buildBillNarrativeTasks(claim: Claim): TaskListItem[] {
+  private static buildBillNarrativeTasks(claim: ClaimDto): TaskListItem[] {
     return claim.lineItems?.filter((lineItem) => lineItem.category ===  Category.BILL_NARRATIVE)
     .map((lineItem: LineItem) => ({
       title: {
@@ -63,7 +63,7 @@ export class UploadEvidenceIndividuallyViewModel {
     })) ?? [];
   }
 
-  private static buildItemTasks(category: Category, claim: Claim): TaskListItem[] {
+  private static buildItemTasks(category: Category, claim: ClaimDto): TaskListItem[] {
     return claim.lineItems?.filter((lineItem) => lineItem.category === category)
     .map((lineItem: LineItem) => ({
       title: {

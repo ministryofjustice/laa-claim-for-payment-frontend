@@ -9,7 +9,8 @@ import { createApiError } from "#src/helpers/index.js";
 import type { ApiResponse, Paginated } from "#src/types/api-types.js";
 import type { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
 import {
-  type Claim,
+  Claim,
+  ClaimDto,
   ClaimResponseSchema,
   ClaimsResponseSchema,
 } from "#src/types/Claim.js";
@@ -45,14 +46,14 @@ class ClaimService {
    * @param {number} [page] - Page number to request.
    * @param {number} [limit] - Maximum number of claims per page.
    * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
-   * @returns {Promise<ApiResponse<Paginated<Claim>>>} Parsed claims response in app response format.
+   * @returns {Promise<ApiResponse<Paginated<ClaimDto>>>} Parsed claims response in app response format.
    */
   static async getClaims(
     axiosMiddleware: AxiosInstanceWrapper,
     page?: number,
     limit?: number,
     deps: ClaimServiceDeps = defaultDeps,
-  ): Promise<ApiResponse<Paginated<Claim>>> {
+  ): Promise<ApiResponse<Paginated<ClaimDto>>> {
     const apiClient = deps.createClient({
       baseURL: config.api.baseUrl,
       axios: axiosMiddleware.axiosInstance,
@@ -132,10 +133,10 @@ class ClaimService {
         client: apiClient,
       });
 
-      const parsed = ClaimResponseSchema.parse(response.data);
+      const parsed: ClaimDto = ClaimResponseSchema.parse(response.data);
 
       return {
-        body: parsed,
+        body: new Claim(parsed),
         status: "success",
       };
     } catch (error) {

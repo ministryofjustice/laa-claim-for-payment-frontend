@@ -27,7 +27,7 @@ export async function fileUploadForLineItemPage(
 
     if (response.status === "success") {
       const { body: claim } = response;
-      const { lineItems } = claim;
+      const { lineItems } = claim.value;
 
       const lineItem = lineItems?.find((item) => item.id === lineItemId.toString());
 

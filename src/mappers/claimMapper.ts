@@ -1,4 +1,4 @@
-import type { Claim } from "#src/types/Claim.js";
+import { Claim } from "#src/types/Claim.js";
 import type { ClaimRequestBody } from "#src/generated/claim-api/index.js";
 
 /**
@@ -9,7 +9,6 @@ import type { ClaimRequestBody } from "#src/generated/claim-api/index.js";
  */
 export function toClaimRequestBody(claim: Claim): ClaimRequestBody {
   return {
-    ufn: claim.ufn ?? "",
-    client: claim.client ?? "",
+    type: claim.type ?? undefined
   };
 }

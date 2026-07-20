@@ -1,4 +1,4 @@
-import type { Claim } from "#src/types/Claim.js";
+import type { ClaimDto } from "#src/types/Claim.js";
 import {
   formatClaimed,
   formatDate,
@@ -16,9 +16,9 @@ export class ClaimViewModel {
 
   /**
    * Creates a view model containing the summary rows derived from the claim data
-   * @param {Claim} claim Array of claims
+   * @param {ClaimDto} claim Array of claims
    */
-  constructor(claim: Claim) {
+  constructor(claim: ClaimDto) {
     this.title = "TODO";
     this.amendLink = `/claim/${claim.id}/amend`;
     const rows: SummaryListRow[] = [];

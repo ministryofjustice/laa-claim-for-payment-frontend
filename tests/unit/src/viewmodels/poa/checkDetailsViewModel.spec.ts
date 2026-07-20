@@ -1,11 +1,11 @@
 import { expect } from "chai";
-import type { Claim } from "#src/types/Claim.js";
+import type { ClaimDto } from "#src/types/Claim.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
 
 describe("CheckDetailsViewModel constructor()", () => {
   it("builds the assessment summary table", () => {
-    const claim: Claim = getClaimsSuccessResponseData.body!.data![0]!;
+    const claim: ClaimDto = getClaimsSuccessResponseData.body!.data![0]!;
     const vm = new CheckDetailsViewModel(claim);
 
     expect(vm.assessmentSummaryTable.head.length).to.equal(2);
@@ -44,7 +44,7 @@ describe("CheckDetailsViewModel constructor()", () => {
   });
 
   it("builds the profit cost details summary list", () => {
-    const claim: Claim = getClaimsSuccessResponseData.body!.data![0]!;
+    const claim: ClaimDto = getClaimsSuccessResponseData.body!.data![0]!;
     const claimId = claim.id;
     const vm = new CheckDetailsViewModel(claim);
 
@@ -161,7 +161,7 @@ describe("CheckDetailsViewModel constructor()", () => {
   });
 
   it("builds the profit cost bill line summary list", () => {
-    const claim: Claim = getClaimsSuccessResponseData.body!.data![0]!;
+    const claim: ClaimDto = getClaimsSuccessResponseData.body!.data![0]!;
     const claimId = claim.id;
     const vm = new CheckDetailsViewModel(claim);
 
@@ -222,7 +222,7 @@ describe("CheckDetailsViewModel constructor()", () => {
   });
 
   it("builds the evidence summary list", () => {
-    const claim: Claim = getClaimsSuccessResponseData.body!.data![0]!;
+    const claim: ClaimDto = getClaimsSuccessResponseData.body!.data![0]!;
     const claimId = claim.id;
     const vm = new CheckDetailsViewModel(claim);
 
@@ -248,7 +248,7 @@ describe("CheckDetailsViewModel constructor()", () => {
   });
 
   it("builds the expert cost bill line summary lists", () => {
-    const claim: Claim = getClaimsSuccessResponseData.body!.data![0]!;
+    const claim: ClaimDto = getClaimsSuccessResponseData.body!.data![0]!;
     const claimId = claim.id;
     const vm = new CheckDetailsViewModel(claim);
 
