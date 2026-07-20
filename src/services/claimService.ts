@@ -98,6 +98,7 @@ class ClaimService {
     try {
       const response = await deps.getClaim({
         path: { claimId: claimId.toString() },
+        query: { status: "SUBMITTED" },
         client: apiClient,
       });
 
