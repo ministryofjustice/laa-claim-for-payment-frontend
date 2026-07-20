@@ -68,7 +68,12 @@
   },
   "pages": {
     "home": {
-      "title": "WELSH!"
+      "title": "WELSH!",
+      "actions": {
+        "import": "Import claim",
+        "create": "Create a new claim",
+        "poa": "Payment on account"
+      }
     },
     "claims" : {
       "title": "welsh"

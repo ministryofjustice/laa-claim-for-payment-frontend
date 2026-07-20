@@ -11,16 +11,27 @@
 {% block content %}
   <h1 class="govuk-heading-xl">{{ t('pages.home.title') }}</h1>
 
-  <div class="govuk-button-group">
-    {{ govukButton({
-      text: "Import claim"
-    }) }}
-    {{ govukButton({
-      text: "Create a new claim",
-      classes: "govuk-button--secondary",
-      href: createClaimHref
-    }) }}
-  </div>
+  <form method="post">
+    <div class="govuk-button-group">
+      {{ govukButton({
+        text: t('pages.home.actions.import'),
+        name: "action",
+        value: "import"
+      }) }}
+      {{ govukButton({
+        text: t('pages.home.actions.create'),
+        name: "action",
+        value: "create",
+        classes: "govuk-button--secondary"
+      }) }}
+      {{ govukButton({
+        text: t('pages.home.actions.poa'),
+        name: "action",
+        value: "poa",
+        classes: "govuk-button--secondary"
+      }) }}
+    </div>
+  </form>
 
   {{ mojSubNavigation({
     label: "Sub navigation",

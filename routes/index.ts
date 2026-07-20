@@ -1,6 +1,6 @@
 import { rateLimit } from "express-rate-limit";
 import { viewClaimPage } from "#src/controllers/claims/viewClaimController.js";
-import { handleYourClaimsPage } from "#src/controllers/viewClaimsController.js";
+import { handleYourClaimsPage, handleYourClaimsActionPage } from "#src/controllers/viewClaimsController.js";
 import type { NextFunction, Request, Response, Router } from "express";
 import express from "express";
 import { viewUploadEvidenceIndividuallyPage } from "#src/controllers/claims/uploadEvidenceIndividuallyController.js";
@@ -21,6 +21,7 @@ import { expertCostDetails, submitExpertCostDetails } from "#src/controllers/poa
 import { poaEvidenceUploadPage, submitPoaEvidenceUpload } from "#src/controllers/poa/poaEvidenceUploadController.js";
 import { deleteEvidenceFileFromClaim, unlinkEvidenceFileFromLineItem, uploadEvidenceFile, uploadEvidenceFileForLineItem } from "#src/controllers/claims/ajaxFileUploadController.js";
 import type { AnswersCache } from "#src/services/answersCache.js";
+import type { ViewClaimsActionRequest } from "#src/types/requests.js";
 
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -51,6 +52,18 @@ export const buildRouter = ({ answersCache }: RouterDependencies): Router => {
       next: NextFunction,
     ): Promise<void> {
       await handleYourClaimsPage(req, res, next);
+    },
+  );
+
+  router.post(
+    ROUTES.CLAIMS,
+    limiter,
+    async function (
+      req: Request<unknown, unknown, ViewClaimsActionRequest>,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await handleYourClaimsActionPage(req, res, next);
     },
   );
 
