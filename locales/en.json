@@ -75,7 +75,7 @@
       "title": "English"
     },
     "chooseUpload" : {
-      "title" : "How do you want to upload your evidence screen?",
+      "title" : "How do you want to upload your evidence?",
       "allAtOnce": {
         "text" : "All at once",
         "hint" : "Upload evidence all at once, without associating it to specific work items or disbursements"
