@@ -12,7 +12,7 @@ test('choose upload page displays radio options', async ({ page, checkAccessibil
 
   await expect(
     page.getByRole('heading', {
-      name: 'How do you want to upload your evidence screen?',
+      name: 'How do you want to upload your evidence?',
     })
   ).toBeVisible();
 
