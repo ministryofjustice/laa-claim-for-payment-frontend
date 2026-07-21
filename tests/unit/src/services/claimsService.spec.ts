@@ -3,7 +3,7 @@ import sinon from "sinon";
 import { claimService } from "#src/services/claimService.js";
 import { ApiError } from "#src/types/api-types.js";
 import { UUID, V7Generator } from "uuidv7";
-import { Claim, ClaimType } from "#src/types/Claim.js";
+import { Claim, CostType } from "#src/types/Claim.js";
 
 describe("Claim Service", () => {
   afterEach(() => {
@@ -530,7 +530,7 @@ describe("Claim Service", () => {
   describe("updateClaim", () => {
     const claim: Claim = new Claim({
       id: claimId.toString(),
-      type: ClaimType.PROFIT_COST,
+      costType: CostType.PROFIT_COST,
     });
 
     it("returns success", async () => {
@@ -556,7 +556,7 @@ describe("Claim Service", () => {
           path: { id: claimId.toString() },
           query: { status: "DRAFT" },
           body: {
-            type: "PROFIT_COST",
+            costType: "PROFIT_COST",
           },
         }),
       );

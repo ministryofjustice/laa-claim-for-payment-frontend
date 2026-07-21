@@ -1389,9 +1389,9 @@
         "type": "object",
         "description": "Claim input data",
         "properties": {
-          "type": {
+          "costType": {
             "type": "string",
-            "description": "claim type",
+            "description": "cost type",
             "enum": [
               "PROFIT_COST",
               "EXPERT_COST",
@@ -1555,9 +1555,9 @@
             "type": "string",
             "format": "uuid"
           },
-          "type": {
+          "costType": {
             "type": "string",
-            "description": "claim type",
+            "description": "cost type",
             "enum": [
               "PROFIT_COST",
               "EXPERT_COST",

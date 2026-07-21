@@ -7,26 +7,26 @@ import {
 import type { NextFunction, Request, Response } from "express";
 import { validateRadioInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
-import { ClaimType } from "#src/types/Claim.js";
+import { CostType } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
 
 const poaClaimTypeFieldName = "poaClaimType" as const;
 
-const poaClaimTypeChoices: ReadonlyArray<RadioQuestionOptions<ClaimType>> = [
+const poaClaimTypeChoices: ReadonlyArray<RadioQuestionOptions<CostType>> = [
   {
-    value: ClaimType.PROFIT_COST,
+    value: CostType.PROFIT_COST,
     text: {
       key: "pages.poaClaimType.profitCost.text",
     },
   },
   {
-    value: ClaimType.EXPERT_COST,
+    value: CostType.EXPERT_COST,
     text: {
       key: "pages.poaClaimType.expertCost.text",
     },
   },
   {
-    value: ClaimType.NON_EXPERT_DISBURSEMENT,
+    value: CostType.NON_EXPERT_DISBURSEMENT,
     text: {
       key: "pages.poaClaimType.nonExpertDisbursement.text",
     },
@@ -62,7 +62,7 @@ export async function poaClaimTypePage(
           },
           fieldName: poaClaimTypeFieldName,
           choices: poaClaimTypeChoices,
-          selectedValue: claim.body.type,
+          selectedValue: claim.body.costType,
         }),
       });
     } else {
@@ -124,18 +124,18 @@ export async function submitPoaClaimType(
     if (claim.status === "success") {
       await claimService.updateClaim(
         req.axiosMiddleware,
-        claim.body.setType(validationResult.value),
+        claim.body.setCostType(validationResult.value),
       );
 
-      const redirectByChoice: Record<ClaimType, string> = {
-        [ClaimType.PROFIT_COST]: buildRoute(ROUTES.PROFIT_COST_DETAILS, {
+      const redirectByChoice: Record<CostType, string> = {
+        [CostType.PROFIT_COST]: buildRoute(ROUTES.PROFIT_COST_DETAILS, {
           claimId,
         }),
-        [ClaimType.EXPERT_COST]: buildRoute(ROUTES.EXPERT_COST_DETAILS, {
+        [CostType.EXPERT_COST]: buildRoute(ROUTES.EXPERT_COST_DETAILS, {
           claimId,
           expertCostId: 1,
         }),
-        [ClaimType.NON_EXPERT_DISBURSEMENT]: buildRoute(
+        [CostType.NON_EXPERT_DISBURSEMENT]: buildRoute(
           ROUTES.NON_EXPERT_COST_DETAILS,
           { claimId },
         ),

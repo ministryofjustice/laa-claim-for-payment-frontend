@@ -15,7 +15,7 @@ export enum Category {
   DISBURSEMENT = "Disbursement",
 }
 
-export enum ClaimType {
+export enum CostType {
   PROFIT_COST = 'PROFIT_COST',
   EXPERT_COST = 'EXPERT_COST',
   NON_EXPERT_DISBURSEMENT = 'NON_EXPERT_DISBURSEMENT',
@@ -33,7 +33,7 @@ export type LineItem = z.infer<typeof LineItemSchema>;
 
 export const ClaimResponseSchema = z.object({
   id: z.uuidv7(),
-  type: z.enum(ClaimType).nullish(),
+  costType: z.enum(CostType).nullish(),
   ufn: z.string().nullish(),
   providerUserId: z.string().nullish(),
   client: z.string().nullish(),
@@ -85,22 +85,22 @@ export class Claim {
   }
 
   /**
-   * Gets the claim type.
+   * Gets the cost type.
    *
-   * @returns {ClaimType | null | undefined} the claim type.
+   * @returns {CostType | null | undefined} the cost type.
    */
-  get type(): ClaimType | null | undefined {
-    return this.data.type;
+  get costType(): CostType | null | undefined {
+    return this.data.costType;
   }
 
   /**
-   * Sets the claim type.
+   * Sets the cost type.
    *
-   * @param {ClaimType | null | undefined} type claim type
+   * @param {CostType | null | undefined} costType cost type
    * @returns {Claim} updated claim
    */
-  setType(type: ClaimType | null | undefined): this {
-    this.data.type = type;
+  setCostType(costType: CostType | null | undefined): this {
+    this.data.costType = costType;
     // cleanup logic here
     return this;
   }

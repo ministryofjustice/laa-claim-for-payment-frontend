@@ -1,4 +1,4 @@
-import { Claim, ClaimDto, ClaimType } from "#src/types/Claim.js";
+import { Claim, ClaimDto, CostType } from "#src/types/Claim.js";
 import { V7Generator } from "uuidv7";
 import { toClaimRequestBody } from "#src/mappers/claimMapper.js";
 import { expect } from "chai";
@@ -10,14 +10,14 @@ describe("ClaimMapper", () => {
   it("when values are defined", () => {
     const claimDto: ClaimDto = {
       id: claimId.toString(),
-      type: ClaimType.PROFIT_COST,
+      costType: CostType.PROFIT_COST,
     };
 
     const claim = new Claim(claimDto);
 
     const result = toClaimRequestBody(claim);
 
-    expect(result.type).to.equal("PROFIT_COST");
+    expect(result.costType).to.equal("PROFIT_COST");
   });
 
   it("when values are undefined", () => {

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ClaimType } from "#src/types/Claim.js";
+import { CostType } from "#src/types/Claim.js";
 
 export const EvidenceSchema = z.object({
   fileKey: z.string(),
@@ -88,7 +88,7 @@ export const ExpertCostDetailsSchema = z.object({
 export type ExpertCostDetails = z.infer<typeof ExpertCostDetailsSchema>;
 
 export const ProfitCostPoaSchema = z.object({
-  type: z.literal(ClaimType.PROFIT_COST),
+  type: z.literal(CostType.PROFIT_COST),
   details: ProfitCostDetailsSchema,
   howManyClientsRetained: HowManyClientsRetainedChoiceSchema.optional(),
   numberOfClientsStartOfCase: NumberOfClientsStartOfCaseChoiceSchema.optional(),
@@ -101,7 +101,7 @@ export const ProfitCostPoaSchema = z.object({
 export type ProfitCostPoa = z.infer<typeof ProfitCostPoaSchema>;
 
 export const ExpertCostPoaSchema = z.object({
-  type: z.literal(ClaimType.EXPERT_COST),
+  type: z.literal(CostType.EXPERT_COST),
   details: z.array(ExpertCostDetailsSchema),
   evidence: z.array(EvidenceSchema).optional(),
 });
@@ -109,7 +109,7 @@ export const ExpertCostPoaSchema = z.object({
 export type ExpertCostPoa = z.infer<typeof ExpertCostPoaSchema>;
 
 export const NonExpertDisbursementPoaSchema = z.object({
-  type: z.literal(ClaimType.NON_EXPERT_DISBURSEMENT),
+  type: z.literal(CostType.NON_EXPERT_DISBURSEMENT),
 });
 
 export type NonExpertDisbursementPoa = z.infer<
