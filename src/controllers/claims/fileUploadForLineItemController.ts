@@ -26,11 +26,9 @@ export async function fileUploadForLineItemPage(
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {
-      const { body: claim } = response;
-      // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
-      const { lineItems } = claim.value;
+      const { body: { value: claim } } = response;
 
-      const lineItem = lineItems?.find((item) => item.id === lineItemId.toString());
+      const lineItem = claim.lineItems?.find((item) => item.id === lineItemId.toString());
 
       if (lineItem === undefined) {
         next(new createHttpError.NotFound(`Line item ${lineItemId.toString()} not found`));

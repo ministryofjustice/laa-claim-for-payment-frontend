@@ -21,8 +21,8 @@ export async function viewClaimPage(
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {
-      const { body: claim } = response;
-      const vm = new ClaimViewModel(claim.value);
+      const { body: { value: claim } } = response;
+      const vm = new ClaimViewModel(claim);
 
       res.render("main/claims/view.njk", { vm });
     } else {

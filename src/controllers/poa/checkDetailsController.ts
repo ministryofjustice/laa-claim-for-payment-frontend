@@ -22,7 +22,7 @@ export async function checkYourDetailsPage(
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {
-      const { body: claim } = response;
+      const { body: { value: claim } } = response;
       const vm = new CheckDetailsViewModel(claim);
 
       res.render("main/poa/checkDetailsView.njk", { vm });
