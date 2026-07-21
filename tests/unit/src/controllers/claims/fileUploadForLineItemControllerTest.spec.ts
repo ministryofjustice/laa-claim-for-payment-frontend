@@ -12,7 +12,7 @@ import {
   linkEvidenceToLineItem,
 } from "#src/controllers/claims/fileUploadForLineItemController.js";
 import { AjaxUploadResponse, ApiResponse } from "#src/types/api-types.js";
-import { Claim } from "#src/types/Claim.js";
+import { ClaimDto } from "#src/types/Claim.js";
 import { HttpError } from "http-errors";
 import { DeleteFileRequest, MulterRequest } from "#src/types/requests.js";
 import { TFunction } from "#node_modules/i18next/index.js";
@@ -95,7 +95,7 @@ describe("View File Upload For Line Item Controller", () => {
     });
 
     it("should redirect to appropriate page when no claim is returned", async () => {
-      const mockApiResponse: ApiResponse<Claim> = {
+      const mockApiResponse: ApiResponse<ClaimDto> = {
         status: "error",
         statusCode: 404,
         message: "not found",

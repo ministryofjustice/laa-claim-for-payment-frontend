@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CostType } from "#src/types/Claim.js";
 
 export const EvidenceSchema = z.object({
   fileKey: z.string(),
@@ -35,16 +36,6 @@ export const NumberOfClientsStartOfCaseChoiceSchema = z.enum(
 export type NumberOfClientsStartOfCaseChoice = z.infer<
   typeof NumberOfClientsStartOfCaseChoiceSchema
 >;
-
-export const PoaClaimTypeChoice = {
-  ProfitCost: "profit-cost",
-  ExpertCost: "expert-cost",
-  NonExpertDisbursement: "non-expert-disbursement",
-} as const;
-
-export const PoaClaimTypeChoiceSchema = z.enum(PoaClaimTypeChoice);
-
-export type PoaClaimTypeChoice = z.infer<typeof PoaClaimTypeChoiceSchema>;
 
 export const ClientStatusChoice = {
   Child: "child",
@@ -97,7 +88,7 @@ export const ExpertCostDetailsSchema = z.object({
 export type ExpertCostDetails = z.infer<typeof ExpertCostDetailsSchema>;
 
 export const ProfitCostPoaSchema = z.object({
-  type: z.literal(PoaClaimTypeChoice.ProfitCost),
+  type: z.literal(CostType.PROFIT_COST),
   details: ProfitCostDetailsSchema,
   howManyClientsRetained: HowManyClientsRetainedChoiceSchema.optional(),
   numberOfClientsStartOfCase: NumberOfClientsStartOfCaseChoiceSchema.optional(),
@@ -110,7 +101,7 @@ export const ProfitCostPoaSchema = z.object({
 export type ProfitCostPoa = z.infer<typeof ProfitCostPoaSchema>;
 
 export const ExpertCostPoaSchema = z.object({
-  type: z.literal(PoaClaimTypeChoice.ExpertCost),
+  type: z.literal(CostType.EXPERT_COST),
   details: z.array(ExpertCostDetailsSchema),
   evidence: z.array(EvidenceSchema).optional(),
 });
@@ -118,7 +109,7 @@ export const ExpertCostPoaSchema = z.object({
 export type ExpertCostPoa = z.infer<typeof ExpertCostPoaSchema>;
 
 export const NonExpertDisbursementPoaSchema = z.object({
-  type: z.literal(PoaClaimTypeChoice.NonExpertDisbursement),
+  type: z.literal(CostType.NON_EXPERT_DISBURSEMENT),
 });
 
 export type NonExpertDisbursementPoa = z.infer<

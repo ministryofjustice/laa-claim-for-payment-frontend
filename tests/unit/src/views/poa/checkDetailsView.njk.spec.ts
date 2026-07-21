@@ -1,7 +1,7 @@
 import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
-import { Claim } from "#src/types/Claim.js";
+import { ClaimDto } from "#src/types/Claim.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
 
@@ -10,7 +10,7 @@ chaiConfig.truncateThreshold = 0;
 describe("views/main/poa/checkDetailsView.njk", () => {
   let $: CheerioAPI;
 
-  const claim: Claim = getClaimsSuccessResponseData.body?.data![0]!;
+  const claim: ClaimDto = getClaimsSuccessResponseData.body?.data![0]!;
 
   const viewModel = new CheckDetailsViewModel(claim);
 
@@ -111,7 +111,7 @@ describe("views/main/poa/checkDetailsView.njk", () => {
 
     describe("without evidence", () => {
 
-      const claim: Claim = getClaimsSuccessResponseData.body?.data![2]!;
+      const claim: ClaimDto = getClaimsSuccessResponseData.body?.data![2]!;
 
       const viewModel = new CheckDetailsViewModel(claim);
 

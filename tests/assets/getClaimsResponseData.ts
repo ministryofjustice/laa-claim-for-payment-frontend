@@ -1,13 +1,13 @@
 import type { ApiResponse, Paginated } from "#src/types/api-types.js";
-import type { Claim } from "#src/types/Claim.js";
+import { Claim, type ClaimDto } from "#src/types/Claim.js";
 import { claim1, claim2, claim3, claim4 } from "./claim.js";
 
 export const getClaimSuccessResponseData: ApiResponse<Claim> = {
-  body: claim1,
+  body: new Claim({...claim1}),
   status: "success",
 }
 
-export const getClaimsSuccessResponseData: ApiResponse<Paginated<Claim>> = {
+export const getClaimsSuccessResponseData: ApiResponse<Paginated<ClaimDto>> = {
   body: {
     meta: {
       total: 1,

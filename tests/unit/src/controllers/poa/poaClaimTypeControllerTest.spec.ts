@@ -1,19 +1,21 @@
 import { expect } from "chai";
-import { beforeEach, describe, it } from "mocha";
+import { afterEach, beforeEach, describe, it } from "mocha";
 import sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
 import {
   poaClaimTypePage,
   submitPoaClaimType,
 } from "#src/controllers/poa/poaClaimTypeController.js";
-import type { AnswersCache } from "#src/services/answersCache.js";
-import { z } from "zod";
 import { V7Generator } from "uuidv7";
+import { claimService } from "#src/services/claimService.js";
+import { Claim } from "#src/types/Claim.js";
 
 describe("poaClaimTypeController", () => {
+  let req: Partial<Request>;
   let res: Response;
   let next: NextFunction;
-  let answersCache: AnswersCache;
+  let getClaimStub: sinon.SinonStub;
+  let updateClaimStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
 
@@ -29,30 +31,29 @@ describe("poaClaimTypeController", () => {
 
     next = sinon.stub() as unknown as NextFunction;
 
-    answersCache = {
-      get: sinon.stub().resolves(null),
-      set: sinon.stub().resolves(),
-      remove: sinon.stub().resolves(),
-      clear: sinon.stub().resolves(),
-    };
+    getClaimStub = sinon.stub(claimService, "getDraftClaim");
+    updateClaimStub = sinon.stub(claimService, "updateClaim");
+  });
+
+  afterEach(() => {
+    sinon.restore();
   });
 
   it("renders the POA claim type radio question page", async () => {
-    const req = {
-      sessionID: "session-123",
+    req = {
       params: {
         claimId: claimId.toString(),
       },
-    } as unknown as Request;
+    };
 
-    await poaClaimTypePage(req, res, next, { answersCache });
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
 
-    const args = (answersCache.get as sinon.SinonStub).firstCall.args;
-
-    expect(args[0]).to.equal("session-123");
-    expect(args[1]).to.deep.equal(claimId);
-    expect(args[2]).to.deep.equal(["poa", "type"]);
-    expect(args[3]).to.be.instanceOf(z.ZodString);
+    await poaClaimTypePage(req as Request, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -65,7 +66,7 @@ describe("poaClaimTypeController", () => {
     expect(renderArgs.vm.title.key).to.equal("pages.poaClaimType.title");
     expect(renderArgs.vm.form.fieldName).to.equal("poaClaimType");
     expect(renderArgs.vm.form.choices).to.deep.include({
-      value: "profit-cost",
+      value: "PROFIT_COST",
       text: {
         key: "pages.poaClaimType.profitCost.text",
       },
@@ -74,25 +75,28 @@ describe("poaClaimTypeController", () => {
   });
 
   it("redirects to profit cost details when Profit cost is selected", async () => {
-    const req = {
-      sessionID: "session-123",
+    req = {
       params: {
         claimId: claimId.toString(),
       },
       body: {
-        poaClaimType: "profit-cost",
+        poaClaimType: "PROFIT_COST",
       },
-    } as unknown as Request;
+    };
 
-    await submitPoaClaimType(req, res, next, { answersCache });
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
 
-    expect((answersCache.set as sinon.SinonStub).calledOnce).to.equal(true);
-    expect((answersCache.set as sinon.SinonStub).firstCall.args).to.deep.equal([
-      "session-123",
-      claimId,
-      ["poa", "type"],
-      "profit-cost",
-    ]);
+    updateClaimStub.resolves({
+      status: "success",
+      body: null,
+    });
+
+    await submitPoaClaimType(req as Request, res, next);
 
     expect((res.redirect as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.redirect as sinon.SinonStub).firstCall.args).to.deep.equal([
@@ -101,25 +105,28 @@ describe("poaClaimTypeController", () => {
   });
 
   it("redirects to expert cost details when Expert cost is selected", async () => {
-    const req = {
-      sessionID: "session-123",
+    req = {
       params: {
         claimId: claimId.toString(),
       },
       body: {
-        poaClaimType: "expert-cost",
+        poaClaimType: "EXPERT_COST",
       },
-    } as unknown as Request;
+    };
 
-    await submitPoaClaimType(req, res, next, { answersCache });
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
 
-    expect((answersCache.set as sinon.SinonStub).calledOnce).to.equal(true);
-    expect((answersCache.set as sinon.SinonStub).firstCall.args).to.deep.equal([
-      "session-123",
-      claimId,
-      ["poa", "type"],
-      "expert-cost",
-    ]);
+    updateClaimStub.resolves({
+      status: "success",
+      body: null,
+    });
+
+    await submitPoaClaimType(req as Request, res, next);
 
     expect((res.redirect as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.redirect as sinon.SinonStub).firstCall.args).to.deep.equal([
@@ -128,25 +135,28 @@ describe("poaClaimTypeController", () => {
   });
 
   it("redirects to non expert disbursement when Non expert disbursement is selected", async () => {
-    const req = {
-      sessionID: "session-123",
+    req = {
       params: {
         claimId: claimId.toString(),
       },
       body: {
-        poaClaimType: "non-expert-disbursement",
+        poaClaimType: "NON_EXPERT_DISBURSEMENT",
       },
-    } as unknown as Request;
+    };
 
-    await submitPoaClaimType(req, res, next, { answersCache });
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
 
-    expect((answersCache.set as sinon.SinonStub).calledOnce).to.equal(true);
-    expect((answersCache.set as sinon.SinonStub).firstCall.args).to.deep.equal([
-      "session-123",
-      claimId,
-      ["poa", "type"],
-      "non-expert-disbursement",
-    ]);
+    updateClaimStub.resolves({
+      status: "success",
+      body: null,
+    });
+
+    await submitPoaClaimType(req as Request, res, next);
 
     expect((res.redirect as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.redirect as sinon.SinonStub).firstCall.args).to.deep.equal([
@@ -155,17 +165,15 @@ describe("poaClaimTypeController", () => {
   });
 
   it("rerenders the radio question page with an error when no option is selected", async () => {
-    const req = {
-      sessionID: "session-123",
+    req = {
       params: {
         claimId: claimId.toString(),
       },
       body: {},
-    } as unknown as Request;
+    };
 
-    await submitPoaClaimType(req, res, next, { answersCache });
+    await submitPoaClaimType(req as Request, res, next);
 
-    expect((answersCache.set as sinon.SinonStub).notCalled).to.equal(true);
     expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -184,19 +192,16 @@ describe("poaClaimTypeController", () => {
   });
 
   it("rerenders with selected invalid string preserved when invalid option is submitted", async () => {
-    const req = {
-      sessionID: "session-123",
+    req = {
       params: {
         claimId: claimId.toString(),
       },
       body: {
         poaClaimType: "something-invalid",
       },
-    } as unknown as Request;
+    };
 
-    await submitPoaClaimType(req, res, next, { answersCache });
-
-    expect((answersCache.set as sinon.SinonStub).notCalled).to.equal(true);
+    await submitPoaClaimType(req as Request, res, next);
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
@@ -210,7 +215,7 @@ describe("poaClaimTypeController", () => {
 
     expect(
       renderArgs.vm.form.choices.every(
-        (choice: { checked: boolean }) => choice.checked === false,
+        (choice: { checked: boolean }) => !choice.checked,
       ),
     ).to.equal(true);
   });

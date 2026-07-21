@@ -1,5 +1,5 @@
 import { ClaimViewModel } from "#src/viewmodels/claimViewModel.js";
-import type { Claim } from "#src/types/Claim.js";
+import type { ClaimDto } from "#src/types/Claim.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { expect } from "chai";
 import {
@@ -9,7 +9,7 @@ import {
 
 describe("ClaimViewModel constructor()", () => {
   it("builds the title and summary rows", () => {
-    const claim: Claim = getClaimsSuccessResponseData.body!.data![0]!;
+    const claim: ClaimDto = getClaimsSuccessResponseData.body!.data![0]!;
     const vm = new ClaimViewModel(claim);
 
     expect(vm.title).to.equal("TODO");

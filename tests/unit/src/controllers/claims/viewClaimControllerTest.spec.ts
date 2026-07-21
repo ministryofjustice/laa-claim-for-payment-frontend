@@ -7,7 +7,7 @@ import { claimService } from "#src/services/claimService.js";
 import { viewClaimPage } from "#src/controllers/claims/viewClaimController.js";
 import { getClaimSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { ApiResponse } from "#src/types/api-types.js";
-import { Claim } from "#src/types/Claim.js";
+import { ClaimDto } from "#src/types/Claim.js";
 import { HttpError } from "http-errors";
 import { V7Generator } from "uuidv7";
 
@@ -64,7 +64,7 @@ describe("View Claim Controller", () => {
     });
 
     it("should redirect to appropriate page when no claim is returned", async () => {
-      const mockApiResponse: ApiResponse<Claim> = {
+      const mockApiResponse: ApiResponse<ClaimDto> = {
         status: "error",
         statusCode: 500,
         message: "not found"

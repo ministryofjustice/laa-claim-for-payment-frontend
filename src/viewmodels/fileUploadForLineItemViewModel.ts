@@ -1,7 +1,7 @@
 import { formatDateReadable } from "#src/helpers/dataFormatters.js";
 import {
   Category,
-  type Claim,
+  type ClaimDto,
   type EvidenceItem,
   type LineItem,
 } from "#src/types/Claim.js";
@@ -22,7 +22,7 @@ export class FileUploadForLineItemViewModel {
 
   /**
    * Creates a view model containing the summary rows derived from the claim data
-   * @param {Claim} claim Array of claims
+   * @param {ClaimDto} claim Array of claims
    * @param {LineItem} lineItem Line item
    * @param {string} uploadUrl url for upload
    * @param {string} deleteUrl url for delete
@@ -30,7 +30,7 @@ export class FileUploadForLineItemViewModel {
    */
   // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   constructor(
-    claim: Claim,
+    claim: ClaimDto,
     lineItem: LineItem,
     uploadUrl: string,
     deleteUrl: string,

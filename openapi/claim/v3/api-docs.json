@@ -186,6 +186,18 @@
               "maximum": 100000,
               "minimum": 0
             }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DRAFT",
+                "SUBMITTED"
+              ]
+            }
           }
         ],
         "responses": {
@@ -1377,6 +1389,15 @@
         "type": "object",
         "description": "Claim input data",
         "properties": {
+          "costType": {
+            "type": "string",
+            "description": "cost type",
+            "enum": [
+              "PROFIT_COST",
+              "EXPERT_COST",
+              "NON_EXPERT_DISBURSEMENT"
+            ]
+          },
           "ufn": {
             "type": "string",
             "description": "universal file number"
@@ -1410,11 +1431,7 @@
             "type": "number",
             "description": "amount claimed"
           }
-        },
-        "required": [
-          "client",
-          "ufn"
-        ]
+        }
       },
       "ApiErrorResponse": {
         "type": "object",
@@ -1537,6 +1554,15 @@
           "id": {
             "type": "string",
             "format": "uuid"
+          },
+          "costType": {
+            "type": "string",
+            "description": "cost type",
+            "enum": [
+              "PROFIT_COST",
+              "EXPERT_COST",
+              "NON_EXPERT_DISBURSEMENT"
+            ]
           },
           "ufn": {
             "type": "string",

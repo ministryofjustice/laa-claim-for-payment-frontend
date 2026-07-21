@@ -9,7 +9,6 @@ import type { ClaimRequestBody } from "#src/generated/claim-api/index.js";
  */
 export function toClaimRequestBody(claim: Claim): ClaimRequestBody {
   return {
-    ufn: claim.ufn ?? "",
-    client: claim.client ?? "",
+    costType: claim.costType ?? undefined
   };
 }

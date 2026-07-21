@@ -1,4 +1,4 @@
-import type { Claim } from "#src/types/Claim.js";
+import type { ClaimDto } from "#src/types/Claim.js";
 import type { TableCell } from "#src/viewmodels/components/index.js";
 import { formatClaimed, formatClaimId, formatDate, formatOptionalString } from "#src/helpers/index.js";
 import { Pagination } from "./components/pagination.js";
@@ -15,11 +15,11 @@ export class ClaimsTableViewModel {
 
   /**
    * Creates a view model containing the table header and rows derived from the claims data
-   * @param {Claim[]} claims Array of claims
+   * @param {ClaimDto[]} claims Array of claims
    * @param {PaginationMeta} paginationMeta The pagination metadata
    * @param {string} href The href of the page
    */
-  constructor(claims: Claim[], paginationMeta: PaginationMeta, href: string) {
+  constructor(claims: ClaimDto[], paginationMeta: PaginationMeta, href: string) {
     const head: SortedTableHeader[] = [
       { text: "ID", attributes: { "aria-sort": "ascending" } },
       { text: "Client", attributes: { "aria-sort": "none" } },

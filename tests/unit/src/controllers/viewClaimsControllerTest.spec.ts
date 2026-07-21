@@ -28,7 +28,7 @@ import {
   linkLineItemToEvidenceResponseData,
 } from "#tests/assets/getClaimsResponseData.js";
 import { ApiResponse, Paginated } from "#src/types/api-types.js";
-import { Claim } from "#src/types/Claim.js";
+import { ClaimDto } from "#src/types/Claim.js";
 import { HttpError } from "http-errors";
 import { UUID } from "uuidv7";
 
@@ -57,6 +57,9 @@ describe("view Claims Controller", () => {
       render: renderStub,
       status: statusStub,
       redirect: sinon.spy(),
+      locals: {
+        csrfToken: "test-csrf-token",
+      },
     };
 
     next = sinon.stub();
@@ -84,6 +87,9 @@ describe("view Claims Controller", () => {
       expect(getClaimsStub.calledOnce).to.be.true;
       expect(getClaimsStub.calledWith(req.axiosMiddleware)).to.be.true;
       expect(renderStub.calledWith("main/index.njk")).to.be.true;
+
+      const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
+      expect(renderArgs.csrfToken).to.equal("test-csrf-token");
     });
 
     it("should redirect to appropriate page when invalid page in query param", async () => {
@@ -92,7 +98,7 @@ describe("view Claims Controller", () => {
 
       req.query!.page = invalidPage.toString();
 
-      const mockApiResponse: ApiResponse<Paginated<Claim>> = {
+      const mockApiResponse: ApiResponse<Paginated<ClaimDto>> = {
         body:{
           data: getClaimsSuccessResponseData.body?.data!,
           meta: {

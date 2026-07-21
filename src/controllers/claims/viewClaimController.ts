@@ -22,7 +22,7 @@ export async function viewClaimPage(
 
     if (response.status === "success") {
       const { body: claim } = response;
-      const vm = new ClaimViewModel(claim);
+      const vm = new ClaimViewModel(claim.value);
 
       res.render("main/claims/view.njk", { vm });
     } else {

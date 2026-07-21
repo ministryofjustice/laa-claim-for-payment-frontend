@@ -29,7 +29,7 @@ export async function poaEvidenceUploadPage(
     }
 
     const uploadedFiles: ReusableDocument[] =
-      response.body.evidence?.map((evidence) => ({
+      response.body.value.evidence?.map((evidence) => ({
         id: evidence.id,
         name: evidence.fileKey,
         size: formatFileSize(evidence.fileSize),
@@ -73,7 +73,7 @@ export async function submitPoaEvidenceUpload(
       return;
     }
 
-    const uploadedFiles = response.body.evidence ?? [];
+    const uploadedFiles = response.body.value.evidence ?? [];
 
     if (uploadedFiles.length === 0) {
       const vm = new PoaEvidenceUploadViewModel({

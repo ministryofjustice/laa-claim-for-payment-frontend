@@ -1,5 +1,5 @@
 import { PaginationMeta } from "#src/types/api-types.js";
-import { Claim } from "#src/types/Claim.js";
+import { ClaimDto } from "#src/types/Claim.js";
 import { ClaimsTableViewModel } from "#src/viewmodels/claimsViewModel.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { getEnValue } from "#tests/support/i18n.js";
@@ -13,7 +13,7 @@ chaiConfig.truncateThreshold = 0;
 describe("views/main/index.njk", () => {
   let $: CheerioAPI;
 
-  const claims: Claim[] = getClaimsSuccessResponseData.body?.data!;
+  const claims: ClaimDto[] = getClaimsSuccessResponseData.body?.data!;
 
   const paginationMeta: PaginationMeta = {
     total: 11,
@@ -25,6 +25,7 @@ describe("views/main/index.njk", () => {
 
   const context = {
     table: viewModel.table,
+    csrfToken: "test-csrf-token",
   };
 
   beforeEach(async () => {

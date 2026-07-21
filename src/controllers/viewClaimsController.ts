@@ -30,6 +30,7 @@ export async function handleYourClaimsPage(
       );
 
       res.render("main/index.njk", {
+        csrfToken: res.locals.csrfToken,
         table: claimsTableViewModel.table,
         pagination: claimsTableViewModel.pagination,
       });

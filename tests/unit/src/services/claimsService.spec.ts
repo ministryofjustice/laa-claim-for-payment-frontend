@@ -3,7 +3,7 @@ import sinon from "sinon";
 import { claimService } from "#src/services/claimService.js";
 import { ApiError } from "#src/types/api-types.js";
 import { UUID, V7Generator } from "uuidv7";
-import { Claim } from "#src/types/Claim.js";
+import { Claim, CostType } from "#src/types/Claim.js";
 
 describe("Claim Service", () => {
   afterEach(() => {
@@ -42,7 +42,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         2,
         10,
-        deps as any
+        deps as any,
       );
 
       expect(result.status).to.equal("success");
@@ -64,6 +64,17 @@ describe("Claim Service", () => {
           claimed: 123.45,
         },
       ]);
+
+      sinon.assert.calledWith(
+        deps.getClaims,
+        sinon.match({
+          query: {
+            limit: 10,
+            page: 2,
+            status: "SUBMITTED"
+          },
+        }),
+      );
     });
 
     it("returns error for a non-200 response", async () => {
@@ -80,12 +91,12 @@ describe("Claim Service", () => {
         }),
       };
 
-      const result = await claimService.getClaims(
+      const result = (await claimService.getClaims(
         { axiosInstance: {} } as any,
         2,
         10,
-        deps as any
-      ) as ApiError;
+        deps as any,
+      )) as ApiError;
 
       expect(result.status).to.equal("error");
       expect(result.statusCode).to.equal(500);
@@ -102,7 +113,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         1,
         10,
-        deps as any
+        deps as any,
       );
 
       expect(result.status).to.equal("error");
@@ -122,7 +133,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         1,
         10,
-        deps as any
+        deps as any,
       );
 
       expect(result.status).to.equal("error");
@@ -152,11 +163,11 @@ describe("Claim Service", () => {
       const result = await claimService.getClaim(
         { axiosInstance: {} } as any,
         claimId,
-        deps as any
+        deps as any,
       );
 
       expect(result.status).to.equal("success");
-      expect(result.body).to.deep.equal({
+      expect(result.body?.value).to.deep.equal({
         id: claimId.toString(),
         ufn: "UFN-123",
         providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
@@ -195,11 +206,11 @@ describe("Claim Service", () => {
         }),
       };
 
-      const result = await claimService.getClaim(
+      const result = (await claimService.getClaim(
         { axiosInstance: {} } as any,
         claimId,
-        deps as any
-      ) as ApiError;
+        deps as any,
+      )) as ApiError;
 
       expect(result.status).to.equal("error");
       expect(result.statusCode).to.equal(404);
@@ -215,7 +226,7 @@ describe("Claim Service", () => {
       const result = await claimService.getClaim(
         { axiosInstance: {} } as any,
         claimId,
-        deps as any
+        deps as any,
       );
 
       expect(result.status).to.equal("error");
@@ -234,7 +245,7 @@ describe("Claim Service", () => {
       const result = await claimService.getClaim(
         { axiosInstance: {} } as any,
         claimId,
-        deps as any
+        deps as any,
       );
 
       expect(result.status).to.equal("error");
@@ -264,11 +275,11 @@ describe("Claim Service", () => {
       const result = await claimService.getDraftClaim(
         { axiosInstance: {} } as any,
         claimId,
-        deps as any
+        deps as any,
       );
 
       expect(result.status).to.equal("success");
-      expect(result.body).to.deep.equal({
+      expect(result.body?.value).to.deep.equal({
         id: claimId.toString(),
         ufn: "UFN-123",
         providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
@@ -307,11 +318,11 @@ describe("Claim Service", () => {
         }),
       };
 
-      const result = await claimService.getDraftClaim(
+      const result = (await claimService.getDraftClaim(
         { axiosInstance: {} } as any,
         claimId,
-        deps as any
-      ) as ApiError;
+        deps as any,
+      )) as ApiError;
 
       expect(result.status).to.equal("error");
       expect(result.statusCode).to.equal(404);
@@ -327,7 +338,7 @@ describe("Claim Service", () => {
       const result = await claimService.getDraftClaim(
         { axiosInstance: {} } as any,
         claimId,
-        deps as any
+        deps as any,
       );
 
       expect(result.status).to.equal("error");
@@ -346,7 +357,7 @@ describe("Claim Service", () => {
       const result = await claimService.getDraftClaim(
         { axiosInstance: {} } as any,
         claimId,
-        deps as any
+        deps as any,
       );
 
       expect(result.status).to.equal("error");
@@ -361,19 +372,20 @@ describe("Claim Service", () => {
         createClient: sinon.stub().returns({}),
         createClaim: sinon.stub().resolves({
           headers: {
-            location: "/api/v1/claims/019f7f1a-0bd5-74c4-87b9-2bb69c0f0cd1?status=DRAFT",
+            location:
+              "/api/v1/claims/019f7f1a-0bd5-74c4-87b9-2bb69c0f0cd1?status=DRAFT",
           },
         }),
       };
 
       const result = await claimService.createClaim(
         { axiosInstance: {} } as any,
-        deps as any
+        deps as any,
       );
 
       expect(result).to.deep.equal({
         status: "success",
-        body: UUID.parse("019f7f1a-0bd5-74c4-87b9-2bb69c0f0cd1")
+        body: UUID.parse("019f7f1a-0bd5-74c4-87b9-2bb69c0f0cd1"),
       });
     });
 
@@ -394,23 +406,23 @@ describe("Claim Service", () => {
               fieldErrors: [
                 {
                   field: "client",
-                  message: "must not be null"
-                }
-              ]
+                  message: "must not be null",
+                },
+              ],
             },
           },
         }),
       };
 
-      const result = await claimService.createClaim(
+      const result = (await claimService.createClaim(
         { axiosInstance: {} } as any,
-        deps as any
-      ) as ApiError;
+        deps as any,
+      )) as ApiError;
 
       expect(result).to.deep.equal({
         status: "error",
         statusCode: 400,
-        message: "Request validation failed."
+        message: "Request validation failed.",
       });
     });
 
@@ -422,13 +434,13 @@ describe("Claim Service", () => {
 
       const result = await claimService.createClaim(
         { axiosInstance: {} } as any,
-        deps as any
+        deps as any,
       );
 
       expect(result).to.deep.equal({
         status: "error",
         statusCode: 500,
-        message: "boom"
+        message: "boom",
       });
     });
 
@@ -444,13 +456,13 @@ describe("Claim Service", () => {
 
       const result = await claimService.createClaim(
         { axiosInstance: {} } as any,
-        deps as any
+        deps as any,
       );
 
       expect(result).to.deep.equal({
         status: "error",
         statusCode: 500,
-        message: "Invalid Location header"
+        message: "Invalid Location header",
       });
     });
 
@@ -466,13 +478,13 @@ describe("Claim Service", () => {
 
       const result = await claimService.createClaim(
         { axiosInstance: {} } as any,
-        deps as any
+        deps as any,
       );
 
       expect(result).to.deep.equal({
         status: "error",
         statusCode: 500,
-        message: "could not parse UUID string"
+        message: "could not parse UUID string",
       });
     });
 
@@ -486,13 +498,13 @@ describe("Claim Service", () => {
 
       const result = await claimService.createClaim(
         { axiosInstance: {} } as any,
-        deps as any
+        deps as any,
       );
 
       expect(result).to.deep.equal({
         status: "error",
         statusCode: 500,
-        message: "Missing Location header"
+        message: "Missing Location header",
       });
     });
 
@@ -504,23 +516,22 @@ describe("Claim Service", () => {
 
       const result = await claimService.createClaim(
         { axiosInstance: {} } as any,
-        deps as any
+        deps as any,
       );
 
       expect(result).to.deep.equal({
         status: "error",
         statusCode: 500,
-        message: "Response did not contain headers"
+        message: "Response did not contain headers",
       });
     });
   });
 
   describe("updateClaim", () => {
-
-    const claim: Claim = {
+    const claim: Claim = new Claim({
       id: claimId.toString(),
-      ufn: "ufn",
-    };
+      costType: CostType.PROFIT_COST,
+    });
 
     it("returns success", async () => {
       const deps = {
@@ -531,12 +542,12 @@ describe("Claim Service", () => {
       const result = await claimService.updateClaim(
         { axiosInstance: {} } as any,
         claim,
-        deps as any
+        deps as any,
       );
 
       expect(result).to.deep.equal({
         status: "success",
-        body: null
+        body: null,
       });
 
       sinon.assert.calledWith(
@@ -545,8 +556,7 @@ describe("Claim Service", () => {
           path: { id: claimId.toString() },
           query: { status: "DRAFT" },
           body: {
-            ufn: "ufn",
-            client: "",
+            costType: "PROFIT_COST",
           },
         }),
       );
@@ -569,24 +579,24 @@ describe("Claim Service", () => {
               fieldErrors: [
                 {
                   field: "client",
-                  message: "must not be null"
-                }
-              ]
+                  message: "must not be null",
+                },
+              ],
             },
           },
         }),
       };
 
-      const result = await claimService.updateClaim(
+      const result = (await claimService.updateClaim(
         { axiosInstance: {} } as any,
         claim,
-        deps as any
-      ) as ApiError;
+        deps as any,
+      )) as ApiError;
 
       expect(result).to.deep.equal({
         status: "error",
         statusCode: 400,
-        message: "Request validation failed."
+        message: "Request validation failed.",
       });
     });
 
@@ -599,13 +609,13 @@ describe("Claim Service", () => {
       const result = await claimService.updateClaim(
         { axiosInstance: {} } as any,
         claim,
-        deps as any
+        deps as any,
       );
 
       expect(result).to.deep.equal({
         status: "error",
         statusCode: 500,
-        message: "boom"
+        message: "boom",
       });
     });
   });
