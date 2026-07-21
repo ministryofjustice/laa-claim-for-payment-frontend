@@ -186,6 +186,18 @@
               "maximum": 100000,
               "minimum": 0
             }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DRAFT",
+                "SUBMITTED"
+              ]
+            }
           }
         ],
         "responses": {
@@ -1379,7 +1391,7 @@
         "properties": {
           "type": {
             "type": "string",
-            "description": "amount claimed",
+            "description": "claim type",
             "enum": [
               "PROFIT_COST",
               "EXPERT_COST",

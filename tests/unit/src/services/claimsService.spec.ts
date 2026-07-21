@@ -64,6 +64,17 @@ describe("Claim Service", () => {
           claimed: 123.45,
         },
       ]);
+
+      sinon.assert.calledWith(
+        deps.getClaims,
+        sinon.match({
+          query: {
+            limit: 10,
+            page: 2,
+            status: "SUBMITTED"
+          },
+        }),
+      );
     });
 
     it("returns error for a non-200 response", async () => {
