@@ -57,6 +57,9 @@ describe("view Claims Controller", () => {
       render: renderStub,
       status: statusStub,
       redirect: sinon.spy(),
+      locals: {
+        csrfToken: "test-csrf-token",
+      },
     };
 
     next = sinon.stub();
@@ -84,6 +87,9 @@ describe("view Claims Controller", () => {
       expect(getClaimsStub.calledOnce).to.be.true;
       expect(getClaimsStub.calledWith(req.axiosMiddleware)).to.be.true;
       expect(renderStub.calledWith("main/index.njk")).to.be.true;
+
+      const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
+      expect(renderArgs.csrfToken).to.equal("test-csrf-token");
     });
 
     it("should redirect to appropriate page when invalid page in query param", async () => {

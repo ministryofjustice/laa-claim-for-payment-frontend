@@ -25,6 +25,7 @@ describe("views/main/index.njk", () => {
 
   const context = {
     table: viewModel.table,
+    csrfToken: "test-csrf-token",
   };
 
   beforeEach(async () => {
