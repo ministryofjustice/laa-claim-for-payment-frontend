@@ -3,6 +3,7 @@ import {
   ClaimDto,
   ClientPartyStatus,
   CostType,
+  Count,
   CourtType,
 } from "#src/types/Claim.js";
 import { V7Generator } from "uuidv7";
@@ -21,6 +22,7 @@ describe("ClaimMapper", () => {
       clientPartyStatus: ClientPartyStatus.CHILD,
       firstActingSolicitorFlag: true,
       transferOfSolicitorFlag: false,
+      clientsRetainedCount: Count.ZERO,
     };
 
     const claim = new Claim(claimDto);
@@ -32,6 +34,7 @@ describe("ClaimMapper", () => {
     expect(result.clientPartyStatus).to.equal("CHILD");
     expect(result.firstActingSolicitorFlag).to.equal(true);
     expect(result.transferOfSolicitorFlag).to.equal(false);
+    expect(result.clientsRetainedCount).to.equal("ZERO");
   });
 
   it("when values are undefined", () => {
@@ -48,5 +51,6 @@ describe("ClaimMapper", () => {
     expect(result.clientPartyStatus).to.be.undefined;
     expect(result.firstActingSolicitorFlag).to.be.undefined;
     expect(result.transferOfSolicitorFlag).to.be.undefined;
+    expect(result.clientsRetainedCount).to.be.undefined;
   });
 });

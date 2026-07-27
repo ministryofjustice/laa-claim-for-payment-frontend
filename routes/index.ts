@@ -171,13 +171,13 @@ router.post(
 router.get(
   ROUTES.HOW_MANY_CLIENTS_RETAINED,
   limiter,
-  function (req: Request, res: Response, next: NextFunction): void {
-    howManyClientsRetained(req, res, next);
+  async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+    await howManyClientsRetained(req, res, next);
   },
 );
 
-router.post(ROUTES.HOW_MANY_CLIENTS_RETAINED, limiter, function (req: Request, res: Response, next: NextFunction): void {
-  submitHowManyClientsRetained(req, res, next);
+router.post(ROUTES.HOW_MANY_CLIENTS_RETAINED, limiter, async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+  await submitHowManyClientsRetained(req, res, next);
 });
 
 router.get(
@@ -323,22 +323,6 @@ router.get(ROUTES.POA_SUBMISSION_SUCCESSFUL, limiter, function(req: Request, res
   router.post(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response, next: NextFunction): void {
     submitChooseFileUpload(req, res, next);
   });
-
-  router.get(
-    ROUTES.HOW_MANY_CLIENTS_RETAINED,
-    limiter,
-    function (req: Request, res: Response, next: NextFunction): void {
-      howManyClientsRetained(req, res, next);
-    },
-  );
-
-  router.post(
-    ROUTES.HOW_MANY_CLIENTS_RETAINED,
-    limiter,
-    function (req: Request, res: Response, next: NextFunction): void {
-      submitHowManyClientsRetained(req, res, next);
-    },
-  );
 
   router.get(
     ROUTES.EXPERT_COST_DETAILS,
