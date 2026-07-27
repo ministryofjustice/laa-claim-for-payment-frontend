@@ -157,6 +157,15 @@ export class Claim {
   }
 
   /**
+   * Gets the clients retained count.
+   *
+   * @returns {Count | null | undefined} the clients retained count.
+   */
+  get clientsRetainedCount(): Count | null | undefined {
+    return this.data.clientsRetainedCount;
+  }
+
+  /**
    * Sets the cost type.
    *
    * @param {CostType} value cost type
@@ -236,7 +245,21 @@ export class Claim {
    * @returns {Claim} updated claim
    */
   setClientsRetainedCount(value: Count | undefined): this {
+    if (value === Count.ONE || value === Count.TWO_OR_MORE) {
+      this.setClientsStartCount(undefined);
+    }
     this.data.clientsRetainedCount = value;
+    return this;
+  }
+
+  /**
+   * Sets the clients start count.
+   *
+   * @param {Count | undefined} value clients start count
+   * @returns {Claim} updated claim
+   */
+  setClientsStartCount(value: Count | undefined): this {
+    this.data.clientsStartCount = value;
     return this;
   }
 }

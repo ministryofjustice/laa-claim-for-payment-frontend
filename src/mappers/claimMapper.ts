@@ -14,5 +14,6 @@ export function toClaimRequestBody(claim: Claim): ClaimRequestBody {
     clientPartyStatus: claim.clientPartyStatus ?? undefined,
     firstActingSolicitorFlag: claim.firstActingSolicitorFlag ?? undefined,
     transferOfSolicitorFlag: claim.transferOfSolicitorFlag ?? undefined,
+    clientsRetainedCount: claim.clientsRetainedCount ?? undefined,
   };
 }

@@ -57,7 +57,7 @@ describe("ClaimResponseSchema", () => {
         courtType: CourtType.COUNTY_COURT,
         clientStatus: ClientPartyStatus.CHILD,
         firstSolicitor: true,
-        transferOfSolicitor: false
+        transferOfSolicitor: false,
       });
 
       expect(claim.value.courtType).to.equal(CourtType.COUNTY_COURT);
@@ -217,6 +217,51 @@ describe("ClaimResponseSchema", () => {
       });
 
       expect(result.clientsRetainedCount).to.equal(Count.ZERO);
+    });
+
+    it("gets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        clientsRetainedCount: Count.ZERO,
+      });
+
+      expect(claim.clientsRetainedCount).to.equal(Count.ZERO);
+    });
+
+    it("sets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+      });
+
+      claim.setClientsRetainedCount(Count.ZERO);
+
+      expect(claim.value.clientsRetainedCount).to.equal(Count.ZERO);
+    });
+
+    it("cleans up 'How many clients did you have at the start of the case?' when answer is not ZERO", () => {
+      const inputs = [Count.ONE, Count.TWO_OR_MORE];
+
+      inputs.forEach((input) => {
+        const claim = new Claim({
+          id: id.toString(),
+          clientsStartCount: Count.ZERO,
+        });
+
+        claim.setClientsRetainedCount(input);
+
+        expect(claim.value.clientsStartCount).to.be.undefined;
+      });
+    });
+
+    it("doesn't clean up 'How many clients did you have at the start of the case?' when answer is ZERO", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        clientsStartCount: Count.ZERO,
+      });
+
+      claim.setClientsRetainedCount(Count.ZERO);
+
+      expect(claim.value.clientsStartCount).to.not.be.undefined;
     });
   });
 
