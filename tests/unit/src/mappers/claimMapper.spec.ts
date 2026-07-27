@@ -25,6 +25,7 @@ describe("ClaimMapper", () => {
       clientsRetainedCount: Count.ZERO,
       clientsStartCount: Count.ONE,
       multiClientHearingFlag: true,
+      escaped: false,
     };
 
     const claim = new Claim(claimDto);
@@ -39,6 +40,7 @@ describe("ClaimMapper", () => {
     expect(result.clientsRetainedCount).to.equal("ZERO");
     expect(result.clientsStartCount).to.equal("ONE");
     expect(result.multiClientHearingFlag).to.equal(true);
+    expect(result.escaped).to.equal(false);
   });
 
   it("when values are undefined", () => {
@@ -58,5 +60,6 @@ describe("ClaimMapper", () => {
     expect(result.clientsRetainedCount).to.be.undefined;
     expect(result.clientsStartCount).to.be.undefined;
     expect(result.multiClientHearingFlag).to.be.undefined;
+    expect(result.escaped).to.be.undefined;
   });
 });
