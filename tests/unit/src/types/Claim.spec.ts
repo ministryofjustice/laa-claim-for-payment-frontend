@@ -47,6 +47,26 @@ describe("ClaimResponseSchema", () => {
     });
   });
 
+  describe("profit cost details", () => {
+    it("sets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+      });
+
+      claim.setProfitCostDetails({
+        courtType: CourtType.COUNTY_COURT,
+        clientStatus: ClientPartyStatus.CHILD,
+        firstSolicitor: true,
+        transferOfSolicitor: false
+      });
+
+      expect(claim.value.courtType).to.equal(CourtType.COUNTY_COURT);
+      expect(claim.value.clientPartyStatus).to.equal(ClientPartyStatus.CHILD);
+      expect(claim.value.firstActingSolicitorFlag).to.equal(true);
+      expect(claim.value.transferOfSolicitorFlag).to.equal(false);
+    });
+  });
+
   describe("courtType", () => {
     it("parses a valid value", () => {
       const result = ClaimResponseSchema.parse({
