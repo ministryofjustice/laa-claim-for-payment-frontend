@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { ProfitCostDetails } from "#src/types/poa.js";
 
 export const EvidenceItemSchema = z.object({
   id: z.uuidv7(),
@@ -120,14 +121,122 @@ export class Claim {
   }
 
   /**
+   * Gets the court type.
+   *
+   * @returns {CourtType | null | undefined} the court type.
+   */
+  get courtType(): CourtType | null | undefined {
+    return this.data.courtType;
+  }
+
+  /**
+   * Gets the client party status.
+   *
+   * @returns {ClientPartyStatus | null | undefined} the client party status.
+   */
+  get clientPartyStatus(): ClientPartyStatus | null | undefined {
+    return this.data.clientPartyStatus;
+  }
+
+  /**
+   * Gets the first acting solicitor flag.
+   *
+   * @returns {boolean | null | undefined} the first acting solicitor flag.
+   */
+  get firstActingSolicitorFlag(): boolean | null | undefined {
+    return this.data.firstActingSolicitorFlag;
+  }
+
+  /**
+   * Gets the transfer of solicitor flag.
+   *
+   * @returns {boolean | null | undefined} the transfer of solicitor flag.
+   */
+  get transferOfSolicitorFlag(): boolean | null | undefined {
+    return this.data.transferOfSolicitorFlag;
+  }
+
+  /**
    * Sets the cost type.
    *
-   * @param {CostType | null | undefined} costType cost type
+   * @param {CostType} value cost type
    * @returns {Claim} updated claim
    */
-  setCostType(costType: CostType | null | undefined): this {
-    this.data.costType = costType;
+  setCostType(value: CostType): this {
+    this.data.costType = value;
     // cleanup logic here
+    return this;
+  }
+
+  /**
+   * Sets the profit cost details.
+   *
+   * @param {ProfitCostDetails} value profit cost details
+   * @returns {Claim} updated claim
+   */
+  setProfitCostDetails(value: ProfitCostDetails): this {
+    this.setCourtType(value.courtType);
+    this.setClientPartyStatus(value.clientStatus);
+    this.setFirstActingSolicitorFlag(value.firstSolicitor);
+    this.setTransferOfSolicitorFlag(value.transferOfSolicitor);
+    return this;
+  }
+
+  /**
+   * Sets the court type.
+   *
+   * @param {CourtType | undefined} value court type
+   * @returns {Claim} updated claim
+   */
+  setCourtType(value: CourtType | undefined): this {
+    this.data.courtType = value;
+    return this;
+  }
+
+  /**
+   * Sets the client party status.
+   *
+   * @param {ClientPartyStatus | undefined} value court type
+   * @returns {Claim} updated claim
+   */
+  setClientPartyStatus(value: ClientPartyStatus | undefined): this {
+    this.data.clientPartyStatus = value;
+    return this;
+  }
+
+  /**
+   * Sets the first acting solicitor flag.
+   *
+   * @param {boolean | undefined} value first acting solicitor flag
+   * @returns {Claim} updated claim
+   */
+  setFirstActingSolicitorFlag(value: boolean | undefined): this {
+    this.data.firstActingSolicitorFlag = value;
+    return this;
+  }
+
+  /**
+   * Sets the transfer of solicitor flag.
+   *
+   * @param {boolean | undefined} value transfer of solicitor flag
+   * @returns {Claim} updated claim
+   */
+  setTransferOfSolicitorFlag(value: boolean | undefined): this {
+    if (value === false) {
+      this.setClientsRetainedCount(undefined);
+    }
+    this.data.transferOfSolicitorFlag = value;
+    return this;
+  }
+
+  /**
+   * Sets the clients retained.
+   *
+   * @param {Count | undefined} value clients retained count
+   * @returns {Claim} updated claim
+   */
+  setClientsRetainedCount(value: Count | undefined): this {
+    this.data.clientsRetainedCount = value;
     return this;
   }
 }

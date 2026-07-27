@@ -76,3 +76,15 @@ export function formatOptionalString(value: string | null | undefined): string {
 
   return value;
 }
+
+/**
+ * Format boolean in human-readable format for use in radio options
+ * @param {boolean | null | undefined} value the value to convert
+ * @returns {string | undefined} the converted value
+ */
+export function formatBoolean(value: boolean | null | undefined): string | undefined {
+  if (value == null) {
+    return undefined;
+  }
+  return value ? "yes" : "no";
+}

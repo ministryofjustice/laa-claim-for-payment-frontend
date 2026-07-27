@@ -2,7 +2,13 @@
  * @description Tests for the utility functions in dataFormatters work as expected
  */
 
-import { formatClaimed, formatClaimId, formatDate, formatOptionalString } from '#src/helpers/dataFormatters.js';
+import {
+  formatBoolean,
+  formatClaimed,
+  formatClaimId,
+  formatDate,
+  formatOptionalString,
+} from "#src/helpers/dataFormatters.js";
 import { expect } from 'chai';
 
 describe("Data Transformation Helpers", () => {
@@ -74,6 +80,24 @@ describe("Data Transformation Helpers", () => {
 
     it("should format defined string as itself", async () => {
       expect(formatOptionalString("foo")).to.equal("foo");
+    });
+  });
+
+  describe("formatBoolean", () => {
+    it("should format undefined as undefined", async () => {
+      expect(formatBoolean(undefined)).to.be.undefined;
+    });
+
+    it("should format null as undefined", async () => {
+      expect(formatBoolean(null)).to.be.undefined;
+    });
+
+    it("should format true as yes", async () => {
+      expect(formatBoolean(true)).to.equal("yes");
+    });
+
+    it("should format false as no", async () => {
+      expect(formatBoolean(false)).to.equal("no");
     });
   });
 });

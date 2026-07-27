@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import {
+  Claim,
   ClaimResponseSchema,
   ClientPartyStatus,
   CostType,
@@ -8,10 +9,9 @@ import {
   EvidenceItemSchema,
 } from "#src/types/Claim.js";
 import { UUID, V7Generator } from "uuidv7";
-import { ZodError } from 'zod';
+import { ZodError } from "zod";
 
 describe("ClaimResponseSchema", () => {
-
   const id = new V7Generator().generate();
 
   describe("id", () => {
@@ -26,10 +26,11 @@ describe("ClaimResponseSchema", () => {
 
     it("fails to parse a uuid4 ", () => {
       const uuid4 = UUID.parse("a8daf4c7-776a-41a4-9247-b6f3d2a13daf");
-      const result = () => ClaimResponseSchema.parse({
-        id: uuid4.toString(),
-        escaped: true,
-      });
+      const result = () =>
+        ClaimResponseSchema.parse({
+          id: uuid4.toString(),
+          escaped: true,
+        });
 
       expect(result).to.throw(ZodError);
     });
@@ -55,6 +56,25 @@ describe("ClaimResponseSchema", () => {
 
       expect(result.courtType).to.equal(CourtType.COUNTY_COURT);
     });
+
+    it("gets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        courtType: CourtType.COUNTY_COURT,
+      });
+
+      expect(claim.courtType).to.equal(CourtType.COUNTY_COURT);
+    });
+
+    it("sets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+      });
+
+      claim.setCourtType(CourtType.COUNTY_COURT);
+
+      expect(claim.value.courtType).to.equal(CourtType.COUNTY_COURT);
+    });
   });
 
   describe("clientPartyStatus", () => {
@@ -65,6 +85,25 @@ describe("ClaimResponseSchema", () => {
       });
 
       expect(result.clientPartyStatus).to.equal(ClientPartyStatus.CHILD);
+    });
+
+    it("gets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        clientPartyStatus: ClientPartyStatus.CHILD,
+      });
+
+      expect(claim.clientPartyStatus).to.equal(ClientPartyStatus.CHILD);
+    });
+
+    it("sets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+      });
+
+      claim.setClientPartyStatus(ClientPartyStatus.CHILD);
+
+      expect(claim.value.clientPartyStatus).to.equal(ClientPartyStatus.CHILD);
     });
   });
 
@@ -77,6 +116,25 @@ describe("ClaimResponseSchema", () => {
 
       expect(result.firstActingSolicitorFlag).to.equal(true);
     });
+
+    it("gets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        firstActingSolicitorFlag: true,
+      });
+
+      expect(claim.firstActingSolicitorFlag).to.equal(true);
+    });
+
+    it("sets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+      });
+
+      claim.setFirstActingSolicitorFlag(true);
+
+      expect(claim.value.firstActingSolicitorFlag).to.equal(true);
+    });
   });
 
   describe("transferOfSolicitorFlag", () => {
@@ -87,6 +145,47 @@ describe("ClaimResponseSchema", () => {
       });
 
       expect(result.transferOfSolicitorFlag).to.equal(false);
+    });
+
+    it("gets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        transferOfSolicitorFlag: true,
+      });
+
+      expect(claim.transferOfSolicitorFlag).to.equal(true);
+    });
+
+    it("sets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+      });
+
+      claim.setTransferOfSolicitorFlag(true);
+
+      expect(claim.value.transferOfSolicitorFlag).to.equal(true);
+    });
+
+    it("cleans up 'How many clients are retained?' when answer is no", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        clientsRetainedCount: Count.ZERO,
+      });
+
+      claim.setTransferOfSolicitorFlag(false);
+
+      expect(claim.value.clientsRetainedCount).to.be.undefined;
+    });
+
+    it("doesn't clean up 'How many clients are retained?' when answer is yes", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        clientsRetainedCount: Count.ZERO,
+      });
+
+      claim.setTransferOfSolicitorFlag(true);
+
+      expect(claim.value.clientsRetainedCount).to.not.be.undefined;
     });
   });
 
@@ -245,7 +344,6 @@ describe("ClaimResponseSchema", () => {
   });
 
   describe("EvidenceItemSchema", () => {
-
     it("parses a valid evidence item", () => {
       const result = EvidenceItemSchema.parse({
         id: id.toString(),
@@ -267,7 +365,7 @@ describe("ClaimResponseSchema", () => {
           fileKey: "test.pdf",
           fileSize: 123456,
           submittedOn: undefined,
-        })
+        }),
       ).to.throw();
     });
 
@@ -278,7 +376,7 @@ describe("ClaimResponseSchema", () => {
           fileKey: "test.pdf",
           fileSize: 123456,
           submittedOn: null,
-        })
+        }),
       ).to.throw();
     });
 
@@ -288,7 +386,7 @@ describe("ClaimResponseSchema", () => {
           id: id.toString(),
           fileKey: "test.pdf",
           fileSize: 123456,
-        })
+        }),
       ).to.throw();
     });
   });

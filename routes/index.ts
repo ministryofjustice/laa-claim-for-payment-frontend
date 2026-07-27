@@ -196,12 +196,12 @@ router.post(
   },
 );
 
-router.get(ROUTES.PROFIT_COST_DETAILS,limiter, function(req: Request, res: Response, next: NextFunction,): void {
-  profitCostDetails(req, res, next);
+router.get(ROUTES.PROFIT_COST_DETAILS,limiter, async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+  await profitCostDetails(req, res, next);
 });
 
-router.post(ROUTES.PROFIT_COST_DETAILS, limiter, function (req: Request, res: Response, next: NextFunction): void {
-  submitProfitCostDetails(req, res, next);
+router.post(ROUTES.PROFIT_COST_DETAILS, limiter, async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+  await submitProfitCostDetails(req, res, next);
 });
 
 router.get(
@@ -339,14 +339,6 @@ router.get(ROUTES.POA_SUBMISSION_SUCCESSFUL, limiter, function(req: Request, res
       submitHowManyClientsRetained(req, res, next);
     },
   );
-
-  router.get(ROUTES.PROFIT_COST_DETAILS,limiter, function(req: Request, res: Response, next: NextFunction,): void {
-    profitCostDetails(req, res, next);
-  });
-
-  router.post(ROUTES.PROFIT_COST_DETAILS, limiter, function (req: Request, res: Response, next: NextFunction): void {
-    submitProfitCostDetails(req, res, next);
-  });
 
   router.get(
     ROUTES.EXPERT_COST_DETAILS,
