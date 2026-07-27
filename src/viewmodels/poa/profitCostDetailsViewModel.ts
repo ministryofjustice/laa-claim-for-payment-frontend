@@ -17,7 +17,7 @@ import {
   firstSolicitorFieldName,
   transferOfSolicitorFieldName,
 } from "#src/controllers/poa/profitCostDetailsController.js";
-import type { ClientStatusChoice, CourtTypeChoice } from "#src/types/poa.js";
+import { ClientPartyStatus, CourtType } from "#src/types/Claim.js";
 
 export interface ProfitCostDetailsViewModelParams {
   form?: ProfitCostDetailsForm;
@@ -39,13 +39,13 @@ export class ProfitCostDetailsViewModel {
     const { form = {}, errors = [] } = params;
 
     this.form = {
-      courtType: radioQuestionForm<CourtTypeChoice>(
+      courtType: radioQuestionForm<CourtType>(
         courtTypeFieldName,
         courtTypeChoices,
         errors,
         form.courtTypeChoice,
       ),
-      clientStatus: radioQuestionForm<ClientStatusChoice>(
+      clientStatus: radioQuestionForm<ClientPartyStatus>(
         clientStatusFieldName,
         clientStatusChoices,
         errors,

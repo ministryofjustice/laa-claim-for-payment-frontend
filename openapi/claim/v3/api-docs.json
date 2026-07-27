@@ -574,6 +574,63 @@
         }
       }
     },
+    "/api/v1/claims/{claimId}/line-items": {
+      "post": {
+        "tags": [
+          "Claims"
+        ],
+        "summary": "Add a line item to a claim",
+        "operationId": "addLineItemToClaim",
+        "parameters": [
+          {
+            "name": "claimId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DRAFT",
+                "SUBMITTED"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LineItemRequestBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Line item created successfully",
+            "headers": {
+              "Location": {
+                "description": "URI of the created line item resource",
+                "style": "simple",
+                "schema": {
+                  "type": "string",
+                  "example": "/api/v1/claims/123/line-items/456"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/claims/{claimId}/line-items/{lineItemId}/upload-evidence": {
       "post": {
         "tags": [
@@ -1120,6 +1177,59 @@
         }
       }
     },
+    "/api/v1/claims/{claimId}/line-items/{lineItemId}": {
+      "get": {
+        "tags": [
+          "Claims"
+        ],
+        "summary": "Get a line item by ID",
+        "operationId": "getLineItem",
+        "parameters": [
+          {
+            "name": "claimId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "lineItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DRAFT",
+                "SUBMITTED"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Line item found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LineItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/claims/{claimId}/line-items/{lineItemId}/evidence/{evidenceId}": {
       "delete": {
         "tags": [
@@ -1398,6 +1508,55 @@
               "NON_EXPERT_DISBURSEMENT"
             ]
           },
+          "courtType": {
+            "type": "string",
+            "description": "court type",
+            "enum": [
+              "COUNTY_COURT",
+              "HIGH_COURT",
+              "MAGISTRATES_COURT",
+              "OTHER_JUDGE"
+            ]
+          },
+          "clientPartyStatus": {
+            "type": "string",
+            "description": "client party status",
+            "enum": [
+              "CHILD",
+              "JOINED_PARTY",
+              "PARENT"
+            ]
+          },
+          "firstActingSolicitorFlag": {
+            "type": "boolean",
+            "description": "first acting solicitor"
+          },
+          "transferOfSolicitorFlag": {
+            "type": "boolean",
+            "description": "transfer of solicitor"
+          },
+          "clientsRetainedCount": {
+            "type": "string",
+            "description": "number of clients retained",
+            "enum": [
+              "ZERO",
+              "ONE",
+              "TWO_OR_MORE"
+            ]
+          },
+          "clientsStartCount": {
+            "type": "string",
+            "description": "number of clients at start of case",
+            "enum": [
+              "ZERO",
+              "ONE",
+              "TWO_OR_MORE"
+            ]
+          },
+          "multiClientHearingFlag": {
+            "type": "boolean",
+            "description": "at least one hearing representing more than one client"
+          },
           "ufn": {
             "type": "string",
             "description": "universal file number"
@@ -1548,6 +1707,31 @@
           "type"
         ]
       },
+      "LineItemRequestBody": {
+        "type": "object",
+        "description": "lineItem",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "actualNetValue": {
+            "type": "number"
+          },
+          "vatApplicable": {
+            "type": "boolean"
+          },
+          "feeEarnerName": {
+            "type": "string"
+          }
+        }
+      },
       "Claim": {
         "type": "object",
         "properties": {
@@ -1563,6 +1747,55 @@
               "EXPERT_COST",
               "NON_EXPERT_DISBURSEMENT"
             ]
+          },
+          "courtType": {
+            "type": "string",
+            "description": "court type",
+            "enum": [
+              "COUNTY_COURT",
+              "HIGH_COURT",
+              "MAGISTRATES_COURT",
+              "OTHER_JUDGE"
+            ]
+          },
+          "clientPartyStatus": {
+            "type": "string",
+            "description": "client party status",
+            "enum": [
+              "CHILD",
+              "JOINED_PARTY",
+              "PARENT"
+            ]
+          },
+          "firstActingSolicitorFlag": {
+            "type": "boolean",
+            "description": "first acting solicitor"
+          },
+          "transferOfSolicitorFlag": {
+            "type": "boolean",
+            "description": "transfer of solicitor"
+          },
+          "clientsRetainedCount": {
+            "type": "string",
+            "description": "number of clients retained",
+            "enum": [
+              "ZERO",
+              "ONE",
+              "TWO_OR_MORE"
+            ]
+          },
+          "clientsStartCount": {
+            "type": "string",
+            "description": "number of clients at start of case",
+            "enum": [
+              "ZERO",
+              "ONE",
+              "TWO_OR_MORE"
+            ]
+          },
+          "multiClientHearingFlag": {
+            "type": "boolean",
+            "description": "at least one hearing representing more than one client"
           },
           "ufn": {
             "type": "string",
@@ -1683,6 +1916,21 @@
           "date": {
             "type": "string",
             "format": "date"
+          },
+          "actualNetValue": {
+            "type": "number"
+          },
+          "netProfitCostAmount": {
+            "type": "number"
+          },
+          "netAdvocacyCostAmount": {
+            "type": "number"
+          },
+          "vatApplicable": {
+            "type": "boolean"
+          },
+          "feeEarnerName": {
+            "type": "string"
           },
           "evidenceItems": {
             "type": "array",

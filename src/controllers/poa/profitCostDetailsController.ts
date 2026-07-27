@@ -8,8 +8,8 @@ import { buildRoute, ROUTES } from "#routes/helper.js";
 import { getForm } from "#src/helpers/validation.js";
 import { type ProfitCostDetailsForm, validateProfitCostDetails } from "#src/helpers/profitCostDetailsValidation.js";
 import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewModel.js";
-import { ClientStatusChoice, CourtTypeChoice } from "#src/types/poa.js";
 import { UUID } from "uuidv7";
+import { ClientPartyStatus, CourtType } from "#src/types/Claim.js";
 
 /**
  * Profit cost details journey view
@@ -85,48 +85,48 @@ export const clientStatusFieldName = "clientStatusChoice" as const;
 export const firstSolicitorFieldName = "firstSolicitorChoice" as const;
 export const transferOfSolicitorFieldName = "transferOfSolicitorChoice" as const;
 
-export const courtTypeChoices: ReadonlyArray<RadioQuestionOptions<CourtTypeChoice>> = [
+export const courtTypeChoices: ReadonlyArray<RadioQuestionOptions<CourtType>> = [
   {
-    value: CourtTypeChoice.CountyCourt,
+    value: CourtType.COUNTY_COURT,
     text: {
       key: "pages.profitCostDetails.courtType.countyCourt.text"
     },
   },
   {
-    value: CourtTypeChoice.HighCourt,
+    value: CourtType.HIGH_COURT,
     text: {
       key: "pages.profitCostDetails.courtType.highCourt.text"
     },
   },
   {
-    value: CourtTypeChoice.MagistratesCourt,
+    value: CourtType.MAGISTRATES_COURT,
     text: {
       key: "pages.profitCostDetails.courtType.magistratesCourt.text"
     },
   },
   {
-    value: CourtTypeChoice.OtherJudge,
+    value: CourtType.OTHER_JUDGE,
     text: {
       key: "pages.profitCostDetails.courtType.otherJudge.text"
     },
   },
 ] as const;
 
-export const clientStatusChoices: ReadonlyArray<RadioQuestionOptions<ClientStatusChoice>> = [
+export const clientStatusChoices: ReadonlyArray<RadioQuestionOptions<ClientPartyStatus>> = [
   {
-    value: ClientStatusChoice.Child,
+    value: ClientPartyStatus.CHILD,
     text: {
       key: "pages.profitCostDetails.clientStatus.child.text"
     },
   },
   {
-    value: ClientStatusChoice.JoinedParty,
+    value: ClientPartyStatus.JOINED_PARTY,
     text: {
       key: "pages.profitCostDetails.clientStatus.joinedParty.text"
     },
   },
   {
-    value: ClientStatusChoice.Parent,
+    value: ClientPartyStatus.PARENT,
     text: {
       key: "pages.profitCostDetails.clientStatus.parent.text"
     },

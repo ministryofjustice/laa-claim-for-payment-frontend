@@ -21,6 +21,25 @@ export enum CostType {
   NON_EXPERT_DISBURSEMENT = 'NON_EXPERT_DISBURSEMENT',
 }
 
+export enum CourtType {
+  COUNTY_COURT = 'COUNTY_COURT',
+  HIGH_COURT = 'HIGH_COURT',
+  MAGISTRATES_COURT = 'MAGISTRATES_COURT',
+  OTHER_JUDGE = 'OTHER_JUDGE',
+}
+
+export enum Count {
+  ZERO = 'ZERO',
+  ONE = 'ONE',
+  TWO_OR_MORE = 'TWO_OR_MORE',
+}
+
+export enum ClientPartyStatus {
+  CHILD = 'CHILD',
+  JOINED_PARTY = 'JOINED_PARTY',
+  PARENT = 'PARENT',
+}
+
 export const LineItemSchema = z.object({
   id: z.uuidv7(),
   title: z.string(),
@@ -34,6 +53,13 @@ export type LineItem = z.infer<typeof LineItemSchema>;
 export const ClaimResponseSchema = z.object({
   id: z.uuidv7(),
   costType: z.enum(CostType).nullish(),
+  courtType: z.enum(CourtType).nullish(),
+  clientPartyStatus: z.enum(ClientPartyStatus).nullish(),
+  firstActingSolicitorFlag: z.boolean().nullish(),
+  transferOfSolicitorFlag: z.boolean().nullish(),
+  clientsRetainedCount: z.enum(Count).nullish(),
+  clientsStartCount: z.enum(Count).nullish(),
+  multiClientHearingFlag: z.boolean().nullish(),
   ufn: z.string().nullish(),
   providerUserId: z.string().nullish(),
   client: z.string().nullish(),

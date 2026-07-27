@@ -61,8 +61,8 @@ describe("Profit cost details controller", () => {
 
 it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'", async () => {
     req.body = {
-      [courtTypeFieldName]: "county-court",
-      [clientStatusFieldName]: "child",
+      [courtTypeFieldName]: "COUNTY_COURT",
+      [clientStatusFieldName]: "CHILD",
       [firstSolicitorFieldName]: "yes",
       [transferOfSolicitorFieldName]: "yes",
     };
@@ -81,8 +81,8 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
 
   it("redirects to NUMBER_OF_CLIENTS_START_OF_CASE when transfer of solicitor is 'no'", async () => {
     req.body = {
-      [courtTypeFieldName]: "county-court",
-      [clientStatusFieldName]: "child",
+      [courtTypeFieldName]: "COUNTY_COURT",
+      [clientStatusFieldName]: "CHILD",
       [firstSolicitorFieldName]: "yes",
       [transferOfSolicitorFieldName]: "no",
     };

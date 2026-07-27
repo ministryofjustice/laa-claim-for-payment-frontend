@@ -52,21 +52,21 @@ describe("numberOfClientsStartOfCaseController", () => {
     );
     expect(renderArgs.vm.form.choices).to.deep.equal([
       {
-        value: "none",
+        value: "ZERO",
         text: {
           key: "pages.numberOfClientsStartOfCase.none.text"
         },
         checked: false,
       },
       {
-        value: "one",
+        value: "ONE",
         text: {
           key: "pages.numberOfClientsStartOfCase.one.text"
         },
         checked: false,
       },
       {
-        value: "more-than-two",
+        value: "TWO_OR_MORE",
         text: {
           key: "pages.numberOfClientsStartOfCase.moreThanTwo.text"
         },
@@ -81,7 +81,7 @@ describe("numberOfClientsStartOfCaseController", () => {
         claimId: claimId.toString(),
       },
       body: {
-        numberOfClientsStartOfCase: "none",
+        numberOfClientsStartOfCase: "ZERO",
       },
     } as unknown as Request;
 
@@ -100,7 +100,7 @@ describe("numberOfClientsStartOfCaseController", () => {
         claimId: claimId.toString(),
       },
       body: {
-        numberOfClientsStartOfCase: "one",
+        numberOfClientsStartOfCase: "ONE",
       },
     } as unknown as Request;
 
@@ -119,7 +119,7 @@ describe("numberOfClientsStartOfCaseController", () => {
         claimId: claimId.toString(),
       },
       body: {
-        numberOfClientsStartOfCase: "more-than-two",
+        numberOfClientsStartOfCase: "TWO_OR_MORE",
       },
     } as unknown as Request;
 

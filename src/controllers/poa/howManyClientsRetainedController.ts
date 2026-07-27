@@ -3,27 +3,27 @@ import type { NextFunction, Request, Response } from "express";
 import { processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { validateRadioInput } from "#src/helpers/validation.js";
-import { HowManyClientsRetainedChoice } from "#src/types/poa.js";
 import { UUID } from "uuidv7";
+import { Count } from "#src/types/Claim.js";
 
 const howManyClientsRetainedFieldName = "howManyClientsRetained" as const;
 
-const howManyClientsRetainedChoices: ReadonlyArray<RadioQuestionOptions<HowManyClientsRetainedChoice>> =
+const howManyClientsRetainedChoices: ReadonlyArray<RadioQuestionOptions<Count>> =
   [
     {
-      value: HowManyClientsRetainedChoice.None,
+      value: Count.ZERO,
       text: {
         key: "pages.howManyClientsRetained.none.text",
       },
     },
     {
-      value: HowManyClientsRetainedChoice.One,
+      value: Count.ONE,
       text: {
         key: "pages.howManyClientsRetained.one.text",
       },
     },
     {
-      value: HowManyClientsRetainedChoice.MoreThanTwo,
+      value: Count.TWO_OR_MORE,
       text: {
         key: "pages.howManyClientsRetained.moreThanTwo.text",
       },
@@ -103,16 +103,16 @@ export function submitHowManyClientsRetained(
 
     const claimId = UUID.parse(req.params.claimId);
 
-    const redirectByChoice: Record<HowManyClientsRetainedChoice, string> = {
-      [HowManyClientsRetainedChoice.None]: buildRoute(
+    const redirectByChoice: Record<Count, string> = {
+      [Count.ZERO]: buildRoute(
         ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
         { claimId },
       ),
-      [HowManyClientsRetainedChoice.One]: buildRoute(
+      [Count.ONE]: buildRoute(
         ROUTES.MULTIPLE_CLIENT_HEARINGS,
         { claimId },
       ),
-      [HowManyClientsRetainedChoice.MoreThanTwo]: buildRoute(
+      [Count.TWO_OR_MORE]: buildRoute(
         ROUTES.MULTIPLE_CLIENT_HEARINGS,
         { claimId },
       ),
