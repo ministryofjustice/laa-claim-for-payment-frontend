@@ -1,5 +1,10 @@
 import { z } from 'zod';
-import { CostType } from "#src/types/Claim.js";
+import {
+  ClientPartyStatus,
+  CostType,
+  Count,
+  CourtType,
+} from "#src/types/Claim.js";
 
 export const EvidenceSchema = z.object({
   fileKey: z.string(),
@@ -9,58 +14,9 @@ export const EvidenceSchema = z.object({
 
 export type Evidence = z.infer<typeof EvidenceSchema>;
 
-export const HowManyClientsRetainedChoice = {
-  None: "none",
-  One: "one",
-  MoreThanTwo: "more-than-two",
-} as const;
-
-export const HowManyClientsRetainedChoiceSchema = z.enum(
-  HowManyClientsRetainedChoice,
-);
-
-export type HowManyClientsRetainedChoice = z.infer<
-  typeof HowManyClientsRetainedChoiceSchema
->;
-
-export const NumberOfClientsStartOfCaseChoice = {
-  None: "none",
-  One: "one",
-  MoreThanTwo: "more-than-two",
-} as const;
-
-export const NumberOfClientsStartOfCaseChoiceSchema = z.enum(
-  NumberOfClientsStartOfCaseChoice,
-);
-
-export type NumberOfClientsStartOfCaseChoice = z.infer<
-  typeof NumberOfClientsStartOfCaseChoiceSchema
->;
-
-export const ClientStatusChoice = {
-  Child: "child",
-  JoinedParty: "joined-party",
-  Parent: "parent",
-} as const;
-
-export const ClientStatusChoiceSchema = z.enum(ClientStatusChoice);
-
-export type ClientStatusChoice = z.infer<typeof ClientStatusChoiceSchema>;
-
-export const CourtTypeChoice = {
-  CountyCourt: "county-court",
-  HighCourt: "high-court",
-  MagistratesCourt: "magistrates-court",
-  OtherJudge: "other-judge",
-} as const;
-
-export const CourtTypeChoiceSchema = z.enum(CourtTypeChoice);
-
-export type CourtTypeChoice = z.infer<typeof CourtTypeChoiceSchema>;
-
 export const ProfitCostDetailsSchema = z.object({
-  courtType: CourtTypeChoiceSchema,
-  clientStatus: ClientStatusChoiceSchema,
+  courtType: z.enum(CourtType),
+  clientStatus: z.enum(ClientPartyStatus),
   firstSolicitor: z.boolean(),
   transferOfSolicitor: z.boolean(),
 });
@@ -90,8 +46,8 @@ export type ExpertCostDetails = z.infer<typeof ExpertCostDetailsSchema>;
 export const ProfitCostPoaSchema = z.object({
   type: z.literal(CostType.PROFIT_COST),
   details: ProfitCostDetailsSchema,
-  howManyClientsRetained: HowManyClientsRetainedChoiceSchema.optional(),
-  numberOfClientsStartOfCase: NumberOfClientsStartOfCaseChoiceSchema.optional(),
+  howManyClientsRetained: z.enum(Count).optional(),
+  numberOfClientsStartOfCase: z.enum(Count).optional(),
   multipleClientHearings: z.boolean(),
   escapingFixedFee: z.boolean(),
   profitCostBillLine: ProfitCostBillLineSchema,

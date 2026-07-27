@@ -54,7 +54,7 @@ describe("howManyClientsRetainedController", () => {
         claimId: claimId.toString(),
       },
       body: {
-        howManyClientsRetained: "none",
+        howManyClientsRetained: "ZERO",
       },
     } as unknown as Request;
 
@@ -68,7 +68,7 @@ describe("howManyClientsRetainedController", () => {
   });
 
   it("redirects to multiple client hearings when answer is not 0", () => {
-    const selections: string[] = ["one", "more-than-two"];
+    const selections: string[] = ["ONE", "TWO_OR_MORE"];
 
     selections.forEach((selection: string) => {
       const req = {

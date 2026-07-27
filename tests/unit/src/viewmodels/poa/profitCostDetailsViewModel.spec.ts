@@ -18,14 +18,14 @@ describe("ProfitCostDetailsViewModel", () => {
 
     it("marks the selected choice as checked", () => {
       const form: ProfitCostDetailsForm = {
-        courtTypeChoice: "high-court",
+        courtTypeChoice: "HIGH_COURT",
       };
       const vm = new ProfitCostDetailsViewModel({
         form: form,
       });
 
       const selected = vm.form.courtType.choices.find(
-        (c: any) => c.value === "high-court",
+        (c: any) => c.value === "HIGH_COURT",
       );
 
       expect(selected?.checked).to.be.true;
@@ -67,14 +67,14 @@ describe("ProfitCostDetailsViewModel", () => {
 
     it("marks the selected choice as checked", () => {
       const form: ProfitCostDetailsForm = {
-        clientStatusChoice: "child",
+        clientStatusChoice: "CHILD",
       };
       const vm = new ProfitCostDetailsViewModel({
         form: form,
       });
 
       const selected = vm.form.clientStatus.choices.find(
-        (c: any) => c.value === "child",
+        (c: any) => c.value === "CHILD",
       );
 
       expect(selected?.checked).to.be.true;

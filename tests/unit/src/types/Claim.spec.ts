@@ -1,5 +1,12 @@
 import { expect } from "chai";
-import { ClaimResponseSchema, EvidenceItemSchema } from "#src/types/Claim.js";
+import {
+  ClaimResponseSchema,
+  ClientPartyStatus,
+  CostType,
+  Count,
+  CourtType,
+  EvidenceItemSchema,
+} from "#src/types/Claim.js";
 import { UUID, V7Generator } from "uuidv7";
 import { ZodError } from 'zod';
 
@@ -28,6 +35,94 @@ describe("ClaimResponseSchema", () => {
     });
   });
 
+  describe("costType", () => {
+    it("parses a valid value", () => {
+      const result = ClaimResponseSchema.parse({
+        id: id.toString(),
+        costType: "PROFIT_COST",
+      });
+
+      expect(result.costType).to.equal(CostType.PROFIT_COST);
+    });
+  });
+
+  describe("courtType", () => {
+    it("parses a valid value", () => {
+      const result = ClaimResponseSchema.parse({
+        id: id.toString(),
+        courtType: "COUNTY_COURT",
+      });
+
+      expect(result.courtType).to.equal(CourtType.COUNTY_COURT);
+    });
+  });
+
+  describe("clientPartyStatus", () => {
+    it("parses a valid value", () => {
+      const result = ClaimResponseSchema.parse({
+        id: id.toString(),
+        clientPartyStatus: "CHILD",
+      });
+
+      expect(result.clientPartyStatus).to.equal(ClientPartyStatus.CHILD);
+    });
+  });
+
+  describe("firstActingSolicitorFlag", () => {
+    it("parses a valid value", () => {
+      const result = ClaimResponseSchema.parse({
+        id: id.toString(),
+        firstActingSolicitorFlag: true,
+      });
+
+      expect(result.firstActingSolicitorFlag).to.equal(true);
+    });
+  });
+
+  describe("transferOfSolicitorFlag", () => {
+    it("parses a valid value", () => {
+      const result = ClaimResponseSchema.parse({
+        id: id.toString(),
+        transferOfSolicitorFlag: false,
+      });
+
+      expect(result.transferOfSolicitorFlag).to.equal(false);
+    });
+  });
+
+  describe("clientsRetainedCount", () => {
+    it("parses a valid value", () => {
+      const result = ClaimResponseSchema.parse({
+        id: id.toString(),
+        clientsRetainedCount: "ZERO",
+      });
+
+      expect(result.clientsRetainedCount).to.equal(Count.ZERO);
+    });
+  });
+
+  describe("clientsStartCount", () => {
+    it("parses a valid value", () => {
+      const result = ClaimResponseSchema.parse({
+        id: id.toString(),
+        clientsStartCount: "ONE",
+      });
+
+      expect(result.clientsStartCount).to.equal(Count.ONE);
+    });
+  });
+
+  describe("multiClientHearingFlag", () => {
+    it("parses a valid value", () => {
+      const result = ClaimResponseSchema.parse({
+        id: id.toString(),
+        multiClientHearingFlag: true,
+      });
+
+      expect(result.multiClientHearingFlag).to.equal(true);
+    });
+  });
+
   describe("ufn", () => {
     it("parses a valid string", () => {
       const result = ClaimResponseSchema.parse({
@@ -36,32 +131,6 @@ describe("ClaimResponseSchema", () => {
       });
 
       expect(result.ufn).to.equal("UFN_123");
-    });
-
-    it("parses undefined as undefined", () => {
-      const result = ClaimResponseSchema.parse({
-        id: id.toString(),
-        ufn: undefined,
-      });
-
-      expect(result.ufn).to.be.undefined;
-    });
-
-    it("parses null as null", () => {
-      const result = ClaimResponseSchema.parse({
-        id: id.toString(),
-        ufn: null,
-      });
-
-      expect(result.ufn).to.be.null;
-    });
-
-    it("parses missing field as undefined", () => {
-      const result = ClaimResponseSchema.parse({
-        id: id.toString(),
-      });
-
-      expect(result.ufn).to.be.undefined;
     });
   });
 
@@ -77,32 +146,102 @@ describe("ClaimResponseSchema", () => {
         "2026-05-07T10:00:00.000Z",
       );
     });
+  });
 
-    it("parses undefined as undefined", () => {
-      const result = ClaimResponseSchema.parse({
-        id: id.toString(),
-        concluded: undefined,
-      });
-
-      expect(result.concluded).to.be.undefined;
+  it("parses undefined fields as undefined", () => {
+    const result = ClaimResponseSchema.parse({
+      id: id.toString(),
+      costType: undefined,
+      courtType: undefined,
+      clientPartyStatus: undefined,
+      firstActingSolicitorFlag: undefined,
+      transferOfSolicitorFlag: undefined,
+      clientsRetainedCount: undefined,
+      clientsStartCount: undefined,
+      multiClientHearingFlag: undefined,
+      ufn: undefined,
+      providerUserId: undefined,
+      client: undefined,
+      category: undefined,
+      concluded: undefined,
+      feeType: undefined,
+      claimed: undefined,
     });
 
-    it("parses null as null", () => {
-      const result = ClaimResponseSchema.parse({
-        id: id.toString(),
-        concluded: null,
-      });
+    expect(result.costType).to.be.undefined;
+    expect(result.courtType).to.be.undefined;
+    expect(result.clientPartyStatus).to.be.undefined;
+    expect(result.firstActingSolicitorFlag).to.be.undefined;
+    expect(result.transferOfSolicitorFlag).to.be.undefined;
+    expect(result.clientsRetainedCount).to.be.undefined;
+    expect(result.clientsStartCount).to.be.undefined;
+    expect(result.multiClientHearingFlag).to.be.undefined;
+    expect(result.ufn).to.be.undefined;
+    expect(result.providerUserId).to.be.undefined;
+    expect(result.client).to.be.undefined;
+    expect(result.category).to.be.undefined;
+    expect(result.concluded).to.be.undefined;
+    expect(result.feeType).to.be.undefined;
+    expect(result.claimed).to.be.undefined;
+  });
 
-      expect(result.concluded).to.be.null;
+  it("parses null fields as null", () => {
+    const result = ClaimResponseSchema.parse({
+      id: id.toString(),
+      costType: null,
+      courtType: null,
+      clientPartyStatus: null,
+      firstActingSolicitorFlag: null,
+      transferOfSolicitorFlag: null,
+      clientsRetainedCount: null,
+      clientsStartCount: null,
+      multiClientHearingFlag: null,
+      ufn: null,
+      providerUserId: null,
+      client: null,
+      category: null,
+      concluded: null,
+      feeType: null,
+      claimed: null,
     });
 
-    it("parses missing field as undefined", () => {
-      const result = ClaimResponseSchema.parse({
-        id: id.toString(),
-      });
+    expect(result.costType).to.be.null;
+    expect(result.courtType).to.be.null;
+    expect(result.clientPartyStatus).to.be.null;
+    expect(result.firstActingSolicitorFlag).to.be.null;
+    expect(result.transferOfSolicitorFlag).to.be.null;
+    expect(result.clientsRetainedCount).to.be.null;
+    expect(result.clientsStartCount).to.be.null;
+    expect(result.multiClientHearingFlag).to.be.null;
+    expect(result.ufn).to.be.null;
+    expect(result.providerUserId).to.be.null;
+    expect(result.client).to.be.null;
+    expect(result.category).to.be.null;
+    expect(result.concluded).to.be.null;
+    expect(result.feeType).to.be.null;
+    expect(result.claimed).to.be.null;
+  });
 
-      expect(result.concluded).to.be.undefined;
+  it("parses missing fields as undefined", () => {
+    const result = ClaimResponseSchema.parse({
+      id: id.toString(),
     });
+
+    expect(result.costType).to.be.undefined;
+    expect(result.courtType).to.be.undefined;
+    expect(result.clientPartyStatus).to.be.undefined;
+    expect(result.firstActingSolicitorFlag).to.be.undefined;
+    expect(result.transferOfSolicitorFlag).to.be.undefined;
+    expect(result.clientsRetainedCount).to.be.undefined;
+    expect(result.clientsStartCount).to.be.undefined;
+    expect(result.multiClientHearingFlag).to.be.undefined;
+    expect(result.ufn).to.be.undefined;
+    expect(result.providerUserId).to.be.undefined;
+    expect(result.client).to.be.undefined;
+    expect(result.category).to.be.undefined;
+    expect(result.concluded).to.be.undefined;
+    expect(result.feeType).to.be.undefined;
+    expect(result.claimed).to.be.undefined;
   });
 
   describe("EvidenceItemSchema", () => {

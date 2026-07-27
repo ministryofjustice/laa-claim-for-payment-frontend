@@ -1,28 +1,28 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { createRadioQuestionController } from "#src/helpers/radioQuestionController.js";
 import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewModel.js";
-import { NumberOfClientsStartOfCaseChoice } from "#src/types/poa.js";
 import { UUID } from "uuidv7";
+import { Count } from "#src/types/Claim.js";
 
 const numberOfClientsStartOfCaseFieldName =
   "numberOfClientsStartOfCase" as const;
 
-const numberOfClientsStartOfCaseChoices: ReadonlyArray<RadioQuestionOptions<NumberOfClientsStartOfCaseChoice>> =
+const numberOfClientsStartOfCaseChoices: ReadonlyArray<RadioQuestionOptions<Count>> =
   [
     {
-      value: NumberOfClientsStartOfCaseChoice.None,
+      value: Count.ZERO,
       text: {
         key: "pages.numberOfClientsStartOfCase.none.text",
       },
     },
     {
-      value: NumberOfClientsStartOfCaseChoice.One,
+      value: Count.ONE,
       text: {
         key: "pages.numberOfClientsStartOfCase.one.text",
       },
     },
     {
-      value: NumberOfClientsStartOfCaseChoice.MoreThanTwo,
+      value: Count.TWO_OR_MORE,
       text: {
         key: "pages.numberOfClientsStartOfCase.moreThanTwo.text",
       },
@@ -31,7 +31,7 @@ const numberOfClientsStartOfCaseChoices: ReadonlyArray<RadioQuestionOptions<Numb
 
 const controller = createRadioQuestionController({
   title: {
-    key: "pages.numberOfClientsStartOfCase.title"
+    key: "pages.numberOfClientsStartOfCase.title",
   },
   fieldName: numberOfClientsStartOfCaseFieldName,
   choices: numberOfClientsStartOfCaseChoices,
