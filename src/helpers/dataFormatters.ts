@@ -4,6 +4,8 @@
  * Utility functions for formatting claim data in a consistent way across the application.
  */
 
+import type { BooleanChoice } from "#src/models/booleanChoice.js";
+
 /**
  * Format date for display in table cells and UI components
  * @param {Date} date Date object
@@ -82,7 +84,7 @@ export function formatOptionalString(value: string | null | undefined): string {
  * @param {boolean | null | undefined} value the value to convert
  * @returns {string | undefined} the converted value
  */
-export function formatBoolean(value: boolean | null | undefined): string | undefined {
+export function formatBoolean(value: boolean | null | undefined): BooleanChoice | undefined {
   if (value == null) {
     return undefined;
   }
