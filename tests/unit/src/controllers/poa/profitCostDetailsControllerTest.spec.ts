@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, afterEach } from "mocha";
+import { afterEach, beforeEach, describe, it } from "mocha";
 import { expect } from "chai";
 import * as sinon from "sinon";
 import type { Request, Response } from "express";
@@ -12,6 +12,8 @@ import {
 } from "#src/controllers/poa/profitCostDetailsController.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { V7Generator } from "uuidv7";
+import { claimService } from "#src/services/claimService.js";
+import { Claim } from "#src/types/Claim.js";
 
 describe("Profit cost details controller", () => {
   let req: Partial<Request>;
@@ -20,6 +22,8 @@ describe("Profit cost details controller", () => {
   let renderStub: sinon.SinonStub;
   let statusStub: sinon.SinonStub;
   let redirectStub: sinon.SinonStub;
+  let getClaimStub: sinon.SinonStub;
+  let updateClaimStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
 
@@ -44,6 +48,9 @@ describe("Profit cost details controller", () => {
     };
 
     next = sinon.stub();
+
+    getClaimStub = sinon.stub(claimService, "getDraftClaim");
+    updateClaimStub = sinon.stub(claimService, "updateClaim");
   });
 
   afterEach(() => {
@@ -51,6 +58,13 @@ describe("Profit cost details controller", () => {
   });
 
   it("should render the profit cost details page with the correct template", async () => {
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
+
     await profitCostDetails(req as Request, res as Response, next);
 
     expect(renderStub.calledOnce).to.be.true;
@@ -58,8 +72,7 @@ describe("Profit cost details controller", () => {
       .true;
   });
 
-
-it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'", async () => {
+  it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'", async () => {
     req.body = {
       [courtTypeFieldName]: "COUNTY_COURT",
       [clientStatusFieldName]: "CHILD",
@@ -67,14 +80,38 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
       [transferOfSolicitorFieldName]: "yes",
     };
 
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
+
+    updateClaimStub.resolves({
+      status: "success",
+      body: null,
+    });
+
     await submitProfitCostDetails(req as Request, res as Response, next);
+
+    expect(
+      updateClaimStub.calledWith(
+        req.axiosMiddleware,
+        sinon.match({
+          id: claimId.toString(),
+          courtType: "COUNTY_COURT",
+          clientPartyStatus: "CHILD",
+          firstActingSolicitorFlag: true,
+          transferOfSolicitorFlag: true,
+        }),
+      ),
+    ).to.be.true;
 
     expect(redirectStub.calledOnce).to.be.true;
 
-    const expectedRoute = buildRoute(
-      ROUTES.HOW_MANY_CLIENTS_RETAINED,
-      { claimId: claimId },
-    );
+    const expectedRoute = buildRoute(ROUTES.HOW_MANY_CLIENTS_RETAINED, {
+      claimId: claimId,
+    });
 
     expect(redirectStub.calledWith(expectedRoute)).to.be.true;
   });
@@ -87,25 +124,58 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
       [transferOfSolicitorFieldName]: "no",
     };
 
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
+
+    updateClaimStub.resolves({
+      status: "success",
+      body: null,
+    });
+
     await submitProfitCostDetails(req as Request, res as Response, next);
+
+    expect(
+      updateClaimStub.calledWith(
+        req.axiosMiddleware,
+        sinon.match({
+          id: claimId.toString(),
+          courtType: "COUNTY_COURT",
+          clientPartyStatus: "CHILD",
+          firstActingSolicitorFlag: true,
+          transferOfSolicitorFlag: false,
+        }),
+      ),
+    ).to.be.true;
 
     expect(redirectStub.calledOnce).to.be.true;
 
-    const expectedRoute = buildRoute(
-      ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
-      { claimId: claimId },
-    );
+    const expectedRoute = buildRoute(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, {
+      claimId: claimId,
+    });
 
     expect(redirectStub.calledWith(expectedRoute)).to.be.true;
   });
 
   describe("Court type question", () => {
     it("should render the court type radios correctly", async () => {
+      getClaimStub.resolves({
+        status: "success",
+        body: new Claim({
+          id: claimId.toString(),
+        }),
+      });
+
       await profitCostDetails(req as Request, res as Response, next);
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.courtType.fieldName).to.equal("courtTypeChoice");
+      expect(renderArgs.vm.form.courtType.fieldName).to.equal(
+        "courtTypeChoice",
+      );
       expect(renderArgs.vm.form.courtType.choices).to.have.length(4);
     });
 
@@ -117,7 +187,7 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
       const renderArgs = renderStub.firstCall.args[1];
 
       expect(renderArgs.vm.form.courtType.error.text).to.deep.equal({
-        key: "pages.profitCostDetails.courtType.errors.empty"
+        key: "pages.profitCostDetails.courtType.errors.empty",
       });
     });
 
@@ -133,13 +203,20 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
       const renderArgs = renderStub.firstCall.args[1];
 
       expect(renderArgs.vm.form.courtType.error.text).to.deep.equal({
-        key: "pages.profitCostDetails.courtType.errors.empty"
+        key: "pages.profitCostDetails.courtType.errors.empty",
       });
     });
   });
 
   describe("Client status question", () => {
     it("should render the client status radios correctly", async () => {
+      getClaimStub.resolves({
+        status: "success",
+        body: new Claim({
+          id: claimId.toString(),
+        }),
+      });
+
       await profitCostDetails(req as Request, res as Response, next);
 
       const renderArgs = renderStub.firstCall.args[1];
@@ -158,7 +235,7 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
       const renderArgs = renderStub.firstCall.args[1];
 
       expect(renderArgs.vm.form.clientStatus.error.text).to.deep.equal({
-        key: "pages.profitCostDetails.clientStatus.errors.empty"
+        key: "pages.profitCostDetails.clientStatus.errors.empty",
       });
     });
 
@@ -174,13 +251,20 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
       const renderArgs = renderStub.firstCall.args[1];
 
       expect(renderArgs.vm.form.clientStatus.error.text).to.deep.equal({
-        key: "pages.profitCostDetails.clientStatus.errors.empty"
+        key: "pages.profitCostDetails.clientStatus.errors.empty",
       });
     });
   });
 
   describe("First solicitor firm question", () => {
     it("should render the first solicitor firm radios correctly", async () => {
+      getClaimStub.resolves({
+        status: "success",
+        body: new Claim({
+          id: claimId.toString(),
+        }),
+      });
+
       await profitCostDetails(req as Request, res as Response, next);
 
       const renderArgs = renderStub.firstCall.args[1];
@@ -199,7 +283,7 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
       const renderArgs = renderStub.firstCall.args[1];
 
       expect(renderArgs.vm.form.firstSolicitor.error.text).to.deep.equal({
-        key: "pages.profitCostDetails.firstSolicitor.errors.empty"
+        key: "pages.profitCostDetails.firstSolicitor.errors.empty",
       });
     });
 
@@ -215,13 +299,20 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
       const renderArgs = renderStub.firstCall.args[1];
 
       expect(renderArgs.vm.form.firstSolicitor.error.text).to.deep.equal({
-        key: "pages.profitCostDetails.firstSolicitor.errors.empty"
+        key: "pages.profitCostDetails.firstSolicitor.errors.empty",
       });
     });
   });
 
   describe("Transfer of solicitor question", () => {
     it("should render the transfer of solicitor radios correctly", async () => {
+      getClaimStub.resolves({
+        status: "success",
+        body: new Claim({
+          id: claimId.toString(),
+        }),
+      });
+
       await profitCostDetails(req as Request, res as Response, next);
 
       const renderArgs = renderStub.firstCall.args[1];
@@ -240,7 +331,7 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
       const renderArgs = renderStub.firstCall.args[1];
 
       expect(renderArgs.vm.form.transferOfSolicitor.error.text).to.deep.equal({
-        key: "pages.profitCostDetails.transferOfSolicitor.errors.empty"
+        key: "pages.profitCostDetails.transferOfSolicitor.errors.empty",
       });
     });
 
@@ -256,7 +347,7 @@ it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'",
       const renderArgs = renderStub.firstCall.args[1];
 
       expect(renderArgs.vm.form.transferOfSolicitor.error.text).to.deep.equal({
-        key: "pages.profitCostDetails.transferOfSolicitor.errors.empty"
+        key: "pages.profitCostDetails.transferOfSolicitor.errors.empty",
       });
     });
   });

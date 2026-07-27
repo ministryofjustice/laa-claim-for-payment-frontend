@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { processError } from "#src/helpers/index.js";
+import { processApiError, processError } from "#src/helpers/index.js";
 import {
   ProfitCostDetailsViewModel,
   type ProfitCostDetailsViewModelParams
@@ -10,6 +10,8 @@ import { type ProfitCostDetailsForm, validateProfitCostDetails } from "#src/help
 import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewModel.js";
 import { UUID } from "uuidv7";
 import { ClientPartyStatus, CourtType } from "#src/types/Claim.js";
+import { claimService } from "#src/services/claimService.js";
+import { formatBoolean } from "#src/helpers/dataFormatters.js";
 
 /**
  * Profit cost details journey view
@@ -17,15 +19,31 @@ import { ClientPartyStatus, CourtType } from "#src/types/Claim.js";
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
  */
-export function profitCostDetails(
+export async function profitCostDetails(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   try {
+    const claimId = UUID.parse(req.params.claimId);
+
+    const claim = await claimService.getDraftClaim(
+      req.axiosMiddleware,
+      claimId,
+    );
+
+    const params: ProfitCostDetailsViewModelParams = {
+      form: {
+        courtTypeChoice: claim.body?.courtType,
+        clientStatusChoice: claim.body?.clientPartyStatus,
+        firstSolicitorChoice: formatBoolean(claim.body?.firstActingSolicitorFlag),
+        transferOfSolicitorChoice: formatBoolean(claim.body?.transferOfSolicitorFlag),
+      }
+    };
+
     res.render("main/poa/profitCostDetailsView.njk", {
       csrfToken: res.locals.csrfToken,
-      vm: new ProfitCostDetailsViewModel(),
+      vm: new ProfitCostDetailsViewModel(params),
     });
   } catch (error) {
     const processedError = processError(
@@ -42,11 +60,11 @@ export function profitCostDetails(
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
  */
-export function submitProfitCostDetails(
+export async function submitProfitCostDetails(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   try {
     const form = getForm(req.body) as ProfitCostDetailsForm;
     const validationResult = validateProfitCostDetails(form);
@@ -66,16 +84,27 @@ export function submitProfitCostDetails(
 
     const claimId = UUID.parse(req.params.claimId);
 
-    const redirectUrl = validationResult.value.transferOfSolicitor
-      ? buildRoute(ROUTES.HOW_MANY_CLIENTS_RETAINED, { claimId })
-      : buildRoute(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, { claimId });
-
-    res.redirect(redirectUrl);
-  } catch (error) {
-    const processedError = processError(
-      error,
-      "submitting court or judge type",
+    const claim = await claimService.getDraftClaim(
+      req.axiosMiddleware,
+      claimId,
     );
+
+    if (claim.status === "success") {
+      await claimService.updateClaim(
+        req.axiosMiddleware,
+        claim.body.setProfitCostDetails(validationResult.value),
+      );
+
+      const redirectUrl = validationResult.value.transferOfSolicitor
+        ? buildRoute(ROUTES.HOW_MANY_CLIENTS_RETAINED, { claimId })
+        : buildRoute(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, { claimId });
+
+      res.redirect(redirectUrl);
+    } else {
+      next(processApiError(claim, "retrieving claim for submitting profit cost details page"));
+    }
+  } catch (error) {
+    const processedError = processError(error, "submitting profit cost details page");
     next(processedError);
   }
 }

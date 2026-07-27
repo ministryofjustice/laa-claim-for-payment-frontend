@@ -17,7 +17,7 @@ import {
   firstSolicitorFieldName,
   transferOfSolicitorFieldName,
 } from "#src/controllers/poa/profitCostDetailsController.js";
-import { ClientPartyStatus, CourtType } from "#src/types/Claim.js";
+import type { ClientPartyStatus, CourtType } from "#src/types/Claim.js";
 
 export interface ProfitCostDetailsViewModelParams {
   form?: ProfitCostDetailsForm;

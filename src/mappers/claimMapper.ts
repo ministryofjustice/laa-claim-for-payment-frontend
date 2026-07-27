@@ -9,6 +9,10 @@ import type { ClaimRequestBody } from "#src/generated/claim-api/index.js";
  */
 export function toClaimRequestBody(claim: Claim): ClaimRequestBody {
   return {
-    costType: claim.costType ?? undefined
+    costType: claim.costType ?? undefined,
+    courtType: claim.courtType ?? undefined,
+    clientPartyStatus: claim.clientPartyStatus ?? undefined,
+    firstActingSolicitorFlag: claim.firstActingSolicitorFlag ?? undefined,
+    transferOfSolicitorFlag: claim.transferOfSolicitorFlag ?? undefined,
   };
 }
