@@ -274,6 +274,25 @@ describe("ClaimResponseSchema", () => {
 
       expect(result.clientsStartCount).to.equal(Count.ONE);
     });
+
+    it("gets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        clientsStartCount: Count.ZERO,
+      });
+
+      expect(claim.clientsStartCount).to.equal(Count.ZERO);
+    });
+
+    it("sets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+      });
+
+      claim.setClientsStartCount(Count.ZERO);
+
+      expect(claim.value.clientsStartCount).to.equal(Count.ZERO);
+    });
   });
 
   describe("multiClientHearingFlag", () => {

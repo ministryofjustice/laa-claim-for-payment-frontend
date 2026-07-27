@@ -252,12 +252,12 @@ router.post(
   },
 );
 
-router.get(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, limiter, function(req: Request, res: Response, next: NextFunction): void {
-  numberOfClientsStartOfCase(req, res, next);
+router.get(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, limiter, async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+  await numberOfClientsStartOfCase(req, res, next);
 });
 
-router.post(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, limiter, function(req: Request, res: Response, next: NextFunction): void {
-  submitNumberOfClientsStartOfCase(req, res, next);
+router.post(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, limiter, async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+  await submitNumberOfClientsStartOfCase(req, res, next);
 });
 
 router.get(
@@ -371,14 +371,6 @@ router.get(ROUTES.POA_SUBMISSION_SUCCESSFUL, limiter, function(req: Request, res
       submitProfitCostBillLine(req, res, next);
     },
   );
-
-  router.get(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, limiter, function(req: Request, res: Response, next: NextFunction): void {
-    numberOfClientsStartOfCase(req, res, next);
-  });
-
-  router.post(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, limiter, function(req: Request, res: Response, next: NextFunction): void {
-    submitNumberOfClientsStartOfCase(req, res, next);
-  });
 
   router.get(
     ROUTES.ESCAPING_FIXED_FEE,

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { beforeEach, describe, it } from "mocha";
+import { afterEach, beforeEach, describe, it } from "mocha";
 import sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
 import {
@@ -7,10 +7,14 @@ import {
   submitNumberOfClientsStartOfCase,
 } from "#src/controllers/poa/numberOfClientsStartOfCaseController.js";
 import { V7Generator } from "uuidv7";
+import { Claim } from "#src/types/Claim.js";
+import { claimService } from "#src/services/claimService.js";
 
 describe("numberOfClientsStartOfCaseController", () => {
   let res: Response;
   let next: NextFunction;
+  let getClaimStub: sinon.SinonStub;
+  let updateClaimStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
 
@@ -25,16 +29,30 @@ describe("numberOfClientsStartOfCaseController", () => {
     } as unknown as Response;
 
     next = sinon.stub() as unknown as NextFunction;
+
+    getClaimStub = sinon.stub(claimService, "getDraftClaim");
+    updateClaimStub = sinon.stub(claimService, "updateClaim");
   });
 
-  it("renders the number of clients start of case radio question page", () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it("renders the number of clients start of case radio question page", async () => {
     const req = {
       params: {
         claimId: claimId.toString(),
       },
     } as unknown as Request;
 
-    numberOfClientsStartOfCase(req, res, next);
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
+
+    await numberOfClientsStartOfCase(req, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -75,7 +93,7 @@ describe("numberOfClientsStartOfCaseController", () => {
     ]);
   });
 
-  it("redirects to multiple client hearings when 0 is selected", () => {
+  it("redirects to multiple client hearings when 0 is selected", async () => {
     const req = {
       params: {
         claimId: claimId.toString(),
@@ -85,7 +103,29 @@ describe("numberOfClientsStartOfCaseController", () => {
       },
     } as unknown as Request;
 
-    submitNumberOfClientsStartOfCase(req, res, next);
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
+
+    updateClaimStub.resolves({
+      status: "success",
+      body: null,
+    });
+
+    await submitNumberOfClientsStartOfCase(req, res, next);
+
+    expect(
+      updateClaimStub.calledWith(
+        req.axiosMiddleware,
+        sinon.match({
+          id: claimId.toString(),
+          clientsStartCount: "ZERO",
+        }),
+      ),
+    ).to.be.true;
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
@@ -94,7 +134,7 @@ describe("numberOfClientsStartOfCaseController", () => {
     ).to.equal(true);
   });
 
-  it("redirects to multiple client hearings when 1 is selected", () => {
+  it("redirects to multiple client hearings when 1 is selected", async () => {
     const req = {
       params: {
         claimId: claimId.toString(),
@@ -104,7 +144,29 @@ describe("numberOfClientsStartOfCaseController", () => {
       },
     } as unknown as Request;
 
-    submitNumberOfClientsStartOfCase(req, res, next);
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
+
+    updateClaimStub.resolves({
+      status: "success",
+      body: null,
+    });
+
+    await submitNumberOfClientsStartOfCase(req, res, next);
+
+    expect(
+      updateClaimStub.calledWith(
+        req.axiosMiddleware,
+        sinon.match({
+          id: claimId.toString(),
+          clientsStartCount: "ONE",
+        }),
+      ),
+    ).to.be.true;
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
@@ -113,7 +175,7 @@ describe("numberOfClientsStartOfCaseController", () => {
     ).to.equal(true);
   });
 
-  it("redirects to multiple client hearings when 2+ is selected", () => {
+  it("redirects to multiple client hearings when 2+ is selected", async () => {
     const req = {
       params: {
         claimId: claimId.toString(),
@@ -123,7 +185,29 @@ describe("numberOfClientsStartOfCaseController", () => {
       },
     } as unknown as Request;
 
-    submitNumberOfClientsStartOfCase(req, res, next);
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
+
+    updateClaimStub.resolves({
+      status: "success",
+      body: null,
+    });
+
+    await submitNumberOfClientsStartOfCase(req, res, next);
+
+    expect(
+      updateClaimStub.calledWith(
+        req.axiosMiddleware,
+        sinon.match({
+          id: claimId.toString(),
+          clientsStartCount: "TWO_OR_MORE",
+        }),
+      ),
+    ).to.be.true;
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
@@ -132,7 +216,7 @@ describe("numberOfClientsStartOfCaseController", () => {
     ).to.equal(true);
   });
 
-  it("rerenders with an error when no option is selected", () => {
+  it("rerenders with an error when no option is selected", async () => {
     const req = {
       params: {
         claimId: claimId.toString(),
@@ -140,7 +224,7 @@ describe("numberOfClientsStartOfCaseController", () => {
       body: {},
     } as unknown as Request;
 
-    submitNumberOfClientsStartOfCase(req, res, next);
+    await submitNumberOfClientsStartOfCase(req, res, next);
 
     expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);

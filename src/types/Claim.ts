@@ -166,6 +166,15 @@ export class Claim {
   }
 
   /**
+   * Gets the clients start count.
+   *
+   * @returns {Count | null | undefined} the clients start count.
+   */
+  get clientsStartCount(): Count | null | undefined {
+    return this.data.clientsStartCount;
+  }
+
+  /**
    * Sets the cost type.
    *
    * @param {CostType} value cost type

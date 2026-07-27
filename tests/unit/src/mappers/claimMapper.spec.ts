@@ -23,6 +23,7 @@ describe("ClaimMapper", () => {
       firstActingSolicitorFlag: true,
       transferOfSolicitorFlag: false,
       clientsRetainedCount: Count.ZERO,
+      clientsStartCount: Count.ONE,
     };
 
     const claim = new Claim(claimDto);
@@ -35,6 +36,7 @@ describe("ClaimMapper", () => {
     expect(result.firstActingSolicitorFlag).to.equal(true);
     expect(result.transferOfSolicitorFlag).to.equal(false);
     expect(result.clientsRetainedCount).to.equal("ZERO");
+    expect(result.clientsStartCount).to.equal("ONE");
   });
 
   it("when values are undefined", () => {
@@ -52,5 +54,6 @@ describe("ClaimMapper", () => {
     expect(result.firstActingSolicitorFlag).to.be.undefined;
     expect(result.transferOfSolicitorFlag).to.be.undefined;
     expect(result.clientsRetainedCount).to.be.undefined;
+    expect(result.clientsStartCount).to.be.undefined;
   });
 });
