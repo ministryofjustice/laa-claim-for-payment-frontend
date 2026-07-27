@@ -196,7 +196,7 @@ export class Claim {
   /**
    * Sets the client party status.
    *
-   * @param {ClientPartyStatus | undefined} value court type
+   * @param {ClientPartyStatus | undefined} value client party status
    * @returns {Claim} updated claim
    */
   setClientPartyStatus(value: ClientPartyStatus | undefined): this {
@@ -230,7 +230,7 @@ export class Claim {
   }
 
   /**
-   * Sets the clients retained.
+   * Sets the clients retained count.
    *
    * @param {Count | undefined} value clients retained count
    * @returns {Claim} updated claim
