@@ -16,6 +16,7 @@ describe("expertCostDetailsController", () => {
   let next: NextFunction;
   let getLineItemStub: sinon.SinonStub;
   let createLineItemStub: sinon.SinonStub;
+  let updateLineItemStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
   const lineItemId = new V7Generator().generate();
@@ -34,6 +35,7 @@ describe("expertCostDetailsController", () => {
 
     getLineItemStub = sinon.stub(claimService, "getLineItem");
     createLineItemStub = sinon.stub(claimService, "addLineItemToClaim");
+    updateLineItemStub = sinon.stub(claimService, "updateLineItem");
   });
 
   afterEach(() => {
@@ -142,6 +144,53 @@ describe("expertCostDetailsController", () => {
     expect(createLineItemStub.firstCall.args[1]).to.deep.equal(claimId);
 
     expect(createLineItemStub.firstCall.args[2]).to.deep.equal({
+      activityDate: new Date(2007, 2, 27),
+      actualNetValue: 123.45,
+      vatApplies: true,
+      feeEarnerName: "John Smith",
+      description: "Lorem ipsum",
+    });
+
+    expect(
+      (res.redirect as sinon.SinonStub).calledWith(
+        buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, {
+          claimId: claimId,
+        }),
+      ),
+    ).to.be.true;
+  });
+
+  it("redirects to POA evidence upload when form is valid when there is a line item ID", async () => {
+    const req = {
+      params: {
+        claimId: claimId.toString(),
+      },
+      query: {
+        lineItemId: lineItemId.toString(),
+      },
+      body: {
+        activityDateDay: "27",
+        activityDateMonth: "3",
+        activityDateYear: "2007",
+        actualNetValue: "123.45",
+        vatApplies: "yes",
+        feeEarnerName: "John Smith",
+        description: "Lorem ipsum",
+      },
+    } as unknown as Request;
+
+    updateLineItemStub.resolves({
+      status: "success",
+      body: null,
+    });
+
+    await submitExpertCostDetails(req, res, next);
+
+    expect(updateLineItemStub.firstCall.args[1]).to.deep.equal(claimId);
+
+    expect(updateLineItemStub.firstCall.args[2]).to.deep.equal(lineItemId);
+
+    expect(updateLineItemStub.firstCall.args[3]).to.deep.equal({
       activityDate: new Date(2007, 2, 27),
       actualNetValue: 123.45,
       vatApplies: true,

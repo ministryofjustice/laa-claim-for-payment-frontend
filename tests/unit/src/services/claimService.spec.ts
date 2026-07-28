@@ -4,6 +4,7 @@ import { claimService } from "#src/services/claimService.js";
 import { ApiError } from "#src/types/api-types.js";
 import { UUID, V7Generator } from "uuidv7";
 import { Category, Claim, CostType } from "#src/types/Claim.js";
+import { ExpertCostDetails } from "#src/types/poa.js";
 
 describe("Claim Service", () => {
   afterEach(() => {
@@ -928,6 +929,111 @@ describe("Claim Service", () => {
       expect(result.status).to.equal("error");
       expect(result.message).to.be.a("string").and.not.empty;
       expect(result).to.not.have.property("body");
+    });
+  });
+
+  describe("updateLineItem", () => {
+
+    const lineItem: ExpertCostDetails = {
+      activityDate: new Date(Date.UTC(2026, 6, 28)),
+      actualNetValue: 123.45,
+      vatApplies: true,
+      feeEarnerName: "Joe Bloggs",
+      description: "Lorem ipsum"
+    };
+
+    it("returns success", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        updateLineItem: sinon.stub().resolves(null),
+      };
+
+      const result = await claimService.updateLineItem(
+        { axiosInstance: {} } as any,
+        claimId,
+        lineItemId,
+        lineItem,
+        deps as any,
+      );
+
+      expect(result).to.deep.equal({
+        status: "success",
+        body: null,
+      });
+
+      expect(deps.updateLineItem.firstCall.args[0]).to.deep.equal({
+        path: {
+          claimId: claimId.toString(),
+          lineItemId: lineItemId.toString(),
+        },
+        query: {
+          status: "DRAFT",
+        },
+        body: {
+          title: "Lorem ipsum",
+          category: "Disbursement",
+          date: "2026-07-28T00:00:00.000Z",
+          actualNetValue: 123.45,
+          vatApplicable: true,
+          feeEarnerName: "Joe Bloggs",
+        },
+        client: {},
+      });
+    });
+
+    it("returns error for a non-200 response", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        updateLineItem: sinon.stub().rejects({
+          isAxiosError: true,
+          response: {
+            status: 400,
+            data: {
+              detail: "Request validation failed.",
+              instance: "/api/v1/claims/019f7fd6-c3d1-7706-b518-6bdd409550c1/line-items/019fa90f-346f-7051-9e40-1bf1c2b53217",
+              status: 400,
+              title: "Invalid request",
+              correlationId: "431063e8-a19a-4991-bc76-78232c54b8e2",
+              errorCode: "VALIDATION_FAILED",
+            },
+          },
+        }),
+      };
+
+      const result = (await claimService.updateLineItem(
+        { axiosInstance: {} } as any,
+        claimId,
+        lineItemId,
+        lineItem,
+        deps as any,
+      )) as ApiError;
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 400,
+        message: "Request validation failed.",
+      });
+    });
+
+    it("returns error shape when the API call fails", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        updateLineItem: sinon.stub().rejects(new Error("boom")),
+      };
+
+      const result = await claimService.updateLineItem(
+        { axiosInstance: {} } as any,
+        claimId,
+        lineItemId,
+        lineItem,
+        deps as any,
+      );
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 500,
+        message: "boom",
+      });
     });
   });
 });

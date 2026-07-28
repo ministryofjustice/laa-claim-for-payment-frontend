@@ -115,7 +115,12 @@ export async function submitExpertCostDetails(
         validationResult.value,
       );
     } else {
-      // TODO - update line item
+      await claimService.updateLineItem(
+        req.axiosMiddleware,
+        claimId,
+        lineItemId,
+        validationResult.value,
+      );
     }
 
     // TODO - redirect to the 'add another work item' page

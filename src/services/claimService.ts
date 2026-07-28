@@ -6,6 +6,7 @@ import {
   getClaims as getClaimsApi,
   updateClaim as updateClaimApi,
   getLineItem as getLineItemApi,
+  updateLineItem as updateLineItemApi,
 } from "#src/generated/claim-api/sdk.gen.js";
 import { createApiError } from "#src/helpers/index.js";
 import type { ApiResponse, Paginated } from "#src/types/api-types.js";
@@ -36,6 +37,7 @@ interface ClaimServiceDeps {
   updateClaim: typeof updateClaimApi;
   addLineItemToClaim: typeof addLineItemToClaimApi;
   getLineItem: typeof getLineItemApi;
+  updateLineItem: typeof updateLineItemApi;
 }
 
 const defaultDeps: ClaimServiceDeps = {
@@ -46,6 +48,7 @@ const defaultDeps: ClaimServiceDeps = {
   updateClaim: updateClaimApi,
   addLineItemToClaim: addLineItemToClaimApi,
   getLineItem: getLineItemApi,
+  updateLineItem: updateLineItemApi,
 };
 
 /**
@@ -299,7 +302,10 @@ class ClaimService {
 
     try {
       const response = await deps.getLineItem({
-        path: { claimId: claimId.toString(), lineItemId: lineItemId.toString() },
+        path: {
+          claimId: claimId.toString(),
+          lineItemId: lineItemId.toString(),
+        },
         query: { status: "DRAFT" },
         client: apiClient,
       });
@@ -309,6 +315,47 @@ class ClaimService {
       return {
         body: parsed,
         status: "success",
+      };
+    } catch (error) {
+      return createApiError(error);
+    }
+  }
+
+  /**
+   * Updates a line item.
+   *
+   * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
+   * @param {UUID} claimId - Claim identifier.
+   * @param {UUID} lineItemId - Line item identifier.
+   * @param {ExpertCostDetails | ProfitCostBillLine} lineItem - Line item.
+   * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
+   * @returns {Promise<ApiResponse<null>>} App response format.
+   */
+  // eslint-disable-next-line @typescript-eslint/max-params -- ignore
+  static async updateLineItem(
+    axiosMiddleware: AxiosInstanceWrapper,
+    claimId: UUID,
+    lineItemId: UUID,
+    lineItem: ExpertCostDetails | ProfitCostBillLine,
+    deps: ClaimServiceDeps = defaultDeps,
+  ): Promise<ApiResponse<null>> {
+    const apiClient = deps.createClient({
+      baseURL: config.api.baseUrl,
+      axios: axiosMiddleware.axiosInstance,
+      throwOnError: true,
+    });
+
+    try {
+      await deps.updateLineItem({
+        path: { claimId: claimId.toString(), lineItemId: lineItemId.toString() },
+        query: { status: "DRAFT" },
+        body: toLineItemRequestBody(lineItem),
+        client: apiClient,
+      });
+
+      return {
+        status: "success",
+        body: null,
       };
     } catch (error) {
       return createApiError(error);
