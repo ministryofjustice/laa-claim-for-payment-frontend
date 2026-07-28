@@ -42,6 +42,8 @@ const controller = createRadioQuestionController({
     buildRoute(ROUTES.MULTIPLE_CLIENT_HEARINGS, {
       claimId: UUID.parse(req.params.claimId),
     }),
+  getValue: (claim) => claim.clientsStartCount,
+  setValue: (claim, selectedChoice) => claim.setClientsStartCount(selectedChoice),
 });
 
 export const {

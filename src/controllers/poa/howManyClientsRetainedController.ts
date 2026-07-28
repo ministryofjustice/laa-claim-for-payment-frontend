@@ -59,7 +59,7 @@ export async function howManyClientsRetained(
           },
           fieldName: howManyClientsRetainedFieldName,
           choices: howManyClientsRetainedChoices,
-          selectedValue: claim.body?.clientsRetainedCount,
+          selectedValue: claim.body.clientsRetainedCount,
         }),
       });
     } else {
