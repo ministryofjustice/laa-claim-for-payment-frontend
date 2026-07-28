@@ -3,7 +3,13 @@ import sinon from "sinon";
 import { claimService } from "#src/services/claimService.js";
 import { ApiError } from "#src/types/api-types.js";
 import { UUID, V7Generator } from "uuidv7";
-import { Category, Claim, CostType } from "#src/types/Claim.js";
+import {
+  Category,
+  Claim,
+  CostType,
+  ExpertCostLineItemSchema,
+  ProfitCostBillLineItemSchema,
+} from "#src/types/Claim.js";
 import { ExpertCostDetails } from "#src/types/poa.js";
 
 describe("Claim Service", () => {
@@ -823,7 +829,7 @@ describe("Claim Service", () => {
   });
 
   describe("getLineItem", () => {
-    it("returns success with a line item", async () => {
+    it("returns success with an expert cost line item", async () => {
       const deps = {
         createClient: sinon.stub().returns({}),
         getLineItem: sinon.stub().resolves({
@@ -833,6 +839,7 @@ describe("Claim Service", () => {
             category: "Disbursement",
             date: "2024-01-02T10:00:00Z",
             evidenceItems: [],
+            actualNetValue: 123,
           },
         }),
       };
@@ -841,6 +848,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
+        ExpertCostLineItemSchema,
         deps as any,
       );
 
@@ -851,6 +859,7 @@ describe("Claim Service", () => {
         category: Category.DISBURSEMENT,
         date: new Date("2024-01-02T10:00:00Z"),
         evidenceItems: [],
+        actualNetValue: 123,
       });
 
       sinon.assert.calledWith(
@@ -860,6 +869,105 @@ describe("Claim Service", () => {
           query: { status: "DRAFT" },
         }),
       );
+    });
+
+    it("returns success with a profit cost bill line item", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getLineItem: sinon.stub().resolves({
+          data: {
+            id: lineItemId.toString(),
+            title: "Some line item",
+            category: "Disbursement",
+            date: "2024-01-02T10:00:00Z",
+            evidenceItems: [],
+            netProfitCostAmount: 123,
+            netAdvocacyCostAmount: 456,
+          },
+        }),
+      };
+
+      const result = await claimService.getLineItem(
+        { axiosInstance: {} } as any,
+        claimId,
+        lineItemId,
+        ProfitCostBillLineItemSchema,
+        deps as any,
+      );
+
+      expect(result.status).to.equal("success");
+      expect(result.body).to.deep.equal({
+        id: lineItemId.toString(),
+        title: "Some line item",
+        category: Category.DISBURSEMENT,
+        date: new Date("2024-01-02T10:00:00Z"),
+        evidenceItems: [],
+        netProfitCostAmount: 123,
+        netAdvocacyCostAmount: 456,
+      });
+
+      sinon.assert.calledWith(
+        deps.getLineItem,
+        sinon.match({
+          path: { claimId: claimId.toString(), lineItemId: lineItemId.toString() },
+          query: { status: "DRAFT" },
+        }),
+      );
+    });
+
+    it("returns zod error when fetching expert cost line item and body is profit cost bill line item", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getLineItem: sinon.stub().resolves({
+          data: {
+            id: lineItemId.toString(),
+            title: "Some line item",
+            category: "Disbursement",
+            date: "2024-01-02T10:00:00Z",
+            evidenceItems: [],
+            netProfitCostAmount: 123,
+            netAdvocacyCostAmount: 456,
+          },
+        }),
+      };
+
+      const result = (await claimService.getLineItem(
+        { axiosInstance: {} } as any,
+        claimId,
+        lineItemId,
+        ExpertCostLineItemSchema,
+        deps as any,
+      )) as ApiError;
+
+      expect(result.status).to.equal("error");
+      expect(result.statusCode).to.equal(500);
+    });
+
+    it("returns zod error when fetching profit cost bill line item and body is expert cost line item", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getLineItem: sinon.stub().resolves({
+          data: {
+            id: lineItemId.toString(),
+            title: "Some line item",
+            category: "Disbursement",
+            date: "2024-01-02T10:00:00Z",
+            evidenceItems: [],
+            actualNetValue: 123,
+          },
+        }),
+      };
+
+      const result = (await claimService.getLineItem(
+        { axiosInstance: {} } as any,
+        claimId,
+        lineItemId,
+        ProfitCostBillLineItemSchema,
+        deps as any,
+      )) as ApiError;
+
+      expect(result.status).to.equal("error");
+      expect(result.statusCode).to.equal(500);
     });
 
     it("returns error for a non-200 response", async () => {
@@ -885,6 +993,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
+        ExpertCostLineItemSchema,
         deps as any,
       )) as ApiError;
 
@@ -903,6 +1012,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
+        ExpertCostLineItemSchema,
         deps as any,
       );
 
@@ -923,6 +1033,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
+        ExpertCostLineItemSchema,
         deps as any,
       );
 

@@ -13,6 +13,7 @@ import { getForm } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { formatBoolean } from "#src/helpers/dataFormatters.js";
+import { ExpertCostLineItemSchema } from "#src/types/Claim.js";
 
 /**
  * Display POA expert cost details page.
@@ -37,6 +38,7 @@ export async function expertCostDetails(
         req.axiosMiddleware,
         claimId,
         lineItemId,
+        ExpertCostLineItemSchema,
       );
 
       if (lineItem.status === "success") {

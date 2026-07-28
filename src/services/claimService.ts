@@ -4,8 +4,8 @@ import {
   createClaim as createClaimApi,
   getClaim as getClaimApi,
   getClaims as getClaimsApi,
-  updateClaim as updateClaimApi,
   getLineItem as getLineItemApi,
+  updateClaim as updateClaimApi,
   updateLineItem as updateLineItemApi,
 } from "#src/generated/claim-api/sdk.gen.js";
 import { createApiError } from "#src/helpers/index.js";
@@ -16,8 +16,6 @@ import {
   type ClaimDto,
   ClaimResponseSchema,
   ClaimsResponseSchema,
-  type LineItem,
-  LineItemSchema,
 } from "#src/types/Claim.js";
 import config from "../../config.js";
 import { UUID } from "uuidv7";
@@ -28,6 +26,7 @@ import {
 } from "#src/mappers/claimMapper.js";
 import type { ExpertCostDetails, ProfitCostBillLine } from "#src/types/poa.js";
 import type { AxiosResponse } from "axios";
+import type { ZodType } from "zod";
 
 interface ClaimServiceDeps {
   createClient: typeof createClient;
@@ -285,15 +284,18 @@ class ClaimService {
    * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
    * @param {UUID} claimId - Claim identifier.
    * @param {UUID} lineItemId - Line item identifier.
+   * @param {ZodType} schema - Schema to validate against.
    * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
-   * @returns {Promise<ApiResponse<LineItem>>} Parsed line item response in app response format.
+   * @returns {Promise<ApiResponse>} Parsed line item response in app response format.
    */
-  static async getLineItem(
+  // eslint-disable-next-line @typescript-eslint/max-params -- ignore
+  static async getLineItem<T>(
     axiosMiddleware: AxiosInstanceWrapper,
     claimId: UUID,
     lineItemId: UUID,
+    schema: ZodType<T>,
     deps: ClaimServiceDeps = defaultDeps,
-  ): Promise<ApiResponse<LineItem>> {
+  ): Promise<ApiResponse<T>> {
     const apiClient = deps.createClient({
       baseURL: config.api.baseUrl,
       axios: axiosMiddleware.axiosInstance,
@@ -310,10 +312,8 @@ class ClaimService {
         client: apiClient,
       });
 
-      const parsed: LineItem = LineItemSchema.parse(response.data);
-
       return {
-        body: parsed,
+        body: schema.parse(response.data),
         status: "success",
       };
     } catch (error) {
@@ -347,7 +347,10 @@ class ClaimService {
 
     try {
       await deps.updateLineItem({
-        path: { claimId: claimId.toString(), lineItemId: lineItemId.toString() },
+        path: {
+          claimId: claimId.toString(),
+          lineItemId: lineItemId.toString(),
+        },
         query: { status: "DRAFT" },
         body: toLineItemRequestBody(lineItem),
         client: apiClient,

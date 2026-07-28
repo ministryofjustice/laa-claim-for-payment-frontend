@@ -41,7 +41,7 @@ export enum ClientPartyStatus {
   PARENT = 'PARENT',
 }
 
-export const LineItemSchema = z.object({
+const BaseLineItemSchema = z.object({
   id: z.uuidv7(),
   title: z.string(),
   category: z.enum(Category),
@@ -53,6 +53,20 @@ export const LineItemSchema = z.object({
   vatApplicable: z.boolean().nullish(),
   feeEarnerName: z.string().nullish(),
 });
+
+export const ExpertCostLineItemSchema = BaseLineItemSchema.omit({
+  netProfitCostAmount: true,
+  netAdvocacyCostAmount: true,
+}).strict();
+
+export const ProfitCostBillLineItemSchema = BaseLineItemSchema.omit({
+  actualNetValue: true,
+}).strict();
+
+export const LineItemSchema = z.union([
+  ExpertCostLineItemSchema,
+  ProfitCostBillLineItemSchema,
+]);
 
 export type LineItem = z.infer<typeof LineItemSchema>;
 
