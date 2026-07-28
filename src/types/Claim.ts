@@ -47,6 +47,11 @@ export const LineItemSchema = z.object({
   category: z.enum(Category),
   date: z.string().pipe(z.coerce.date()),
   evidenceItems: z.array(z.uuidv7()),
+  actualNetValue: z.number().nullish(),
+  netProfitCostAmount: z.number().nullish(),
+  netAdvocacyCostAmount: z.number().nullish(),
+  vatApplicable: z.boolean().nullish(),
+  feeEarnerName: z.string().nullish(),
 });
 
 export type LineItem = z.infer<typeof LineItemSchema>;
@@ -191,6 +196,15 @@ export class Claim {
    */
   get escapedFlag(): boolean | null | undefined {
     return this.data.escaped;
+  }
+
+  /**
+   * Gets the line items.
+   *
+   * @returns {LineItem[] | null | undefined} the line items.
+   */
+  get lineItems(): LineItem[] | null | undefined {
+    return this.data.lineItems;
   }
 
   /**

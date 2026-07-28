@@ -27,7 +27,6 @@ import { requiresAuth } from "#utils/openidSetup.js";
 import { initializeI18nextSync } from "./scripts/helpers/i18nLoader.js";
 import { initRedis } from "#utils/redisClient.js";
 import createHttpError from "http-errors";
-import { buildAnswersCache } from "./services/answersCache.js";
 
 const TRUST_FIRST_PROXY = 1;
 const SUCCESSFUL_REQUEST = 200;
@@ -54,8 +53,6 @@ const createApp = async (): Promise<express.Application> => {
   const redisClient = buildRedisClient(config.redis);
   await initRedis(redisClient);
   setupRedisSession(app, redisClient);
-
-  const answersCache = buildAnswersCache(redisClient);
 
   app.use(axiosMiddleware);
 
@@ -131,7 +128,7 @@ const createApp = async (): Promise<express.Application> => {
     res.status(SUCCESSFUL_REQUEST).send("Healthy");
   });
 
-  const indexRouter = buildRouter({ answersCache });
+  const indexRouter = buildRouter();
   // Register the main router
   app.use("/", requiresAuth(), injectUser, indexRouter);
 

@@ -43,7 +43,7 @@ describe("poaEvidenceUploadController", () => {
 
     next = sinon.stub();
 
-    getClaimStub = sinon.stub(claimService, "getClaim");
+    getClaimStub = sinon.stub(claimService, "getDraftClaim");
     deleteEvidenceFromClaimStub = sinon.stub(
       uploadService,
       "deleteEvidenceFromClaim",

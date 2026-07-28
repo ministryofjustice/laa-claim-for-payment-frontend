@@ -1,5 +1,6 @@
-import type { Claim } from "#src/types/Claim.js";
-import type { ClaimRequestBody } from "#src/generated/claim-api/index.js";
+import { Category, type Claim } from "#src/types/Claim.js";
+import type { ClaimRequestBody, LineItemRequestBody } from "#src/generated/claim-api/index.js";
+import type { ExpertCostDetails, ProfitCostBillLine } from "#src/types/poa.js";
 
 /**
  * Maps a UI claim model to a backend claim model
@@ -19,4 +20,35 @@ export function toClaimRequestBody(claim: Claim): ClaimRequestBody {
     multiClientHearingFlag: claim.multiClientHearingFlag ?? undefined,
     escaped: claim.escapedFlag ?? undefined,
   };
+}
+
+/**
+ * Maps a UI line item model to a backend line item model
+ *
+ * @param {ExpertCostDetails | ProfitCostBillLine} value the UI line item model
+ * @returns {LineItemRequestBody} the backend line item model
+ */
+export function toLineItemRequestBody(
+  value: ExpertCostDetails | ProfitCostBillLine,
+): LineItemRequestBody {
+  if ("description" in value) {
+    return {
+      title: value.description,
+      category: Category.DISBURSEMENT.toString(),
+      date: value.activityDate.toISOString(),
+      actualNetValue: value.actualNetValue,
+      vatApplicable: value.vatApplies,
+      feeEarnerName: value.feeEarnerName,
+    };
+  } else {
+    return {
+      title: undefined, // TODO - what should this be?
+      category: Category.DISBURSEMENT.toString(),
+      date: value.activityDate.toISOString(),
+      netProfitCostAmount: value.actualNetProfitCostExcludingAdvocacy,
+      netAdvocacyCostAmount: value.actualNetAdvocacyCosts,
+      vatApplicable: value.vatApplies,
+      feeEarnerName: value.feeEarnerName,
+    };
+  }
 }

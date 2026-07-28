@@ -3,7 +3,7 @@ import sinon from "sinon";
 import { claimService } from "#src/services/claimService.js";
 import { ApiError } from "#src/types/api-types.js";
 import { UUID, V7Generator } from "uuidv7";
-import { Claim, CostType } from "#src/types/Claim.js";
+import { Category, Claim, CostType } from "#src/types/Claim.js";
 
 describe("Claim Service", () => {
   afterEach(() => {
@@ -11,6 +11,7 @@ describe("Claim Service", () => {
   });
 
   const claimId = new V7Generator().generate();
+  const lineItemId = new V7Generator().generate();
 
   describe("getClaims", () => {
     it("returns success with paginated claims data", async () => {
@@ -617,6 +618,316 @@ describe("Claim Service", () => {
         statusCode: 500,
         message: "boom",
       });
+    });
+  });
+
+  describe("addLineItemToClaim", () => {
+    it("returns success with a location header when empty line item", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        addLineItemToClaim: sinon.stub().resolves({
+          headers: {
+            location:
+              `/api/v1/claims/${claimId.toString()}/line-items/${lineItemId.toString()}`,
+          },
+        }),
+      };
+
+      const result = await claimService.addLineItemToClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        undefined,
+        deps as any,
+      );
+
+      expect(result).to.deep.equal({
+        status: "success",
+        body: lineItemId,
+      });
+    });
+
+    it("returns success with a location header when defined line item", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        addLineItemToClaim: sinon.stub().resolves({
+          headers: {
+            location:
+              `/api/v1/claims/${claimId.toString()}/line-items/${lineItemId.toString()}`,
+          },
+        }),
+      };
+
+      const result = await claimService.addLineItemToClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        {
+          activityDate: new Date(),
+          actualNetValue: 123,
+          vatApplies: true,
+          feeEarnerName: "Joe Bloggs",
+          description: "Lorem ipsum"
+        },
+        deps as any,
+      );
+
+      expect(result).to.deep.equal({
+        status: "success",
+        body: lineItemId,
+      });
+    });
+
+    it("returns error for a non-200 response", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        addLineItemToClaim: sinon.stub().rejects({
+          isAxiosError: true,
+          response: {
+            status: 400,
+            data: {
+              detail: "Request validation failed.",
+              instance: "/api/v1/claims/019fa7eb-e836-74e8-9eb5-01fa32302a9d/line-items",
+              status: 400,
+              title: "Invalid request",
+              correlationId: "1eef7e2a-fdb9-4b17-8e54-cb32e9fd1eeb",
+              errorCode: "VALIDATION_FAILED"
+            },
+          },
+        }),
+      };
+
+      const result = (await claimService.addLineItemToClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        undefined,
+        deps as any,
+      )) as ApiError;
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 400,
+        message: "Request validation failed.",
+      });
+    });
+
+    it("returns error shape when the API call fails", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        addLineItemToClaim: sinon.stub().rejects(new Error("boom")),
+      };
+
+      const result = await claimService.addLineItemToClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        undefined,
+        deps as any,
+      );
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 500,
+        message: "boom",
+      });
+    });
+
+    it("returns error shape when the location header is unexpected shape", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        addLineItemToClaim: sinon.stub().resolves({
+          headers: {
+            location: "foo",
+          },
+        }),
+      };
+
+      const result = await claimService.addLineItemToClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        undefined,
+        deps as any,
+      );
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 500,
+        message: "Invalid Location header",
+      });
+    });
+
+    it("returns error shape when the location header doesn't contain uuid", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        addLineItemToClaim: sinon.stub().resolves({
+          headers: {
+            location:
+              `/api/v1/claims/${claimId}/line-items/foo`,
+          },
+        }),
+      };
+
+      const result = await claimService.addLineItemToClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        undefined,
+        deps as any,
+      );
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 500,
+        message: "could not parse UUID string",
+      });
+    });
+
+    it("returns error shape when the location header is missing", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        addLineItemToClaim: sinon.stub().resolves({
+          headers: {},
+        }),
+      };
+
+      const result = await claimService.addLineItemToClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        undefined,
+        deps as any,
+      );
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 500,
+        message: "Missing Location header",
+      });
+    });
+
+    it("returns error shape when the headers are missing", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        addLineItemToClaim: sinon.stub().resolves({}),
+      };
+
+      const result = await claimService.addLineItemToClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        undefined,
+        deps as any,
+      );
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 500,
+        message: "Response did not contain headers",
+      });
+    });
+  });
+
+  describe("getLineItem", () => {
+    it("returns success with a line item", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getLineItem: sinon.stub().resolves({
+          data: {
+            id: lineItemId.toString(),
+            title: "Some line item",
+            category: "Disbursement",
+            date: "2024-01-02T10:00:00Z",
+            evidenceItems: [],
+          },
+        }),
+      };
+
+      const result = await claimService.getLineItem(
+        { axiosInstance: {} } as any,
+        claimId,
+        lineItemId,
+        deps as any,
+      );
+
+      expect(result.status).to.equal("success");
+      expect(result.body).to.deep.equal({
+        id: lineItemId.toString(),
+        title: "Some line item",
+        category: Category.DISBURSEMENT,
+        date: new Date("2024-01-02T10:00:00Z"),
+        evidenceItems: [],
+      });
+
+      sinon.assert.calledWith(
+        deps.getLineItem,
+        sinon.match({
+          path: { claimId: claimId.toString(), lineItemId: lineItemId.toString() },
+          query: { status: "DRAFT" },
+        }),
+      );
+    });
+
+    it("returns error for a non-200 response", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getLineItem: sinon.stub().rejects({
+          isAxiosError: true,
+          response: {
+            status: 404,
+            data: {
+              detail: "Resource not found",
+              instance: "/api/v1/claims/123/line-items/456",
+              status: 404,
+              title: "Not found",
+              correlationId: "b7d7c91f-950a-43f6-a8de-ffb37f1001c1",
+              errorCode: "NOT_FOUND",
+            },
+          },
+        }),
+      };
+
+      const result = (await claimService.getLineItem(
+        { axiosInstance: {} } as any,
+        claimId,
+        lineItemId,
+        deps as any,
+      )) as ApiError;
+
+      expect(result.status).to.equal("error");
+      expect(result.statusCode).to.equal(404);
+      expect(result.message).to.equal("Resource not found");
+    });
+
+    it("returns error shape when the API call fails", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getLineItem: sinon.stub().rejects(new Error("boom")),
+      };
+
+      const result = await claimService.getLineItem(
+        { axiosInstance: {} } as any,
+        claimId,
+        lineItemId,
+        deps as any,
+      );
+
+      expect(result.status).to.equal("error");
+      expect(result.message).to.be.a("string").and.not.empty;
+      expect(result).to.not.have.property("body");
+    });
+
+    it("returns error shape when the response shape is invalid", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        getLineItem: sinon.stub().resolves({
+          data: { invalid: true },
+        }),
+      };
+
+      const result = await claimService.getLineItem(
+        { axiosInstance: {} } as any,
+        claimId,
+        lineItemId,
+        deps as any,
+      );
+
+      expect(result.status).to.equal("error");
+      expect(result.message).to.be.a("string").and.not.empty;
+      expect(result).to.not.have.property("body");
     });
   });
 });

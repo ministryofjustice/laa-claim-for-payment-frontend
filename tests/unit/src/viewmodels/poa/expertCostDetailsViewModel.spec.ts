@@ -8,11 +8,12 @@ import { V7Generator } from "uuidv7";
 describe("expertCostDetailsViewModel constructor", () => {
 
   const claimId = new V7Generator().generate();
+  const lineItemId = new V7Generator().generate();
 
   it("constructs view model when form/errors undefined", () => {
     const params: ExpertCostDetailsViewModelParams = {
       claimId: claimId,
-      expertCostId: 1,
+      lineItemId: lineItemId,
     };
 
     const result = new ExpertCostDetailsViewModel(params);
@@ -72,7 +73,7 @@ describe("expertCostDetailsViewModel constructor", () => {
   it("constructs view model when form/errors defined", () => {
     const params: ExpertCostDetailsViewModelParams = {
       claimId: claimId,
-      expertCostId: 1,
+      lineItemId: lineItemId,
       form: {
         activityDateDay: "1",
         activityDateMonth: "1",

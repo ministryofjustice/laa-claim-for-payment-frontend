@@ -21,7 +21,7 @@ export async function poaEvidenceUploadPage(
 ): Promise<void> {
   try {
     const claimId = UUID.parse(req.params.claimId);
-    const response = await claimService.getClaim(req.axiosMiddleware, claimId);
+    const response = await claimService.getDraftClaim(req.axiosMiddleware, claimId);
 
      if (response.status !== "success") {
       next(processApiError(response, "fetching POA evidence upload details"));
@@ -67,7 +67,7 @@ export async function submitPoaEvidenceUpload(
 ): Promise<void> {
   try {
     const claimId = UUID.parse(req.params.claimId);
-    const response = await claimService.getClaim(req.axiosMiddleware, claimId);
+    const response = await claimService.getDraftClaim(req.axiosMiddleware, claimId);
 
     if (response.status !== "success") {
       next(processApiError(response, "fetching POA evidence upload details"));

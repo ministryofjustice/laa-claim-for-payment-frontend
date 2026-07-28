@@ -13,11 +13,12 @@ describe("views/main/poa/expertCostDetailsView.njk", () => {
   let $: CheerioAPI;
 
   const claimId = new V7Generator().generate();
+  const lineItemId = new V7Generator().generate();
 
   describe("view with no errors", () => {
     const params: ExpertCostDetailsViewModelParams = {
       claimId: claimId,
-      expertCostId: 1,
+      lineItemId: lineItemId,
     };
 
     const viewModel = new ExpertCostDetailsViewModel(params);
@@ -80,7 +81,7 @@ describe("views/main/poa/expertCostDetailsView.njk", () => {
   describe("view with errors", () => {
     const params: ExpertCostDetailsViewModelParams = {
       claimId: claimId,
-      expertCostId: 1,
+      lineItemId: lineItemId,
       form: {
         activityDateDay: "",
         activityDateMonth: "",

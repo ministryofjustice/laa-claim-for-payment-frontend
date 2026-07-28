@@ -1724,6 +1724,12 @@
           "actualNetValue": {
             "type": "number"
           },
+          "netProfitCostAmount": {
+            "type": "number"
+          },
+          "netAdvocacyCostAmount": {
+            "type": "number"
+          },
           "vatApplicable": {
             "type": "boolean"
           },
