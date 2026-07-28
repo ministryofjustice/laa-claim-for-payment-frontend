@@ -61,6 +61,7 @@ export const ClaimResponseSchema = z.object({
   clientsRetainedCount: z.enum(Count).nullish(),
   clientsStartCount: z.enum(Count).nullish(),
   multiClientHearingFlag: z.boolean().nullish(),
+  escaped: z.boolean().nullish(),
   ufn: z.string().nullish(),
   providerUserId: z.string().nullish(),
   client: z.string().nullish(),
@@ -177,10 +178,19 @@ export class Claim {
   /**
    * Gets the multi-client hearing flag.
    *
-   * @returns {Count | null | undefined} the multi-client hearing flag.
+   * @returns {boolean | null | undefined} the multi-client hearing flag.
    */
   get multiClientHearingFlag(): boolean | null | undefined {
     return this.data.multiClientHearingFlag;
+  }
+
+  /**
+   * Gets the escaped flag.
+   *
+   * @returns {boolean | null | undefined} the escaped flag.
+   */
+  get escapedFlag(): boolean | null | undefined {
+    return this.data.escaped;
   }
 
   /**
@@ -282,13 +292,24 @@ export class Claim {
   }
 
   /**
-   * Sets the  multi-client hearing flag.
+   * Sets the multi-client hearing flag.
    *
    * @param {boolean | undefined} value multi-client hearing flag
    * @returns {Claim} updated claim
    */
   setMultiClientHearingFlag(value: boolean | undefined): this {
     this.data.multiClientHearingFlag = value;
+    return this;
+  }
+
+  /**
+   * Sets the escaped flag.
+   *
+   * @param {boolean | undefined} value escaped flag
+   * @returns {Claim} updated claim
+   */
+  setEscapedFlag(value: boolean | undefined): this {
+    this.data.escaped = value;
     return this;
   }
 }

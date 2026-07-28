@@ -325,6 +325,36 @@ describe("ClaimResponseSchema", () => {
     });
   });
 
+  describe("escaped", () => {
+    it("parses a valid value", () => {
+      const result = ClaimResponseSchema.parse({
+        id: id.toString(),
+        escaped: true,
+      });
+
+      expect(result.escaped).to.equal(true);
+    });
+
+    it("gets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        escaped: true,
+      });
+
+      expect(claim.escapedFlag).to.equal(true);
+    });
+
+    it("sets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+      });
+
+      claim.setEscapedFlag(true);
+
+      expect(claim.value.escaped).to.equal(true);
+    });
+  });
+
   describe("ufn", () => {
     it("parses a valid string", () => {
       const result = ClaimResponseSchema.parse({
@@ -361,6 +391,7 @@ describe("ClaimResponseSchema", () => {
       clientsRetainedCount: undefined,
       clientsStartCount: undefined,
       multiClientHearingFlag: undefined,
+      escaped: undefined,
       ufn: undefined,
       providerUserId: undefined,
       client: undefined,
@@ -378,6 +409,7 @@ describe("ClaimResponseSchema", () => {
     expect(result.clientsRetainedCount).to.be.undefined;
     expect(result.clientsStartCount).to.be.undefined;
     expect(result.multiClientHearingFlag).to.be.undefined;
+    expect(result.escaped).to.be.undefined;
     expect(result.ufn).to.be.undefined;
     expect(result.providerUserId).to.be.undefined;
     expect(result.client).to.be.undefined;
@@ -398,6 +430,7 @@ describe("ClaimResponseSchema", () => {
       clientsRetainedCount: null,
       clientsStartCount: null,
       multiClientHearingFlag: null,
+      escaped: null,
       ufn: null,
       providerUserId: null,
       client: null,
@@ -415,6 +448,7 @@ describe("ClaimResponseSchema", () => {
     expect(result.clientsRetainedCount).to.be.null;
     expect(result.clientsStartCount).to.be.null;
     expect(result.multiClientHearingFlag).to.be.null;
+    expect(result.escaped).to.be.null;
     expect(result.ufn).to.be.null;
     expect(result.providerUserId).to.be.null;
     expect(result.client).to.be.null;
@@ -437,6 +471,7 @@ describe("ClaimResponseSchema", () => {
     expect(result.clientsRetainedCount).to.be.undefined;
     expect(result.clientsStartCount).to.be.undefined;
     expect(result.multiClientHearingFlag).to.be.undefined;
+    expect(result.escaped).to.be.undefined;
     expect(result.ufn).to.be.undefined;
     expect(result.providerUserId).to.be.undefined;
     expect(result.client).to.be.undefined;

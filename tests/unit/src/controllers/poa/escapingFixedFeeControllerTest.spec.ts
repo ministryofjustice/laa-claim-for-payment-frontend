@@ -1,13 +1,17 @@
 import { expect } from "chai";
-import { describe, it, beforeEach } from "mocha";
+import { describe, it, beforeEach, afterEach } from "mocha";
 import sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
 import { escapingFixedFee, submitEscapingFixedFee } from "#src/controllers/poa/escapingFixedFeeController.js";
 import { V7Generator } from "uuidv7";
+import { claimService } from "#src/services/claimService.js";
+import { Claim } from "#src/types/Claim.js";
 
 describe("escapingFixedFeeController", () => {
   let res: Response;
   let next: NextFunction;
+  let getClaimStub: sinon.SinonStub;
+  let updateClaimStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
 
@@ -22,16 +26,30 @@ describe("escapingFixedFeeController", () => {
     } as unknown as Response;
 
     next = sinon.stub() as unknown as NextFunction;
+
+    getClaimStub = sinon.stub(claimService, "getDraftClaim");
+    updateClaimStub = sinon.stub(claimService, "updateClaim");
   });
 
-  it("renders the escaping the fixed fee radio question page", () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it("renders the escaping the fixed fee radio question page", async () => {
     const req = {
       params: {
         claimId: claimId.toString(),
       },
     } as unknown as Request;
 
-    escapingFixedFee(req, res, next);
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
+
+    await escapingFixedFee(req, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -45,7 +63,7 @@ describe("escapingFixedFeeController", () => {
     expect(renderArgs.vm.form.fieldName).to.equal("escapingFixedFee");
   });
 
-  it("redirects to CPGFS profit cost bill line page when escaping fixed fee answer is given", () => {
+  it("redirects to CPGFS profit cost bill line page when escaping fixed fee answer is given", async () => {
     const req = {
       params: {
         claimId: claimId.toString(),
@@ -55,14 +73,36 @@ describe("escapingFixedFeeController", () => {
       },
     } as unknown as Request;
 
-    submitEscapingFixedFee(req, res, next);
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
+
+    updateClaimStub.resolves({
+      status: "success",
+      body: null,
+    });
+
+    await submitEscapingFixedFee(req, res, next);
+
+    expect(
+      updateClaimStub.calledWith(
+        req.axiosMiddleware,
+        sinon.match({
+          id: claimId.toString(),
+          escapedFlag: true,
+        }),
+      ),
+    ).to.be.true;
 
     expect((res.redirect as sinon.SinonStub).calledWith(
       `/claims/${claimId.toString()}/poa/cpgfs-profit-cost-bill-line`,
     )).to.equal(true);
   });
 
-  it("rerenders the radio question page with an error when no option is selected", () => {
+  it("rerenders the radio question page with an error when no option is selected", async () => {
     const req = {
       params: {
         claimId: claimId.toString(),
@@ -70,7 +110,7 @@ describe("escapingFixedFeeController", () => {
       body: {},
     } as unknown as Request;
 
-    submitEscapingFixedFee(req, res, next);
+    await submitEscapingFixedFee(req, res, next);
 
     expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
@@ -89,7 +129,7 @@ describe("escapingFixedFeeController", () => {
     });
   });
 
-  it("rerenders with selected invalid string preserved when invalid option is submitted", () => {
+  it("rerenders with selected invalid string preserved when invalid option is submitted", async () => {
     const req = {
       params: {
         claimId: claimId.toString(),
@@ -99,7 +139,7 @@ describe("escapingFixedFeeController", () => {
       },
     } as unknown as Request;
 
-    submitEscapingFixedFee(req, res, next);
+    await submitEscapingFixedFee(req, res, next);
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
@@ -113,7 +153,7 @@ describe("escapingFixedFeeController", () => {
 
     expect(
       renderArgs.vm.form.choices.every(
-        (choice: { checked: boolean }) => choice.checked === false,
+        (choice: { checked: boolean }) => !choice.checked,
       ),
     ).to.equal(true);
   });
