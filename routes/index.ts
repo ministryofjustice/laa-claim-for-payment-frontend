@@ -223,16 +223,16 @@ router.post(
 router.get(
   ROUTES.MULTIPLE_CLIENT_HEARINGS,
   limiter,
-  function (req: Request, res: Response, next: NextFunction): void {
-    multipleClientHearings(req, res, next);
+  async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+    await multipleClientHearings(req, res, next);
   },
 );
 
 router.post(
   ROUTES.MULTIPLE_CLIENT_HEARINGS,
   limiter,
-  function (req: Request, res: Response, next: NextFunction): void {
-    submitMultipleClientHearings(req, res, next);
+  async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+    await submitMultipleClientHearings(req, res, next);
   },
 );
 
@@ -337,22 +337,6 @@ router.get(ROUTES.POA_SUBMISSION_SUCCESSFUL, limiter, function(req: Request, res
     limiter,
     async function (req: Request, res: Response, next: NextFunction): Promise<void> {
       await submitExpertCostDetails(req, res, next, {answersCache});
-    },
-  );
-
-  router.get(
-    ROUTES.MULTIPLE_CLIENT_HEARINGS,
-    limiter,
-    function (req: Request, res: Response, next: NextFunction): void {
-      multipleClientHearings(req, res, next);
-    },
-  );
-
-  router.post(
-    ROUTES.MULTIPLE_CLIENT_HEARINGS,
-    limiter,
-    function (req: Request, res: Response, next: NextFunction): void {
-      submitMultipleClientHearings(req, res, next);
     },
   );
 

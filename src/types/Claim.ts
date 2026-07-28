@@ -175,6 +175,15 @@ export class Claim {
   }
 
   /**
+   * Gets the multi-client hearing flag.
+   *
+   * @returns {Count | null | undefined} the multi-client hearing flag.
+   */
+  get multiClientHearingFlag(): boolean | null | undefined {
+    return this.data.multiClientHearingFlag;
+  }
+
+  /**
    * Sets the cost type.
    *
    * @param {CostType} value cost type
@@ -269,6 +278,17 @@ export class Claim {
    */
   setClientsStartCount(value: Count | undefined): this {
     this.data.clientsStartCount = value;
+    return this;
+  }
+
+  /**
+   * Sets the  multi-client hearing flag.
+   *
+   * @param {boolean | undefined} value multi-client hearing flag
+   * @returns {Claim} updated claim
+   */
+  setMultiClientHearingFlag(value: boolean | undefined): this {
+    this.data.multiClientHearingFlag = value;
     return this;
   }
 }

@@ -1,10 +1,12 @@
 import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
-import { processError } from "#src/helpers/index.js";
+import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { booleanChoices } from "#src/models/booleanChoice.js";
-import { validateRadioInput } from "#src/helpers/validation.js";
+import { validateBooleanInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
+import { claimService } from "#src/services/claimService.js";
+import { formatBoolean } from "#src/helpers/dataFormatters.js";
 
 const multipleClientHearingsFieldName = "multipleClientHearings" as const;
 
@@ -14,22 +16,39 @@ const multipleClientHearingsFieldName = "multipleClientHearings" as const;
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
  */
-export function multipleClientHearings(
+export async function multipleClientHearings(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   try {
-    res.render("main/radioQuestionPage.njk", {
-      csrfToken: res.locals.csrfToken,
-      vm: new RadioQuestionViewModel({
-        title: {
-          key: "pages.multipleClientHearings.title"
-        },
-        fieldName: multipleClientHearingsFieldName,
-        choices: booleanChoices,
-      }),
-    });
+    const claimId = UUID.parse(req.params.claimId);
+
+    const claim = await claimService.getDraftClaim(
+      req.axiosMiddleware,
+      claimId,
+    );
+
+    if (claim.status === "success") {
+      res.render("main/radioQuestionPage.njk", {
+        csrfToken: res.locals.csrfToken,
+        vm: new RadioQuestionViewModel({
+          title: {
+            key: "pages.multipleClientHearings.title",
+          },
+          fieldName: multipleClientHearingsFieldName,
+          choices: booleanChoices,
+          selectedValue: formatBoolean(claim.body.multiClientHearingFlag),
+        }),
+      });
+    } else {
+      next(
+        processApiError(
+          claim,
+          "retrieving claim for rendering multiple client hearings page",
+        ),
+      );
+    }
   } catch (error) {
     const processedError = processError(
       error,
@@ -45,17 +64,16 @@ export function multipleClientHearings(
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
  */
-export function submitMultipleClientHearings(
+export async function submitMultipleClientHearings(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedChoice: unknown = req.body?.[multipleClientHearingsFieldName];
 
-    const validationResult = validateRadioInput(
-      booleanChoices,
+    const validationResult = validateBooleanInput(
       selectedChoice,
       multipleClientHearingsFieldName,
       multipleClientHearingsFieldName,
@@ -67,7 +85,7 @@ export function submitMultipleClientHearings(
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
           title: {
-            key: "pages.multipleClientHearings.title"
+            key: "pages.multipleClientHearings.title",
           },
           fieldName: multipleClientHearingsFieldName,
           choices: booleanChoices,
@@ -78,13 +96,33 @@ export function submitMultipleClientHearings(
       });
       return;
     }
+
     const claimId = UUID.parse(req.params.claimId);
 
-    res.redirect(buildRoute(ROUTES.ESCAPING_FIXED_FEE, { claimId }));
+    const claim = await claimService.getDraftClaim(
+      req.axiosMiddleware,
+      claimId,
+    );
+
+    if (claim.status === "success") {
+      await claimService.updateClaim(
+        req.axiosMiddleware,
+        claim.body.setMultiClientHearingFlag(validationResult.value),
+      );
+
+      res.redirect(buildRoute(ROUTES.ESCAPING_FIXED_FEE, { claimId }));
+    } else {
+      next(
+        processApiError(
+          claim,
+          "retrieving claim for submitting multiple client hearings page",
+        ),
+      );
+    }
   } catch (error) {
     const processedError = processError(
       error,
-      "submitting how many clients retained page",
+      "submitting multiple client hearings page",
     );
     next(processedError);
   }

@@ -304,6 +304,25 @@ describe("ClaimResponseSchema", () => {
 
       expect(result.multiClientHearingFlag).to.equal(true);
     });
+
+    it("gets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        multiClientHearingFlag: true,
+      });
+
+      expect(claim.multiClientHearingFlag).to.equal(true);
+    });
+
+    it("sets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+      });
+
+      claim.setMultiClientHearingFlag(true);
+
+      expect(claim.value.multiClientHearingFlag).to.equal(true);
+    });
   });
 
   describe("ufn", () => {
