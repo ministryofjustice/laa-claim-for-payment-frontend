@@ -43,7 +43,7 @@ export async function expertCostDetails(
           activityDateDay: lineItem.body.date.getDate().toString(),
           activityDateMonth: (lineItem.body.date.getMonth() + 1).toString(),
           activityDateYear: lineItem.body.date.getFullYear().toString(),
-          actualNetValue: lineItem.body.actualNetValue?.toString(),
+          actualNetValue: lineItem.body.actualNetValue.toString(),
           vatApplies: formatBoolean(lineItem.body.vatApplicable),
           feeEarnerName: lineItem.body.feeEarnerName,
           description: lineItem.body.title,

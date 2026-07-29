@@ -47,23 +47,27 @@ const BaseLineItemSchema = z.object({
   category: z.enum(Category),
   date: z.string().pipe(z.coerce.date()),
   evidenceItems: z.array(z.uuidv7()),
-  actualNetValue: z.number().nullish(),
-  netProfitCostAmount: z.number().nullish(),
-  netAdvocacyCostAmount: z.number().nullish(),
-  vatApplicable: z.boolean().nullish(),
-  feeEarnerName: z.string().nullish(),
 });
 
-export const ExpertCostLineItemSchema = BaseLineItemSchema.omit({
-  netProfitCostAmount: true,
-  netAdvocacyCostAmount: true,
+// TODO - needed for backwards compatibility. Eventually remove.
+export const StubLineItemSchema = BaseLineItemSchema;
+
+const PoaLineItemSchema = BaseLineItemSchema.extend({
+  feeEarnerName: z.string(),
+  vatApplicable: z.boolean(),
+});
+
+export const ExpertCostLineItemSchema = PoaLineItemSchema.extend({
+  actualNetValue: z.number(),
 }).strict();
 
-export const ProfitCostBillLineItemSchema = BaseLineItemSchema.omit({
-  actualNetValue: true,
+export const ProfitCostBillLineItemSchema = PoaLineItemSchema.extend({
+  netProfitCostAmount: z.number(),
+  netAdvocacyCostAmount: z.number(),
 }).strict();
 
 export const LineItemSchema = z.union([
+  StubLineItemSchema,
   ExpertCostLineItemSchema,
   ProfitCostBillLineItemSchema,
 ]);
