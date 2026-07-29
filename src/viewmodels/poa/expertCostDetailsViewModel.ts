@@ -12,7 +12,7 @@ import type { UUID } from "uuidv7";
 
 export interface ExpertCostDetailsViewModelParams {
   claimId: UUID;
-  expertCostId: number;
+  lineItemId?: UUID;
   form?: ExpertCostDetailsForm;
   errors?: FieldValidationError[];
 }

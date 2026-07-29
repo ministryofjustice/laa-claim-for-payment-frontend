@@ -20,7 +20,6 @@ import { checkYourDetailsPage, submitYourDetails } from "#src/controllers/poa/ch
 import { expertCostDetails, submitExpertCostDetails } from "#src/controllers/poa/expertCostDetailsController.js";
 import { poaEvidenceUploadPage, submitPoaEvidenceUpload } from "#src/controllers/poa/poaEvidenceUploadController.js";
 import { deleteEvidenceFileFromClaim, unlinkEvidenceFileFromLineItem, uploadEvidenceFile, uploadEvidenceFileForLineItem } from "#src/controllers/claims/ajaxFileUploadController.js";
-import type { AnswersCache } from "#src/services/answersCache.js";
 import type { ViewClaimsActionRequest } from "#src/types/requests.js";
 
 const limiter = rateLimit({
@@ -28,18 +27,12 @@ const limiter = rateLimit({
   max: 100, // limit each IP to 100 requests per minute
 });
 
-interface RouterDependencies {
-  answersCache: AnswersCache;
-}
-
 /**
  * Builds the main application router.
  *
- * @param {RouterDependencies} root0 Router dependencies.
- * @param {AnswersCache} root0.answersCache Cache used for storing journey answers.
  * @returns {Router} Configured Express router.
  */
-export const buildRouter = ({ answersCache }: RouterDependencies): Router => {
+export const buildRouter = (): Router => {
   const router = express.Router();
 
   /* GET home page. */
@@ -82,7 +75,7 @@ export const buildRouter = ({ answersCache }: RouterDependencies): Router => {
 
   /* GET view upload evidence individually page.*/
   router.get(
-    ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY,//TODO: Needs to be renamed to line items or something similar
+    ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, //TODO: Needs to be renamed to line items or something similar
     limiter,
     async function (
       req: Request,
@@ -96,247 +89,201 @@ export const buildRouter = ({ answersCache }: RouterDependencies): Router => {
   router.get(
     ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
     limiter,
-    async function(
+    async function (
       req: Request,
       res: Response,
       next: NextFunction,
     ): Promise<void> {
       await fileUploadForLineItemPage(req, res, next);
-    }
-  )
-/* GET choose how to upload file page. */
-router.get(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response, next: NextFunction): void {
-  chooseFileUpload(req, res, next);
-});
-
-/* POST choose how to upload file page. */
-router.post(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response, next: NextFunction): void {
-  submitChooseFileUpload(req, res, next);
-});
-
-router.post(
-  ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM,
-  evidenceUpload.single('documents'),
-  multerErrorHandler,
-  uploadEvidenceFileForLineItem
-);
-
-router.post(
-  ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM,
-  unlinkEvidenceFileFromLineItem,
-);
-
-router.get(ROUTES.UPLOAD_FILE_FOR_LINE_ITEM, limiter, async function (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
-    await fileUploadForLineItemPage(req, res, next);
-  }
-);
-
-/* POST linked evidence. */
-router.post(
-  ROUTES.UPLOAD_FILE_FOR_LINE_ITEM, limiter, async function (req: Request, res: Response, next: NextFunction ): Promise<void> {
-    await linkEvidenceToLineItem(req, res, next);
-  },
-);
-
-router.get(
-  ROUTES.POA_EVIDENCE_UPLOAD,
-  limiter,
-  async function (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
-    await poaEvidenceUploadPage(req, res, next);
-  },
-);
-
-router.post(ROUTES.POA_EVIDENCE_UPLOAD, limiter, submitPoaEvidenceUpload);
-
-router.post(
-  ROUTES.AJAX_UPLOAD_POA_EVIDENCE,
-  evidenceUpload.single("documents"),
-  multerErrorHandler,
-  uploadEvidenceFile,
-);
-
-router.post(
-  ROUTES.AJAX_DELETE_POA_EVIDENCE,
-  deleteEvidenceFileFromClaim,
-);
-
-router.get(
-  ROUTES.HOW_MANY_CLIENTS_RETAINED,
-  limiter,
-  async function (req: Request, res: Response, next: NextFunction): Promise<void> {
-    await howManyClientsRetained(req, res, next);
-  },
-);
-
-router.post(ROUTES.HOW_MANY_CLIENTS_RETAINED, limiter, async function (req: Request, res: Response, next: NextFunction): Promise<void> {
-  await submitHowManyClientsRetained(req, res, next);
-});
-
-router.get(
-  ROUTES.POA_CLAIM_TYPE,
-  limiter,
-  async function (req, res, next): Promise<void> {
-    await poaClaimTypePage(req, res, next);
-  },
-);
-
-router.post(
-  ROUTES.POA_CLAIM_TYPE,
-  limiter,
-  async function (req, res, next): Promise<void> {
-    await submitPoaClaimType(req, res, next);
-  },
-);
-
-router.get(ROUTES.PROFIT_COST_DETAILS,limiter, async function(req: Request, res: Response, next: NextFunction): Promise<void> {
-  await profitCostDetails(req, res, next);
-});
-
-router.post(ROUTES.PROFIT_COST_DETAILS, limiter, async function (req: Request, res: Response, next: NextFunction): Promise<void> {
-  await submitProfitCostDetails(req, res, next);
-});
-
-router.get(
-  ROUTES.EXPERT_COST_DETAILS,
-  limiter,
-  async function (req: Request, res: Response, next: NextFunction): Promise<void> {
-    await expertCostDetails(req, res, next, {answersCache});
-  },
-);
-
-router.post(
-  ROUTES.EXPERT_COST_DETAILS,
-  limiter,
-  async function (req: Request, res: Response, next: NextFunction): Promise<void> {
-    await submitExpertCostDetails(req, res, next, {answersCache});
-  },
-);
-
-router.get(
-  ROUTES.MULTIPLE_CLIENT_HEARINGS,
-  limiter,
-  async function (req: Request, res: Response, next: NextFunction): Promise<void> {
-    await multipleClientHearings(req, res, next);
-  },
-);
-
-router.post(
-  ROUTES.MULTIPLE_CLIENT_HEARINGS,
-  limiter,
-  async function (req: Request, res: Response, next: NextFunction): Promise<void> {
-    await submitMultipleClientHearings(req, res, next);
-  },
-);
-
-router.get(
-  ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
-  limiter,
-  function (req: Request, res: Response, next: NextFunction): void {
-    profitCostBillLine(req, res, next);
-  },
-);
-
-router.post(
-  ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
-  limiter,
-  function (req: Request, res: Response, next: NextFunction): void {
-    submitProfitCostBillLine(req, res, next);
-  },
-);
-
-router.get(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, limiter, async function(req: Request, res: Response, next: NextFunction): Promise<void> {
-  await numberOfClientsStartOfCase(req, res, next);
-});
-
-router.post(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, limiter, async function(req: Request, res: Response, next: NextFunction): Promise<void> {
-  await submitNumberOfClientsStartOfCase(req, res, next);
-});
-
-router.get(
-  ROUTES.ESCAPING_FIXED_FEE,
-  limiter,
-  async function (req: Request, res: Response, next: NextFunction): Promise<void> {
-    await escapingFixedFee(req, res, next);
-  },
-);
-
-router.post(
-  ROUTES.ESCAPING_FIXED_FEE,
-  limiter,
-  async function (req: Request, res: Response, next: NextFunction): Promise<void> {
-    await submitEscapingFixedFee(req, res, next);
-  },
-);
-
-router.get(ROUTES.POA_CHECK_YOUR_DETAILS, limiter, async function(req: Request, res: Response, next: NextFunction): Promise<void> {
-  await checkYourDetailsPage(req, res, next);
-});
-
-router.post(ROUTES.POA_CHECK_YOUR_DETAILS, limiter, function(req: Request, res: Response, next: NextFunction): void {
-  submitYourDetails(req, res, next);
-});
-
-router.get(ROUTES.POA_SUBMISSION_SUCCESSFUL, limiter, function(req: Request, res: Response, next: NextFunction): void {
-  poaSubmissionSuccessfulPage(req, res, next);
-});
-
-// Make an API call with `Axios` and `middleware-axios`
-// GET users from external API
+    },
+  );
+  /* GET choose how to upload file page. */
   router.get(
-    "/users",
+    ROUTES.CHOOSE_UPLOAD,
+    limiter,
+    function (req: Request, res: Response, next: NextFunction): void {
+      chooseFileUpload(req, res, next);
+    },
+  );
+
+  /* POST choose how to upload file page. */
+  router.post(
+    ROUTES.CHOOSE_UPLOAD,
+    limiter,
+    function (req: Request, res: Response, next: NextFunction): void {
+      submitChooseFileUpload(req, res, next);
+    },
+  );
+
+  router.post(
+    ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM,
+    evidenceUpload.single("documents"),
+    multerErrorHandler,
+    uploadEvidenceFileForLineItem,
+  );
+
+  router.post(
+    ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM,
+    unlinkEvidenceFileFromLineItem,
+  );
+
+  router.get(
+    ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
     limiter,
     async function (
       req: Request,
       res: Response,
       next: NextFunction,
     ): Promise<void> {
-      try {
-        // Use the Axios instance attached to the request object
-        const response = await req.axiosMiddleware.get(
-          "https://jsonplaceholder.typicode.com/users",
-        );
-        res.json(response.data);
-      } catch (error) {
-        next(error);
-      }
-  });
+      await fileUploadForLineItemPage(req, res, next);
+    },
+  );
 
   /* POST linked evidence. */
-  router.post(ROUTES.UPLOAD_FILE_FOR_LINE_ITEM, limiter, async function (req: Request, res: Response, next: NextFunction): Promise<void> {
-    await linkEvidenceToLineItem(req, res, next);
-  });
+  router.post(
+    ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await linkEvidenceToLineItem(req, res, next);
+    },
+  );
 
-  /* GET choose how to upload file page. */
-  router.get(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response, next: NextFunction): void {
-    chooseFileUpload(req, res, next);
-  });
+  router.get(
+    ROUTES.POA_EVIDENCE_UPLOAD,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await poaEvidenceUploadPage(req, res, next);
+    },
+  );
 
-  /* POST choose how to upload file page. */
-  router.post(ROUTES.CHOOSE_UPLOAD, limiter, function (req: Request, res: Response, next: NextFunction): void {
-    submitChooseFileUpload(req, res, next);
-  });
+  router.post(ROUTES.POA_EVIDENCE_UPLOAD, limiter, submitPoaEvidenceUpload);
+
+  router.post(
+    ROUTES.AJAX_UPLOAD_POA_EVIDENCE,
+    evidenceUpload.single("documents"),
+    multerErrorHandler,
+    uploadEvidenceFile,
+  );
+
+  router.post(ROUTES.AJAX_DELETE_POA_EVIDENCE, deleteEvidenceFileFromClaim);
+
+  router.get(
+    ROUTES.HOW_MANY_CLIENTS_RETAINED,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await howManyClientsRetained(req, res, next);
+    },
+  );
+
+  router.post(
+    ROUTES.HOW_MANY_CLIENTS_RETAINED,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await submitHowManyClientsRetained(req, res, next);
+    },
+  );
+
+  router.get(
+    ROUTES.POA_CLAIM_TYPE,
+    limiter,
+    async function (req, res, next): Promise<void> {
+      await poaClaimTypePage(req, res, next);
+    },
+  );
+
+  router.post(
+    ROUTES.POA_CLAIM_TYPE,
+    limiter,
+    async function (req, res, next): Promise<void> {
+      await submitPoaClaimType(req, res, next);
+    },
+  );
+
+  router.get(
+    ROUTES.PROFIT_COST_DETAILS,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await profitCostDetails(req, res, next);
+    },
+  );
+
+  router.post(
+    ROUTES.PROFIT_COST_DETAILS,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await submitProfitCostDetails(req, res, next);
+    },
+  );
 
   router.get(
     ROUTES.EXPERT_COST_DETAILS,
     limiter,
-    async function (req: Request, res: Response, next: NextFunction): Promise<void> {
-      await expertCostDetails(req, res, next, {answersCache});
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await expertCostDetails(req, res, next);
     },
   );
 
   router.post(
     ROUTES.EXPERT_COST_DETAILS,
     limiter,
-    async function (req: Request, res: Response, next: NextFunction): Promise<void> {
-      await submitExpertCostDetails(req, res, next, {answersCache});
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await submitExpertCostDetails(req, res, next);
+    },
+  );
+
+  router.get(
+    ROUTES.MULTIPLE_CLIENT_HEARINGS,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await multipleClientHearings(req, res, next);
+    },
+  );
+
+  router.post(
+    ROUTES.MULTIPLE_CLIENT_HEARINGS,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await submitMultipleClientHearings(req, res, next);
     },
   );
 
@@ -356,17 +303,178 @@ router.get(ROUTES.POA_SUBMISSION_SUCCESSFUL, limiter, function(req: Request, res
     },
   );
 
-  router.get(ROUTES.POA_CHECK_YOUR_DETAILS, limiter, async function(req: Request, res: Response, next: NextFunction): Promise<void> {
-    await checkYourDetailsPage(req, res, next);
-  });
+  router.get(
+    ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await numberOfClientsStartOfCase(req, res, next);
+    },
+  );
 
-  router.post(ROUTES.POA_CHECK_YOUR_DETAILS, limiter, function(req: Request, res: Response, next: NextFunction): void {
-    submitYourDetails(req, res, next);
-  });
+  router.post(
+    ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await submitNumberOfClientsStartOfCase(req, res, next);
+    },
+  );
 
-  router.get(ROUTES.POA_SUBMISSION_SUCCESSFUL, limiter, function(req: Request, res: Response, next: NextFunction): void {
-    poaSubmissionSuccessfulPage(req, res, next);
-  });
+  router.get(
+    ROUTES.ESCAPING_FIXED_FEE,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await escapingFixedFee(req, res, next);
+    },
+  );
+
+  router.post(
+    ROUTES.ESCAPING_FIXED_FEE,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await submitEscapingFixedFee(req, res, next);
+    },
+  );
+
+  router.get(
+    ROUTES.POA_CHECK_YOUR_DETAILS,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await checkYourDetailsPage(req, res, next);
+    },
+  );
+
+  router.post(
+    ROUTES.POA_CHECK_YOUR_DETAILS,
+    limiter,
+    function (req: Request, res: Response, next: NextFunction): void {
+      submitYourDetails(req, res, next);
+    },
+  );
+
+  router.get(
+    ROUTES.POA_SUBMISSION_SUCCESSFUL,
+    limiter,
+    function (req: Request, res: Response, next: NextFunction): void {
+      poaSubmissionSuccessfulPage(req, res, next);
+    },
+  );
+
+  // Make an API call with `Axios` and `middleware-axios`
+  // GET users from external API
+  router.get(
+    "/users",
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      try {
+        // Use the Axios instance attached to the request object
+        const response = await req.axiosMiddleware.get(
+          "https://jsonplaceholder.typicode.com/users",
+        );
+        res.json(response.data);
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  /* POST linked evidence. */
+  router.post(
+    ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await linkEvidenceToLineItem(req, res, next);
+    },
+  );
+
+  /* GET choose how to upload file page. */
+  router.get(
+    ROUTES.CHOOSE_UPLOAD,
+    limiter,
+    function (req: Request, res: Response, next: NextFunction): void {
+      chooseFileUpload(req, res, next);
+    },
+  );
+
+  /* POST choose how to upload file page. */
+  router.post(
+    ROUTES.CHOOSE_UPLOAD,
+    limiter,
+    function (req: Request, res: Response, next: NextFunction): void {
+      submitChooseFileUpload(req, res, next);
+    },
+  );
+
+  router.get(
+    ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
+    limiter,
+    function (req: Request, res: Response, next: NextFunction): void {
+      profitCostBillLine(req, res, next);
+    },
+  );
+
+  router.post(
+    ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
+    limiter,
+    function (req: Request, res: Response, next: NextFunction): void {
+      submitProfitCostBillLine(req, res, next);
+    },
+  );
+
+  router.get(
+    ROUTES.POA_CHECK_YOUR_DETAILS,
+    limiter,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await checkYourDetailsPage(req, res, next);
+    },
+  );
+
+  router.post(
+    ROUTES.POA_CHECK_YOUR_DETAILS,
+    limiter,
+    function (req: Request, res: Response, next: NextFunction): void {
+      submitYourDetails(req, res, next);
+    },
+  );
+
+  router.get(
+    ROUTES.POA_SUBMISSION_SUCCESSFUL,
+    limiter,
+    function (req: Request, res: Response, next: NextFunction): void {
+      poaSubmissionSuccessfulPage(req, res, next);
+    },
+  );
 
   // Make an API call with `Axios` and `middleware-axios`
   // GET users from external API
@@ -396,5 +504,5 @@ router.get(ROUTES.POA_SUBMISSION_SUCCESSFUL, limiter, function(req: Request, res
   });
 
   return router;
-}
+};
 

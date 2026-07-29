@@ -41,7 +41,9 @@ export enum ClientPartyStatus {
   PARENT = 'PARENT',
 }
 
-export const LineItemSchema = z.object({
+const NullOrUndefinedSchema = z.union([z.null(), z.undefined()]);
+
+const BaseLineItemSchema = z.object({
   id: z.uuidv7(),
   title: z.string(),
   category: z.enum(Category),
@@ -49,6 +51,34 @@ export const LineItemSchema = z.object({
   evidenceItems: z.array(z.uuidv7()),
 });
 
+// TODO - needed for backwards compatibility. Eventually remove.
+export const StubLineItemSchema = BaseLineItemSchema;
+
+const PoaLineItemSchema = BaseLineItemSchema.extend({
+  feeEarnerName: z.string(),
+  vatApplicable: z.boolean(),
+});
+
+export const ExpertCostLineItemSchema = PoaLineItemSchema.extend({
+  actualNetValue: z.number(),
+  netProfitCostAmount: NullOrUndefinedSchema,
+  netAdvocacyCostAmount: NullOrUndefinedSchema,
+}).strict();
+
+export const ProfitCostBillLineItemSchema = PoaLineItemSchema.extend({
+  netProfitCostAmount: z.number(),
+  netAdvocacyCostAmount: z.number(),
+  actualNetValue: NullOrUndefinedSchema,
+}).strict();
+
+export const LineItemSchema = z.union([
+  StubLineItemSchema,
+  ExpertCostLineItemSchema,
+  ProfitCostBillLineItemSchema,
+]);
+
+export type ExpertCostLineItem = z.infer<typeof ExpertCostLineItemSchema>;
+export type ProfitCostBillLineItem = z.infer<typeof ProfitCostBillLineItemSchema>;
 export type LineItem = z.infer<typeof LineItemSchema>;
 
 export const ClaimResponseSchema = z.object({
@@ -191,6 +221,15 @@ export class Claim {
    */
   get escapedFlag(): boolean | null | undefined {
     return this.data.escaped;
+  }
+
+  /**
+   * Gets the line items.
+   *
+   * @returns {LineItem[] | null | undefined} the line items.
+   */
+  get lineItems(): LineItem[] | null | undefined {
+    return this.data.lineItems;
   }
 
   /**

@@ -1,24 +1,17 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { processError } from "#src/helpers/index.js";
+import { processApiError, processError } from "#src/helpers/index.js";
 import type { NextFunction, Request, Response } from "express";
 import {
   ExpertCostDetailsViewModel,
-  type ExpertCostDetailsViewModelParams,
+  type ExpertCostDetailsViewModelParams
 } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
-import {
-  type ExpertCostDetailsForm,
-  validateExpertCostDetails,
-} from "#src/helpers/expertCostDetailsValidation.js";
+import { type ExpertCostDetailsForm, validateExpertCostDetails } from "#src/helpers/expertCostDetailsValidation.js";
 import { getForm } from "#src/helpers/validation.js";
-import type { AnswersCache } from "#src/services/answersCache.js";
-import { ExpertCostDetailsSchema, type ExpertCostPoa } from "#src/types/poa.js";
 import { UUID } from "uuidv7";
-
-const path = (expertCostId: number): ["poa", keyof ExpertCostPoa, number] => [
-  "poa",
-  "details",
-  expertCostId - 1,
-];
+import { claimService } from "#src/services/claimService.js";
+import { formatBoolean } from "#src/helpers/dataFormatters.js";
+import { CostType, type ExpertCostLineItem, ExpertCostLineItemSchema } from "#src/types/Claim.js";
+import type { LineItemForm } from "#src/types/poa.js";
 
 /**
  * Display POA expert cost details page.
@@ -26,41 +19,50 @@ const path = (expertCostId: number): ["poa", keyof ExpertCostPoa, number] => [
  * @param {Request} req Express request object.
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
- * @param {{ answersCache: AnswersCache }} dependencies Controller dependencies.
- * @param {AnswersCache} dependencies.answersCache Cache used for storing journey answers.
  */
 export async function expertCostDetails(
   req: Request,
   res: Response,
   next: NextFunction,
-  dependencies: { answersCache: AnswersCache },
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
-    const expertCostId = Number(req.params.expertCostId);
+    const claimId = getClaimId(req);
+    const lineItemId = getLineItemId(req);
 
-    const cachedAnswer = await dependencies.answersCache.get(
-      req.sessionID,
-      claimId,
-      path(expertCostId),
-      ExpertCostDetailsSchema,
-    );
+    let form: ExpertCostDetailsForm = {};
+
+    if (lineItemId != null) {
+      const lineItem = await claimService.getLineItem<ExpertCostLineItem>(
+        req.axiosMiddleware,
+        claimId,
+        lineItemId,
+        ExpertCostLineItemSchema,
+      );
+
+      if (lineItem.status === "success") {
+        form = {
+          activityDateDay: lineItem.body.date.getDate().toString(),
+          activityDateMonth: (lineItem.body.date.getMonth() + 1).toString(),
+          activityDateYear: lineItem.body.date.getFullYear().toString(),
+          actualNetValue: lineItem.body.actualNetValue.toString(),
+          vatApplies: formatBoolean(lineItem.body.vatApplicable),
+          feeEarnerName: lineItem.body.feeEarnerName,
+          description: lineItem.body.title,
+        };
+      } else {
+        next(
+          processApiError(
+            lineItem,
+            "retrieving line item for rendering expert cost details page",
+          ),
+        );
+      }
+    }
 
     const params: ExpertCostDetailsViewModelParams = {
       claimId,
-      expertCostId,
-      form:
-        cachedAnswer == null
-          ? {}
-          : {
-              activityDateDay: cachedAnswer.activityDate.getDate().toString(),
-              activityDateMonth: (cachedAnswer.activityDate.getMonth() + 1).toString(),
-              activityDateYear: cachedAnswer.activityDate.getFullYear().toString(),
-              actualNetValue: cachedAnswer.actualNetValue.toString(),
-              vatApplies: cachedAnswer.vatApplies ? "yes" : "no",
-              feeEarnerName: cachedAnswer.feeEarnerName,
-              description: cachedAnswer.description,
-            },
+      lineItemId,
+      form,
     };
 
     res.render("main/poa/expertCostDetailsView.njk", {
@@ -78,18 +80,15 @@ export async function expertCostDetails(
  * @param {Request} req Express request object.
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
- * @param {{ answersCache: AnswersCache }} dependencies Controller dependencies.
- * @param {AnswersCache} dependencies.answersCache Cache used for storing journey answers.
  */
 export async function submitExpertCostDetails(
   req: Request,
   res: Response,
   next: NextFunction,
-  dependencies: { answersCache: AnswersCache },
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
-    const expertCostId = Number(req.params.expertCostId);
+    const claimId = getClaimId(req);
+    const lineItemId = getLineItemId(req);
 
     const form = getForm(req.body) as ExpertCostDetailsForm;
     const validationResult = validateExpertCostDetails(form);
@@ -97,7 +96,7 @@ export async function submitExpertCostDetails(
     if (!validationResult.isValid) {
       const params: ExpertCostDetailsViewModelParams = {
         claimId,
-        expertCostId,
+        lineItemId,
         form,
         errors: validationResult.errors,
       };
@@ -109,12 +108,25 @@ export async function submitExpertCostDetails(
       return;
     }
 
-    await dependencies.answersCache.set(
-      req.sessionID,
-      claimId,
-      path(expertCostId),
-      validationResult.value,
-    );
+    const lineItemForm: LineItemForm = {
+      type: CostType.EXPERT_COST,
+      value: validationResult.value,
+    }
+
+    if (lineItemId == null) {
+      await claimService.addLineItemToClaim(
+        req.axiosMiddleware,
+        claimId,
+        lineItemForm,
+      );
+    } else {
+      await claimService.updateLineItem(
+        req.axiosMiddleware,
+        claimId,
+        lineItemId,
+        lineItemForm,
+      );
+    }
 
     // TODO - redirect to the 'add another work item' page
     res.redirect(
@@ -125,4 +137,14 @@ export async function submitExpertCostDetails(
   } catch (error) {
     next(processError(error, "submitting expert cost details page"));
   }
+}
+
+function getClaimId(req: Request): UUID {
+  return UUID.parse(req.params.claimId);
+}
+
+function getLineItemId(req: Request): UUID | undefined {
+  return typeof req.query.lineItemId === "string"
+    ? UUID.parse(req.query.lineItemId)
+    : undefined;
 }

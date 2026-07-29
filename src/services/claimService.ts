@@ -1,9 +1,12 @@
 import { createClient } from "#src/generated/claim-api/client/client.gen.js";
 import {
+  addLineItemToClaim as addLineItemToClaimApi,
   createClaim as createClaimApi,
   getClaim as getClaimApi,
   getClaims as getClaimsApi,
+  getLineItem as getLineItemApi,
   updateClaim as updateClaimApi,
+  updateLineItem as updateLineItemApi,
 } from "#src/generated/claim-api/sdk.gen.js";
 import { createApiError } from "#src/helpers/index.js";
 import type { ApiResponse, Paginated } from "#src/types/api-types.js";
@@ -13,11 +16,18 @@ import {
   type ClaimDto,
   ClaimResponseSchema,
   ClaimsResponseSchema,
+  type LineItem,
 } from "#src/types/Claim.js";
 import config from "../../config.js";
 import { UUID } from "uuidv7";
 import type { ClaimRequestBody } from "#src/generated/claim-api/index.js";
-import { toClaimRequestBody } from "#src/mappers/claimMapper.js";
+import {
+  toClaimRequestBody,
+  toLineItemRequestBody,
+} from "#src/mappers/claimMapper.js";
+import type { LineItemForm } from "#src/types/poa.js";
+import type { AxiosResponse } from "axios";
+import type { ZodType } from "zod";
 
 interface ClaimServiceDeps {
   createClient: typeof createClient;
@@ -25,6 +35,9 @@ interface ClaimServiceDeps {
   getClaim: typeof getClaimApi;
   createClaim: typeof createClaimApi;
   updateClaim: typeof updateClaimApi;
+  addLineItemToClaim: typeof addLineItemToClaimApi;
+  getLineItem: typeof getLineItemApi;
+  updateLineItem: typeof updateLineItemApi;
 }
 
 const defaultDeps: ClaimServiceDeps = {
@@ -33,6 +46,9 @@ const defaultDeps: ClaimServiceDeps = {
   getClaim: getClaimApi,
   createClaim: createClaimApi,
   updateClaim: updateClaimApi,
+  addLineItemToClaim: addLineItemToClaimApi,
+  getLineItem: getLineItemApi,
+  updateLineItem: updateLineItemApi,
 };
 
 /**
@@ -95,7 +111,12 @@ class ClaimService {
     claimId: UUID,
     deps: ClaimServiceDeps = defaultDeps,
   ): Promise<ApiResponse<Claim>> {
-    return await ClaimService.getClaimByStatus(axiosMiddleware, claimId, "SUBMITTED", deps);
+    return await ClaimService.getClaimByStatus(
+      axiosMiddleware,
+      claimId,
+      "SUBMITTED",
+      deps,
+    );
   }
 
   /**
@@ -111,7 +132,12 @@ class ClaimService {
     claimId: UUID,
     deps: ClaimServiceDeps = defaultDeps,
   ): Promise<ApiResponse<Claim>> {
-    return await ClaimService.getClaimByStatus(axiosMiddleware, claimId, "DRAFT", deps);
+    return await ClaimService.getClaimByStatus(
+      axiosMiddleware,
+      claimId,
+      "DRAFT",
+      deps,
+    );
   }
 
   private static async getClaimByStatus(
@@ -164,38 +190,23 @@ class ClaimService {
     const body: ClaimRequestBody = {};
 
     try {
-      const response = await deps.createClaim({
+      const response = await deps.createClaim<true>({
         body,
         query: { status: "DRAFT" },
         client: apiClient,
       });
 
-      if ("headers" in response) {
-        // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
-        const { location } = response.headers;
-        if (typeof location !== "string") {
-          return createApiError(new Error("Missing Location header"));
-        }
-
-        const match = /\/claims\/([^?]+)/.exec(location);
-        if (match == null) {
-          return createApiError(new Error("Invalid Location header"));
-        }
-
-        return {
-          status: "success",
-          body: UUID.parse(match[1]),
-        };
-      }
-
-      return createApiError(new Error("Response did not contain headers"));
+      return {
+        status: "success",
+        body: getId(response, /\/claims\/([^?]+)/, 1),
+      };
     } catch (error) {
       return createApiError(error);
     }
   }
 
   /**
-   * Updates a draft claim and returns the ID in the Location header.
+   * Updates a draft claim.
    *
    * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
    * @param {Claim} claim - Claim.
@@ -229,6 +240,150 @@ class ClaimService {
       return createApiError(error);
     }
   }
+
+  /**
+   * Adds a line item to a draft claim and returns the ID in the Location header.
+   *
+   * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
+   * @param {UUID} claimId - Claim ID.
+   * @param {LineItemForm} lineItemForm - Line item form.
+   * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
+   * @returns {Promise<ApiResponse<null>>} App response format.
+   */
+  static async addLineItemToClaim(
+    axiosMiddleware: AxiosInstanceWrapper,
+    claimId: UUID,
+    lineItemForm?: LineItemForm,
+    deps: ClaimServiceDeps = defaultDeps,
+  ): Promise<ApiResponse<UUID>> {
+    const apiClient = deps.createClient({
+      baseURL: config.api.baseUrl,
+      axios: axiosMiddleware.axiosInstance,
+      throwOnError: true,
+    });
+
+    try {
+      const response = await deps.addLineItemToClaim<true>({
+        path: { claimId: claimId.toString() },
+        query: { status: "DRAFT" },
+        body: lineItemForm == null ? {} : toLineItemRequestBody(lineItemForm),
+        client: apiClient,
+      });
+
+      return {
+        status: "success",
+        body: getId(response, /\/claims\/([^/]+)\/line-items\/([^/?]+)/, 2),
+      };
+    } catch (error) {
+      return createApiError(error);
+    }
+  }
+
+  /**
+   * Get a line item.
+   *
+   * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
+   * @param {UUID} claimId - Claim identifier.
+   * @param {UUID} lineItemId - Line item identifier.
+   * @param {ZodType} schema - Schema to validate against.
+   * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
+   * @returns {Promise<ApiResponse>} Parsed line item response in app response format.
+   */
+  // eslint-disable-next-line @typescript-eslint/max-params -- ignore
+  static async getLineItem<T extends LineItem>(
+    axiosMiddleware: AxiosInstanceWrapper,
+    claimId: UUID,
+    lineItemId: UUID,
+    schema: ZodType<T>,
+    deps: ClaimServiceDeps = defaultDeps,
+  ): Promise<ApiResponse<T>> {
+    const apiClient = deps.createClient({
+      baseURL: config.api.baseUrl,
+      axios: axiosMiddleware.axiosInstance,
+      throwOnError: true,
+    });
+
+    try {
+      const response = await deps.getLineItem({
+        path: {
+          claimId: claimId.toString(),
+          lineItemId: lineItemId.toString(),
+        },
+        query: { status: "DRAFT" },
+        client: apiClient,
+      });
+
+      return {
+        body: schema.parse(response.data),
+        status: "success",
+      };
+    } catch (error) {
+      return createApiError(error);
+    }
+  }
+
+  /**
+   * Updates a line item.
+   *
+   * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
+   * @param {UUID} claimId - Claim identifier.
+   * @param {UUID} lineItemId - Line item identifier.
+   * @param {LineItemForm} lineItemForm - Line item form.
+   * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
+   * @returns {Promise<ApiResponse<null>>} App response format.
+   */
+  // eslint-disable-next-line @typescript-eslint/max-params -- ignore
+  static async updateLineItem(
+    axiosMiddleware: AxiosInstanceWrapper,
+    claimId: UUID,
+    lineItemId: UUID,
+    lineItemForm: LineItemForm,
+    deps: ClaimServiceDeps = defaultDeps,
+  ): Promise<ApiResponse<null>> {
+    const apiClient = deps.createClient({
+      baseURL: config.api.baseUrl,
+      axios: axiosMiddleware.axiosInstance,
+      throwOnError: true,
+    });
+
+    try {
+      await deps.updateLineItem({
+        path: {
+          claimId: claimId.toString(),
+          lineItemId: lineItemId.toString(),
+        },
+        query: { status: "DRAFT" },
+        body: toLineItemRequestBody(lineItemForm),
+        client: apiClient,
+      });
+
+      return {
+        status: "success",
+        body: null,
+      };
+    } catch (error) {
+      return createApiError(error);
+    }
+  }
+}
+
+function getId(response: AxiosResponse, pattern: RegExp, group: number): UUID {
+  if ("headers" in response) {
+    // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
+    const { location } = response.headers;
+    if (typeof location !== "string") {
+      throw new Error("Missing Location header");
+    }
+
+    const match = pattern.exec(location);
+    if (match == null) {
+      throw new Error("Invalid Location header");
+    }
+
+    return UUID.parse(match[group]);
+  }
+
+  throw new Error("Response did not contain headers");
 }
 
 export const claimService = ClaimService;

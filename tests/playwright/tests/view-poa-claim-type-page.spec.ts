@@ -49,7 +49,7 @@ test.describe("POA claim type page", () => {
     await poaClaimTypePage.saveAndContinueButton.click();
 
     await expect(page).toHaveURL(
-      new RegExp(`/claims/${claim1Id}/poa/expert-cost-details/1$`)
+      new RegExp(`/claims/${claim1Id}/poa/expert-cost-details$`)
     );
   });
 

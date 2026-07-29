@@ -15,7 +15,7 @@ export const ROUTES = {
   HOW_MANY_CLIENTS_RETAINED: '/claims/:claimId/poa/how-many-clients-retained',
   POA_CLAIM_TYPE: '/claims/:claimId/poa/claim-type',
   PROFIT_COST_DETAILS: '/claims/:claimId/poa/profit-cost-details',
-  EXPERT_COST_DETAILS: '/claims/:claimId/poa/expert-cost-details/:expertCostId',
+  EXPERT_COST_DETAILS: '/claims/:claimId/poa/expert-cost-details',
   NON_EXPERT_COST_DETAILS: '/claims/:claimId/poa/non-expert-disbursement',
   MULTIPLE_CLIENT_HEARINGS: '/claims/:claimId/poa/multiple-client-hearings',
   ESCAPING_FIXED_FEE: '/claims/:claimId/poa/escaping-standard-fixed-fee',
@@ -32,18 +32,32 @@ export const ROUTES = {
  * Builds a route by replacing named parameters with encoded values.
  *
  * @param {string} route The route pattern containing named parameters.
- * @param {Record<string, string | number>} params The parameter values to insert into the route.
+ * @param {Record<string, string | number>} params The path parameter values to insert into the route.
+ * @param {Record<string, string | number>} query The query parameter values to insert into the route.
  * @returns {string} The route with parameters replaced.
  */
 export function buildRoute(
   route: string,
-  params: Record<string, string | number | UUID>
+  params: Record<string, string | number | UUID>,
+  query?: Record<string, string | number | UUID>,
 ): string {
-  return Object.entries(params).reduce(
-    (path, [key, value]) =>
-      path.replace(`:${key}`, encodeURIComponent(String(value))),
-    route
-  );
+  let path = route;
+
+  for (const [key, value] of Object.entries(params)) {
+    path = path.replace(`:${key}`, encodeURIComponent(String(value)));
+  }
+
+  if (query == null || Object.keys(query).length === 0) {
+    return path;
+  }
+
+  const searchParams = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(query)) {
+    searchParams.set(key, String(value));
+  }
+
+  return `${path}?${searchParams.toString()}`;
 }
 
 /**

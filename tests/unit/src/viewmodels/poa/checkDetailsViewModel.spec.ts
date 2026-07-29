@@ -272,11 +272,11 @@ describe("CheckDetailsViewModel constructor()", () => {
       key: "common.change",
     });
     expect(firstSummaryList.card?.actions?.items[1].href).to.equal(
-      `/claims/${claimId.toString()}/poa/expert-cost-details/1`,
+      `/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=1`,
     );
 
     expect(secondSummaryList.card?.actions?.items[1].href).to.equal(
-      `/claims/${claimId.toString()}/poa/expert-cost-details/2`,
+      `/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=2`,
     );
 
     expect(firstSummaryList.attributes.id).to.equal(
