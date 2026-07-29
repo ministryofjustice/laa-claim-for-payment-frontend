@@ -34,14 +34,15 @@ export async function profitCostBillLine(
       let form: ProfitCostBillLineForm = {};
 
       if (claim.body.lineItems?.length === 1) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
         const lineItem = claim.body.lineItems[0] as ProfitCostBillLineItem;
         ({ id: lineItemId } = lineItem);
         form = {
           activityDateDay: lineItem.date.getDate().toString(),
           activityDateMonth: (lineItem.date.getMonth() + 1).toString(),
           activityDateYear: lineItem.date.getFullYear().toString(),
-          actualNetProfitCostExcludingAdvocacy: lineItem.netProfitCostAmount?.toString(),
-          actualNetAdvocacyCosts: lineItem.netAdvocacyCostAmount?.toString(),
+          actualNetProfitCostExcludingAdvocacy: lineItem.netProfitCostAmount.toString(),
+          actualNetAdvocacyCosts: lineItem.netAdvocacyCostAmount.toString(),
           vatApplies: formatBoolean(lineItem.vatApplicable),
           feeEarnerName: lineItem.feeEarnerName,
         };
