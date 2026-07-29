@@ -101,7 +101,7 @@ describe("ClaimMapper", () => {
       expect(result.netAdvocacyCostAmount).to.equal(456);
       expect(result.vatApplicable).to.equal(true);
       expect(result.feeEarnerName).to.equal("Joe Bloggs");
-      expect(result.title).to.equal(undefined);
+      expect(result.title).to.equal("TODO");
     });
   });
 });

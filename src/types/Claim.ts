@@ -72,13 +72,14 @@ export const ProfitCostBillLineItemSchema = PoaLineItemSchema.extend({
 }).strict();
 
 export const LineItemSchema = z.union([
-  StubLineItemSchema,
   ExpertCostLineItemSchema,
   ProfitCostBillLineItemSchema,
+  StubLineItemSchema, // must go last
 ]);
 
 export type ExpertCostLineItem = z.infer<typeof ExpertCostLineItemSchema>;
 export type ProfitCostBillLineItem = z.infer<typeof ProfitCostBillLineItemSchema>;
+export type StubLineItem = z.infer<typeof StubLineItemSchema>;
 export type LineItem = z.infer<typeof LineItemSchema>;
 
 export const ClaimResponseSchema = z.object({

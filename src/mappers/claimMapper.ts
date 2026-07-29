@@ -42,7 +42,7 @@ export function toLineItemRequestBody(
     };
   } else {
     return {
-      title: undefined, // TODO - what should this be?
+      title: "TODO", // TODO - what should this be?
       category: Category.DISBURSEMENT.toString(),
       date: value.activityDate.toISOString(),
       netProfitCostAmount: value.actualNetProfitCostExcludingAdvocacy,
