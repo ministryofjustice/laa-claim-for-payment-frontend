@@ -3,26 +3,34 @@ import {
   CostType,
   type EvidenceItem,
   type ExpertCostLineItem,
-  type ProfitCostBillLineItem
+  type ProfitCostBillLineItem,
 } from "#src/types/Claim.js";
 import type { Table } from "#src/viewmodels/components/table.js";
-import type { TableCell, TableHeader } from "#src/viewmodels/components/index.js";
+import type {
+  TableCell,
+  TableHeader,
+} from "#src/viewmodels/components/index.js";
 import {
   buildSummaryListRow,
   buildSummaryListRowWithChangeLink,
   buildSummaryListWithCard,
   type SummaryList,
-  type SummaryListRow
+  type SummaryListRow,
 } from "#src/viewmodels/components/summaryList.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { formatBoolean, formatClaimed, formatDateReadable } from "#src/helpers/dataFormatters.js";
+import {
+  formatBoolean,
+  formatClaimed,
+  formatDateReadable,
+} from "#src/helpers/dataFormatters.js";
 import {
   clientStatusFieldName,
   courtTypeFieldName,
   firstSolicitorFieldName,
-  transferOfSolicitorFieldName
+  transferOfSolicitorFieldName,
 } from "#src/controllers/poa/profitCostDetailsController.js";
+import { AnswerMissingError } from "#src/types/errors.js";
 
 /**
  *
@@ -50,20 +58,25 @@ export class CheckDetailsViewModel {
 
     switch (claim.costType) {
       case CostType.PROFIT_COST:
-        this.profitCostDetailsSummaryList = CheckDetailsViewModel.buildProfitCostDetailsSummaryList(claim);
-        this.lineItemSummaryLists = CheckDetailsViewModel.buildProfitCostBillLineItemSummaryLists(claim);
+        this.profitCostDetailsSummaryList =
+          CheckDetailsViewModel.buildProfitCostDetailsSummaryList(claim);
+        this.lineItemSummaryLists =
+          CheckDetailsViewModel.buildProfitCostBillLineItemSummaryLists(claim);
         break;
       case CostType.EXPERT_COST:
-        this.lineItemSummaryLists = CheckDetailsViewModel.buildExpertCostLineItemSummaryLists(claim);
+        this.lineItemSummaryLists =
+          CheckDetailsViewModel.buildExpertCostLineItemSummaryLists(claim);
         break;
       case CostType.NON_EXPERT_DISBURSEMENT:
         break;
       default:
-        // TODO - throw some exception that the controller can catch and redirect to ROUTES.POA_CLAIM_TYPE
-        break;
+        throw new AnswerMissingError(
+          buildRoute(ROUTES.POA_CLAIM_TYPE, { claimId: claim.id }),
+        );
     }
 
-    this.evidenceSummaryList = CheckDetailsViewModel.buildEvidenceSummaryList(claim);
+    this.evidenceSummaryList =
+      CheckDetailsViewModel.buildEvidenceSummaryList(claim);
   }
 
   private static buildAssessmentSummaryTableHead(): TableHeader[] {
@@ -118,7 +131,9 @@ export class CheckDetailsViewModel {
     ];
   }
 
-  private static buildProfitCostDetailsSummaryList(claim: ClaimDto): SummaryList {
+  private static buildProfitCostDetailsSummaryList(
+    claim: ClaimDto,
+  ): SummaryList {
     const { id: claimId } = claim;
     return buildSummaryListWithCard(
       { key: "pages.poa.checkYourDetails.cya.profitCostDetails.title" },
@@ -130,10 +145,10 @@ export class CheckDetailsViewModel {
           claim.courtType == null
             ? undefined
             : {
-              text: {
-                key: `pages.profitCostDetails.courtType.${claim.courtType}.text`,
+                text: {
+                  key: `pages.profitCostDetails.courtType.${claim.courtType}.text`,
+                },
               },
-            },
         ),
         buildSummaryListRowWithChangeLink(
           {
@@ -143,10 +158,10 @@ export class CheckDetailsViewModel {
           claim.clientPartyStatus == null
             ? undefined
             : {
-              text: {
-                key: `pages.profitCostDetails.clientStatus.${claim.clientPartyStatus}.text`,
+                text: {
+                  key: `pages.profitCostDetails.clientStatus.${claim.clientPartyStatus}.text`,
+                },
               },
-            },
         ),
         buildSummaryListRowWithChangeLink(
           {
@@ -174,10 +189,10 @@ export class CheckDetailsViewModel {
           claim.clientsRetainedCount == null
             ? undefined
             : {
-              text: {
-                key: `pages.howManyClientsRetained.${claim.clientsRetainedCount}.text`,
+                text: {
+                  key: `pages.howManyClientsRetained.${claim.clientsRetainedCount}.text`,
+                },
               },
-            },
         ),
         buildSummaryListRowWithChangeLink(
           {
@@ -187,10 +202,10 @@ export class CheckDetailsViewModel {
           claim.clientsStartCount == null
             ? undefined
             : {
-              text: {
-                key: `pages.howManyClientsRetained.${claim.clientsStartCount}.text`,
+                text: {
+                  key: `pages.howManyClientsRetained.${claim.clientsStartCount}.text`,
+                },
               },
-            },
         ),
         buildSummaryListRowWithChangeLink(
           {
@@ -214,7 +229,9 @@ export class CheckDetailsViewModel {
     );
   }
 
-  private static buildProfitCostBillLineItemSummaryLists(claim: ClaimDto): SummaryList[] {
+  private static buildProfitCostBillLineItemSummaryLists(
+    claim: ClaimDto,
+  ): SummaryList[] {
     const result: SummaryList[] = [];
     const { id: claimId } = claim;
     (claim.lineItems ?? [])
@@ -278,7 +295,9 @@ export class CheckDetailsViewModel {
     return result;
   }
 
-  private static buildExpertCostLineItemSummaryLists(claim: ClaimDto): SummaryList[] {
+  private static buildExpertCostLineItemSummaryLists(
+    claim: ClaimDto,
+  ): SummaryList[] {
     const result: SummaryList[] = [];
     const { id: claimId } = claim;
     (claim.lineItems ?? [])

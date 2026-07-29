@@ -4,6 +4,7 @@ import { processApiError, processError } from "#src/helpers/index.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { UUID } from "uuidv7";
+import { AnswerMissingError } from "#src/types/errors.js";
 
 /**
  * Handle claim view with API data
@@ -30,6 +31,9 @@ export async function checkYourDetailsPage(
       next(processApiError(response, `fetching claim details for user`));
     }
   } catch (error) {
+    if (error instanceof AnswerMissingError) {
+      res.redirect(error.urlToRedirectTo);
+    }
     next(processError(error, `fetching claim details for user`));
   }
 }

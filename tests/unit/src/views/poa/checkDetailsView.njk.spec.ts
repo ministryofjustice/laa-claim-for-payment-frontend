@@ -2,18 +2,15 @@ import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
 import { ClaimDto } from "#src/types/Claim.js";
-import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
-import { claim10, claim9 } from "#tests/assets/claim.js";
+import { claim10, claim11, claim9 } from "#tests/assets/claim.js";
 
 chaiConfig.truncateThreshold = 0;
 
 describe("views/main/poa/checkDetailsView.njk", () => {
   let $: CheerioAPI;
 
-  const claim: ClaimDto = getClaimsSuccessResponseData.body?.data![0]!;
-
-  const viewModel = new CheckDetailsViewModel(claim);
+  const viewModel = new CheckDetailsViewModel(claim9);
 
   beforeEach(async () => {
     $ = await renderView("main/poa/checkDetailsView.njk", {
@@ -61,14 +58,6 @@ describe("views/main/poa/checkDetailsView.njk", () => {
     });
 
     describe("with profit cost bill line item", () => {
-      const viewModel = new CheckDetailsViewModel(claim9);
-
-      beforeEach(async () => {
-        $ = await renderView("main/poa/checkDetailsView.njk", {
-          vm: viewModel,
-        });
-      });
-
       it("renders the profit cost details card", () => {
         const card = $("#profit-cost-details");
 
@@ -95,7 +84,7 @@ describe("views/main/poa/checkDetailsView.njk", () => {
     });
 
     describe("with expert cost line items", () => {
-      const viewModel = new CheckDetailsViewModel(claim10);
+      const viewModel = new CheckDetailsViewModel(claim11);
 
       beforeEach(async () => {
         $ = await renderView("main/poa/checkDetailsView.njk", {
@@ -136,9 +125,7 @@ describe("views/main/poa/checkDetailsView.njk", () => {
     });
 
     describe("without evidence", () => {
-      const claim: ClaimDto = getClaimsSuccessResponseData.body?.data![2]!;
-
-      const viewModel = new CheckDetailsViewModel(claim);
+      const viewModel = new CheckDetailsViewModel(claim10);
 
       beforeEach(async () => {
         $ = await renderView("main/poa/checkDetailsView.njk", {

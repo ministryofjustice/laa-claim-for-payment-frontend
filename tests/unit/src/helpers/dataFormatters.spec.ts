@@ -3,6 +3,7 @@
  */
 
 import {
+  formatBoolean,
   formatBooleanChoice,
   formatClaimed,
   formatClaimId,
@@ -67,7 +68,7 @@ describe("Data Transformation Helpers", () => {
     });
   });
 
-  describe("formatBoolean", () => {
+  describe("formatBooleanChoice", () => {
     it("should format undefined as undefined", async () => {
       expect(formatBooleanChoice(undefined)).to.be.undefined;
     });
@@ -82,6 +83,16 @@ describe("Data Transformation Helpers", () => {
 
     it("should format false as no", async () => {
       expect(formatBooleanChoice(false)).to.equal("no");
+    });
+  });
+
+  describe("formatBoolean", () => {
+    it("should format true as yes key", async () => {
+      expect(formatBoolean(true)).to.equal("common.yes");
+    });
+
+    it("should format false as no key", async () => {
+      expect(formatBoolean(false)).to.equal("common.no");
     });
   });
 });

@@ -148,7 +148,7 @@ export const claim8: ClaimDto = {
 };
 
 /**
- * Draft claim with profit cost bill line item
+ * Draft claim with profit cost bill line item and evidence
  */
 export const claim9: ClaimDto = {
   id: "019fae76-b6bd-76ec-ae50-38d76da01631",
@@ -185,9 +185,38 @@ export const claim9: ClaimDto = {
 };
 
 /**
- * Draft claim with expert cost bill line items
+ * Draft claim with profit cost bill line item and no evidence
  */
 export const claim10: ClaimDto = {
+  id: "019fae76-b6bd-76ec-ae50-38d76da01631",
+  costType: CostType.PROFIT_COST,
+  courtType: CourtType.COUNTY_COURT,
+  clientPartyStatus: ClientPartyStatus.CHILD,
+  firstActingSolicitorFlag: true,
+  transferOfSolicitorFlag: false,
+  clientsRetainedCount: Count.ZERO,
+  clientsStartCount: Count.TWO_OR_MORE,
+  multiClientHearingFlag: true,
+  escaped: false,
+  lineItems: [
+    {
+      id: "019fae73-5288-76ac-aa2d-e88859c5960a",
+      title: "Line item",
+      category: Category.DISBURSEMENT,
+      date: new Date("2026-07-29"),
+      netProfitCostAmount: 123,
+      netAdvocacyCostAmount: 456,
+      vatApplicable: false,
+      feeEarnerName: "John Smith",
+      evidenceItems: []
+    }
+  ]
+};
+
+/**
+ * Draft claim with expert cost bill line items
+ */
+export const claim11: ClaimDto = {
   id: "019fae76-cf01-7487-99d5-8920f857df7f",
   costType: CostType.EXPERT_COST,
   lineItems: [

@@ -1,13 +1,19 @@
 import { expect } from "chai";
-import type { ClaimDto } from "#src/types/Claim.js";
-import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
+import { ClaimDto } from "#src/types/Claim.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
-import { claim10, claim9 } from "#tests/assets/claim.js";
+import { claim11, claim9 } from "#tests/assets/claim.js";
+import { AnswerMissingError } from "#src/types/errors.js";
 
 describe("CheckDetailsViewModel constructor()", () => {
+  it("throws for an empty claim", () => {
+    const claim: ClaimDto = {
+      id: "019fae76-b6bd-76ec-ae50-38d76da01631",
+    };
+    expect(() => new CheckDetailsViewModel(claim)).to.throw(AnswerMissingError);
+  });
+
   it("builds the assessment summary table", () => {
-    const claim: ClaimDto = getClaimsSuccessResponseData.body!.data![0]!;
-    const vm = new CheckDetailsViewModel(claim);
+    const vm = new CheckDetailsViewModel(claim9);
 
     expect(vm.assessmentSummaryTable.head.length).to.equal(2);
     expect(vm.assessmentSummaryTable.head[0].text).to.deep.equal({
@@ -255,7 +261,7 @@ describe("CheckDetailsViewModel constructor()", () => {
   });
 
   it("builds the evidence summary list", () => {
-    const claim: ClaimDto = getClaimsSuccessResponseData.body!.data![0]!;
+    const claim: ClaimDto = claim9;
     const claimId = claim.id;
     const vm = new CheckDetailsViewModel(claim);
 
@@ -281,7 +287,7 @@ describe("CheckDetailsViewModel constructor()", () => {
   });
 
   it("builds the expert cost bill line summary lists", () => {
-    const claim: ClaimDto = claim10;
+    const claim: ClaimDto = claim11;
     const claimId = claim.id;
     const vm = new CheckDetailsViewModel(claim);
 
