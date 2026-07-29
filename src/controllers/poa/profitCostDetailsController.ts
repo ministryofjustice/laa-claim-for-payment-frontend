@@ -11,7 +11,7 @@ import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewMode
 import { UUID } from "uuidv7";
 import { ClientPartyStatus, CourtType } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
-import { formatBoolean } from "#src/helpers/dataFormatters.js";
+import { formatBooleanChoice } from "#src/helpers/dataFormatters.js";
 
 /**
  * Profit cost details journey view
@@ -36,8 +36,8 @@ export async function profitCostDetails(
       form: {
         courtTypeChoice: claim.body?.courtType,
         clientStatusChoice: claim.body?.clientPartyStatus,
-        firstSolicitorChoice: formatBoolean(claim.body?.firstActingSolicitorFlag),
-        transferOfSolicitorChoice: formatBoolean(claim.body?.transferOfSolicitorFlag),
+        firstSolicitorChoice: formatBooleanChoice(claim.body?.firstActingSolicitorFlag),
+        transferOfSolicitorChoice: formatBooleanChoice(claim.body?.transferOfSolicitorFlag),
       }
     };
 
@@ -118,25 +118,25 @@ export const courtTypeChoices: ReadonlyArray<RadioQuestionOptions<CourtType>> = 
   {
     value: CourtType.COUNTY_COURT,
     text: {
-      key: "pages.profitCostDetails.courtType.countyCourt.text"
+      key: "pages.profitCostDetails.courtType.COUNTY_COURT.text"
     },
   },
   {
     value: CourtType.HIGH_COURT,
     text: {
-      key: "pages.profitCostDetails.courtType.highCourt.text"
+      key: "pages.profitCostDetails.courtType.HIGH_COURT.text"
     },
   },
   {
     value: CourtType.MAGISTRATES_COURT,
     text: {
-      key: "pages.profitCostDetails.courtType.magistratesCourt.text"
+      key: "pages.profitCostDetails.courtType.MAGISTRATES_COURT.text"
     },
   },
   {
     value: CourtType.OTHER_JUDGE,
     text: {
-      key: "pages.profitCostDetails.courtType.otherJudge.text"
+      key: "pages.profitCostDetails.courtType.OTHER_JUDGE.text"
     },
   },
 ] as const;
@@ -145,19 +145,19 @@ export const clientStatusChoices: ReadonlyArray<RadioQuestionOptions<ClientParty
   {
     value: ClientPartyStatus.CHILD,
     text: {
-      key: "pages.profitCostDetails.clientStatus.child.text"
+      key: "pages.profitCostDetails.clientStatus.CHILD.text"
     },
   },
   {
     value: ClientPartyStatus.JOINED_PARTY,
     text: {
-      key: "pages.profitCostDetails.clientStatus.joinedParty.text"
+      key: "pages.profitCostDetails.clientStatus.JOINED_PARTY.text"
     },
   },
   {
     value: ClientPartyStatus.PARENT,
     text: {
-      key: "pages.profitCostDetails.clientStatus.parent.text"
+      key: "pages.profitCostDetails.clientStatus.PARENT.text"
     },
   },
 ] as const;

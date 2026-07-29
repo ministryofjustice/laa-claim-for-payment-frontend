@@ -43,7 +43,7 @@ describe("Check Details Controller", () => {
 
     next = sinon.stub();
 
-    claimServiceStub = sinon.stub(claimService, "getClaim");
+    claimServiceStub = sinon.stub(claimService, "getDraftClaim");
   });
 
   afterEach(() => {

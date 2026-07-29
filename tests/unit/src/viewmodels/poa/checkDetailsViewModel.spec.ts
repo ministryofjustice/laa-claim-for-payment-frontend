@@ -2,6 +2,7 @@ import { expect } from "chai";
 import type { ClaimDto } from "#src/types/Claim.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
+import { claim10, claim9 } from "#tests/assets/claim.js";
 
 describe("CheckDetailsViewModel constructor()", () => {
   it("builds the assessment summary table", () => {
@@ -44,181 +45,213 @@ describe("CheckDetailsViewModel constructor()", () => {
   });
 
   it("builds the profit cost details summary list", () => {
-    const claim: ClaimDto = getClaimsSuccessResponseData.body!.data![0]!;
+    const claim: ClaimDto = claim9;
     const claimId = claim.id;
     const vm = new CheckDetailsViewModel(claim);
 
-    expect(vm.profitCostDetailsSummaryList.card?.title.text).to.deep.equal({
+    expect(vm.profitCostDetailsSummaryList?.card?.title.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.title",
     });
-    expect(vm.profitCostDetailsSummaryList.card?.actions).to.not.exist;
-    expect(vm.profitCostDetailsSummaryList.attributes.id).to.equal(
+    expect(vm.profitCostDetailsSummaryList?.card?.actions).to.not.exist;
+    expect(vm.profitCostDetailsSummaryList?.attributes.id).to.equal(
       "profit-cost-details-rows",
     );
-    expect(vm.profitCostDetailsSummaryList.rows.length).to.equal(7);
+    expect(vm.profitCostDetailsSummaryList?.rows.length).to.equal(8);
 
-    expect(vm.profitCostDetailsSummaryList.rows[0].key.text).to.deep.equal({
+    expect(vm.profitCostDetailsSummaryList?.rows[0].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.courtType",
     });
-    expect(vm.profitCostDetailsSummaryList.rows[0].value.text).to.equal(
-      "Circuit/district judge",
-    );
+    expect(vm.profitCostDetailsSummaryList?.rows[0].value.text).to.deep.equal({
+      key: "pages.profitCostDetails.courtType.COUNTY_COURT.text",
+    });
     expect(
-      vm.profitCostDetailsSummaryList.rows[0].actions?.items.length,
+      vm.profitCostDetailsSummaryList?.rows[0].actions?.items.length,
     ).to.equal(1);
     expect(
-      vm.profitCostDetailsSummaryList.rows[0].actions?.items[0].text,
+      vm.profitCostDetailsSummaryList?.rows[0].actions?.items[0].text,
     ).to.deep.equal({ key: "common.change" });
     expect(
-      vm.profitCostDetailsSummaryList.rows[0].actions?.items[0].href,
-    ).to.equal(`/claims/${claimId.toString()}/poa/profit-cost-details#courtTypeChoice`);
+      vm.profitCostDetailsSummaryList?.rows[0].actions?.items[0].href,
+    ).to.equal(
+      `/claims/${claimId.toString()}/poa/profit-cost-details#courtTypeChoice`,
+    );
 
-    expect(vm.profitCostDetailsSummaryList.rows[1].key.text).to.deep.equal({
+    expect(vm.profitCostDetailsSummaryList?.rows[1].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientPartyStatus",
     });
-    expect(vm.profitCostDetailsSummaryList.rows[1].value.text).to.equal(
-      "Child",
-    );
+    expect(vm.profitCostDetailsSummaryList?.rows[1].value.text).to.deep.equal({
+      key: "pages.profitCostDetails.clientStatus.CHILD.text",
+    });
     expect(
-      vm.profitCostDetailsSummaryList.rows[1].actions?.items.length,
+      vm.profitCostDetailsSummaryList?.rows[1].actions?.items.length,
     ).to.equal(1);
     expect(
-      vm.profitCostDetailsSummaryList.rows[1].actions?.items[0].text,
+      vm.profitCostDetailsSummaryList?.rows[1].actions?.items[0].text,
     ).to.deep.equal({ key: "common.change" });
     expect(
-      vm.profitCostDetailsSummaryList.rows[1].actions?.items[0].href,
-    ).to.equal(`/claims/${claimId.toString()}/poa/profit-cost-details#clientStatusChoice`);
+      vm.profitCostDetailsSummaryList?.rows[1].actions?.items[0].href,
+    ).to.equal(
+      `/claims/${claimId.toString()}/poa/profit-cost-details#clientStatusChoice`,
+    );
 
-    expect(vm.profitCostDetailsSummaryList.rows[2].key.text).to.deep.equal({
+    expect(vm.profitCostDetailsSummaryList?.rows[2].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.firstSolicitor",
     });
-    expect(vm.profitCostDetailsSummaryList.rows[2].value.text).to.equal("Yes");
+    expect(vm.profitCostDetailsSummaryList?.rows[2].value.text).to.deep.equal({
+      key: "common.yes",
+    });
     expect(
-      vm.profitCostDetailsSummaryList.rows[2].actions?.items.length,
+      vm.profitCostDetailsSummaryList?.rows[2].actions?.items.length,
     ).to.equal(1);
     expect(
-      vm.profitCostDetailsSummaryList.rows[2].actions?.items[0].text,
+      vm.profitCostDetailsSummaryList?.rows[2].actions?.items[0].text,
     ).to.deep.equal({ key: "common.change" });
     expect(
-      vm.profitCostDetailsSummaryList.rows[2].actions?.items[0].href,
-    ).to.equal(`/claims/${claimId.toString()}/poa/profit-cost-details#firstSolicitorChoice`);
+      vm.profitCostDetailsSummaryList?.rows[2].actions?.items[0].href,
+    ).to.equal(
+      `/claims/${claimId.toString()}/poa/profit-cost-details#firstSolicitorChoice`,
+    );
 
-    expect(vm.profitCostDetailsSummaryList.rows[3].key.text).to.deep.equal({
+    expect(vm.profitCostDetailsSummaryList?.rows[3].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.transferOfSolicitor",
     });
-    expect(vm.profitCostDetailsSummaryList.rows[3].value.text).to.equal("Yes");
+    expect(vm.profitCostDetailsSummaryList?.rows[3].value.text).to.deep.equal({
+      key: "common.no",
+    });
     expect(
-      vm.profitCostDetailsSummaryList.rows[3].actions?.items.length,
+      vm.profitCostDetailsSummaryList?.rows[3].actions?.items.length,
     ).to.equal(1);
     expect(
-      vm.profitCostDetailsSummaryList.rows[3].actions?.items[0].text,
+      vm.profitCostDetailsSummaryList?.rows[3].actions?.items[0].text,
     ).to.deep.equal({ key: "common.change" });
     expect(
-      vm.profitCostDetailsSummaryList.rows[3].actions?.items[0].href,
-    ).to.equal(`/claims/${claimId.toString()}/poa/profit-cost-details#transferOfSolicitorChoice`);
+      vm.profitCostDetailsSummaryList?.rows[3].actions?.items[0].href,
+    ).to.equal(
+      `/claims/${claimId.toString()}/poa/profit-cost-details#transferOfSolicitorChoice`,
+    );
 
-    expect(vm.profitCostDetailsSummaryList.rows[4].key.text).to.deep.equal({
+    expect(vm.profitCostDetailsSummaryList?.rows[4].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientsRetained",
     });
-    expect(vm.profitCostDetailsSummaryList.rows[4].value.text).to.equal("1");
+    expect(vm.profitCostDetailsSummaryList?.rows[4].value.text).to.deep.equal({
+      key: "pages.howManyClientsRetained.ZERO.text",
+    });
     expect(
-      vm.profitCostDetailsSummaryList.rows[4].actions?.items.length,
+      vm.profitCostDetailsSummaryList?.rows[4].actions?.items.length,
     ).to.equal(1);
     expect(
-      vm.profitCostDetailsSummaryList.rows[4].actions?.items[0].text,
+      vm.profitCostDetailsSummaryList?.rows[4].actions?.items[0].text,
     ).to.deep.equal({ key: "common.change" });
     expect(
-      vm.profitCostDetailsSummaryList.rows[4].actions?.items[0].href,
+      vm.profitCostDetailsSummaryList?.rows[4].actions?.items[0].href,
     ).to.equal(`/claims/${claimId.toString()}/poa/how-many-clients-retained`);
 
-    expect(vm.profitCostDetailsSummaryList.rows[5].key.text).to.deep.equal({
+    expect(vm.profitCostDetailsSummaryList?.rows[5].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientsStart",
+    });
+    expect(vm.profitCostDetailsSummaryList?.rows[5].value.text).to.deep.equal({
+      key: "pages.howManyClientsRetained.TWO_OR_MORE.text",
+    });
+    expect(
+      vm.profitCostDetailsSummaryList?.rows[5].actions?.items.length,
+    ).to.equal(1);
+    expect(
+      vm.profitCostDetailsSummaryList?.rows[5].actions?.items[0].text,
+    ).to.deep.equal({ key: "common.change" });
+    expect(
+      vm.profitCostDetailsSummaryList?.rows[5].actions?.items[0].href,
+    ).to.equal(
+      `/claims/${claimId.toString()}/poa/number-of-clients-start-of-case`,
+    );
+
+    expect(vm.profitCostDetailsSummaryList?.rows[6].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.attendedHearings",
     });
-    expect(vm.profitCostDetailsSummaryList.rows[5].value.text).to.equal("Yes");
+    expect(vm.profitCostDetailsSummaryList?.rows[6].value.text).to.deep.equal({
+      key: "common.yes",
+    });
     expect(
-      vm.profitCostDetailsSummaryList.rows[5].actions?.items.length,
+      vm.profitCostDetailsSummaryList?.rows[6].actions?.items.length,
     ).to.equal(1);
     expect(
-      vm.profitCostDetailsSummaryList.rows[5].actions?.items[0].text,
+      vm.profitCostDetailsSummaryList?.rows[6].actions?.items[0].text,
     ).to.deep.equal({ key: "common.change" });
     expect(
-      vm.profitCostDetailsSummaryList.rows[5].actions?.items[0].href,
+      vm.profitCostDetailsSummaryList?.rows[6].actions?.items[0].href,
     ).to.equal(`/claims/${claimId.toString()}/poa/multiple-client-hearings`);
 
-    expect(vm.profitCostDetailsSummaryList.rows[6].key.text).to.deep.equal({
+    expect(vm.profitCostDetailsSummaryList?.rows[7].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.escapedStandardFixedFee",
     });
-    expect(vm.profitCostDetailsSummaryList.rows[6].value.text).to.equal("No");
+    expect(vm.profitCostDetailsSummaryList?.rows[7].value.text).to.deep.equal({
+      key: "common.yes",
+    });
     expect(
-      vm.profitCostDetailsSummaryList.rows[6].actions?.items.length,
+      vm.profitCostDetailsSummaryList?.rows[7].actions?.items.length,
     ).to.equal(1);
     expect(
-      vm.profitCostDetailsSummaryList.rows[6].actions?.items[0].text,
+      vm.profitCostDetailsSummaryList?.rows[7].actions?.items[0].text,
     ).to.deep.equal({ key: "common.change" });
     expect(
-      vm.profitCostDetailsSummaryList.rows[6].actions?.items[0].href,
+      vm.profitCostDetailsSummaryList?.rows[7].actions?.items[0].href,
     ).to.equal(`/claims/${claimId.toString()}/poa/escaping-standard-fixed-fee`);
   });
 
   it("builds the profit cost bill line summary list", () => {
-    const claim: ClaimDto = getClaimsSuccessResponseData.body!.data![0]!;
+    const claim: ClaimDto = claim9;
     const claimId = claim.id;
     const vm = new CheckDetailsViewModel(claim);
 
-    expect(vm.profitCostBillLineSummaryList.card?.title.text).to.deep.equal({
+    expect(vm.lineItemSummaryLists[0].card?.title.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostBillLine.title",
     });
+    expect(vm.lineItemSummaryLists[0].card?.actions?.items.length).to.equal(1);
     expect(
-      vm.profitCostBillLineSummaryList.card?.actions?.items.length,
-    ).to.equal(1);
-    expect(
-      vm.profitCostBillLineSummaryList.card?.actions?.items[0].text
+      vm.lineItemSummaryLists[0].card?.actions?.items[0].text,
     ).to.deep.equal({ key: "common.change" });
-    expect(
-      vm.profitCostBillLineSummaryList.card?.actions?.items[0].href
-    ).to.equal(`/claims/${claimId.toString()}/poa/cpgfs-profit-cost-bill-line`);
-    expect(vm.profitCostBillLineSummaryList.attributes.id).to.equal(
+    expect(vm.lineItemSummaryLists[0].card?.actions?.items[0].href).to.equal(
+      `/claims/${claimId.toString()}/poa/cpgfs-profit-cost-bill-line`,
+    );
+    expect(vm.lineItemSummaryLists[0].attributes.id).to.equal(
       "profit-cost-bill-line-rows",
     );
-    expect(vm.profitCostBillLineSummaryList.rows.length).to.equal(5);
+    expect(vm.lineItemSummaryLists[0].rows.length).to.equal(5);
 
-    expect(vm.profitCostBillLineSummaryList.rows[0].key.text).to.deep.equal({
+    expect(vm.lineItemSummaryLists[0].rows[0].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostBillLine.date",
     });
-    expect(vm.profitCostBillLineSummaryList.rows[0].value.text).to.equal(
-      "20 December 2023",
+    expect(vm.lineItemSummaryLists[0].rows[0].value.text).to.equal(
+      "29 July 2026",
     );
-    expect(vm.profitCostBillLineSummaryList.rows[0].actions).to.not.exist;
+    expect(vm.lineItemSummaryLists[0].rows[0].actions).to.not.exist;
 
-    expect(vm.profitCostBillLineSummaryList.rows[1].key.text).to.deep.equal({
+    expect(vm.lineItemSummaryLists[0].rows[1].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostBillLine.netProfitCost",
     });
-    expect(vm.profitCostBillLineSummaryList.rows[1].value.text).to.equal(
-      "£150",
-    );
-    expect(vm.profitCostBillLineSummaryList.rows[1].actions).to.not.exist;
+    expect(vm.lineItemSummaryLists[0].rows[1].value.text).to.equal("£123.00");
+    expect(vm.lineItemSummaryLists[0].rows[1].actions).to.not.exist;
 
-    expect(vm.profitCostBillLineSummaryList.rows[2].key.text).to.deep.equal({
+    expect(vm.lineItemSummaryLists[0].rows[2].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostBillLine.netAdvocacyCost",
     });
-    expect(vm.profitCostBillLineSummaryList.rows[2].value.text).to.equal(
-      "£150",
-    );
-    expect(vm.profitCostBillLineSummaryList.rows[2].actions).to.not.exist;
+    expect(vm.lineItemSummaryLists[0].rows[2].value.text).to.equal("£456.00");
+    expect(vm.lineItemSummaryLists[0].rows[2].actions).to.not.exist;
 
-    expect(vm.profitCostBillLineSummaryList.rows[3].key.text).to.deep.equal({
+    expect(vm.lineItemSummaryLists[0].rows[3].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostBillLine.doesVatApply",
     });
-    expect(vm.profitCostBillLineSummaryList.rows[3].value.text).to.equal("Yes");
-    expect(vm.profitCostBillLineSummaryList.rows[3].actions).to.not.exist;
+    expect(vm.lineItemSummaryLists[0].rows[3].value.text).to.deep.equal({
+      key: "common.no",
+    });
+    expect(vm.lineItemSummaryLists[0].rows[3].actions).to.not.exist;
 
-    expect(vm.profitCostBillLineSummaryList.rows[4].key.text).to.deep.equal({
+    expect(vm.lineItemSummaryLists[0].rows[4].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostBillLine.feeEarnerName",
     });
-    expect(vm.profitCostBillLineSummaryList.rows[4].value.text).to.equal(
-      "Carol Spencer",
+    expect(vm.lineItemSummaryLists[0].rows[4].value.text).to.equal(
+      "John Smith",
     );
-    expect(vm.profitCostBillLineSummaryList.rows[4].actions).to.not.exist;
+    expect(vm.lineItemSummaryLists[0].rows[4].actions).to.not.exist;
   });
 
   it("builds the evidence summary list", () => {
@@ -232,12 +265,12 @@ describe("CheckDetailsViewModel constructor()", () => {
     expect(vm.evidenceSummaryList.card?.actions?.items.length).to.equal(1);
     expect(vm.evidenceSummaryList.attributes.id).to.equal("evidence-rows");
     expect(vm.evidenceSummaryList.rows.length).to.equal(1);
-    expect(
-      vm.evidenceSummaryList.card?.actions?.items[0].text
-    ).to.deep.equal({ key: "common.change" });
-    expect(
-      vm.evidenceSummaryList.card?.actions?.items[0].href
-    ).to.equal(`/claims/${claimId.toString()}/poa/evidence-upload`);
+    expect(vm.evidenceSummaryList.card?.actions?.items[0].text).to.deep.equal({
+      key: "common.change",
+    });
+    expect(vm.evidenceSummaryList.card?.actions?.items[0].href).to.equal(
+      `/claims/${claimId.toString()}/poa/evidence-upload`,
+    );
 
     expect(vm.evidenceSummaryList.rows[0].key.text).to.equal("evidence1.pdf");
     expect(vm.evidenceSummaryList.rows[0].value.html).to.deep.equal({
@@ -248,39 +281,33 @@ describe("CheckDetailsViewModel constructor()", () => {
   });
 
   it("builds the expert cost bill line summary lists", () => {
-    const claim: ClaimDto = getClaimsSuccessResponseData.body!.data![0]!;
+    const claim: ClaimDto = claim10;
     const claimId = claim.id;
     const vm = new CheckDetailsViewModel(claim);
 
-    expect(vm.expertCostBillLineSummaryLists).to.have.length(2);
+    expect(vm.lineItemSummaryLists).to.have.length(2);
 
-    const firstSummaryList = vm.expertCostBillLineSummaryLists[0];
-    const secondSummaryList = vm.expertCostBillLineSummaryLists[1];
+    const firstSummaryList = vm.lineItemSummaryLists[0];
+    const secondSummaryList = vm.lineItemSummaryLists[1];
 
     expect(firstSummaryList.card?.title.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title",
     });
 
     expect(firstSummaryList.card?.actions?.items).to.have.length(2);
-
     expect(firstSummaryList.card?.actions?.items[0].text).to.deep.equal({
       key: "common.delete",
     });
     expect(firstSummaryList.card?.actions?.items[0].href).to.equal("#");
-
     expect(firstSummaryList.card?.actions?.items[1].text).to.deep.equal({
       key: "common.change",
     });
     expect(firstSummaryList.card?.actions?.items[1].href).to.equal(
-      `/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=1`,
-    );
-
-    expect(secondSummaryList.card?.actions?.items[1].href).to.equal(
-      `/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=2`,
+      `/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=019fae76-e8a7-73bc-af8d-990543ec4a65`,
     );
 
     expect(firstSummaryList.attributes.id).to.equal(
-      "expert-cost-bill-line-rows",
+      "expert-cost-bill-line-1-rows",
     );
 
     expect(firstSummaryList.rows).to.have.length(5);
@@ -288,32 +315,77 @@ describe("CheckDetailsViewModel constructor()", () => {
     expect(firstSummaryList.rows[0].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.expertCostBillLine.date",
     });
-    expect(firstSummaryList.rows[0].value.text).to.equal(
-      "20 December 2023",
-    );
+    expect(firstSummaryList.rows[0].value.text).to.equal("20 December 2023");
 
     expect(firstSummaryList.rows[1].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.expertCostBillLine.actualNetValue",
     });
-    expect(firstSummaryList.rows[1].value.text).to.equal("£150");
+    expect(firstSummaryList.rows[1].value.text).to.equal("£150.00");
 
     expect(firstSummaryList.rows[2].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.expertCostBillLine.doesVatApply",
     });
-    expect(firstSummaryList.rows[2].value.text).to.equal("Yes");
+    expect(firstSummaryList.rows[2].value.text).to.deep.equal({
+      key: "common.yes",
+    });
 
     expect(firstSummaryList.rows[3].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.expertCostBillLine.feeEarnerName",
     });
-    expect(firstSummaryList.rows[3].value.text).to.equal(
-      "Carol Spencer",
-    );
+    expect(firstSummaryList.rows[3].value.text).to.equal("Carol Spencer");
 
     expect(firstSummaryList.rows[4].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.expertCostBillLine.description",
     });
-    expect(firstSummaryList.rows[4].value.text).to.equal(
-      "Cost of petrol",
+    expect(firstSummaryList.rows[4].value.text).to.equal("Cost of petrol");
+
+    expect(secondSummaryList.card?.title.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title",
+    });
+
+    expect(secondSummaryList.card?.actions?.items).to.have.length(2);
+    expect(secondSummaryList.card?.actions?.items[0].text).to.deep.equal({
+      key: "common.delete",
+    });
+    expect(secondSummaryList.card?.actions?.items[0].href).to.equal("#");
+    expect(secondSummaryList.card?.actions?.items[1].text).to.deep.equal({
+      key: "common.change",
+    });
+    expect(secondSummaryList.card?.actions?.items[1].href).to.equal(
+      `/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=019fae77-87c3-734c-a38d-54624d48d7e5`,
     );
+
+    expect(secondSummaryList.attributes.id).to.equal(
+      "expert-cost-bill-line-2-rows",
+    );
+
+    expect(secondSummaryList.rows).to.have.length(5);
+
+    expect(secondSummaryList.rows[0].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.date",
+    });
+    expect(secondSummaryList.rows[0].value.text).to.equal("30 July 2026");
+
+    expect(secondSummaryList.rows[1].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.actualNetValue",
+    });
+    expect(secondSummaryList.rows[1].value.text).to.equal("£456.00");
+
+    expect(secondSummaryList.rows[2].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.doesVatApply",
+    });
+    expect(secondSummaryList.rows[2].value.text).to.deep.equal({
+      key: "common.yes",
+    });
+
+    expect(secondSummaryList.rows[3].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.feeEarnerName",
+    });
+    expect(secondSummaryList.rows[3].value.text).to.equal("Joe Bloggs");
+
+    expect(secondSummaryList.rows[4].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.description",
+    });
+    expect(secondSummaryList.rows[4].value.text).to.equal("Line item 2");
   });
 });

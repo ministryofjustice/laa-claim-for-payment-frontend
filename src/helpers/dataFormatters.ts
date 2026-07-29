@@ -11,16 +11,12 @@ import type { BooleanChoice } from "#src/models/booleanChoice.js";
  * @param {Date} date Date object
  * @returns {string} Formatted date in DD/MM/YYYY format (e.g., "06/01/1986")
  */
-export function formatDate(date: Date | null | undefined): string {
-  if (date == null) {
-    return "";
-  } else {
-    const day = date.toLocaleString('en-GB', { day: '2-digit' });
-    const month = date.toLocaleString('en-GB', { month: '2-digit' });
-    const year = date.getFullYear();
+export function formatDate(date: Date): string {
+  const day = date.toLocaleString('en-GB', { day: '2-digit' });
+  const month = date.toLocaleString('en-GB', { month: '2-digit' });
+  const year = date.getFullYear();
 
-    return `${day}/${month}/${year}`;
-  }
+  return `${day}/${month}/${year}`;
 }
 
 /**
@@ -28,16 +24,12 @@ export function formatDate(date: Date | null | undefined): string {
  * @param {Date} date Date object
  * @returns {string} Formatted date in D MMMM YYYY format (e.g., "6 January 1986")
  */
-export function formatDateReadable(date: Date | null | undefined): string {
-  if (date == null) {
-    return "No data available";
-  } else {
-    return date.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  }
+export function formatDateReadable(date: Date): string {
+  return date.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 }
 
 /**
@@ -52,14 +44,10 @@ export function formatClaimId(value: number): string {
 
 /**
  * Format claimed amount for display in table cells and UI components
- * @param {number | undefined} value optional value representing the claimed amount
+ * @param {number} value optional value representing the claimed amount
  * @returns {string} Transformed currency value
  */
-export function formatClaimed(value: number | null | undefined): string {
-  if (value == null) {
-    return "";
-  }
-  
+export function formatClaimed(value: number): string {
   return new Intl.NumberFormat("en-GB", {
     style: "currency",
     currency: "GBP",
@@ -72,11 +60,24 @@ export function formatClaimed(value: number | null | undefined): string {
  * @returns {string} String value or empty if undefined
  */
 export function formatOptionalString(value: string | null | undefined): string {
+  return formatOptionalValue(value, value => value);
+}
+
+/**
+ * Format optional value as a string
+ * @param {string | null | undefined} value Optional string to format
+ * @param {(value) => string} f Function used to format the value.
+ * @returns {string} String value or empty if undefined
+ */
+export function formatOptionalValue<T>(
+  value: T | null | undefined,
+  f: (value: T) => string,
+): string {
   if (value == null) {
     return "";
   }
 
-  return value;
+  return f(value);
 }
 
 /**
@@ -84,9 +85,18 @@ export function formatOptionalString(value: string | null | undefined): string {
  * @param {boolean | null | undefined} value the value to convert
  * @returns {string | undefined} the converted value
  */
-export function formatBoolean(value: boolean | null | undefined): BooleanChoice | undefined {
+export function formatBooleanChoice(value: boolean | null | undefined): BooleanChoice | undefined {
   if (value == null) {
     return undefined;
   }
   return value ? "yes" : "no";
+}
+
+/**
+ * Format boolean in human-readable format for use in radio options
+ * @param {boolean} value the value to convert
+ * @returns {string | undefined} the converted value
+ */
+export function formatBoolean(value: boolean): string {
+  return value ? "common.yes" : "common.no";
 }

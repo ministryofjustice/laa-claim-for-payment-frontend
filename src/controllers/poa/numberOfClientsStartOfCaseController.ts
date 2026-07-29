@@ -12,19 +12,19 @@ const numberOfClientsStartOfCaseChoices: ReadonlyArray<RadioQuestionOptions<Coun
     {
       value: Count.ZERO,
       text: {
-        key: "pages.numberOfClientsStartOfCase.none.text",
+        key: "pages.numberOfClientsStartOfCase.ZERO.text",
       },
     },
     {
       value: Count.ONE,
       text: {
-        key: "pages.numberOfClientsStartOfCase.one.text",
+        key: "pages.numberOfClientsStartOfCase.ONE.text",
       },
     },
     {
       value: Count.TWO_OR_MORE,
       text: {
-        key: "pages.numberOfClientsStartOfCase.moreThanTwo.text",
+        key: "pages.numberOfClientsStartOfCase.TWO_OR_MORE.text",
       },
     },
   ];

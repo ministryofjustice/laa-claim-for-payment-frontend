@@ -72,21 +72,21 @@ describe("numberOfClientsStartOfCaseController", () => {
       {
         value: "ZERO",
         text: {
-          key: "pages.numberOfClientsStartOfCase.none.text"
+          key: "pages.numberOfClientsStartOfCase.ZERO.text"
         },
         checked: false,
       },
       {
         value: "ONE",
         text: {
-          key: "pages.numberOfClientsStartOfCase.one.text"
+          key: "pages.numberOfClientsStartOfCase.ONE.text"
         },
         checked: false,
       },
       {
         value: "TWO_OR_MORE",
         text: {
-          key: "pages.numberOfClientsStartOfCase.moreThanTwo.text"
+          key: "pages.numberOfClientsStartOfCase.TWO_OR_MORE.text"
         },
         checked: false,
       },

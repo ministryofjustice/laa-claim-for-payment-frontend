@@ -4,6 +4,7 @@ import { renderView } from "#tests/unit/src/views/base/renderView.js";
 import { ClaimDto } from "#src/types/Claim.js";
 import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
+import { claim10, claim9 } from "#tests/assets/claim.js";
 
 chaiConfig.truncateThreshold = 0;
 
@@ -38,9 +39,9 @@ describe("views/main/poa/checkDetailsView.njk", () => {
       const table = $("table.govuk-table");
 
       expect(table).to.have.length(1);
-      expect(
-        table.find("caption.govuk-table__caption").text().trim(),
-      ).to.equal("pages.poa.checkYourDetails.assessmentSummary.title");
+      expect(table.find("caption.govuk-table__caption").text().trim()).to.equal(
+        "pages.poa.checkYourDetails.assessmentSummary.title",
+      );
     });
 
     it("renders the assessment summary rows", () => {
@@ -59,36 +60,65 @@ describe("views/main/poa/checkDetailsView.njk", () => {
       );
     });
 
-    it("renders the profit cost details card", () => {
-      const card = $("#profit-cost-details");
+    describe("with profit cost bill line item", () => {
+      const viewModel = new CheckDetailsViewModel(claim9);
 
-      expect(card).to.have.length(1);
+      beforeEach(async () => {
+        $ = await renderView("main/poa/checkDetailsView.njk", {
+          vm: viewModel,
+        });
+      });
 
-      expect(
-        card.find(".govuk-summary-card__title").text().trim(),
-      ).to.equal(
-        "pages.poa.checkYourDetails.cya.profitCostDetails.title",
-      );
+      it("renders the profit cost details card", () => {
+        const card = $("#profit-cost-details");
 
-      expect(
-        card.find(".govuk-summary-list__row")
-      ).to.have.length(7);
+        expect(card).to.have.length(1);
+
+        expect(card.find(".govuk-summary-card__title").text().trim()).to.equal(
+          "pages.poa.checkYourDetails.cya.profitCostDetails.title",
+        );
+
+        expect(card.find(".govuk-summary-list__row")).to.have.length(8);
+      });
+
+      it("renders the profit cost bill line card", () => {
+        const card = $("#profit-cost-bill-line");
+
+        expect(card).to.have.length(1);
+
+        expect(card.find(".govuk-summary-card__title").text().trim()).to.equal(
+          "pages.poa.checkYourDetails.cya.profitCostBillLine.title",
+        );
+
+        expect(card.find(".govuk-summary-list__row")).to.have.length(5);
+      });
     });
 
-    it("renders the profit cost bill line card", () => {
-      const card = $("#profit-cost-bill-line");
+    describe("with expert cost line items", () => {
+      const viewModel = new CheckDetailsViewModel(claim10);
 
-      expect(card).to.have.length(1);
+      beforeEach(async () => {
+        $ = await renderView("main/poa/checkDetailsView.njk", {
+          vm: viewModel,
+        });
+      });
 
-      expect(
-        card.find(".govuk-summary-card__title").text().trim(),
-      ).to.equal(
-        "pages.poa.checkYourDetails.cya.profitCostBillLine.title",
-      );
+      it("renders the expert cost bill line cards", () => {
+        const cards = $('[id^="expert-cost-bill-line-"]').filter((_, el) =>
+          /^expert-cost-bill-line-\d+$/.test($(el).attr("id") ?? "")
+        );
 
-      expect(
-        card.find(".govuk-summary-list__row")
-      ).to.have.length(5);
+        expect(cards.length).to.equal(2);
+
+        cards.each((index, el) => {
+          const card = $(el);
+          expect(card.attr("id")).to.equal(`expert-cost-bill-line-${index + 1}`);
+          expect(
+            card.find(".govuk-summary-card__title").first().text().trim(),
+          ).to.equal("pages.poa.checkYourDetails.cya.expertCostBillLine.title");
+          expect(card.find(".govuk-summary-list__row").length).to.equal(5);
+        });
+      });
     });
 
     describe("with evidence", () => {
@@ -97,20 +127,15 @@ describe("views/main/poa/checkDetailsView.njk", () => {
 
         expect(card).to.have.length(1);
 
-        expect(
-          card.find(".govuk-summary-card__title").text().trim(),
-        ).to.equal(
+        expect(card.find(".govuk-summary-card__title").text().trim()).to.equal(
           "pages.poa.checkYourDetails.cya.evidence.title",
         );
 
-        expect(
-          card.find(".govuk-summary-list__row")
-        ).to.have.length(1);
+        expect(card.find(".govuk-summary-list__row")).to.have.length(1);
       });
     });
 
     describe("without evidence", () => {
-
       const claim: ClaimDto = getClaimsSuccessResponseData.body?.data![2]!;
 
       const viewModel = new CheckDetailsViewModel(claim);
@@ -125,24 +150,6 @@ describe("views/main/poa/checkDetailsView.njk", () => {
         const card = $("#evidence");
 
         expect(card).to.have.length(0);
-      });
-    });
-
-    it("renders the expert cost bill line cards", () => {
-      const cards = $("#expert-cost-bill-line");
-
-      expect(cards.length).to.equal(2);
-
-      cards.each((_, el) => {
-        const card = $(el);
-        expect(
-          card.find(".govuk-summary-card__title").first().text().trim()
-        ).to.equal(
-          "pages.poa.checkYourDetails.cya.expertCostBillLine.title"
-        );
-        expect(
-          card.find(".govuk-summary-list__row").length
-        ).to.equal(5);
       });
     });
   });

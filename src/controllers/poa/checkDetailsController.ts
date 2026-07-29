@@ -19,7 +19,7 @@ export async function checkYourDetailsPage(
 ): Promise<void> {
   try {
     const claimId = UUID.parse(req.params.claimId);
-    const response = await claimService.getClaim(req.axiosMiddleware, claimId);
+    const response = await claimService.getDraftClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {
       const { body: { value: claim } } = response;

@@ -14,19 +14,19 @@ const howManyClientsRetainedChoices: ReadonlyArray<RadioQuestionOptions<Count>> 
     {
       value: Count.ZERO,
       text: {
-        key: "pages.howManyClientsRetained.none.text",
+        key: "pages.howManyClientsRetained.ZERO.text",
       },
     },
     {
       value: Count.ONE,
       text: {
-        key: "pages.howManyClientsRetained.one.text",
+        key: "pages.howManyClientsRetained.ONE.text",
       },
     },
     {
       value: Count.TWO_OR_MORE,
       text: {
-        key: "pages.howManyClientsRetained.moreThanTwo.text",
+        key: "pages.howManyClientsRetained.TWO_OR_MORE.text",
       },
     },
   ];
