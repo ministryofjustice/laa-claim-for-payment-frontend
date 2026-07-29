@@ -9,7 +9,7 @@ import {
 } from "#src/controllers/poa/expertCostDetailsController.js";
 import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { Category } from "#src/types/Claim.js";
+import { Category, CostType } from "#src/types/Claim.js";
 
 describe("expertCostDetailsController", () => {
   let res: Response;
@@ -144,11 +144,14 @@ describe("expertCostDetailsController", () => {
     expect(createLineItemStub.firstCall.args[1]).to.deep.equal(claimId);
 
     expect(createLineItemStub.firstCall.args[2]).to.deep.equal({
-      activityDate: new Date(2007, 2, 27),
-      actualNetValue: 123.45,
-      vatApplies: true,
-      feeEarnerName: "John Smith",
-      description: "Lorem ipsum",
+      type: CostType.EXPERT_COST,
+      value: {
+        activityDate: new Date(2007, 2, 27),
+        actualNetValue: 123.45,
+        vatApplies: true,
+        feeEarnerName: "John Smith",
+        description: "Lorem ipsum",
+      },
     });
 
     expect(
@@ -191,11 +194,14 @@ describe("expertCostDetailsController", () => {
     expect(updateLineItemStub.firstCall.args[2]).to.deep.equal(lineItemId);
 
     expect(updateLineItemStub.firstCall.args[3]).to.deep.equal({
-      activityDate: new Date(2007, 2, 27),
-      actualNetValue: 123.45,
-      vatApplies: true,
-      feeEarnerName: "John Smith",
-      description: "Lorem ipsum",
+      type: CostType.EXPERT_COST,
+      value: {
+        activityDate: new Date(2007, 2, 27),
+        actualNetValue: 123.45,
+        vatApplies: true,
+        feeEarnerName: "John Smith",
+        description: "Lorem ipsum",
+      },
     });
 
     expect(

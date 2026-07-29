@@ -10,7 +10,7 @@ import {
   ExpertCostLineItemSchema,
   ProfitCostBillLineItemSchema,
 } from "#src/types/Claim.js";
-import { ExpertCostDetails } from "#src/types/poa.js";
+import { ExpertCostDetails, LineItemForm } from "#src/types/poa.js";
 
 describe("Claim Service", () => {
   afterEach(() => {
@@ -79,7 +79,7 @@ describe("Claim Service", () => {
           query: {
             limit: 10,
             page: 2,
-            status: "SUBMITTED"
+            status: "SUBMITTED",
           },
         }),
       );
@@ -634,8 +634,7 @@ describe("Claim Service", () => {
         createClient: sinon.stub().returns({}),
         addLineItemToClaim: sinon.stub().resolves({
           headers: {
-            location:
-              `/api/v1/claims/${claimId.toString()}/line-items/${lineItemId.toString()}`,
+            location: `/api/v1/claims/${claimId.toString()}/line-items/${lineItemId.toString()}`,
           },
         }),
       };
@@ -658,8 +657,7 @@ describe("Claim Service", () => {
         createClient: sinon.stub().returns({}),
         addLineItemToClaim: sinon.stub().resolves({
           headers: {
-            location:
-              `/api/v1/claims/${claimId.toString()}/line-items/${lineItemId.toString()}`,
+            location: `/api/v1/claims/${claimId.toString()}/line-items/${lineItemId.toString()}`,
           },
         }),
       };
@@ -668,11 +666,14 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         {
-          activityDate: new Date(),
-          actualNetValue: 123,
-          vatApplies: true,
-          feeEarnerName: "Joe Bloggs",
-          description: "Lorem ipsum"
+          type: CostType.EXPERT_COST,
+          value: {
+            activityDate: new Date(),
+            actualNetValue: 123,
+            vatApplies: true,
+            feeEarnerName: "Joe Bloggs",
+            description: "Lorem ipsum",
+          },
         },
         deps as any,
       );
@@ -692,11 +693,12 @@ describe("Claim Service", () => {
             status: 400,
             data: {
               detail: "Request validation failed.",
-              instance: "/api/v1/claims/019fa7eb-e836-74e8-9eb5-01fa32302a9d/line-items",
+              instance:
+                "/api/v1/claims/019fa7eb-e836-74e8-9eb5-01fa32302a9d/line-items",
               status: 400,
               title: "Invalid request",
               correlationId: "1eef7e2a-fdb9-4b17-8e54-cb32e9fd1eeb",
-              errorCode: "VALIDATION_FAILED"
+              errorCode: "VALIDATION_FAILED",
             },
           },
         }),
@@ -765,8 +767,7 @@ describe("Claim Service", () => {
         createClient: sinon.stub().returns({}),
         addLineItemToClaim: sinon.stub().resolves({
           headers: {
-            location:
-              `/api/v1/claims/${claimId}/line-items/foo`,
+            location: `/api/v1/claims/${claimId}/line-items/foo`,
           },
         }),
       };
@@ -873,7 +874,10 @@ describe("Claim Service", () => {
       sinon.assert.calledWith(
         deps.getLineItem,
         sinon.match({
-          path: { claimId: claimId.toString(), lineItemId: lineItemId.toString() },
+          path: {
+            claimId: claimId.toString(),
+            lineItemId: lineItemId.toString(),
+          },
           query: { status: "DRAFT" },
         }),
       );
@@ -923,7 +927,10 @@ describe("Claim Service", () => {
       sinon.assert.calledWith(
         deps.getLineItem,
         sinon.match({
-          path: { claimId: claimId.toString(), lineItemId: lineItemId.toString() },
+          path: {
+            claimId: claimId.toString(),
+            lineItemId: lineItemId.toString(),
+          },
           query: { status: "DRAFT" },
         }),
       );
@@ -1058,13 +1065,17 @@ describe("Claim Service", () => {
   });
 
   describe("updateLineItem", () => {
-
     const lineItem: ExpertCostDetails = {
       activityDate: new Date(Date.UTC(2026, 6, 28)),
       actualNetValue: 123.45,
       vatApplies: true,
       feeEarnerName: "Joe Bloggs",
-      description: "Lorem ipsum"
+      description: "Lorem ipsum",
+    };
+
+    const lineItemForm: LineItemForm = {
+      type: CostType.EXPERT_COST,
+      value: lineItem,
     };
 
     it("returns success", async () => {
@@ -1077,7 +1088,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        lineItem,
+        lineItemForm,
         deps as any,
       );
 
@@ -1115,7 +1126,8 @@ describe("Claim Service", () => {
             status: 400,
             data: {
               detail: "Request validation failed.",
-              instance: "/api/v1/claims/019f7fd6-c3d1-7706-b518-6bdd409550c1/line-items/019fa90f-346f-7051-9e40-1bf1c2b53217",
+              instance:
+                "/api/v1/claims/019f7fd6-c3d1-7706-b518-6bdd409550c1/line-items/019fa90f-346f-7051-9e40-1bf1c2b53217",
               status: 400,
               title: "Invalid request",
               correlationId: "431063e8-a19a-4991-bc76-78232c54b8e2",
@@ -1129,7 +1141,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        lineItem,
+        lineItemForm,
         deps as any,
       )) as ApiError;
 
@@ -1150,7 +1162,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        lineItem,
+        lineItemForm,
         deps as any,
       );
 

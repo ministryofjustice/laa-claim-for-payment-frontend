@@ -7,10 +7,17 @@ import {
   CourtType,
 } from "#src/types/Claim.js";
 import { V7Generator } from "uuidv7";
-import { toClaimRequestBody, toLineItemRequestBody } from "#src/mappers/claimMapper.js";
+import {
+  toClaimRequestBody,
+  toLineItemRequestBody,
+} from "#src/mappers/claimMapper.js";
 import { expect } from "chai";
 import { describe } from "mocha";
-import { ExpertCostDetails, ProfitCostBillLine } from "#src/types/poa.js";
+import {
+  ExpertCostDetails,
+  LineItemForm,
+  ProfitCostBillLine,
+} from "#src/types/poa.js";
 
 describe("ClaimMapper", () => {
   const claimId = new V7Generator().generate();
@@ -76,7 +83,12 @@ describe("ClaimMapper", () => {
         description: "Lorem ipsum",
       };
 
-      const result = toLineItemRequestBody(lineItem);
+      const form: LineItemForm = {
+        type: CostType.EXPERT_COST,
+        value: lineItem,
+      };
+
+      const result = toLineItemRequestBody(form);
 
       expect(result.date).to.equal("2026-03-12T00:00:00.000Z");
       expect(result.actualNetValue).to.equal(123);
@@ -94,14 +106,19 @@ describe("ClaimMapper", () => {
         feeEarnerName: "Joe Bloggs",
       };
 
-      const result = toLineItemRequestBody(lineItem);
+      const form: LineItemForm = {
+        type: CostType.PROFIT_COST,
+        value: lineItem,
+      };
+
+      const result = toLineItemRequestBody(form);
 
       expect(result.date).to.equal("2026-03-12T00:00:00.000Z");
       expect(result.netProfitCostAmount).to.equal(123);
       expect(result.netAdvocacyCostAmount).to.equal(456);
       expect(result.vatApplicable).to.equal(true);
       expect(result.feeEarnerName).to.equal("Joe Bloggs");
-      expect(result.title).to.equal(undefined);
+      expect(result.title).to.equal("TODO");
     });
   });
 });

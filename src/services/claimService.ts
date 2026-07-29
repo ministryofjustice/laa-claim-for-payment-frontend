@@ -25,7 +25,7 @@ import {
   toClaimRequestBody,
   toLineItemRequestBody,
 } from "#src/mappers/claimMapper.js";
-import type { ExpertCostDetails, ProfitCostBillLine } from "#src/types/poa.js";
+import type { LineItemForm } from "#src/types/poa.js";
 import type { AxiosResponse } from "axios";
 import type { ZodType } from "zod";
 
@@ -246,14 +246,14 @@ class ClaimService {
    *
    * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
    * @param {UUID} claimId - Claim ID.
-   * @param {ExpertCostDetails | ProfitCostBillLine} lineItem - Line item.
+   * @param {LineItemForm} lineItemForm - Line item form.
    * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
    * @returns {Promise<ApiResponse<null>>} App response format.
    */
   static async addLineItemToClaim(
     axiosMiddleware: AxiosInstanceWrapper,
     claimId: UUID,
-    lineItem?: ExpertCostDetails | ProfitCostBillLine,
+    lineItemForm?: LineItemForm,
     deps: ClaimServiceDeps = defaultDeps,
   ): Promise<ApiResponse<UUID>> {
     const apiClient = deps.createClient({
@@ -266,7 +266,7 @@ class ClaimService {
       const response = await deps.addLineItemToClaim<true>({
         path: { claimId: claimId.toString() },
         query: { status: "DRAFT" },
-        body: lineItem == null ? {} : toLineItemRequestBody(lineItem),
+        body: lineItemForm == null ? {} : toLineItemRequestBody(lineItemForm),
         client: apiClient,
       });
 
@@ -328,7 +328,7 @@ class ClaimService {
    * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
    * @param {UUID} claimId - Claim identifier.
    * @param {UUID} lineItemId - Line item identifier.
-   * @param {ExpertCostDetails | ProfitCostBillLine} lineItem - Line item.
+   * @param {LineItemForm} lineItemForm - Line item form.
    * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
    * @returns {Promise<ApiResponse<null>>} App response format.
    */
@@ -337,7 +337,7 @@ class ClaimService {
     axiosMiddleware: AxiosInstanceWrapper,
     claimId: UUID,
     lineItemId: UUID,
-    lineItem: ExpertCostDetails | ProfitCostBillLine,
+    lineItemForm: LineItemForm,
     deps: ClaimServiceDeps = defaultDeps,
   ): Promise<ApiResponse<null>> {
     const apiClient = deps.createClient({
@@ -353,7 +353,7 @@ class ClaimService {
           lineItemId: lineItemId.toString(),
         },
         query: { status: "DRAFT" },
-        body: toLineItemRequestBody(lineItem),
+        body: toLineItemRequestBody(lineItemForm),
         client: apiClient,
       });
 
