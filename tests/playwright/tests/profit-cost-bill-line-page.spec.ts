@@ -1,13 +1,16 @@
 import { expect, test } from "../fixtures/index.js";
 import { ProfitCostBillLinePage } from "#tests/playwright/pages/ProfitCostBillLinePage.js";
-import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
+import { profitCostDraftClaim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("Profit cost bill line page", () => {
   test("displays the profit cost bill line page", async ({
     page,
     checkAccessibility,
   }) => {
-    const profitCostBillLinePage = new ProfitCostBillLinePage(page, claim1Id);
+    const profitCostBillLinePage = new ProfitCostBillLinePage(
+      page,
+      profitCostDraftClaim1Id,
+    );
 
     await profitCostBillLinePage.navigate();
     await profitCostBillLinePage.waitForLoad();
@@ -19,7 +22,9 @@ test.describe("Profit cost bill line page", () => {
     await expect(
       profitCostBillLinePage.actualNetProfitCostExcludingAdvocacyInput,
     ).toBeVisible();
-    await expect(profitCostBillLinePage.actualNetAdvocacyCostsInput).toBeVisible();
+    await expect(
+      profitCostBillLinePage.actualNetAdvocacyCostsInput,
+    ).toBeVisible();
     await expect(profitCostBillLinePage.vatYesRadio).toBeVisible();
     await expect(profitCostBillLinePage.vatNoRadio).toBeVisible();
     await expect(profitCostBillLinePage.feeEarnerNameInput).toBeVisible();
@@ -31,7 +36,10 @@ test.describe("Profit cost bill line page", () => {
   test("redirects to POA evidence upload when valid form is submitted", async ({
     page,
   }) => {
-    const profitCostBillLinePage = new ProfitCostBillLinePage(page, claim1Id);
+    const profitCostBillLinePage = new ProfitCostBillLinePage(
+      page,
+      profitCostDraftClaim1Id,
+    );
 
     await profitCostBillLinePage.navigate();
     await profitCostBillLinePage.waitForLoad();
@@ -40,12 +48,17 @@ test.describe("Profit cost bill line page", () => {
     await profitCostBillLinePage.saveAndContinueButton.click();
 
     await expect(page).toHaveURL(
-      new RegExp(`/claims/${claim1Id}/poa/evidence-upload$`)
+      new RegExp(`/claims/${profitCostDraftClaim1Id}/poa/evidence-upload$`),
     );
   });
 
-  test("shows validation errors when empty form is submitted", async ({ page }) => {
-    const profitCostBillLinePage = new ProfitCostBillLinePage(page, claim1Id);
+  test("shows validation errors when empty form is submitted", async ({
+    page,
+  }) => {
+    const profitCostBillLinePage = new ProfitCostBillLinePage(
+      page,
+      profitCostDraftClaim1Id,
+    );
 
     await profitCostBillLinePage.navigate();
     await profitCostBillLinePage.waitForLoad();
