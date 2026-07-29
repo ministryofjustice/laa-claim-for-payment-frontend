@@ -41,6 +41,8 @@ export enum ClientPartyStatus {
   PARENT = 'PARENT',
 }
 
+const NullOrUndefinedSchema = z.union([z.null(), z.undefined()]);
+
 const BaseLineItemSchema = z.object({
   id: z.uuidv7(),
   title: z.string(),
@@ -59,11 +61,14 @@ const PoaLineItemSchema = BaseLineItemSchema.extend({
 
 export const ExpertCostLineItemSchema = PoaLineItemSchema.extend({
   actualNetValue: z.number(),
+  netProfitCostAmount: NullOrUndefinedSchema,
+  netAdvocacyCostAmount: NullOrUndefinedSchema,
 }).strict();
 
 export const ProfitCostBillLineItemSchema = PoaLineItemSchema.extend({
   netProfitCostAmount: z.number(),
   netAdvocacyCostAmount: z.number(),
+  actualNetValue: NullOrUndefinedSchema,
 }).strict();
 
 export const LineItemSchema = z.union([
