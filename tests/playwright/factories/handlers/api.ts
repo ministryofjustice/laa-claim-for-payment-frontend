@@ -87,13 +87,13 @@ export const apiHandlers = [
       throw new Error("URL missing a valid string id param.");
     }
     console.log("🧩 MSW matched: GET /api/v1/claims/%s", claimId);
-    if (claimId === claim2Id.toString()) {
-      return HttpResponse.error();
-    } else if (claimId === profitCostDraftClaim1Id.toString()) {
-      return HttpResponse.json(profitCostDraftClaim1);
-    } else {
-      const claim = makeFakeClaim(UUID.parse(claimId));
-      return HttpResponse.json(claim);
+    switch (claimId) {
+      case claim2Id.toString():
+        return HttpResponse.error();
+      case profitCostDraftClaim1Id.toString():
+        return HttpResponse.json(profitCostDraftClaim1);
+      default:
+        return HttpResponse.json(makeFakeClaim(UUID.parse(claimId)));
     }
   }),
 
