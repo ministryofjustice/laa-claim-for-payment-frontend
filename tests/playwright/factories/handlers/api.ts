@@ -7,13 +7,17 @@ export const claim3Id = UUID.parse("019f5ba6-6849-7214-9436-af6269d2d0fd");
 export const lineItemId = UUID.parse("019f6098-0f50-7f43-9508-7f5da5817a72");
 export const evidenceId = UUID.parse("019f6098-3305-70be-82c6-e4b74c5749d0");
 
+export const profitCostDraftClaim1Id = UUID.parse(
+  "019faf99-e88a-71f7-b467-cd3aa9f643aa",
+);
+
 /**
  * create a stub claim helper method
  * @param { UUID } id id of the claim to create
  * @param { object } overrides any overrides to be
  * @returns { object } object for stubbed API response
  */
-export function makeFakeClaim(id: UUID, overrides = {}): object {
+function makeFakeClaim(id: UUID, overrides = {}): object {
   return {
     id,
     client: "Giordano",
@@ -35,6 +39,21 @@ export function makeFakeClaim(id: UUID, overrides = {}): object {
     ...overrides,
   };
 }
+
+const profitCostDraftClaim1: object = {
+  id: profitCostDraftClaim1Id.toString(),
+  costType: "PROFIT_COST",
+  courtType: "COUNTY_COURT",
+  clientPartyStatus: "CHILD",
+  firstActingSolicitorFlag: true,
+  transferOfSolicitorFlag: false,
+  clientsRetainedCount: "ZERO",
+  clientsStartCount: "ONE",
+  multiClientHearingFlag: true,
+  escaped: true,
+  lineItems: [],
+  evidence: [],
+};
 
 /**
  * API handlers that intercept outbound requests from the Express app
@@ -70,6 +89,8 @@ export const apiHandlers = [
     console.log("🧩 MSW matched: GET /api/v1/claims/%s", claimId);
     if (claimId === claim2Id.toString()) {
       return HttpResponse.error();
+    } else if (claimId === profitCostDraftClaim1Id.toString()) {
+      return HttpResponse.json(profitCostDraftClaim1);
     } else {
       const claim = makeFakeClaim(UUID.parse(claimId));
       return HttpResponse.json(claim);
