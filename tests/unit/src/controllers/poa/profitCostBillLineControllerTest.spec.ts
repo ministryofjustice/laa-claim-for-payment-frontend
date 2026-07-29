@@ -123,7 +123,7 @@ describe("profitCostBillLineController", () => {
     expect(renderArgs.vm.form.feeEarnerName.value).to.equal("Joe Bloggs");
   });
 
-  it("redirects to POA evidence upload when form is valid", async () => {
+  it("creates line item when it doesn't already exist", async () => {
     const req = {
       params: {
         claimId: claimId.toString(),
@@ -156,17 +156,9 @@ describe("profitCostBillLineController", () => {
         feeEarnerName: "John Smith",
       },
     });
-
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, {
-          claimId: claimId,
-        }),
-      ),
-    ).to.equal(true);
   });
 
-  it("redirects to POA evidence upload when line item exists and form is valid", async () => {
+  it("updates line item when it does already exist", async () => {
     const req = {
       params: {
         claimId: claimId.toString(),
@@ -200,10 +192,121 @@ describe("profitCostBillLineController", () => {
         feeEarnerName: "John Smith",
       },
     });
+  });
+
+  it("redirects to POA evidence upload when escaping standard fixed fee", async () => {
+    const req = {
+      params: {
+        claimId: claimId.toString(),
+      },
+      body: {
+        activityDateDay: "27",
+        activityDateMonth: "3",
+        activityDateYear: "2007",
+        actualNetProfitCostExcludingAdvocacy: "123.45",
+        actualNetAdvocacyCosts: "156.00",
+        vatApplies: "yes",
+        feeEarnerName: "John Smith",
+      },
+    } as unknown as Request;
+
+    createLineItemStub.resolves({
+      status: "success",
+      body: null,
+    });
+
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+        escaped: true,
+      }),
+    });
+
+    await submitProfitCostBillLine(req, res, next);
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
         buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, {
+          claimId: claimId,
+        }),
+      ),
+    ).to.equal(true);
+  });
+
+  it("redirects to CYA when not escaping standard fixed fee", async () => {
+    const req = {
+      params: {
+        claimId: claimId.toString(),
+      },
+      body: {
+        activityDateDay: "27",
+        activityDateMonth: "3",
+        activityDateYear: "2007",
+        actualNetProfitCostExcludingAdvocacy: "123.45",
+        actualNetAdvocacyCosts: "156.00",
+        vatApplies: "yes",
+        feeEarnerName: "John Smith",
+      },
+    } as unknown as Request;
+
+    createLineItemStub.resolves({
+      status: "success",
+      body: null,
+    });
+
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+        escaped: false,
+      }),
+    });
+
+    await submitProfitCostBillLine(req, res, next);
+
+    expect(
+      (res.redirect as sinon.SinonStub).calledWith(
+        buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, {
+          claimId: claimId,
+        }),
+      ),
+    ).to.equal(true);
+  });
+
+  it("redirects to escape yes/no when that question is unanswered", async () => {
+    const req = {
+      params: {
+        claimId: claimId.toString(),
+      },
+      body: {
+        activityDateDay: "27",
+        activityDateMonth: "3",
+        activityDateYear: "2007",
+        actualNetProfitCostExcludingAdvocacy: "123.45",
+        actualNetAdvocacyCosts: "156.00",
+        vatApplies: "yes",
+        feeEarnerName: "John Smith",
+      },
+    } as unknown as Request;
+
+    createLineItemStub.resolves({
+      status: "success",
+      body: null,
+    });
+
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
+
+    await submitProfitCostBillLine(req, res, next);
+
+    expect(
+      (res.redirect as sinon.SinonStub).calledWith(
+        buildRoute(ROUTES.ESCAPING_FIXED_FEE, {
           claimId: claimId,
         }),
       ),

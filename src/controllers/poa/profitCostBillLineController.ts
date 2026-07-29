@@ -42,7 +42,8 @@ export async function profitCostBillLine(
           activityDateDay: lineItem.date.getDate().toString(),
           activityDateMonth: (lineItem.date.getMonth() + 1).toString(),
           activityDateYear: lineItem.date.getFullYear().toString(),
-          actualNetProfitCostExcludingAdvocacy: lineItem.netProfitCostAmount.toString(),
+          actualNetProfitCostExcludingAdvocacy:
+            lineItem.netProfitCostAmount.toString(),
           actualNetAdvocacyCosts: lineItem.netAdvocacyCostAmount.toString(),
           vatApplies: formatBoolean(lineItem.vatApplicable),
           feeEarnerName: lineItem.feeEarnerName,
@@ -127,11 +128,31 @@ export async function submitProfitCostBillLine(
       );
     }
 
-    res.redirect(
-      buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, {
-        claimId,
-      }),
+    const claim = await claimService.getDraftClaim(
+      req.axiosMiddleware,
+      claimId,
     );
+
+    if (claim.status === "success") {
+      // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- Ignore.
+      const escaped = claim.body.escapedFlag;
+
+      const route =
+        escaped === true
+          ? ROUTES.POA_EVIDENCE_UPLOAD
+          : escaped === false
+            ? ROUTES.POA_CHECK_YOUR_DETAILS
+            : ROUTES.ESCAPING_FIXED_FEE;
+
+      res.redirect(buildRoute(route, { claimId })); 
+    } else {
+      next(
+        processApiError(
+          claim,
+          "retrieving claim for submitting profit cost bill line page",
+        ),
+      );
+    }
   } catch (error) {
     next(processError(error, "submitting profit cost bill line page"));
   }
