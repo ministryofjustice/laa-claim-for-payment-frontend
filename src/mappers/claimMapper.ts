@@ -1,6 +1,6 @@
-import { Category, type Claim } from "#src/types/Claim.js";
+import { Category, type Claim, CostType } from "#src/types/Claim.js";
 import type { ClaimRequestBody, LineItemRequestBody } from "#src/generated/claim-api/index.js";
-import type { ExpertCostDetails, ProfitCostBillLine } from "#src/types/poa.js";
+import type { LineItemForm } from "#src/types/poa.js";
 
 /**
  * Maps a UI claim model to a backend claim model
@@ -25,30 +25,31 @@ export function toClaimRequestBody(claim: Claim): ClaimRequestBody {
 /**
  * Maps a UI line item model to a backend line item model
  *
- * @param {ExpertCostDetails | ProfitCostBillLine} value the UI line item model
+ * @param {LineItemForm} form the UI line item form model
  * @returns {LineItemRequestBody} the backend line item model
  */
 export function toLineItemRequestBody(
-  value: ExpertCostDetails | ProfitCostBillLine,
+  form: LineItemForm,
 ): LineItemRequestBody {
-  if ("description" in value) {
-    return {
-      title: value.description,
-      category: Category.DISBURSEMENT.toString(),
-      date: value.activityDate.toISOString(),
-      actualNetValue: value.actualNetValue,
-      vatApplicable: value.vatApplies,
-      feeEarnerName: value.feeEarnerName,
-    };
-  } else {
-    return {
-      title: "TODO", // TODO - what should this be?
-      category: Category.DISBURSEMENT.toString(),
-      date: value.activityDate.toISOString(),
-      netProfitCostAmount: value.actualNetProfitCostExcludingAdvocacy,
-      netAdvocacyCostAmount: value.actualNetAdvocacyCosts,
-      vatApplicable: value.vatApplies,
-      feeEarnerName: value.feeEarnerName,
-    };
+  switch (form.type) {
+    case CostType.EXPERT_COST:
+      return {
+        title: form.value.description,
+        category: Category.DISBURSEMENT.toString(),
+        date: form.value.activityDate.toISOString(),
+        actualNetValue: form.value.actualNetValue,
+        vatApplicable: form.value.vatApplies,
+        feeEarnerName: form.value.feeEarnerName,
+      }
+    case CostType.PROFIT_COST:
+      return {
+        title: "TODO", // TODO - what should this be?
+        category: Category.DISBURSEMENT.toString(),
+        date: form.value.activityDate.toISOString(),
+        netProfitCostAmount: form.value.actualNetProfitCostExcludingAdvocacy,
+        netAdvocacyCostAmount: form.value.actualNetAdvocacyCosts,
+        vatApplicable: form.value.vatApplies,
+        feeEarnerName: form.value.feeEarnerName,
+      }
   }
 }

@@ -9,7 +9,7 @@ import {
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { Category, Claim } from "#src/types/Claim.js";
+import { Category, Claim, CostType } from "#src/types/Claim.js";
 
 describe("profitCostBillLineController", () => {
   let res: Response;
@@ -91,8 +91,8 @@ describe("profitCostBillLineController", () => {
             netAdvocacyCostAmount: 456,
             vatApplicable: false,
             feeEarnerName: "Joe Bloggs",
-          }
-        ]
+          },
+        ],
       }),
     });
 
@@ -112,7 +112,9 @@ describe("profitCostBillLineController", () => {
     expect(renderArgs.vm.form.activityDate.value.day).to.equal("4");
     expect(renderArgs.vm.form.activityDate.value.month).to.equal("1");
     expect(renderArgs.vm.form.activityDate.value.year).to.equal("2024");
-    expect(renderArgs.vm.form.actualNetProfitCostExcludingAdvocacy.value).to.equal("123");
+    expect(
+      renderArgs.vm.form.actualNetProfitCostExcludingAdvocacy.value,
+    ).to.equal("123");
     expect(renderArgs.vm.form.actualNetAdvocacyCosts.value).to.equal("456");
     expect(renderArgs.vm.form.vatApplies.choices[0].value).to.equal("yes");
     expect(renderArgs.vm.form.vatApplies.choices[0].checked).to.equal(false);
@@ -145,11 +147,14 @@ describe("profitCostBillLineController", () => {
     await submitProfitCostBillLine(req, res, next);
 
     expect(createLineItemStub.firstCall.args[2]).to.deep.equal({
-      activityDate: new Date(2007, 2, 27),
-      actualNetProfitCostExcludingAdvocacy: 123.45,
-      actualNetAdvocacyCosts: 156,
-      vatApplies: true,
-      feeEarnerName: "John Smith",
+      type: CostType.PROFIT_COST,
+      value: {
+        activityDate: new Date(2007, 2, 27),
+        actualNetProfitCostExcludingAdvocacy: 123.45,
+        actualNetAdvocacyCosts: 156,
+        vatApplies: true,
+        feeEarnerName: "John Smith",
+      },
     });
 
     expect(
@@ -186,11 +191,14 @@ describe("profitCostBillLineController", () => {
     await submitProfitCostBillLine(req, res, next);
 
     expect(updateLineItemStub.firstCall.args[3]).to.deep.equal({
-      activityDate: new Date(2007, 2, 27),
-      actualNetProfitCostExcludingAdvocacy: 123.45,
-      actualNetAdvocacyCosts: 156,
-      vatApplies: true,
-      feeEarnerName: "John Smith",
+      type: CostType.PROFIT_COST,
+      value: {
+        activityDate: new Date(2007, 2, 27),
+        actualNetProfitCostExcludingAdvocacy: 123.45,
+        actualNetAdvocacyCosts: 156,
+        vatApplies: true,
+        feeEarnerName: "John Smith",
+      },
     });
 
     expect(

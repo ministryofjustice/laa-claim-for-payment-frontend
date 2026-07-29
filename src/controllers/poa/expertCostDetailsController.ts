@@ -10,7 +10,8 @@ import { getForm } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { formatBoolean } from "#src/helpers/dataFormatters.js";
-import { type ExpertCostLineItem, ExpertCostLineItemSchema } from "#src/types/Claim.js";
+import { CostType, type ExpertCostLineItem, ExpertCostLineItemSchema } from "#src/types/Claim.js";
+import type { LineItemForm } from "#src/types/poa.js";
 
 /**
  * Display POA expert cost details page.
@@ -107,18 +108,23 @@ export async function submitExpertCostDetails(
       return;
     }
 
+    const lineItemForm: LineItemForm = {
+      type: CostType.EXPERT_COST,
+      value: validationResult.value,
+    };
+
     if (lineItemId == null) {
       await claimService.addLineItemToClaim(
         req.axiosMiddleware,
         claimId,
-        validationResult.value,
+        lineItemForm,
       );
     } else {
       await claimService.updateLineItem(
         req.axiosMiddleware,
         claimId,
         lineItemId,
-        validationResult.value,
+        lineItemForm,
       );
     }
 

@@ -7,7 +7,8 @@ import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { getForm } from "#src/helpers/validation.js";
 import { formatBoolean } from "#src/helpers/dataFormatters.js";
-import type { ProfitCostBillLineItem } from "#src/types/Claim.js";
+import { CostType, type ProfitCostBillLineItem } from "#src/types/Claim.js";
+import type { LineItemForm } from "#src/types/poa.js";
 
 /**
  * Display POA CPGFS profit cost bill line page.
@@ -106,18 +107,23 @@ export async function submitProfitCostBillLine(
       return;
     }
 
+    const lineItemForm: LineItemForm = {
+      type: CostType.PROFIT_COST,
+      value: validationResult.value,
+    };
+
     if (lineItemId == null) {
       await claimService.addLineItemToClaim(
         req.axiosMiddleware,
         claimId,
-        validationResult.value,
+        lineItemForm,
       );
     } else {
       await claimService.updateLineItem(
         req.axiosMiddleware,
         claimId,
         lineItemId,
-        validationResult.value,
+        lineItemForm,
       );
     }
 
