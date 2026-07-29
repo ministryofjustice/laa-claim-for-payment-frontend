@@ -3,17 +3,14 @@ import { processApiError, processError } from "#src/helpers/index.js";
 import type { NextFunction, Request, Response } from "express";
 import {
   ExpertCostDetailsViewModel,
-  type ExpertCostDetailsViewModelParams,
+  type ExpertCostDetailsViewModelParams
 } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
-import {
-  type ExpertCostDetailsForm,
-  validateExpertCostDetails,
-} from "#src/helpers/expertCostDetailsValidation.js";
+import { type ExpertCostDetailsForm, validateExpertCostDetails } from "#src/helpers/expertCostDetailsValidation.js";
 import { getForm } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { formatBoolean } from "#src/helpers/dataFormatters.js";
-import { ExpertCostLineItemSchema } from "#src/types/Claim.js";
+import { type ExpertCostLineItem, ExpertCostLineItemSchema } from "#src/types/Claim.js";
 
 /**
  * Display POA expert cost details page.
@@ -34,7 +31,7 @@ export async function expertCostDetails(
     let form: ExpertCostDetailsForm = {};
 
     if (lineItemId != null) {
-      const lineItem = await claimService.getLineItem(
+      const lineItem = await claimService.getLineItem<ExpertCostLineItem>(
         req.axiosMiddleware,
         claimId,
         lineItemId,

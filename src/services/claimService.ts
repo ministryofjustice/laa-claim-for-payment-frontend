@@ -16,6 +16,7 @@ import {
   type ClaimDto,
   ClaimResponseSchema,
   ClaimsResponseSchema,
+  type LineItem,
 } from "#src/types/Claim.js";
 import config from "../../config.js";
 import { UUID } from "uuidv7";
@@ -289,7 +290,7 @@ class ClaimService {
    * @returns {Promise<ApiResponse>} Parsed line item response in app response format.
    */
   // eslint-disable-next-line @typescript-eslint/max-params -- ignore
-  static async getLineItem<T>(
+  static async getLineItem<T extends LineItem>(
     axiosMiddleware: AxiosInstanceWrapper,
     claimId: UUID,
     lineItemId: UUID,

@@ -68,6 +68,8 @@ export const LineItemSchema = z.union([
   ProfitCostBillLineItemSchema,
 ]);
 
+export type ExpertCostLineItem = z.infer<typeof ExpertCostLineItemSchema>;
+export type ProfitCostBillLineItem = z.infer<typeof ProfitCostBillLineItemSchema>;
 export type LineItem = z.infer<typeof LineItemSchema>;
 
 export const ClaimResponseSchema = z.object({
