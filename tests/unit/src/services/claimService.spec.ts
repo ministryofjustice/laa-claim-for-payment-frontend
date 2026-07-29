@@ -840,6 +840,8 @@ describe("Claim Service", () => {
             date: "2024-01-02T10:00:00Z",
             evidenceItems: [],
             actualNetValue: 123,
+            feeEarnerName: "Joe Bloggs",
+            vatApplicable: true,
           },
         }),
       };
@@ -860,6 +862,8 @@ describe("Claim Service", () => {
         date: new Date("2024-01-02T10:00:00Z"),
         evidenceItems: [],
         actualNetValue: 123,
+        feeEarnerName: "Joe Bloggs",
+        vatApplicable: true,
       });
 
       sinon.assert.calledWith(
@@ -883,6 +887,8 @@ describe("Claim Service", () => {
             evidenceItems: [],
             netProfitCostAmount: 123,
             netAdvocacyCostAmount: 456,
+            feeEarnerName: "Joe Bloggs",
+            vatApplicable: true,
           },
         }),
       };
@@ -904,6 +910,8 @@ describe("Claim Service", () => {
         evidenceItems: [],
         netProfitCostAmount: 123,
         netAdvocacyCostAmount: 456,
+        feeEarnerName: "Joe Bloggs",
+        vatApplicable: true,
       });
 
       sinon.assert.calledWith(
