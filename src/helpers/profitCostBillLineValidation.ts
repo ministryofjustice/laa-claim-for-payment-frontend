@@ -1,6 +1,5 @@
 import {
   combine,
-  getForm,
   validateBooleanInput,
   validateDateInput,
   validateMoneyInput,
@@ -24,13 +23,12 @@ const FEE_EARNER_NAME_REGEX = /^[A-Za-z' -]+$/;
 /**
  * Validates the profit cost bill line form.
  *
- * @param {unknown} body Express request body.
+ * @param {ProfitCostBillLineForm} form The profit cost bill line form.
  * @returns {ValidationResult} Validation result.
  */
 export function validateProfitCostBillLine(
-  body: unknown,
+  form: ProfitCostBillLineForm,
 ): ValidationResult<ProfitCostBillLine> {
-  const form = getForm(body) as ProfitCostBillLineForm;
   return combine({
     activityDate: validateActivityDate(form),
     actualNetProfitCostExcludingAdvocacy:

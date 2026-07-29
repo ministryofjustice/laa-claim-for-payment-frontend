@@ -20,6 +20,9 @@
 
     <form method="post">
       <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+      {% if lineItemId %}
+        <input type="hidden" name="lineItemId" value="{{ lineItemId }}">
+      {% endif %}
 
       <h1 class="govuk-heading-l">
         {{ t("pages.profitCostBillLine.title") }}

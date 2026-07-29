@@ -290,16 +290,16 @@ export const buildRouter = (): Router => {
   router.get(
     ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
     limiter,
-    function (req: Request, res: Response, next: NextFunction): void {
-      profitCostBillLine(req, res, next);
+    async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+      await profitCostBillLine(req, res, next);
     },
   );
 
   router.post(
     ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
     limiter,
-    function (req: Request, res: Response, next: NextFunction): void {
-      submitProfitCostBillLine(req, res, next);
+    async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+      await submitProfitCostBillLine(req, res, next);
     },
   );
 
@@ -429,22 +429,6 @@ export const buildRouter = (): Router => {
     limiter,
     function (req: Request, res: Response, next: NextFunction): void {
       submitChooseFileUpload(req, res, next);
-    },
-  );
-
-  router.get(
-    ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
-    limiter,
-    function (req: Request, res: Response, next: NextFunction): void {
-      profitCostBillLine(req, res, next);
-    },
-  );
-
-  router.post(
-    ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
-    limiter,
-    function (req: Request, res: Response, next: NextFunction): void {
-      submitProfitCostBillLine(req, res, next);
     },
   );
 
