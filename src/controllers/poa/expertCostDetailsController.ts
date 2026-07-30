@@ -9,7 +9,7 @@ import { type ExpertCostDetailsForm, validateExpertCostDetails } from "#src/help
 import { getForm } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { formatBoolean } from "#src/helpers/dataFormatters.js";
+import { formatBooleanChoice } from "#src/helpers/dataFormatters.js";
 import { CostType, type ExpertCostLineItem, ExpertCostLineItemSchema } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
 
@@ -45,7 +45,7 @@ export async function expertCostDetails(
           activityDateMonth: (lineItem.body.date.getMonth() + 1).toString(),
           activityDateYear: lineItem.body.date.getFullYear().toString(),
           actualNetValue: lineItem.body.actualNetValue.toString(),
-          vatApplies: formatBoolean(lineItem.body.vatApplicable),
+          vatApplies: formatBooleanChoice(lineItem.body.vatApplicable),
           feeEarnerName: lineItem.body.feeEarnerName,
           description: lineItem.body.title,
         };

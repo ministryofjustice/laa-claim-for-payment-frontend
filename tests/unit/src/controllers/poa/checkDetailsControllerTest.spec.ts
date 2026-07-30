@@ -4,16 +4,16 @@ import * as sinon from "sinon";
 import type { Request, Response } from "express";
 import "#utils/axiosSetup.js";
 import { claimService } from "#src/services/claimService.js";
-import { getClaimSuccessResponseData } from "#tests/assets/getClaimsResponseData.js";
 import { ApiResponse } from "#src/types/api-types.js";
-import { ClaimDto } from "#src/types/Claim.js";
+import { Claim, ClaimDto } from "#src/types/Claim.js";
 import { HttpError } from "http-errors";
 import {
   checkYourDetailsPage,
   submitYourDetails,
 } from "#src/controllers/poa/checkDetailsController.js";
-import { ROUTES } from "#routes/helper.js";
+import { buildRoute, ROUTES } from "#routes/helper.js";
 import { V7Generator } from "uuidv7";
+import { claim9 } from "#tests/assets/claim.js";
 
 describe("Check Details Controller", () => {
   let req: Partial<Request>;
@@ -43,7 +43,7 @@ describe("Check Details Controller", () => {
 
     next = sinon.stub();
 
-    claimServiceStub = sinon.stub(claimService, "getClaim");
+    claimServiceStub = sinon.stub(claimService, "getDraftClaim");
   });
 
   afterEach(() => {
@@ -52,7 +52,10 @@ describe("Check Details Controller", () => {
 
   describe("Check Details controller test", () => {
     it("should render the page with data and correct template", async () => {
-      const mockApiResponse = getClaimSuccessResponseData;
+      const mockApiResponse = {
+        body: new Claim({ ...claim9 }),
+        status: "success",
+      };
 
       claimServiceStub.resolves(mockApiResponse);
 
@@ -61,6 +64,27 @@ describe("Check Details Controller", () => {
       expect(claimServiceStub.calledOnce).to.be.true;
       expect(claimServiceStub.calledWith(req.axiosMiddleware)).to.be.true;
       expect(renderStub.calledWith("main/poa/checkDetailsView.njk")).to.be.true;
+    });
+
+    it("should redirect when cost type missing from claim", async () => {
+      const mockApiResponse = {
+        body: new Claim({
+          id: claimId.toString(),
+        }),
+        status: "success",
+      };
+
+      claimServiceStub.resolves(mockApiResponse);
+
+      await checkYourDetailsPage(req as Request, res as Response, next);
+
+      expect(
+        (res.redirect as sinon.SinonStub).calledWith(
+          buildRoute(ROUTES.POA_CLAIM_TYPE, {
+            claimId: claimId,
+          }),
+        ),
+      ).to.be.true;
     });
 
     it("should redirect to appropriate page when no claim is returned", async () => {

@@ -6,7 +6,7 @@ import type { NextFunction, Request, Response } from "express";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { getForm } from "#src/helpers/validation.js";
-import { formatBoolean } from "#src/helpers/dataFormatters.js";
+import { formatBooleanChoice } from "#src/helpers/dataFormatters.js";
 import { CostType, type ProfitCostBillLineItem } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
 
@@ -45,7 +45,7 @@ export async function profitCostBillLine(
           actualNetProfitCostExcludingAdvocacy:
             lineItem.netProfitCostAmount.toString(),
           actualNetAdvocacyCosts: lineItem.netAdvocacyCostAmount.toString(),
-          vatApplies: formatBoolean(lineItem.vatApplicable),
+          vatApplies: formatBooleanChoice(lineItem.vatApplicable),
           feeEarnerName: lineItem.feeEarnerName,
         };
       }

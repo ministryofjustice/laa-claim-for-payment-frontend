@@ -1,6 +1,12 @@
 import type { ClaimDto } from "#src/types/Claim.js";
 import type { TableCell } from "#src/viewmodels/components/index.js";
-import { formatClaimed, formatClaimId, formatDate, formatOptionalString } from "#src/helpers/index.js";
+import {
+  formatClaimed,
+  formatClaimId,
+  formatDate,
+  formatOptionalString,
+  formatOptionalValue
+} from "#src/helpers/index.js";
 import { Pagination } from "./components/pagination.js";
 import type { PaginationMeta } from "#src/types/api-types.js";
 import type { Table } from "#src/viewmodels/components/table.js";
@@ -19,7 +25,11 @@ export class ClaimsTableViewModel {
    * @param {PaginationMeta} paginationMeta The pagination metadata
    * @param {string} href The href of the page
    */
-  constructor(claims: ClaimDto[], paginationMeta: PaginationMeta, href: string) {
+  constructor(
+    claims: ClaimDto[],
+    paginationMeta: PaginationMeta,
+    href: string,
+  ) {
     const head: SortedTableHeader[] = [
       { text: "ID", attributes: { "aria-sort": "ascending" } },
       { text: "Client", attributes: { "aria-sort": "none" } },
@@ -39,19 +49,24 @@ export class ClaimsTableViewModel {
                 ${formatClaimId(number + 1)}
                 <span class="govuk-visually-hidden"> – view claim</span>
               </a>`,
-        attributes: { "data-sort-value": claim.id }
+        attributes: { "data-sort-value": claim.id },
       },
       { text: formatOptionalString(claim.client) },
       { text: formatOptionalString(claim.category) },
       {
-        text: formatDate(claim.concluded),
+        text: formatOptionalValue(claim.concluded, formatDate),
         attributes:
-          claim.concluded == null ? undefined : { "data-sort-value": claim.concluded.getTime() },
+          claim.concluded == null
+            ? undefined
+            : { "data-sort-value": claim.concluded.getTime() },
       },
       { text: formatOptionalString(claim.feeType) },
       {
-        text: formatClaimed(claim.claimed),
-        attributes: claim.claimed == null ? undefined : { "data-sort-value": claim.claimed } ,
+        text: formatOptionalValue(claim.claimed, formatClaimed),
+        attributes:
+          claim.claimed == null
+            ? undefined
+            : { "data-sort-value": claim.claimed },
         classes: "govuk-table__cell--numeric",
       },
     ]);
@@ -61,17 +76,15 @@ export class ClaimsTableViewModel {
       head,
       rows,
       attributes: {
-        "data-module": "moj-sortable-table"
-      }
+        "data-module": "moj-sortable-table",
+      },
     };
 
     this.pagination = new Pagination(
       paginationMeta.total,
       paginationMeta.limit,
       paginationMeta.page + 1,
-      href
+      href,
     );
   }
 }
-
-

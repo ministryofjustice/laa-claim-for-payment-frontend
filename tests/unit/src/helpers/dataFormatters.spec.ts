@@ -4,6 +4,7 @@
 
 import {
   formatBoolean,
+  formatBooleanChoice,
   formatClaimed,
   formatClaimId,
   formatDate,
@@ -22,14 +23,6 @@ describe("Data Transformation Helpers", () => {
     it('formats dates with single-digit days with a leading zero', () => {
       expect(formatDate(new Date('2023-2-5'))).to.equal('05/02/2023');
       expect(formatDate(new Date('2023/2/5'))).to.equal('05/02/2023')
-    });
-
-    it('handles undefined date strings by returning an empty string', () => {
-      expect(formatDate(undefined)).to.equal('');
-    });
-
-    it('handles null date strings by returning an empty string', () => {
-      expect(formatDate(null)).to.equal('');
     });
   });
 
@@ -63,14 +56,6 @@ describe("Data Transformation Helpers", () => {
     it("should format 1.10 -> £1.10", async () => {
       expect(formatClaimed(1.10)).to.equal("£1.10");
     });
-
-    it("should return empty string on undefined input", async () => {
-      expect(formatClaimed(undefined)).to.equal("");
-    });
-
-    it("should return empty string on null input", async () => {
-      expect(formatClaimed(null)).to.equal("");
-    });
   });
 
   describe("formatOptionalString", () => {
@@ -83,21 +68,31 @@ describe("Data Transformation Helpers", () => {
     });
   });
 
-  describe("formatBoolean", () => {
+  describe("formatBooleanChoice", () => {
     it("should format undefined as undefined", async () => {
-      expect(formatBoolean(undefined)).to.be.undefined;
+      expect(formatBooleanChoice(undefined)).to.be.undefined;
     });
 
     it("should format null as undefined", async () => {
-      expect(formatBoolean(null)).to.be.undefined;
+      expect(formatBooleanChoice(null)).to.be.undefined;
     });
 
     it("should format true as yes", async () => {
-      expect(formatBoolean(true)).to.equal("yes");
+      expect(formatBooleanChoice(true)).to.equal("yes");
     });
 
     it("should format false as no", async () => {
-      expect(formatBoolean(false)).to.equal("no");
+      expect(formatBooleanChoice(false)).to.equal("no");
+    });
+  });
+
+  describe("formatBoolean", () => {
+    it("should format true as yes key", async () => {
+      expect(formatBoolean(true)).to.equal("common.yes");
+    });
+
+    it("should format false as no key", async () => {
+      expect(formatBoolean(false)).to.equal("common.no");
     });
   });
 });

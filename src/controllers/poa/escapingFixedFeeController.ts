@@ -6,7 +6,7 @@ import { booleanChoices } from "#src/models/booleanChoice.js";
 import { validateBooleanInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { formatBoolean } from "#src/helpers/dataFormatters.js";
+import { formatBooleanChoice } from "#src/helpers/dataFormatters.js";
 
 const escapingFixedFeeFieldName = "escapingFixedFee" as const;
 
@@ -38,7 +38,7 @@ export async function escapingFixedFee(
           },
           fieldName: escapingFixedFeeFieldName,
           choices: booleanChoices,
-          selectedValue: formatBoolean(claim.body.escapedFlag),
+          selectedValue: formatBooleanChoice(claim.body.escapedFlag),
         }),
       });
     } else {

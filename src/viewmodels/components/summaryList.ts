@@ -44,7 +44,7 @@ interface SummaryCard {
 export function buildSummaryListWithCard(
   cardTitle: TextOrMessage,
   cardId: string,
-  summaryListRows: SummaryListRow[],
+  summaryListRows: Array<SummaryListRow | undefined>,
   cardActions?: SummaryListRowActionItem[],
 ): SummaryList {
   return {
@@ -62,7 +62,7 @@ export function buildSummaryListWithCard(
         id: cardId,
       },
     },
-    rows: summaryListRows,
+    rows: summaryListRows.filter((row) => row !== undefined),
     attributes: {
       id: `${cardId}-rows`,
     },
@@ -77,8 +77,11 @@ export function buildSummaryListWithCard(
  */
 export function buildSummaryListRow(
   key: TextOrMessage,
-  value: SummaryListRowValue,
-): SummaryListRow {
+  value?: SummaryListRowValue,
+): SummaryListRow | undefined {
+  if (value == null) {
+    return undefined;
+  }
   return {
     key: {
       text: key,
@@ -90,17 +93,21 @@ export function buildSummaryListRow(
 /**
  * Summary list row with change link builder.
  * @param {string} key row key
- * @param {string} value row value
  * @param {string} href row change link href
+ * @param {string} value row value
  * @returns {SummaryListRow} a summary list row with change link
  */
 export function buildSummaryListRowWithChangeLink(
   key: TextOrMessage,
-  value: SummaryListRowValue,
   href: string,
-): SummaryListRow {
+  value?: SummaryListRowValue,
+): SummaryListRow | undefined {
+  const summaryListRow = buildSummaryListRow(key, value);
+  if (summaryListRow == null) {
+    return undefined;
+  }
   return {
-    ...buildSummaryListRow(key, value),
+    ...summaryListRow,
     actions: {
       items: [
         {

@@ -17,3 +17,20 @@ export class InvalidPageError extends Error {
     this.pageToRedirectTo = pageToRedirectTo;
   }
 }
+
+/**
+ *
+ */
+export class AnswerMissingError extends Error {
+  urlToRedirectTo: string;
+
+  /**
+   * Creates an AnswerMissingError error
+   * @param {string} urlToRedirectTo The URL to redirect to
+   */
+  constructor(urlToRedirectTo: string) {
+    super(`Answer missing from: ${urlToRedirectTo}`);
+    this.name = "AnswerMissingError";
+    this.urlToRedirectTo = urlToRedirectTo;
+  }
+}

@@ -1,4 +1,4 @@
-import type { ClaimDto } from "#src/types/Claim.js";
+import  { Category, type ClaimDto, ClientPartyStatus, CostType, Count, CourtType } from "#src/types/Claim.js";
 import {
   billNarrativeLineItem,
   disbursementLineItem,
@@ -144,5 +144,115 @@ export const claim8: ClaimDto = {
   ],
   evidence: [
     evidenceItem
+  ]
+};
+
+/**
+ * Draft claim with profit cost bill line item and evidence
+ */
+export const claim9: ClaimDto = {
+  id: "019fae76-b6bd-76ec-ae50-38d76da01631",
+  costType: CostType.PROFIT_COST,
+  courtType: CourtType.COUNTY_COURT,
+  clientPartyStatus: ClientPartyStatus.CHILD,
+  firstActingSolicitorFlag: true,
+  transferOfSolicitorFlag: false,
+  clientsRetainedCount: Count.ZERO,
+  clientsStartCount: Count.TWO_OR_MORE,
+  multiClientHearingFlag: true,
+  escaped: true,
+  lineItems: [
+    {
+      id: "019fae73-5288-76ac-aa2d-e88859c5960a",
+      title: "Line item",
+      category: Category.DISBURSEMENT,
+      date: new Date("2026-07-29"),
+      netProfitCostAmount: 123,
+      netAdvocacyCostAmount: 456,
+      vatApplicable: false,
+      feeEarnerName: "John Smith",
+      evidenceItems: []
+    }
+  ],
+  evidence: [
+    {
+      id: "019f5fa3-e258-7583-9626-eb7febb94b62",
+      fileKey: "evidence1.pdf",
+      fileSize: 1000,
+      submittedOn: new Date("2026-06-17T14:34:01.226855Z"),
+    }
+  ]
+};
+
+/**
+ * Draft claim with profit cost bill line item and no evidence
+ */
+export const claim10: ClaimDto = {
+  id: "019fae76-b6bd-76ec-ae50-38d76da01631",
+  costType: CostType.PROFIT_COST,
+  courtType: CourtType.COUNTY_COURT,
+  clientPartyStatus: ClientPartyStatus.CHILD,
+  firstActingSolicitorFlag: true,
+  transferOfSolicitorFlag: false,
+  clientsRetainedCount: Count.ZERO,
+  clientsStartCount: Count.TWO_OR_MORE,
+  multiClientHearingFlag: true,
+  escaped: false,
+  lineItems: [
+    {
+      id: "019fae73-5288-76ac-aa2d-e88859c5960a",
+      title: "Line item",
+      category: Category.DISBURSEMENT,
+      date: new Date("2026-07-29"),
+      netProfitCostAmount: 123,
+      netAdvocacyCostAmount: 456,
+      vatApplicable: false,
+      feeEarnerName: "John Smith",
+      evidenceItems: []
+    }
+  ]
+};
+
+/**
+ * Draft claim with expert cost bill line items
+ */
+export const claim11: ClaimDto = {
+  id: "019fae76-cf01-7487-99d5-8920f857df7f",
+  costType: CostType.EXPERT_COST,
+  lineItems: [
+    {
+      id: "019fae76-e8a7-73bc-af8d-990543ec4a65",
+      title: "Cost of petrol",
+      category: Category.DISBURSEMENT,
+      date: new Date("2023-12-20"),
+      actualNetValue: 150,
+      vatApplicable: true,
+      feeEarnerName: "Carol Spencer",
+      evidenceItems: []
+    },
+    {
+      id: "019fae77-87c3-734c-a38d-54624d48d7e5",
+      title: "Line item 2",
+      category: Category.DISBURSEMENT,
+      date: new Date("2026-07-30"),
+      actualNetValue: 456,
+      vatApplicable: true,
+      feeEarnerName: "Joe Bloggs",
+      evidenceItems: []
+    }
+  ],
+  evidence: [
+    {
+      id: "019f5fa3-e258-7583-9626-eb7febb94b62",
+      fileKey: "evidence1.pdf",
+      fileSize: 1000,
+      submittedOn: new Date("2026-06-17T14:34:01.226855Z"),
+    },
+    {
+      id: "019fae78-414c-71e8-b4a7-d1cc65cabee1",
+      fileKey: "evidence2.pdf",
+      fileSize: 2000,
+      submittedOn: new Date("2026-06-18T14:34:01.226855Z"),
+    }
   ]
 };

@@ -2,7 +2,6 @@ import type { ClaimDto } from "#src/types/Claim.js";
 import {
   formatClaimed,
   formatDate,
-  formatOptionalString,
 } from "#src/helpers/index.js";
 import type { SummaryListRow } from "./components/summaryList.js";
 
@@ -32,14 +31,14 @@ export class ClaimViewModel {
     if (claim.client != null) {
       rows.push({
         key: { text: "Client" },
-        value: { text: formatOptionalString(claim.client) },
+        value: { text: claim.client },
       });
     }
 
     if (claim.category != null) {
       rows.push({
         key: { text: "Category" },
-        value: { text: formatOptionalString(claim.category) },
+        value: { text: claim.category },
       });
     }
 

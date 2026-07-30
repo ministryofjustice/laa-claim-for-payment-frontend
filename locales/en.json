@@ -149,13 +149,13 @@
     },
     "howManyClientsRetained" : {
       "title" : "How many clients are retained?",
-      "none": {
+      "ZERO": {
         "text" : "0"
       },
-      "one" : {
+      "ONE" : {
         "text" : "1"
       },
-      "moreThanTwo" : {
+      "TWO_OR_MORE" : {
         "text": "2+"
       },
       "errors" : {
@@ -181,16 +181,16 @@
       "title": "Profit cost details",
       "courtType": {
         "title": "Court or judge type",
-        "countyCourt": {
+        "COUNTY_COURT": {
           "text": "County court"
         },
-        "highCourt": {
+        "HIGH_COURT": {
           "text": "High court"
         },
-        "magistratesCourt": {
+        "MAGISTRATES_COURT": {
           "text": "Magistrates court"
         },
-        "otherJudge": {
+        "OTHER_JUDGE": {
           "text": "Other judge"
         },
         "errors": {
@@ -199,13 +199,13 @@
       },
       "clientStatus": {
         "title": "What is your client’s party status?",
-        "child": {
+        "CHILD": {
           "text": "Child"
         },
-        "joinedParty": {
+        "JOINED_PARTY": {
           "text": "Joined party"
         },
-        "parent": {
+        "PARENT": {
           "text": "Parent"
         },
         "errors": {
@@ -233,13 +233,13 @@
     },
     "numberOfClientsStartOfCase": {
       "title": "How many clients did you have at the start of the case?",
-      "none": {
+      "ZERO": {
         "text": "0"
       },
-      "one": {
+      "ONE": {
         "text": "1"
       },
-      "moreThanTwo": {
+      "TWO_OR_MORE": {
         "text": "2+"
       },
       "errors": {
@@ -277,6 +277,7 @@
             "firstSolicitor": "First solicitor?",
             "transferOfSolicitor": "Transfer of solicitor",
             "clientsRetained": "Clients retained",
+            "clientsStart": "Clients at start of case",
             "attendedHearings": "Attended hearings?",
             "escapedStandardFixedFee": "Escaped standard fixed fee?"
           },
