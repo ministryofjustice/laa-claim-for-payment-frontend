@@ -10,6 +10,7 @@ import type { MulterRequest } from "#src/types/requests.js";
 import { uploadService } from "#src/services/uploadService.js";
 import type { TFunction } from "#node_modules/i18next/index.js";
 import { V7Generator } from "uuidv7";
+import { AjaxUploadResponse } from "#src/types/api-types.js";
 
 describe("ajaxFileUploadController", () => {
   let res: Response;
@@ -85,17 +86,15 @@ describe("ajaxFileUploadController", () => {
     });
 
     it("uploads POA evidence successfully", async () => {
-      const mockApiResponse = {
+      const mockApiResponse: AjaxUploadResponse = {
         status: "success",
-        body: {
-          success: {
-            messageText: "evidence.pdf uploaded",
-            messageHtml: "<span>Uploaded</span>",
-          },
-          file: {
-            filename: evidenceId.toString(),
-            originalname: "evidence.pdf",
-          },
+        success: {
+          messageText: "evidence.pdf uploaded",
+          messageHtml: "<span>Uploaded</span>",
+        },
+        file: {
+          filename: evidenceId.toString(),
+          originalname: "evidence.pdf",
         },
       };
 
@@ -118,7 +117,7 @@ describe("ajaxFileUploadController", () => {
 
       expect((res.json as sinon.SinonStub).calledOnce).to.equal(true);
       expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal(
-        mockApiResponse.body,
+        mockApiResponse,
       );
 
       expect((res.status as sinon.SinonStub).called).to.equal(false);
@@ -181,17 +180,15 @@ describe("ajaxFileUploadController", () => {
     });
 
     it("uploads line item evidence successfully", async () => {
-      const mockApiResponse = {
+      const mockApiResponse: AjaxUploadResponse = {
         status: "success",
-        body: {
-          success: {
-            messageText: "evidence.pdf uploaded",
-            messageHtml: "<span>Uploaded</span>",
-          },
-          file: {
-            filename: evidenceId.toString(),
-            originalname: "evidence.pdf",
-          },
+        success: {
+          messageText: "evidence.pdf uploaded",
+          messageHtml: "<span>Uploaded</span>",
+        },
+        file: {
+          filename: evidenceId.toString(),
+          originalname: "evidence.pdf",
         },
       };
 
@@ -217,7 +214,7 @@ describe("ajaxFileUploadController", () => {
 
       expect((res.json as sinon.SinonStub).calledOnce).to.equal(true);
       expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal(
-        mockApiResponse.body,
+        mockApiResponse,
       );
 
       expect((res.status as sinon.SinonStub).called).to.equal(false);

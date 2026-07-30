@@ -30,9 +30,10 @@ export interface PaginationMeta {
 export interface Paginated<Data> {
   meta: PaginationMeta;
   data: Data[];
-} 
+}
 
-export interface AjaxUploadResponse {
+export interface AjaxUploadSuccess {
+  status: "success";
   success: {
     messageText: string;
     messageHtml: string;
@@ -42,3 +43,12 @@ export interface AjaxUploadResponse {
     originalname: string;
   };
 }
+
+export interface AjaxUploadError {
+  status: "error";
+  error: {
+    message: string;
+  };
+}
+
+export type AjaxUploadResponse = AjaxUploadSuccess | AjaxUploadError;

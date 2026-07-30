@@ -1,6 +1,10 @@
 import { expect } from "chai";
 import sinon from "sinon";
-import { ApiError } from "#src/types/api-types.js";
+import {
+  AjaxUploadError,
+  AjaxUploadSuccess,
+  ApiError,
+} from "#src/types/api-types.js";
 import { uploadService } from "#src/services/uploadService.js";
 import { V7Generator } from "uuidv7";
 
@@ -53,17 +57,17 @@ describe("Upload Service", () => {
         file,
         translations,
         deps as any
-      );
+      ) as AjaxUploadSuccess;
 
       expect(result.status).to.equal("success");
-      expect(result.body?.file).to.deep.equal({
+      expect(result.file).to.deep.equal({
         filename: evidence1Id.toString(),
         originalname: 'evidence.pdf',
       });
-      expect(result.body?.success.messageText).to.equal('evidence.pdf uploaded');
-      expect(result.body?.success.messageHtml).to.include('evidence.pdf');
-      expect(result.body?.success.messageHtml).to.include('12KB');
-      expect(result.body?.success.messageHtml).to.include('Uploaded');
+      expect(result.success.messageText).to.equal('evidence.pdf uploaded');
+      expect(result.success.messageHtml).to.include('evidence.pdf');
+      expect(result.success.messageHtml).to.include('12KB');
+      expect(result.success.messageHtml).to.include('Uploaded');
     });
 
     it('escapes file names in the success HTML', async () => {
@@ -103,9 +107,9 @@ describe("Upload Service", () => {
         file,
         translations,
         deps as any
-      );
+      ) as AjaxUploadSuccess;
 
-      expect(result.body?.success.messageHtml).to.include('&lt;script&gt;.pdf');
+      expect(result.success.messageHtml).to.include('&lt;script&gt;.pdf');
     });
 
     it("returns error for a non-200 response", async () => {
@@ -145,11 +149,10 @@ describe("Upload Service", () => {
         file,
         translations,
         deps as any
-      ) as ApiError;
+      ) as AjaxUploadError;
 
       expect(result.status).to.equal("error");
-      expect(result.statusCode).to.equal(404);
-      expect(result.message).to.equal("Resource not found");
+      expect(result.error.message).to.equal("evidence.pdf");
     });
 
     it("returns error shape when the API call fails", async () => {
@@ -176,11 +179,10 @@ describe("Upload Service", () => {
         file,
         translations,
         deps as any
-      );
+      ) as AjaxUploadError;
 
       expect(result.status).to.equal("error");
-      expect(result.message).to.be.a("string").and.not.empty;
-      expect(result).to.not.have.property("body");
+      expect(result.error.message).to.equal("evidence.pdf");
     });
   });
 
@@ -315,17 +317,17 @@ describe("Upload Service", () => {
         file,
         translations,
         deps as any
-      );
+      ) as AjaxUploadSuccess;
 
       expect(result.status).to.equal("success");
-      expect(result.body?.file).to.deep.equal({
+      expect(result.file).to.deep.equal({
         filename: evidence3Id.toString(),
         originalname: 'evidence.pdf',
       });
-      expect(result.body?.success.messageText).to.equal('evidence.pdf uploaded');
-      expect(result.body?.success.messageHtml).to.include('evidence.pdf');
-      expect(result.body?.success.messageHtml).to.include('12KB');
-      expect(result.body?.success.messageHtml).to.include('Uploaded');
+      expect(result.success.messageText).to.equal('evidence.pdf uploaded');
+      expect(result.success.messageHtml).to.include('evidence.pdf');
+      expect(result.success.messageHtml).to.include('12KB');
+      expect(result.success.messageHtml).to.include('Uploaded');
     });
 
     it('escapes file names in the success HTML', async () => {
@@ -369,9 +371,9 @@ describe("Upload Service", () => {
         file,
         translations,
         deps as any
-      );
+      ) as AjaxUploadSuccess;
 
-      expect(result.body?.success.messageHtml).to.include('&lt;script&gt;.pdf');
+      expect(result.success.messageHtml).to.include('&lt;script&gt;.pdf');
     });
 
     it("returns error for a non-200 response", async () => {
@@ -415,11 +417,10 @@ describe("Upload Service", () => {
         file,
         translations,
         deps as any
-      ) as ApiError;
+      ) as AjaxUploadError;
 
       expect(result.status).to.equal("error");
-      expect(result.statusCode).to.equal(404);
-      expect(result.message).to.equal("Resource not found");
+      expect(result.error.message).to.equal("evidence.pdf");
     });
 
     it("returns error shape when the API call fails", async () => {
@@ -450,11 +451,10 @@ describe("Upload Service", () => {
         file,
         translations,
         deps as any
-      );
+      ) as AjaxUploadError;
 
       expect(result.status).to.equal("error");
-      expect(result.message).to.be.a("string").and.not.empty;
-      expect(result).to.not.have.property("body");
+      expect(result.error.message).to.equal("evidence.pdf");
     });
   });
 });

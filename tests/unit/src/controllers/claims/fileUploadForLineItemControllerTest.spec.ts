@@ -158,17 +158,15 @@ describe("View File Upload For Line Item Controller", () => {
     });
 
     it("returns uploaded file details when a file is uploaded", async () => {
-      const mockApiResponse: ApiResponse<AjaxUploadResponse> = {
+      const mockApiResponse: AjaxUploadResponse = {
         status: "success",
-        body: {
-          success: {
-            messageText: "evidence.pdf uploaded",
-            messageHtml: "<span>Uploaded</span>",
-          },
-          file: {
-            filename: "1",
-            originalname: "evidence.pdf",
-          },
+        success: {
+          messageText: "evidence.pdf uploaded",
+          messageHtml: "<span>Uploaded</span>",
+        },
+        file: {
+          filename: "1",
+          originalname: "evidence.pdf",
         },
       };
 
@@ -200,7 +198,7 @@ describe("View File Upload For Line Item Controller", () => {
 
       const responseBody = json.firstCall.args[0];
 
-      expect(responseBody).to.deep.equal(mockApiResponse.body);
+      expect(responseBody).to.deep.equal(mockApiResponse);
 
       expect(status.called).to.equal(false);
       expect(next.called).to.equal(false);

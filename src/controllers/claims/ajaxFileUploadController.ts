@@ -66,7 +66,7 @@ export async function uploadEvidenceFile(
       translations,
     );
 
-    res.json(response.body);
+    res.json(response);
   } catch (error) {
     next(processError(error, "uploading evidence file"));
   }
@@ -107,7 +107,7 @@ export async function uploadEvidenceFileForLineItem(
       translations,
     );
 
-    res.json(response.body);
+    res.json(response);
   } catch (error) {
     next(processError(error, "uploading evidence file"));
   }
