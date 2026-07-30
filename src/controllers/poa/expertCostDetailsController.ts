@@ -111,7 +111,7 @@ export async function submitExpertCostDetails(
     const lineItemForm: LineItemForm = {
       type: CostType.EXPERT_COST,
       value: validationResult.value,
-    }
+    };
 
     if (lineItemId == null) {
       await claimService.addLineItemToClaim(

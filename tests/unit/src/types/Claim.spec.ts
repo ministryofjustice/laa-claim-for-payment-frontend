@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import {
+  Category,
   Claim,
   ClaimResponseSchema,
   ClientPartyStatus,
@@ -7,6 +8,10 @@ import {
   Count,
   CourtType,
   EvidenceItemSchema,
+  ExpertCostLineItem,
+  LineItemSchema,
+  ProfitCostBillLineItem,
+  StubLineItem,
 } from "#src/types/Claim.js";
 import { UUID, V7Generator } from "uuidv7";
 import { ZodError } from "zod";
@@ -524,6 +529,111 @@ describe("ClaimResponseSchema", () => {
           id: id.toString(),
           fileKey: "test.pdf",
           fileSize: 123456,
+        }),
+      ).to.throw();
+    });
+  });
+
+  describe("LineItemSchema", () => {
+    it("parses a valid expert cost line item", () => {
+      const result = LineItemSchema.parse({
+        id: "019fad29-2579-7544-9961-3b3b6061f64e",
+        title: "Title",
+        category: "Disbursement",
+        date: "2007-03-26",
+        actualNetValue: 123,
+        netProfitCostAmount: null,
+        netAdvocacyCostAmount: null,
+        vatApplicable: true,
+        feeEarnerName: "Joe Bloggs",
+        evidenceItems: [],
+      }) as ExpertCostLineItem;
+
+      expect(result.id).to.equal("019fad29-2579-7544-9961-3b3b6061f64e");
+      expect(result.title).to.equal("Title");
+      expect(result.category).to.equal(Category.DISBURSEMENT);
+      expect(result.date.toISOString()).to.equal("2007-03-26T00:00:00.000Z");
+      expect(result.evidenceItems).has.length(0);
+      expect(result.feeEarnerName).to.equal("Joe Bloggs");
+      expect(result.vatApplicable).to.equal(true);
+      expect(result.actualNetValue).to.equal(123);
+      expect(result.netProfitCostAmount).to.be.null;
+      expect(result.netAdvocacyCostAmount).to.be.null;
+    });
+
+    it("parses a valid profit cost bill line item", () => {
+      const result = LineItemSchema.parse({
+        id: "019fad29-2579-7544-9961-3b3b6061f64e",
+        title: "Title",
+        category: "Disbursement",
+        date: "2007-03-26",
+        actualNetValue: null,
+        netProfitCostAmount: 123,
+        netAdvocacyCostAmount: 456,
+        vatApplicable: true,
+        feeEarnerName: "Joe Bloggs",
+        evidenceItems: [],
+      }) as ProfitCostBillLineItem;
+
+      expect(result.id).to.equal("019fad29-2579-7544-9961-3b3b6061f64e");
+      expect(result.title).to.equal("Title");
+      expect(result.category).to.equal(Category.DISBURSEMENT);
+      expect(result.date.toISOString()).to.equal("2007-03-26T00:00:00.000Z");
+      expect(result.evidenceItems).has.length(0);
+      expect(result.feeEarnerName).to.equal("Joe Bloggs");
+      expect(result.vatApplicable).to.equal(true);
+      expect(result.actualNetValue).to.be.null;
+      expect(result.netProfitCostAmount).to.equal(123);
+      expect(result.netAdvocacyCostAmount).to.equal(456);
+    });
+
+    it("parses a valid stubbed line item", () => {
+      const result = LineItemSchema.parse({
+        id: "019fad29-2579-7544-9961-3b3b6061f64e",
+        title: "Title",
+        category: "Disbursement",
+        date: "2007-03-26",
+        evidenceItems: [],
+      }) as StubLineItem;
+
+      expect(result.id).to.equal("019fad29-2579-7544-9961-3b3b6061f64e");
+      expect(result.title).to.equal("Title");
+      expect(result.category).to.equal(Category.DISBURSEMENT);
+      expect(result.date.toISOString()).to.equal("2007-03-26T00:00:00.000Z");
+      expect(result.evidenceItems).has.length(0);
+    });
+
+    it("fails to parse when mandatory field is undefined", () => {
+      expect(() =>
+        LineItemSchema.parse({
+          id: id.toString(),
+          title: undefined,
+          category: "Disbursement",
+          date: "2007-03-26",
+          evidenceItems: [],
+        }),
+      ).to.throw();
+    });
+
+    it("fails to parse when mandatory field is null", () => {
+      expect(() =>
+        LineItemSchema.parse({
+          id: id.toString(),
+          title: null,
+          category: "Disbursement",
+          date: "2007-03-26",
+          evidenceItems: [],
+        }),
+      ).to.throw();
+    });
+
+    it("fails to parse when mandatory field is missing", () => {
+      expect(() =>
+        LineItemSchema.parse({
+          id: id.toString(),
+          category: "Disbursement",
+          date: "2007-03-26",
+          evidenceItems: [],
         }),
       ).to.throw();
     });
