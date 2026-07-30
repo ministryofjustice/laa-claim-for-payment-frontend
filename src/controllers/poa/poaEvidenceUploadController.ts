@@ -6,6 +6,7 @@ import { PoaEvidenceUploadViewModel } from "#src/viewmodels/profitCostDetails/pr
 import type { NextFunction, Request, Response } from "express";
 import { UUID } from "uuidv7";
 import type { ReusableDocument } from "#src/viewmodels/components/taskList.js";
+import { ClaimStatus } from "#src/types/Claim.js";
 
 /**
  * Display POA evidence upload page.
@@ -21,14 +22,19 @@ export async function poaEvidenceUploadPage(
 ): Promise<void> {
   try {
     const claimId = UUID.parse(req.params.claimId);
-    const response = await claimService.getDraftClaim(req.axiosMiddleware, claimId);
+    const response = await claimService.getDraftClaim(
+      req.axiosMiddleware,
+      claimId,
+    );
 
-     if (response.status !== "success") {
+    if (response.status !== "success") {
       next(processApiError(response, "fetching POA evidence upload details"));
       return;
     }
 
-    const { body: { value: claim } } = response;
+    const {
+      body: { value: claim },
+    } = response;
     const uploadedFiles: ReusableDocument[] =
       claim.evidence?.map((evidence) => ({
         id: evidence.id,
@@ -37,9 +43,19 @@ export async function poaEvidenceUploadPage(
       })) ?? [];
 
     const vm = new PoaEvidenceUploadViewModel({
-      uploadUrl: buildRoute(ROUTES.AJAX_UPLOAD_POA_EVIDENCE, { claimId }),
-      deleteUrl: buildRoute(ROUTES.AJAX_DELETE_POA_EVIDENCE, { claimId }),
-      saveAndContinueHref: buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, { claimId }),
+      uploadUrl: buildRoute(
+        ROUTES.AJAX_UPLOAD_POA_EVIDENCE,
+        { claimId },
+        { claimStatus: ClaimStatus.DRAFT },
+      ),
+      deleteUrl: buildRoute(
+        ROUTES.AJAX_DELETE_POA_EVIDENCE,
+        { claimId },
+        { claimStatus: ClaimStatus.DRAFT },
+      ),
+      saveAndContinueHref: buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, {
+        claimId,
+      }),
       saveAndComeBackLaterHref: "#",
       uploadedFiles,
     });
@@ -67,20 +83,33 @@ export async function submitPoaEvidenceUpload(
 ): Promise<void> {
   try {
     const claimId = UUID.parse(req.params.claimId);
-    const response = await claimService.getDraftClaim(req.axiosMiddleware, claimId);
+    const response = await claimService.getDraftClaim(
+      req.axiosMiddleware,
+      claimId,
+    );
 
     if (response.status !== "success") {
       next(processApiError(response, "fetching POA evidence upload details"));
       return;
     }
 
-    const { body: { value: claim } } = response;
+    const {
+      body: { value: claim },
+    } = response;
     const uploadedFiles = claim.evidence ?? [];
 
     if (uploadedFiles.length === 0) {
       const vm = new PoaEvidenceUploadViewModel({
-        uploadUrl: buildRoute(ROUTES.AJAX_UPLOAD_POA_EVIDENCE, { claimId }),
-        deleteUrl: buildRoute(ROUTES.AJAX_DELETE_POA_EVIDENCE, { claimId }),
+        uploadUrl: buildRoute(
+          ROUTES.AJAX_UPLOAD_POA_EVIDENCE,
+          { claimId },
+          { claimStatus: ClaimStatus.DRAFT },
+        ),
+        deleteUrl: buildRoute(
+          ROUTES.AJAX_DELETE_POA_EVIDENCE,
+          { claimId },
+          { claimStatus: ClaimStatus.DRAFT },
+        ),
         saveAndContinueHref: buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, {
           claimId,
         }),

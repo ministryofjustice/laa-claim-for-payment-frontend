@@ -1,12 +1,9 @@
 import { expect } from "chai";
 import sinon from "sinon";
-import {
-  AjaxUploadError,
-  AjaxUploadSuccess,
-  ApiError,
-} from "#src/types/api-types.js";
+import { AjaxUploadError, AjaxUploadSuccess, ApiError } from "#src/types/api-types.js";
 import { uploadService } from "#src/services/uploadService.js";
 import { V7Generator } from "uuidv7";
+import { ClaimStatus } from "#src/types/Claim.js";
 
 describe("Upload Service", () => {
   afterEach(() => {
@@ -56,6 +53,7 @@ describe("Upload Service", () => {
         claimId,
         file,
         translations,
+        ClaimStatus.DRAFT,
         deps as any
       ) as AjaxUploadSuccess;
 
@@ -106,6 +104,7 @@ describe("Upload Service", () => {
         claimId,
         file,
         translations,
+        ClaimStatus.SUBMITTED,
         deps as any
       ) as AjaxUploadSuccess;
 

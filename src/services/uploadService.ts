@@ -14,6 +14,7 @@ import { escapeHtml } from "#src/helpers/escapehtml.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import type { UUID } from "uuidv7";
 import type { Client } from "#src/generated/claim-api/client/index.js";
+import type { ClaimStatus } from "#src/types/Claim.js";
 
 interface UploadServiceDeps {
   createClient: typeof createClient;
@@ -89,6 +90,7 @@ class UploadService {
    * @param {object} translations Translations.
    * @param {string} translations.uploaded Translation for uploaded message.
    * @param {string} translations.uploadedMessage Translation for uploadedMessage message.
+   * @param {ClaimStatus} claimStatus Claim status (DRAFT or SUBMITTED).
    * @param {UploadServiceDeps} deps - Service dependencies used to create the client and call the generated API.
    * @returns {Promise<AjaxUploadResponse>} Upload response for the multi-file upload component.
    */
@@ -101,6 +103,7 @@ class UploadService {
       uploaded: string;
       uploadedMessage: string;
     },
+    claimStatus: ClaimStatus,
     deps: UploadServiceDeps = defaultDeps,
   ): Promise<AjaxUploadResponse> {
     try {
@@ -111,6 +114,9 @@ class UploadService {
         path: {
           claimId: claimId.toString(),
         },
+        query: {
+          status: claimStatus,
+        },
         body: {
           documents: this.fileToUpload(file),
         },
@@ -120,11 +126,7 @@ class UploadService {
         return this.uploadError(file);
       }
 
-      return this.uploadSuccess(
-        file,
-        translations,
-        response.data.evidenceId,
-      );
+      return this.uploadSuccess(file, translations, response.data.evidenceId);
     } catch {
       return this.uploadError(file);
     }
@@ -173,11 +175,7 @@ class UploadService {
         return this.uploadError(file);
       }
 
-      return this.uploadSuccess(
-        file,
-        translations,
-        response.data.evidenceId,
-      );
+      return this.uploadSuccess(file, translations, response.data.evidenceId);
     } catch {
       return this.uploadError(file);
     }
@@ -232,13 +230,16 @@ class UploadService {
    * @param {AxiosInstanceWrapper} axiosMiddleware Wrapped Axios client from request middleware.
    * @param {UUID} claimId Claim identifier.
    * @param {UUID} evidenceId Evidence identifier.
+   * @param {ClaimStatus} claimStatus Claim status (DRAFT or SUBMITTED).
    * @param {UploadServiceDeps} deps Service dependencies used to create the client and call the generated API.
    * @returns {Promise<ApiResponse<null>>} Null response in app response format.
    */
+  // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   static async deleteEvidenceFromClaim(
     axiosMiddleware: AxiosInstanceWrapper,
     claimId: UUID,
     evidenceId: UUID,
+    claimStatus: ClaimStatus,
     deps: UploadServiceDeps = defaultDeps,
   ): Promise<ApiResponse<null>> {
     try {
@@ -253,6 +254,9 @@ class UploadService {
         path: {
           claimId: claimId.toString(),
           evidenceId: evidenceId.toString(),
+        },
+        query: {
+          status: claimStatus,
         },
       });
 

@@ -6,6 +6,7 @@ import createHttpError from "http-errors";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { uploadService } from "#src/services/uploadService.js";
 import { UUID } from "uuidv7";
+import { ClaimStatus } from "#src/types/Claim.js";
 
 /**
  * File upload page for Bill narrative.
@@ -26,28 +27,53 @@ export async function fileUploadForLineItemPage(
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {
-      const { body: { value: claim } } = response;
+      const {
+        body: { value: claim },
+      } = response;
 
-      const lineItem = claim.lineItems?.find((item) => item.id === lineItemId.toString());
+      const lineItem = claim.lineItems?.find(
+        (item) => item.id === lineItemId.toString(),
+      );
 
       if (lineItem === undefined) {
-        next(new createHttpError.NotFound(`Line item ${lineItemId.toString()} not found`));
+        next(
+          new createHttpError.NotFound(
+            `Line item ${lineItemId.toString()} not found`,
+          ),
+        );
         return;
       }
 
-      const saveAndContinueHref = buildRoute(ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, {
-        claimId: claim.id,
-      });
-      const uploadUrl = buildRoute(ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM, {
-        claimId: claim.id,
-        lineItemId: lineItem.id,
-      });
-      const deleteUrl = buildRoute(ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM, {
-        claimId: claim.id,
-        lineItemId: lineItem.id,
-      });
+      const saveAndContinueHref = buildRoute(
+        ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY,
+        {
+          claimId: claim.id,
+        },
+      );
+      const uploadUrl = buildRoute(
+        ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM,
+        {
+          claimId: claim.id,
+          lineItemId: lineItem.id,
+        },
+        { claimStatus: ClaimStatus.SUBMITTED },
+      );
+      const deleteUrl = buildRoute(
+        ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM,
+        {
+          claimId: claim.id,
+          lineItemId: lineItem.id,
+        },
+        { claimStatus: ClaimStatus.SUBMITTED },
+      );
 
-      const vm = new FileUploadForLineItemViewModel(claim, lineItem, uploadUrl, deleteUrl, saveAndContinueHref);
+      const vm = new FileUploadForLineItemViewModel(
+        claim,
+        lineItem,
+        uploadUrl,
+        deleteUrl,
+        saveAndContinueHref,
+      );
 
       res.render("main/claims/fileUploadForLineItemView.njk", {
         vm,
@@ -89,7 +115,7 @@ export async function linkEvidenceToLineItem(
           .filter((id): id is string => typeof id === "string")
           .map((id) => id.trim())
           .filter(Boolean)
-          .map(id => UUID.parse(id))
+          .map((id) => UUID.parse(id))
       : [];
 
     if (evidenceIds.length > 0) {
