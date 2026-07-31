@@ -4,8 +4,7 @@ import { getRequiredEnv } from '#utils/envHelper.js';
 dotenv.config();
 
 const DEFAULT_RATE_LIMIT_MAX = 100;
-const DEFAULT_RATE_WINDOW_MS_MINUTE = 15;
-const MILLISECONDS_IN_A_MINUTE = 60000;
+const DEFAULT_RATE_WINDOW_MS = 60000;
 const DEFAULT_PORT = 3000;
 const DEFAULT_NUMBER_OF_RESULTS_PER_PAGE = 20;
 
@@ -34,9 +33,9 @@ const config: Config = {
   RATELIMIT_HEADERS_ENABLED: process.env.RATELIMIT_HEADERS_ENABLED,
   RATELIMIT_STORAGE_URI: process.env.RATELIMIT_STORAGE_URI,
   RATE_LIMIT_MAX: Number(process.env.RATE_LIMIT_MAX ?? DEFAULT_RATE_LIMIT_MAX),
-  // Default rate window: 15 minutes in milliseconds
+  // Default rate window: 1 minute in milliseconds
   RATE_WINDOW_MS: Number(
-    process.env.RATE_WINDOW_MS ?? String(DEFAULT_RATE_WINDOW_MS_MINUTE * MILLISECONDS_IN_A_MINUTE)
+    process.env.RATE_WINDOW_MS ?? String(DEFAULT_RATE_WINDOW_MS)
   ),
   SERVICE_PHASE: process.env.SERVICE_PHASE,
   SERVICE_URL: process.env.SERVICE_URL,
