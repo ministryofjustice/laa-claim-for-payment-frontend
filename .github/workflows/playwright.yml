@@ -57,7 +57,7 @@ jobs:
           SERVICE_URL: "https://www.gov.uk/legal-aid"
           RATELIMIT_HEADERS_ENABLED: "true"
           RATE_LIMIT_MAX: "100"
-          RATE_WINDOW_MS: "60000"
+          RATE_WINDOW_MS: "1000"
           AUTH_ENABLED: "false" # Disable auth for testing
           REDIS_DISABLED: "false"
           REDIS_URL: "redis://localhost:6379"
