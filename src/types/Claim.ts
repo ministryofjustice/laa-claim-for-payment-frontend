@@ -41,6 +41,11 @@ export enum ClientPartyStatus {
   PARENT = 'PARENT',
 }
 
+export enum ClaimStatus {
+  DRAFT = "DRAFT",
+  SUBMITTED = "SUBMITTED",
+}
+
 const NullOrUndefinedSchema = z.union([z.null(), z.undefined()]);
 
 const BaseLineItemSchema = z.object({

@@ -91,7 +91,12 @@ describe("View File Upload For Line Item Controller", () => {
       expect(renderStub.firstCall.args[0]).to.equal(
         "main/claims/fileUploadForLineItemView.njk",
       );
-      expect(renderStub.firstCall.args[1]).to.have.property("vm");
+      const renderArgs = renderStub.firstCall.args[1];
+
+      expect(renderArgs.csrfToken).to.equal("test-csrf-token");
+      expect(renderArgs.vm.uploadUrl).to.equal(`/claims/${claimId.toString()}/upload-evidence-individually/${lineItemId.toString()}/file-upload/ajax-upload?claimStatus=SUBMITTED`);
+      expect(renderArgs.vm.deleteUrl).to.equal(`/claims/${claimId.toString()}/upload-evidence-individually/${lineItemId.toString()}/file-upload/ajax-delete?claimStatus=SUBMITTED`);
+      expect(renderArgs.vm.saveAndContinueHref).to.equal(`/claims/${claimId.toString()}/upload-evidence-individually`);
     });
 
     it("should redirect to appropriate page when no claim is returned", async () => {
@@ -158,17 +163,15 @@ describe("View File Upload For Line Item Controller", () => {
     });
 
     it("returns uploaded file details when a file is uploaded", async () => {
-      const mockApiResponse: ApiResponse<AjaxUploadResponse> = {
+      const mockApiResponse: AjaxUploadResponse = {
         status: "success",
-        body: {
-          success: {
-            messageText: "evidence.pdf uploaded",
-            messageHtml: "<span>Uploaded</span>",
-          },
-          file: {
-            filename: "1",
-            originalname: "evidence.pdf",
-          },
+        success: {
+          messageText: "evidence.pdf uploaded",
+          messageHtml: "<span>Uploaded</span>",
+        },
+        file: {
+          filename: "1",
+          originalname: "evidence.pdf",
         },
       };
 
@@ -200,7 +203,7 @@ describe("View File Upload For Line Item Controller", () => {
 
       const responseBody = json.firstCall.args[0];
 
-      expect(responseBody).to.deep.equal(mockApiResponse.body);
+      expect(responseBody).to.deep.equal(mockApiResponse);
 
       expect(status.called).to.equal(false);
       expect(next.called).to.equal(false);
@@ -223,6 +226,7 @@ describe("View File Upload For Line Item Controller", () => {
 
       expect(status.calledWith(400)).to.equal(true);
       expect(json.firstCall.args[0]).to.deep.equal({
+        status: "error",
         error: {
           message: "multiFileUpload.errors.noFileSelected",
         },
@@ -302,6 +306,7 @@ describe("View File Upload For Line Item Controller", () => {
 
       expect(status.calledWith(400)).to.equal(true);
       expect(json.firstCall.args[0]).to.deep.equal({
+        status: "error",
         error: {
           message: "multiFileUpload.errors.missingFileId",
         },

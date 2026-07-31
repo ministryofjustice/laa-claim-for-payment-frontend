@@ -13,7 +13,7 @@ import { DeleteFileRequest } from "#src/types/requests.js";
 import { TFunction } from "#node_modules/i18next/index.js";
 import { deleteEvidenceFileFromClaim } from "#src/controllers/claims/ajaxFileUploadController.js";
 import { uploadService } from "#src/services/uploadService.js";
-import { Claim } from "#src/types/Claim.js";
+import { Claim, ClaimStatus } from "#src/types/Claim.js";
 
 describe("poaEvidenceUploadController", () => {
   let res: any;
@@ -86,15 +86,9 @@ describe("poaEvidenceUploadController", () => {
 
       expect(renderArgs.csrfToken).to.equal("test-csrf-token");
       expect(renderArgs.vm.title).to.equal("pages.poaEvidenceUpload.title");
-      expect(renderArgs.vm.uploadUrl).to.equal(
-        buildRoute(ROUTES.AJAX_UPLOAD_POA_EVIDENCE, { claimId: claimId }),
-      );
-      expect(renderArgs.vm.deleteUrl).to.equal(
-        buildRoute(ROUTES.AJAX_DELETE_POA_EVIDENCE, { claimId: claimId }),
-      );
-      expect(renderArgs.vm.saveAndContinueHref).to.equal(
-        buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, { claimId: claimId }),
-      );
+      expect(renderArgs.vm.uploadUrl).to.equal(`/claims/${claimId.toString()}/poa/evidence-upload/ajax-upload?claimStatus=DRAFT`);
+      expect(renderArgs.vm.deleteUrl).to.equal(`/claims/${claimId.toString()}/poa/evidence-upload/ajax-delete?claimStatus=DRAFT`);
+      expect(renderArgs.vm.saveAndContinueHref).to.equal(`/claims/${claimId.toString()}/poa/check-details`);
       expect(renderArgs.vm.saveAndComeBackLaterHref).to.equal("#");
     });
   });
@@ -171,6 +165,9 @@ describe("poaEvidenceUploadController", () => {
         params: {
           claimId: claimId.toString(),
         },
+        query: {
+          claimStatus: ClaimStatus.DRAFT,
+        },
         t: mockT,
       } as unknown as DeleteFileRequest;
     });
@@ -241,6 +238,7 @@ describe("poaEvidenceUploadController", () => {
 
       expect(status.calledWith(400)).to.equal(true);
       expect(json.firstCall.args[0]).to.deep.equal({
+        status: "error",
         error: {
           message: "multiFileUpload.errors.missingFileId",
         },

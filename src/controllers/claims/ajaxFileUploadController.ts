@@ -3,29 +3,35 @@ import { processError } from "#src/helpers/index.js";
 import type { DeleteFileRequest, MulterRequest } from "#src/types/requests.js";
 import { uploadService } from "#src/services/uploadService.js";
 import { UUID } from "uuidv7";
+import { ClaimStatus } from "#src/types/Claim.js";
+import type { AjaxUploadResponse } from "#src/types/api-types.js";
 const BAD_REQUEST = 400;
 
 function validateUploadedFile(
   req: MulterRequest,
   res: Response,
 ): Express.Multer.File | undefined {
-  const { file } = req;
+  const { file, t } = req;
 
   if (file === undefined) {
-    res.status(BAD_REQUEST).json({
+    const response: AjaxUploadResponse = {
+      status: "error",
       error: {
-        message: req.t("multiFileUpload.errors.noFileSelected"),
+        message: t("multiFileUpload.errors.noFileSelected"),
       },
-    });
+    };
+    res.status(BAD_REQUEST).json(response);
     return undefined;
   }
 
   if (file.size === 0) {
-    res.status(BAD_REQUEST).json({
+    const response: AjaxUploadResponse = {
+      status: "error",
       error: {
-        message: req.t("multiFileUpload.errors.emptyFile"),
+        message: t("multiFileUpload.errors.emptyFile"),
       },
-    });
+    };
+    res.status(BAD_REQUEST).json(response);
     return undefined;
   }
 
@@ -46,27 +52,46 @@ export async function uploadEvidenceFile(
   next: NextFunction,
 ): Promise<void> {
   try {
+    const {
+      params: { claimId },
+      query: { claimStatus },
+      t,
+      axiosMiddleware,
+    } = req;
+
     const file = validateUploadedFile(req, res);
 
     if (file === undefined) {
       return;
     }
 
+    if (!isClaimStatus(claimStatus)) {
+      const response: AjaxUploadResponse = {
+        status: "error",
+        error: {
+          message: t("multiFileUpload.errors.invalidClaimStatus"),
+        },
+      };
+      res.status(400).json(response);
+      return;
+    }
+
     const translations = {
-      uploaded: req.t("common.uploadStatus.uploaded"),
-      uploadedMessage: req.t("multiFileUpload.uploadedMessage", {
+      uploaded: t("common.uploadStatus.uploaded"),
+      uploadedMessage: t("multiFileUpload.uploadedMessage", {
         filename: file.originalname,
       }),
     };
 
     const response = await uploadService.uploadEvidence(
-      req.axiosMiddleware,
-      UUID.parse(req.params.claimId),
+      axiosMiddleware,
+      UUID.parse(claimId),
       file,
       translations,
+      claimStatus,
     );
 
-    res.json(response.body);
+    res.json(response);
   } catch (error) {
     next(processError(error, "uploading evidence file"));
   }
@@ -86,6 +111,12 @@ export async function uploadEvidenceFileForLineItem(
   next: NextFunction,
 ): Promise<void> {
   try {
+    const {
+      params: { claimId, lineItemId },
+      t,
+      axiosMiddleware,
+    } = req;
+
     const file = validateUploadedFile(req, res);
 
     if (file === undefined) {
@@ -93,21 +124,21 @@ export async function uploadEvidenceFileForLineItem(
     }
 
     const translations = {
-      uploaded: req.t("common.uploadStatus.uploaded"),
-      uploadedMessage: req.t("multiFileUpload.uploadedMessage", {
+      uploaded: t("common.uploadStatus.uploaded"),
+      uploadedMessage: t("multiFileUpload.uploadedMessage", {
         filename: file.originalname,
       }),
     };
 
     const response = await uploadService.uploadLineItemEvidence(
-      req.axiosMiddleware,
-      UUID.parse(req.params.claimId),
-      UUID.parse(req.params.lineItemId),
+      axiosMiddleware,
+      UUID.parse(claimId),
+      UUID.parse(lineItemId),
       file,
       translations,
     );
 
-    res.json(response.body);
+    res.json(response);
   } catch (error) {
     next(processError(error, "uploading evidence file"));
   }
@@ -130,15 +161,30 @@ export async function deleteEvidenceFileFromClaim(
     const {
       body: { delete: fileId },
       params: { claimId },
+      query: { claimStatus },
+      t,
       axiosMiddleware,
     } = req;
 
     if (fileId === "") {
-      res.status(BAD_REQUEST).json({
+      const response: AjaxUploadResponse = {
+        status: "error",
         error: {
-          message: req.t("multiFileUpload.errors.missingFileId"),
+          message: t("multiFileUpload.errors.missingFileId"),
         },
-      });
+      };
+      res.status(BAD_REQUEST).json(response);
+      return;
+    }
+
+    if (!isClaimStatus(claimStatus)) {
+      const response: AjaxUploadResponse = {
+        status: "error",
+        error: {
+          message: t("multiFileUpload.errors.invalidClaimStatus"),
+        },
+      };
+      res.status(400).json(response);
       return;
     }
 
@@ -146,6 +192,7 @@ export async function deleteEvidenceFileFromClaim(
       axiosMiddleware,
       UUID.parse(claimId),
       UUID.parse(fileId),
+      claimStatus,
     );
 
     res.json(response);
@@ -168,21 +215,28 @@ export async function unlinkEvidenceFileFromLineItem(
   next: NextFunction,
 ): Promise<void> {
   try {
-    // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- Using alias because "delete" is a reserved keyword.
-    const { delete: fileId } = req.body;
+    const {
+      body: { delete: fileId },
+      t,
+      axiosMiddleware,
+      params: { claimId, lineItemId },
+    } = req;
+
     if (fileId === "") {
-      res.status(BAD_REQUEST).json({
+      const response: AjaxUploadResponse = {
+        status: "error",
         error: {
-          message: req.t("multiFileUpload.errors.missingFileId"),
+          message: t("multiFileUpload.errors.missingFileId"),
         },
-      });
+      };
+      res.status(BAD_REQUEST).json(response);
       return;
     }
 
     const response = await uploadService.unlinkEvidenceFromLineItem(
-      req.axiosMiddleware,
-      UUID.parse(req.params.claimId),
-      UUID.parse(req.params.lineItemId),
+      axiosMiddleware,
+      UUID.parse(claimId),
+      UUID.parse(lineItemId),
       UUID.parse(fileId),
     );
 
@@ -190,4 +244,9 @@ export async function unlinkEvidenceFileFromLineItem(
   } catch (error) {
     next(error);
   }
+}
+
+function isClaimStatus(value: unknown): value is ClaimStatus {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
+  return Object.values(ClaimStatus).includes(value as ClaimStatus);
 }

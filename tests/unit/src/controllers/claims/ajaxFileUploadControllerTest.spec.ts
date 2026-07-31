@@ -10,6 +10,8 @@ import type { MulterRequest } from "#src/types/requests.js";
 import { uploadService } from "#src/services/uploadService.js";
 import type { TFunction } from "#node_modules/i18next/index.js";
 import { V7Generator } from "uuidv7";
+import { AjaxUploadResponse } from "#src/types/api-types.js";
+import { ClaimStatus } from "#src/types/Claim.js";
 
 describe("ajaxFileUploadController", () => {
   let res: Response;
@@ -43,7 +45,17 @@ describe("ajaxFileUploadController", () => {
         params: {
           claimId: claimId.toString(),
         },
+        query: {
+          claimStatus: ClaimStatus.DRAFT,
+        },
         t: mockT,
+        file: {
+          filename: "abc123",
+          originalname: "evidence.pdf",
+          size: 12345,
+          mimetype: "application/pdf",
+          buffer: Buffer.from("fake pdf content"),
+        } as Express.Multer.File,
       } as unknown as MulterRequest;
 
       uploadEvidenceStub = sinon.stub(uploadService, "uploadEvidence");
@@ -56,8 +68,41 @@ describe("ajaxFileUploadController", () => {
 
       expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
       expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+        status: "error",
         error: {
           message: "multiFileUpload.errors.noFileSelected",
+        },
+      });
+      expect(uploadEvidenceStub.called).to.equal(false);
+      expect((next as sinon.SinonStub).called).to.equal(false);
+    });
+
+    it("returns 400 when claim status is undefined", async () => {
+      req.query = {};
+
+      await uploadEvidenceFile(req, res, next);
+
+      expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
+      expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+        status: "error",
+        error: {
+          message: "multiFileUpload.errors.invalidClaimStatus",
+        },
+      });
+      expect(uploadEvidenceStub.called).to.equal(false);
+      expect((next as sinon.SinonStub).called).to.equal(false);
+    });
+
+    it("returns 400 when claim status is invalid", async () => {
+      req.query = { claimStatus: "foo" };
+
+      await uploadEvidenceFile(req, res, next);
+
+      expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
+      expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+        status: "error",
+        error: {
+          message: "multiFileUpload.errors.invalidClaimStatus",
         },
       });
       expect(uploadEvidenceStub.called).to.equal(false);
@@ -76,6 +121,7 @@ describe("ajaxFileUploadController", () => {
 
       expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
       expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+        status: "error",
         error: {
           message: "multiFileUpload.errors.emptyFile",
         },
@@ -85,29 +131,19 @@ describe("ajaxFileUploadController", () => {
     });
 
     it("uploads POA evidence successfully", async () => {
-      const mockApiResponse = {
+      const mockApiResponse: AjaxUploadResponse = {
         status: "success",
-        body: {
-          success: {
-            messageText: "evidence.pdf uploaded",
-            messageHtml: "<span>Uploaded</span>",
-          },
-          file: {
-            filename: evidenceId.toString(),
-            originalname: "evidence.pdf",
-          },
+        success: {
+          messageText: "evidence.pdf uploaded",
+          messageHtml: "<span>Uploaded</span>",
+        },
+        file: {
+          filename: evidenceId.toString(),
+          originalname: "evidence.pdf",
         },
       };
 
       uploadEvidenceStub.resolves(mockApiResponse);
-
-      req.file = {
-        filename: "abc123",
-        originalname: "evidence.pdf",
-        size: 12345,
-        mimetype: "application/pdf",
-        buffer: Buffer.from("fake pdf content"),
-      } as Express.Multer.File;
 
       await uploadEvidenceFile(req, res, next);
 
@@ -118,7 +154,7 @@ describe("ajaxFileUploadController", () => {
 
       expect((res.json as sinon.SinonStub).calledOnce).to.equal(true);
       expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal(
-        mockApiResponse.body,
+        mockApiResponse,
       );
 
       expect((res.status as sinon.SinonStub).called).to.equal(false);
@@ -152,6 +188,7 @@ describe("ajaxFileUploadController", () => {
 
       expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
       expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+        status: "error",
         error: {
           message: "multiFileUpload.errors.noFileSelected",
         },
@@ -172,6 +209,7 @@ describe("ajaxFileUploadController", () => {
 
       expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
       expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+        status: "error",
         error: {
           message: "multiFileUpload.errors.emptyFile",
         },
@@ -181,17 +219,15 @@ describe("ajaxFileUploadController", () => {
     });
 
     it("uploads line item evidence successfully", async () => {
-      const mockApiResponse = {
+      const mockApiResponse: AjaxUploadResponse = {
         status: "success",
-        body: {
-          success: {
-            messageText: "evidence.pdf uploaded",
-            messageHtml: "<span>Uploaded</span>",
-          },
-          file: {
-            filename: evidenceId.toString(),
-            originalname: "evidence.pdf",
-          },
+        success: {
+          messageText: "evidence.pdf uploaded",
+          messageHtml: "<span>Uploaded</span>",
+        },
+        file: {
+          filename: evidenceId.toString(),
+          originalname: "evidence.pdf",
         },
       };
 
@@ -208,16 +244,20 @@ describe("ajaxFileUploadController", () => {
       await uploadEvidenceFileForLineItem(req, res, next);
 
       expect(uploadLineItemEvidenceStub.calledOnce).to.equal(true);
-      expect(uploadLineItemEvidenceStub.calledWith(req.axiosMiddleware)).to.equal(
-        true,
+      expect(
+        uploadLineItemEvidenceStub.calledWith(req.axiosMiddleware),
+      ).to.equal(true);
+      expect(uploadLineItemEvidenceStub.firstCall.args[1]).to.deep.equal(
+        claimId,
       );
-      expect(uploadLineItemEvidenceStub.firstCall.args[1]).to.deep.equal(claimId);
-      expect(uploadLineItemEvidenceStub.firstCall.args[2]).to.deep.equal(lineItemId);
+      expect(uploadLineItemEvidenceStub.firstCall.args[2]).to.deep.equal(
+        lineItemId,
+      );
       expect(uploadLineItemEvidenceStub.firstCall.args[3]).to.equal(req.file);
 
       expect((res.json as sinon.SinonStub).calledOnce).to.equal(true);
       expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal(
-        mockApiResponse.body,
+        mockApiResponse,
       );
 
       expect((res.status as sinon.SinonStub).called).to.equal(false);

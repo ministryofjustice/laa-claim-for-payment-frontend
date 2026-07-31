@@ -1,28 +1,34 @@
-import type { NextFunction, Request, Response } from 'express';
-import { HttpError } from 'http-errors';
-import multer from 'multer';
+import type { NextFunction, Request, Response } from "express";
+import { HttpError } from "http-errors";
+import multer from "multer";
 import type { MulterRequest } from "#src/types/requests.js";
 import type { UUID } from "uuidv7";
+import type { AjaxUploadError } from "#src/types/api-types.js";
 
 export const ROUTES = {
-  CLAIMS: '/',
-  CHOOSE_UPLOAD: '/claims/:claimId/choose-upload',
-  UPLOAD_EVIDENCE_INDIVIDUALLY: '/claims/:claimId/upload-evidence-individually',
-  UPLOAD_FILE_FOR_LINE_ITEM: '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload',
-  AJAX_UPLOAD_FILE_FOR_LINE_ITEM: '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-upload',
-  AJAX_DELETE_FILE_FOR_LINE_ITEM: '/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-delete',
-  VIEW_CLAIM: '/claims/:claimId',
-  HOW_MANY_CLIENTS_RETAINED: '/claims/:claimId/poa/how-many-clients-retained',
-  POA_CLAIM_TYPE: '/claims/:claimId/poa/claim-type',
-  PROFIT_COST_DETAILS: '/claims/:claimId/poa/profit-cost-details',
-  EXPERT_COST_DETAILS: '/claims/:claimId/poa/expert-cost-details',
-  NON_EXPERT_COST_DETAILS: '/claims/:claimId/poa/non-expert-disbursement',
-  MULTIPLE_CLIENT_HEARINGS: '/claims/:claimId/poa/multiple-client-hearings',
-  ESCAPING_FIXED_FEE: '/claims/:claimId/poa/escaping-standard-fixed-fee',
-  NUMBER_OF_CLIENTS_START_OF_CASE: '/claims/:claimId/poa/number-of-clients-start-of-case',
-  POA_CHECK_YOUR_DETAILS: '/claims/:claimId/poa/check-details',
-  POA_SUBMISSION_SUCCESSFUL: '/claims/:claimId/poa-submitted',
-  CPGFS_PROFIT_COST_BILL_LINE: '/claims/:claimId/poa/cpgfs-profit-cost-bill-line',
+  CLAIMS: "/",
+  CHOOSE_UPLOAD: "/claims/:claimId/choose-upload",
+  UPLOAD_EVIDENCE_INDIVIDUALLY: "/claims/:claimId/upload-evidence-individually",
+  UPLOAD_FILE_FOR_LINE_ITEM:
+    "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload",
+  AJAX_UPLOAD_FILE_FOR_LINE_ITEM:
+    "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-upload",
+  AJAX_DELETE_FILE_FOR_LINE_ITEM:
+    "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-delete",
+  VIEW_CLAIM: "/claims/:claimId",
+  HOW_MANY_CLIENTS_RETAINED: "/claims/:claimId/poa/how-many-clients-retained",
+  POA_CLAIM_TYPE: "/claims/:claimId/poa/claim-type",
+  PROFIT_COST_DETAILS: "/claims/:claimId/poa/profit-cost-details",
+  EXPERT_COST_DETAILS: "/claims/:claimId/poa/expert-cost-details",
+  NON_EXPERT_COST_DETAILS: "/claims/:claimId/poa/non-expert-disbursement",
+  MULTIPLE_CLIENT_HEARINGS: "/claims/:claimId/poa/multiple-client-hearings",
+  ESCAPING_FIXED_FEE: "/claims/:claimId/poa/escaping-standard-fixed-fee",
+  NUMBER_OF_CLIENTS_START_OF_CASE:
+    "/claims/:claimId/poa/number-of-clients-start-of-case",
+  POA_CHECK_YOUR_DETAILS: "/claims/:claimId/poa/check-details",
+  POA_SUBMISSION_SUCCESSFUL: "/claims/:claimId/poa-submitted",
+  CPGFS_PROFIT_COST_BILL_LINE:
+    "/claims/:claimId/poa/cpgfs-profit-cost-bill-line",
   POA_EVIDENCE_UPLOAD: "/claims/:claimId/poa/evidence-upload",
   AJAX_UPLOAD_POA_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-upload",
   AJAX_DELETE_POA_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-delete",
@@ -76,23 +82,27 @@ export function multerErrorHandler(
   next: NextFunction,
 ): void {
   if (error instanceof multer.MulterError) {
-    res.status(400).json({
+    const response: AjaxUploadError = {
+      status: "error",
       error: {
         message:
           error.code === "LIMIT_FILE_SIZE"
             ? req.t("multiFileUpload.errors.fileTooLarge")
             : error.message,
       },
-    });
+    };
+    res.status(400).json(response);
     return;
   }
 
   if (error instanceof HttpError && error.statusCode === 415) {
-    res.status(400).json({
+    const response: AjaxUploadError = {
+      status: "error",
       error: {
-        message: req.t('multiFileUpload.errors.onlyPdf'),
+        message: req.t("multiFileUpload.errors.onlyPdf"),
       },
-    });
+    };
+    res.status(400).json(response);
     return;
   }
 

@@ -7,15 +7,14 @@ import {
   uploadLineItemEvidence as uploadLineItemEvidenceApi,
 } from "#src/generated/claim-api/sdk.gen.js";
 import { createApiError } from "#src/helpers/index.js";
-import type {
-  AjaxUploadResponse,
-  ApiResponse,
-} from "#src/types/api-types.js";
+import type { AjaxUploadResponse, ApiResponse } from "#src/types/api-types.js";
 import type { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
 import config from "../../config.js";
 import { escapeHtml } from "#src/helpers/escapehtml.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import type { UUID } from "uuidv7";
+import type { Client } from "#src/generated/claim-api/client/index.js";
+import type { ClaimStatus } from "#src/types/Claim.js";
 
 interface UploadServiceDeps {
   createClient: typeof createClient;
@@ -39,7 +38,6 @@ const defaultDeps: UploadServiceDeps = {
  *
  */
 class UploadService {
-  
   /**
    * Link an array of evidence IDs to the given line item ID.
    *
@@ -71,7 +69,7 @@ class UploadService {
           claimId: claimId.toString(),
           lineItemId: lineItemId.toString(),
         },
-        body: evidenceIds.map(evidenceId => evidenceId.toString()),
+        body: evidenceIds.map((evidenceId) => evidenceId.toString()),
       });
 
       return {
@@ -92,6 +90,7 @@ class UploadService {
    * @param {object} translations Translations.
    * @param {string} translations.uploaded Translation for uploaded message.
    * @param {string} translations.uploadedMessage Translation for uploadedMessage message.
+   * @param {ClaimStatus} claimStatus Claim status (DRAFT or SUBMITTED).
    * @param {UploadServiceDeps} deps - Service dependencies used to create the client and call the generated API.
    * @returns {Promise<AjaxUploadResponse>} Upload response for the multi-file upload component.
    */
@@ -104,69 +103,39 @@ class UploadService {
       uploaded: string;
       uploadedMessage: string;
     },
+    claimStatus: ClaimStatus,
     deps: UploadServiceDeps = defaultDeps,
-  ): Promise<ApiResponse<AjaxUploadResponse>> {
+  ): Promise<AjaxUploadResponse> {
     try {
-      const apiClient = deps.createClient({
-        baseURL: config.api.baseUrl,
-        axios: axiosMiddleware.axiosInstance,
-        throwOnError: true,
-      });
-
-      const arrayBuffer = new ArrayBuffer(file.buffer.byteLength);
-      const view = new Uint8Array(arrayBuffer);
-
-      view.set(file.buffer);
+      const client = this.createApiClient(axiosMiddleware, deps);
 
       const response = await deps.uploadClaimEvidence({
-        client: apiClient,
+        client,
         path: {
           claimId: claimId.toString(),
         },
+        query: {
+          status: claimStatus,
+        },
         body: {
-          documents: new File([arrayBuffer], file.originalname, {
-            type: file.mimetype,
-          }),
+          documents: this.fileToUpload(file),
         },
       });
 
-      if (response.data == null) {
-        return createApiError(response.error);
+      if (response.data == null || response.data.type === "error") {
+        return this.uploadError(file);
       }
 
-      if (response.data.type === "error") {
-        return createApiError(response.data);
-      }
-
-      return {
-        status: "success",
-        body: {
-          success: {
-            messageText: translations.uploadedMessage,
-            messageHtml: `
-              <span class="uploaded-file-row">
-                <a href="#" class="govuk-link uploaded-file-name">${escapeHtml(file.originalname)}</a>
-                <span class="uploaded-file-size govuk-!-margin-left-2">${formatFileSize(file.size)}</span>
-                <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">
-                  ${translations.uploaded}
-                </strong>
-              </span>`,
-          },
-          file: {
-            filename: response.data.evidenceId,
-            originalname: file.originalname,
-          },
-        },
-      };
-    } catch (error) {
-      return createApiError(error);
+      return this.uploadSuccess(file, translations, response.data.evidenceId);
+    } catch {
+      return this.uploadError(file);
     }
   }
 
   /**
    * Uploads evidence for a claim line item and returns a response for the multi-file upload component.
    *
-   * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.   
+   * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
    * @param {UUID} claimId - Claim identifier.
    * @param {UUID} lineItemId - Line item identifier.
    * @param {object} file Uploaded file from multer.
@@ -187,62 +156,28 @@ class UploadService {
       uploadedMessage: string;
     },
     deps: UploadServiceDeps = defaultDeps,
-  ): Promise<ApiResponse<AjaxUploadResponse>> {
+  ): Promise<AjaxUploadResponse> {
     try {
-      const apiClient = deps.createClient({
-        baseURL: config.api.baseUrl,
-        axios: axiosMiddleware.axiosInstance,
-        throwOnError: true,
-      });
-
-      const arrayBuffer = new ArrayBuffer(file.buffer.byteLength);
-      const view = new Uint8Array(arrayBuffer);
-
-      view.set(file.buffer);
+      const client = this.createApiClient(axiosMiddleware, deps);
 
       const response = await deps.uploadLineItemEvidence({
-        client: apiClient,
+        client,
         path: {
           claimId: claimId.toString(),
           lineItemId: lineItemId.toString(),
         },
         body: {
-          documents: new File([arrayBuffer], file.originalname, {
-            type: file.mimetype,
-          }),
+          documents: this.fileToUpload(file),
         },
       });
 
-      if (response.data == null) {
-        return createApiError(response.error);
+      if (response.data == null || response.data.type === "error") {
+        return this.uploadError(file);
       }
 
-      if (response.data.type === "error") {
-        return createApiError(response.data);
-      }
-
-      return {
-        status: "success",
-        body: {
-          success: {
-            messageText: translations.uploadedMessage,
-            messageHtml: `
-              <span class="uploaded-file-row">
-                <a href="#" class="govuk-link uploaded-file-name">${escapeHtml(file.originalname)}</a>
-                <span class="uploaded-file-size govuk-!-margin-left-2">${formatFileSize(file.size)}</span>
-                <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">
-                  ${translations.uploaded}
-                </strong>
-              </span>`,
-          },
-          file: {
-            filename: response.data.evidenceId,
-            originalname: file.originalname,
-          },
-        },
-      };
-    } catch (error) {
-      return createApiError(error);
+      return this.uploadSuccess(file, translations, response.data.evidenceId);
+    } catch {
+      return this.uploadError(file);
     }
   }
 
@@ -289,20 +224,23 @@ class UploadService {
     }
   }
 
- /**
-  * Delete evidence from a claim.
-  *
-  * @param {AxiosInstanceWrapper} axiosMiddleware Wrapped Axios client from request middleware.
-  * @param {UUID} claimId Claim identifier.
-  * @param {UUID} evidenceId Evidence identifier.
-  * @param {UploadServiceDeps} deps Service dependencies used to create the client and call the generated API.
-  * @returns {Promise<ApiResponse<null>>} Null response in app response format.
-  */
+  /**
+   * Delete evidence from a claim.
+   *
+   * @param {AxiosInstanceWrapper} axiosMiddleware Wrapped Axios client from request middleware.
+   * @param {UUID} claimId Claim identifier.
+   * @param {UUID} evidenceId Evidence identifier.
+   * @param {ClaimStatus} claimStatus Claim status (DRAFT or SUBMITTED).
+   * @param {UploadServiceDeps} deps Service dependencies used to create the client and call the generated API.
+   * @returns {Promise<ApiResponse<null>>} Null response in app response format.
+   */
+  // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   static async deleteEvidenceFromClaim(
-  axiosMiddleware: AxiosInstanceWrapper,
-  claimId: UUID,
-  evidenceId: UUID,
-  deps: UploadServiceDeps = defaultDeps,
+    axiosMiddleware: AxiosInstanceWrapper,
+    claimId: UUID,
+    evidenceId: UUID,
+    claimStatus: ClaimStatus,
+    deps: UploadServiceDeps = defaultDeps,
   ): Promise<ApiResponse<null>> {
     try {
       const apiClient = deps.createClient({
@@ -317,6 +255,9 @@ class UploadService {
           claimId: claimId.toString(),
           evidenceId: evidenceId.toString(),
         },
+        query: {
+          status: claimStatus,
+        },
       });
 
       return {
@@ -326,6 +267,63 @@ class UploadService {
     } catch (error) {
       return createApiError(error);
     }
+  }
+
+  private static createApiClient(
+    axiosMiddleware: AxiosInstanceWrapper,
+    deps: UploadServiceDeps,
+  ): Client {
+    return deps.createClient({
+      baseURL: config.api.baseUrl,
+      axios: axiosMiddleware.axiosInstance,
+      throwOnError: true,
+    });
+  }
+
+  private static fileToUpload(file: Express.Multer.File): File {
+    const arrayBuffer = new ArrayBuffer(file.buffer.byteLength);
+    new Uint8Array(arrayBuffer).set(file.buffer);
+
+    return new File([arrayBuffer], file.originalname, {
+      type: file.mimetype,
+    });
+  }
+
+  private static uploadSuccess(
+    file: Express.Multer.File,
+    translations: {
+      uploaded: string;
+      uploadedMessage: string;
+    },
+    evidenceId: string,
+  ): AjaxUploadResponse {
+    return {
+      status: "success",
+      success: {
+        messageText: translations.uploadedMessage,
+        messageHtml: `
+          <span class="uploaded-file-row">
+            <a href="#" class="govuk-link uploaded-file-name">${escapeHtml(file.originalname)}</a>
+            <span class="uploaded-file-size govuk-!-margin-left-2">${formatFileSize(file.size)}</span>
+            <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">
+              ${translations.uploaded}
+            </strong>
+          </span>`,
+      },
+      file: {
+        filename: evidenceId,
+        originalname: file.originalname,
+      },
+    };
+  }
+
+  private static uploadError(file: Express.Multer.File): AjaxUploadResponse {
+    return {
+      status: "error",
+      error: {
+        message: file.originalname,
+      },
+    };
   }
 }
 
