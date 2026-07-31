@@ -4,7 +4,7 @@ import { getRequiredEnv } from '#utils/envHelper.js';
 dotenv.config();
 
 const DEFAULT_RATE_LIMIT_MAX = 100;
-const DEFAULT_RATE_WINDOW_MS = 60000;
+const DEFAULT_RATE_WINDOW_MS = 1000;
 const DEFAULT_PORT = 3000;
 const DEFAULT_NUMBER_OF_RESULTS_PER_PAGE = 20;
 

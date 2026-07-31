@@ -83,7 +83,7 @@ runs:
         echo "RATELIMIT_HEADERS_ENABLED=${{ inputs.ratelimit_headers_enabled || 'true' }}" >> $GITHUB_ENV
         echo "RATELIMIT_STORAGE_URI=${{ inputs.ratelimit_storage_uri || '' }}" >> $GITHUB_ENV
         echo "RATE_LIMIT_MAX=${{ inputs.ratelimit_max || '100' }}" >> $GITHUB_ENV
-        echo "RATE_WINDOW_MS=${{ inputs.ratewindow_ms || '60000' }}" >> $GITHUB_ENV
+        echo "RATE_WINDOW_MS=${{ inputs.ratewindow_ms || '1000' }}" >> $GITHUB_ENV
         echo "NODE_ENV=production" >> $GITHUB_ENV
 
     - name: Deploy using Helm
