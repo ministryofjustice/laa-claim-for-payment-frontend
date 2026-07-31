@@ -16,6 +16,7 @@ import {
   type ClaimDto,
   ClaimResponseSchema,
   ClaimsResponseSchema,
+  ClaimStatus,
   type LineItem,
 } from "#src/types/Claim.js";
 import config from "../../config.js";
@@ -79,7 +80,7 @@ class ClaimService {
     try {
       const response = await deps.getClaims({
         client: apiClient,
-        query: { limit, page, status: "SUBMITTED" },
+        query: { limit, page, status: ClaimStatus.SUBMITTED },
       });
 
       const parsed = ClaimsResponseSchema.parse(response.data);
@@ -114,7 +115,7 @@ class ClaimService {
     return await ClaimService.getClaimByStatus(
       axiosMiddleware,
       claimId,
-      "SUBMITTED",
+      ClaimStatus.SUBMITTED,
       deps,
     );
   }
@@ -135,7 +136,7 @@ class ClaimService {
     return await ClaimService.getClaimByStatus(
       axiosMiddleware,
       claimId,
-      "DRAFT",
+      ClaimStatus.DRAFT,
       deps,
     );
   }
@@ -143,7 +144,7 @@ class ClaimService {
   private static async getClaimByStatus(
     axiosMiddleware: AxiosInstanceWrapper,
     claimId: UUID,
-    status: "DRAFT" | "SUBMITTED",
+    status: ClaimStatus,
     deps: ClaimServiceDeps = defaultDeps,
   ): Promise<ApiResponse<Claim>> {
     const apiClient = deps.createClient({
@@ -192,7 +193,7 @@ class ClaimService {
     try {
       const response = await deps.createClaim<true>({
         body,
-        query: { status: "DRAFT" },
+        query: { status: ClaimStatus.DRAFT },
         client: apiClient,
       });
 
@@ -227,7 +228,7 @@ class ClaimService {
     try {
       await deps.updateClaim({
         path: { id: claim.id },
-        query: { status: "DRAFT" },
+        query: { status: ClaimStatus.DRAFT },
         body: toClaimRequestBody(claim),
         client: apiClient,
       });
@@ -265,7 +266,7 @@ class ClaimService {
     try {
       const response = await deps.addLineItemToClaim<true>({
         path: { claimId: claimId.toString() },
-        query: { status: "DRAFT" },
+        query: { status: ClaimStatus.DRAFT },
         body: lineItemForm == null ? {} : toLineItemRequestBody(lineItemForm),
         client: apiClient,
       });
@@ -309,7 +310,7 @@ class ClaimService {
           claimId: claimId.toString(),
           lineItemId: lineItemId.toString(),
         },
-        query: { status: "DRAFT" },
+        query: { status: ClaimStatus.DRAFT },
         client: apiClient,
       });
 
@@ -352,7 +353,7 @@ class ClaimService {
           claimId: claimId.toString(),
           lineItemId: lineItemId.toString(),
         },
-        query: { status: "DRAFT" },
+        query: { status: ClaimStatus.DRAFT },
         body: toLineItemRequestBody(lineItemForm),
         client: apiClient,
       });
