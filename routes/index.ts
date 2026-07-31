@@ -1,31 +1,42 @@
-import { rateLimit } from "express-rate-limit";
 import { viewClaimPage } from "#src/controllers/claims/viewClaimController.js";
-import { handleYourClaimsPage, handleYourClaimsActionPage } from "#src/controllers/viewClaimsController.js";
+import { handleYourClaimsActionPage, handleYourClaimsPage } from "#src/controllers/viewClaimsController.js";
 import type { NextFunction, Request, Response, Router } from "express";
 import express from "express";
 import { viewUploadEvidenceIndividuallyPage } from "#src/controllers/claims/uploadEvidenceIndividuallyController.js";
 import { chooseFileUpload, submitChooseFileUpload } from "#src/controllers/claims/chooseUploadController.js";
-import { ROUTES, multerErrorHandler } from "./helper.js";
-import { fileUploadForLineItemPage, linkEvidenceToLineItem } from "#src/controllers/claims/fileUploadForLineItemController.js";
-import { evidenceUpload } from '#src/helpers/multerUpload.js';
-import { howManyClientsRetained, submitHowManyClientsRetained } from "#src/controllers/poa/howManyClientsRetainedController.js";
+import { multerErrorHandler, ROUTES } from "./helper.js";
+import {
+  fileUploadForLineItemPage,
+  linkEvidenceToLineItem
+} from "#src/controllers/claims/fileUploadForLineItemController.js";
+import { evidenceUpload } from "#src/helpers/multerUpload.js";
+import {
+  howManyClientsRetained,
+  submitHowManyClientsRetained
+} from "#src/controllers/poa/howManyClientsRetainedController.js";
 import { poaClaimTypePage, submitPoaClaimType } from "#src/controllers/poa/poaClaimTypeController.js";
 import { profitCostDetails, submitProfitCostDetails } from "#src/controllers/poa/profitCostDetailsController.js";
-import { multipleClientHearings, submitMultipleClientHearings } from "#src/controllers/poa/multipleClientHearingsController.js";
-import { numberOfClientsStartOfCase, submitNumberOfClientsStartOfCase } from "#src/controllers/poa/numberOfClientsStartOfCaseController.js";
+import {
+  multipleClientHearings,
+  submitMultipleClientHearings
+} from "#src/controllers/poa/multipleClientHearingsController.js";
+import {
+  numberOfClientsStartOfCase,
+  submitNumberOfClientsStartOfCase
+} from "#src/controllers/poa/numberOfClientsStartOfCaseController.js";
 import { poaSubmissionSuccessfulPage } from "#src/controllers/poa/submissionSuccessfulController.js";
 import { escapingFixedFee, submitEscapingFixedFee } from "#src/controllers/poa/escapingFixedFeeController.js";
 import { profitCostBillLine, submitProfitCostBillLine } from "#src/controllers/poa/profitCostBillLineController.js";
 import { checkYourDetailsPage, submitYourDetails } from "#src/controllers/poa/checkDetailsController.js";
 import { expertCostDetails, submitExpertCostDetails } from "#src/controllers/poa/expertCostDetailsController.js";
 import { poaEvidenceUploadPage, submitPoaEvidenceUpload } from "#src/controllers/poa/poaEvidenceUploadController.js";
-import { deleteEvidenceFileFromClaim, unlinkEvidenceFileFromLineItem, uploadEvidenceFile, uploadEvidenceFileForLineItem } from "#src/controllers/claims/ajaxFileUploadController.js";
+import {
+  deleteEvidenceFileFromClaim,
+  unlinkEvidenceFileFromLineItem,
+  uploadEvidenceFile,
+  uploadEvidenceFileForLineItem
+} from "#src/controllers/claims/ajaxFileUploadController.js";
 import type { ViewClaimsActionRequest } from "#src/types/requests.js";
-
-const limiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 100, // limit each IP to 100 requests per minute
-});
 
 /**
  * Builds the main application router.
@@ -38,7 +49,6 @@ export const buildRouter = (): Router => {
   /* GET home page. */
   router.get(
     ROUTES.CLAIMS,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -50,7 +60,6 @@ export const buildRouter = (): Router => {
 
   router.post(
     ROUTES.CLAIMS,
-    limiter,
     async function (
       req: Request<unknown, unknown, ViewClaimsActionRequest>,
       res: Response,
@@ -63,7 +72,6 @@ export const buildRouter = (): Router => {
   /* GET view claim page. */
   router.get(
     ROUTES.VIEW_CLAIM,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -76,7 +84,6 @@ export const buildRouter = (): Router => {
   /* GET view upload evidence individually page.*/
   router.get(
     ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, //TODO: Needs to be renamed to line items or something similar
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -86,21 +93,9 @@ export const buildRouter = (): Router => {
     },
   );
 
-  router.get(
-    ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
-    limiter,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await fileUploadForLineItemPage(req, res, next);
-    },
-  );
   /* GET choose how to upload file page. */
   router.get(
     ROUTES.CHOOSE_UPLOAD,
-    limiter,
     function (req: Request, res: Response, next: NextFunction): void {
       chooseFileUpload(req, res, next);
     },
@@ -109,7 +104,6 @@ export const buildRouter = (): Router => {
   /* POST choose how to upload file page. */
   router.post(
     ROUTES.CHOOSE_UPLOAD,
-    limiter,
     function (req: Request, res: Response, next: NextFunction): void {
       submitChooseFileUpload(req, res, next);
     },
@@ -129,7 +123,6 @@ export const buildRouter = (): Router => {
 
   router.get(
     ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -142,7 +135,6 @@ export const buildRouter = (): Router => {
   /* POST linked evidence. */
   router.post(
     ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -154,7 +146,6 @@ export const buildRouter = (): Router => {
 
   router.get(
     ROUTES.POA_EVIDENCE_UPLOAD,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -164,7 +155,7 @@ export const buildRouter = (): Router => {
     },
   );
 
-  router.post(ROUTES.POA_EVIDENCE_UPLOAD, limiter, submitPoaEvidenceUpload);
+  router.post(ROUTES.POA_EVIDENCE_UPLOAD, submitPoaEvidenceUpload);
 
   router.post(
     ROUTES.AJAX_UPLOAD_POA_EVIDENCE,
@@ -177,7 +168,6 @@ export const buildRouter = (): Router => {
 
   router.get(
     ROUTES.HOW_MANY_CLIENTS_RETAINED,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -189,7 +179,6 @@ export const buildRouter = (): Router => {
 
   router.post(
     ROUTES.HOW_MANY_CLIENTS_RETAINED,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -201,7 +190,6 @@ export const buildRouter = (): Router => {
 
   router.get(
     ROUTES.POA_CLAIM_TYPE,
-    limiter,
     async function (req, res, next): Promise<void> {
       await poaClaimTypePage(req, res, next);
     },
@@ -209,7 +197,6 @@ export const buildRouter = (): Router => {
 
   router.post(
     ROUTES.POA_CLAIM_TYPE,
-    limiter,
     async function (req, res, next): Promise<void> {
       await submitPoaClaimType(req, res, next);
     },
@@ -217,7 +204,6 @@ export const buildRouter = (): Router => {
 
   router.get(
     ROUTES.PROFIT_COST_DETAILS,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -229,7 +215,6 @@ export const buildRouter = (): Router => {
 
   router.post(
     ROUTES.PROFIT_COST_DETAILS,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -241,7 +226,6 @@ export const buildRouter = (): Router => {
 
   router.get(
     ROUTES.EXPERT_COST_DETAILS,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -253,7 +237,6 @@ export const buildRouter = (): Router => {
 
   router.post(
     ROUTES.EXPERT_COST_DETAILS,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -265,7 +248,6 @@ export const buildRouter = (): Router => {
 
   router.get(
     ROUTES.MULTIPLE_CLIENT_HEARINGS,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -277,7 +259,6 @@ export const buildRouter = (): Router => {
 
   router.post(
     ROUTES.MULTIPLE_CLIENT_HEARINGS,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -289,23 +270,28 @@ export const buildRouter = (): Router => {
 
   router.get(
     ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
-    limiter,
-    async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
       await profitCostBillLine(req, res, next);
     },
   );
 
   router.post(
     ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
-    limiter,
-    async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
       await submitProfitCostBillLine(req, res, next);
     },
   );
 
   router.get(
     ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -317,7 +303,6 @@ export const buildRouter = (): Router => {
 
   router.post(
     ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -329,7 +314,6 @@ export const buildRouter = (): Router => {
 
   router.get(
     ROUTES.ESCAPING_FIXED_FEE,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -341,7 +325,6 @@ export const buildRouter = (): Router => {
 
   router.post(
     ROUTES.ESCAPING_FIXED_FEE,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -353,7 +336,6 @@ export const buildRouter = (): Router => {
 
   router.get(
     ROUTES.POA_CHECK_YOUR_DETAILS,
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -365,7 +347,6 @@ export const buildRouter = (): Router => {
 
   router.post(
     ROUTES.POA_CHECK_YOUR_DETAILS,
-    limiter,
     function (req: Request, res: Response, next: NextFunction): void {
       submitYourDetails(req, res, next);
     },
@@ -373,7 +354,6 @@ export const buildRouter = (): Router => {
 
   router.get(
     ROUTES.POA_SUBMISSION_SUCCESSFUL,
-    limiter,
     function (req: Request, res: Response, next: NextFunction): void {
       poaSubmissionSuccessfulPage(req, res, next);
     },
@@ -383,88 +363,6 @@ export const buildRouter = (): Router => {
   // GET users from external API
   router.get(
     "/users",
-    limiter,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      try {
-        // Use the Axios instance attached to the request object
-        const response = await req.axiosMiddleware.get(
-          "https://jsonplaceholder.typicode.com/users",
-        );
-        res.json(response.data);
-      } catch (error) {
-        next(error);
-      }
-    },
-  );
-
-  /* POST linked evidence. */
-  router.post(
-    ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
-    limiter,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await linkEvidenceToLineItem(req, res, next);
-    },
-  );
-
-  /* GET choose how to upload file page. */
-  router.get(
-    ROUTES.CHOOSE_UPLOAD,
-    limiter,
-    function (req: Request, res: Response, next: NextFunction): void {
-      chooseFileUpload(req, res, next);
-    },
-  );
-
-  /* POST choose how to upload file page. */
-  router.post(
-    ROUTES.CHOOSE_UPLOAD,
-    limiter,
-    function (req: Request, res: Response, next: NextFunction): void {
-      submitChooseFileUpload(req, res, next);
-    },
-  );
-
-  router.get(
-    ROUTES.POA_CHECK_YOUR_DETAILS,
-    limiter,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await checkYourDetailsPage(req, res, next);
-    },
-  );
-
-  router.post(
-    ROUTES.POA_CHECK_YOUR_DETAILS,
-    limiter,
-    function (req: Request, res: Response, next: NextFunction): void {
-      submitYourDetails(req, res, next);
-    },
-  );
-
-  router.get(
-    ROUTES.POA_SUBMISSION_SUCCESSFUL,
-    limiter,
-    function (req: Request, res: Response, next: NextFunction): void {
-      poaSubmissionSuccessfulPage(req, res, next);
-    },
-  );
-
-  // Make an API call with `Axios` and `middleware-axios`
-  // GET users from external API
-  router.get(
-    "/users",
-    limiter,
     async function (
       req: Request,
       res: Response,
@@ -489,4 +387,3 @@ export const buildRouter = (): Router => {
 
   return router;
 };
-

@@ -18,7 +18,7 @@ export const rateLimitSetUp = (app: Application, config: Config): void => {
       typeof config.RATE_WINDOW_MS === "string"
         ? parseInt(config.RATE_WINDOW_MS, 10)
         : config.RATE_WINDOW_MS,
-    max:
+    limit:
       typeof config.RATE_LIMIT_MAX === "string"
         ? parseInt(config.RATE_LIMIT_MAX, 10)
         : config.RATE_LIMIT_MAX,
