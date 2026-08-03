@@ -24,7 +24,8 @@
     "service": "Claim for controlled work",
     "department": "Ministry of Justice",
     "selectDocument": "Select {document}",
-    "opensInNewTab": "opens in a new tab"
+    "opensInNewTab": "opens in a new tab",
+    "upload": "Upload"
   },
   "multiFileUpload": {
     "uploadStatusText": "Uploading files, please wait",

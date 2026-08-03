@@ -103,7 +103,7 @@ describe("views/main/poa/poaEvidenceUploadView.njk", () => {
 
     expect(uploadButton).to.have.length(1);
     expect(uploadButton.text().trim()).to.equal(
-      "pages.poaEvidenceUpload.uploadFiles.uploadButton",
+      "common.upload",
     );
   });
 
