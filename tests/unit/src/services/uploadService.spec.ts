@@ -1,9 +1,14 @@
 import { expect } from "chai";
 import sinon from "sinon";
-import { AjaxUploadError, AjaxUploadSuccess, ApiError } from "#src/types/api-types.js";
+import {
+  AjaxUploadError,
+  AjaxUploadSuccess,
+  ApiError,
+} from "#src/types/api-types.js";
 import { uploadService } from "#src/services/uploadService.js";
 import { V7Generator } from "uuidv7";
 import { ClaimStatus } from "#src/types/Claim.js";
+import { TFunction } from "#node_modules/i18next/index.js";
 
 describe("Upload Service", () => {
   afterEach(() => {
@@ -16,19 +21,21 @@ describe("Upload Service", () => {
   const evidence2Id = new V7Generator().generate();
   const evidence3Id = new V7Generator().generate();
 
+  const mockT: TFunction = ((key: string) => key) as TFunction;
+
   describe("uploadEvidence", () => {
     it("returns success", async () => {
       const mockApiResponse = {
         data: {
-          type: 'success',
+          type: "success",
           evidenceId: evidence1Id.toString(),
           file: {
             filename: evidence1Id.toString(),
-            originalname: 'evidence.pdf',
+            originalname: "evidence.pdf",
             filesize: 12345,
           },
           message: `File uploaded with ID: ${evidence1Id.toString()}`,
-        }
+        },
       };
 
       const deps = {
@@ -37,49 +44,46 @@ describe("Upload Service", () => {
       };
 
       const file = {
-        originalname: 'evidence.pdf',
-        mimetype: 'application/pdf',
+        originalname: "evidence.pdf",
+        mimetype: "application/pdf",
         size: 12345,
-        buffer: Buffer.from('fake pdf content'),
+        buffer: Buffer.from("fake pdf content"),
       } as Express.Multer.File;
 
-      const translations = {
-        uploaded: 'Uploaded',
-        uploadedMessage: 'evidence.pdf uploaded',
-      };
-
-      const result = await uploadService.uploadEvidence(
+      const result = (await uploadService.uploadEvidence(
         { axiosInstance: {} } as any,
         claimId,
         file,
-        translations,
+        mockT,
         ClaimStatus.DRAFT,
-        deps as any
-      ) as AjaxUploadSuccess;
+        deps as any,
+      )) as AjaxUploadSuccess;
 
       expect(result.status).to.equal("success");
       expect(result.file).to.deep.equal({
-        filename: evidence1Id.toString(),
-        originalname: 'evidence.pdf',
+        id: evidence1Id.toString(),
+        filename: "evidence.pdf",
+        originalname: "evidence.pdf",
+        size: "12KB",
       });
-      expect(result.success.messageText).to.equal('evidence.pdf uploaded');
-      expect(result.success.messageHtml).to.include('evidence.pdf');
-      expect(result.success.messageHtml).to.include('12KB');
-      expect(result.success.messageHtml).to.include('Uploaded');
+      expect(result.success.messageText).to.equal("multiFileUpload.uploadedMessage");
+      expect(result.success.messageHtml).to.include("evidence.pdf");
+      expect(result.success.messageHtml).to.include("12KB");
+      expect(result.success.messageHtml).to.include("common.uploadStatus.uploaded");
     });
 
-    it('escapes file names in the success HTML', async () => {
+    it("escapes file names in the success HTML", async () => {
       const mockApiResponse = {
         data: {
-          type: 'success',
+          type: "success",
           evidenceId: evidence1Id.toString(),
           file: {
-            filename: '<script>.pdf',
-            originalname: '<script>.pdf',
+            filename: "<script>.pdf",
+            originalname: "<script>.pdf",
             filesize: 12345,
           },
           message: `File uploaded with ID: ${evidence1Id} and linked to line item: ${lineItemId}`,
-        }
+        },
       };
 
       const deps = {
@@ -88,27 +92,22 @@ describe("Upload Service", () => {
       };
 
       const file = {
-        originalname: '<script>.pdf',
-        mimetype: 'application/pdf',
+        originalname: "<script>.pdf",
+        mimetype: "application/pdf",
         size: 12345,
-        buffer: Buffer.from('fake pdf content'),
+        buffer: Buffer.from("fake pdf content"),
       } as Express.Multer.File;
 
-      const translations = {
-        uploaded: 'Uploaded',
-        uploadedMessage: '<script>.pdf uploaded',
-      };
-
-      const result = await uploadService.uploadEvidence(
+      const result = (await uploadService.uploadEvidence(
         { axiosInstance: {} } as any,
         claimId,
         file,
-        translations,
+        mockT,
         ClaimStatus.SUBMITTED,
-        deps as any
-      ) as AjaxUploadSuccess;
+        deps as any,
+      )) as AjaxUploadSuccess;
 
-      expect(result.success.messageHtml).to.include('&lt;script&gt;.pdf');
+      expect(result.success.messageHtml).to.include("&lt;script&gt;.pdf");
     });
 
     it("returns error for a non-200 response", async () => {
@@ -131,27 +130,22 @@ describe("Upload Service", () => {
       };
 
       const file = {
-        originalname: 'evidence.pdf',
-        mimetype: 'application/pdf',
+        originalname: "evidence.pdf",
+        mimetype: "application/pdf",
         size: 12345,
-        buffer: Buffer.from('fake pdf content'),
+        buffer: Buffer.from("fake pdf content"),
       } as Express.Multer.File;
 
-      const translations = {
-        uploaded: 'Uploaded',
-        uploadedMessage: 'evidence.pdf uploaded',
-      };
-
-      const result = await uploadService.uploadEvidence(
+      const result = (await uploadService.uploadEvidence(
         { axiosInstance: {} } as any,
         claimId,
         file,
-        translations,
-        deps as any
-      ) as AjaxUploadError;
+        mockT,
+        deps as any,
+      )) as AjaxUploadError;
 
       expect(result.status).to.equal("error");
-      expect(result.error.message).to.equal("evidence.pdf");
+      expect(result.error.message).to.equal("multiFileUpload.errors.uploadFailed");
     });
 
     it("returns error shape when the API call fails", async () => {
@@ -161,27 +155,22 @@ describe("Upload Service", () => {
       };
 
       const file = {
-        originalname: 'evidence.pdf',
-        mimetype: 'application/pdf',
+        originalname: "evidence.pdf",
+        mimetype: "application/pdf",
         size: 12345,
-        buffer: Buffer.from('fake pdf content'),
+        buffer: Buffer.from("fake pdf content"),
       } as Express.Multer.File;
 
-      const translations = {
-        uploaded: 'Uploaded',
-        uploadedMessage: 'evidence.pdf uploaded',
-      };
-
-      const result = await uploadService.uploadEvidence(
+      const result = (await uploadService.uploadEvidence(
         { axiosInstance: {} } as any,
         claimId,
         file,
-        translations,
-        deps as any
-      ) as AjaxUploadError;
+        mockT,
+        deps as any,
+      )) as AjaxUploadError;
 
       expect(result.status).to.equal("error");
-      expect(result.error.message).to.equal("evidence.pdf");
+      expect(result.error.message).to.equal("multiFileUpload.errors.uploadFailed");
     });
   });
 
@@ -198,12 +187,8 @@ describe("Upload Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        [
-          evidence1Id,
-          evidence2Id,
-          evidence3Id
-        ],
-        deps as any
+        [evidence1Id, evidence2Id, evidence3Id],
+        deps as any,
       );
 
       expect(result.status).to.equal("success");
@@ -231,17 +216,13 @@ describe("Upload Service", () => {
         }),
       };
 
-      const result = await uploadService.linkEvidenceToLineItem(
+      const result = (await uploadService.linkEvidenceToLineItem(
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        [
-          evidence1Id,
-          evidence2Id,
-          evidence3Id
-        ],
-        deps as any
-      ) as ApiError;
+        [evidence1Id, evidence2Id, evidence3Id],
+        deps as any,
+      )) as ApiError;
 
       expect(result.status).to.equal("error");
       expect(result.statusCode).to.equal(404);
@@ -260,12 +241,8 @@ describe("Upload Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        [
-          evidence1Id,
-          evidence2Id,
-          evidence3Id
-        ],
-        deps as any
+        [evidence1Id, evidence2Id, evidence3Id],
+        deps as any,
       );
 
       expect(result.status).to.equal("error");
@@ -278,15 +255,15 @@ describe("Upload Service", () => {
     it("returns success", async () => {
       const mockApiResponse = {
         data: {
-          type: 'success',
+          type: "success",
           evidenceId: evidence3Id.toString(),
           file: {
             filename: evidence3Id.toString(),
-            originalname: 'evidence.pdf',
+            originalname: "evidence.pdf",
             filesize: 12345,
           },
           message: `File uploaded with ID: ${evidence3Id.toString()} and linked to line item: ${lineItemId.toString()}`,
-        }
+        },
       };
 
       const deps = {
@@ -298,49 +275,46 @@ describe("Upload Service", () => {
       };
 
       const file = {
-        originalname: 'evidence.pdf',
-        mimetype: 'application/pdf',
+        originalname: "evidence.pdf",
+        mimetype: "application/pdf",
         size: 12345,
-        buffer: Buffer.from('fake pdf content'),
+        buffer: Buffer.from("fake pdf content"),
       } as Express.Multer.File;
 
-      const translations = {
-        uploaded: 'Uploaded',
-        uploadedMessage: 'evidence.pdf uploaded',
-      };
-
-      const result = await uploadService.uploadLineItemEvidence(
+      const result = (await uploadService.uploadLineItemEvidence(
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
         file,
-        translations,
-        deps as any
-      ) as AjaxUploadSuccess;
+        mockT,
+        deps as any,
+      )) as AjaxUploadSuccess;
 
       expect(result.status).to.equal("success");
       expect(result.file).to.deep.equal({
-        filename: evidence3Id.toString(),
-        originalname: 'evidence.pdf',
+        id: evidence3Id.toString(),
+        filename: "evidence.pdf",
+        originalname: "evidence.pdf",
+        size: "12KB",
       });
-      expect(result.success.messageText).to.equal('evidence.pdf uploaded');
-      expect(result.success.messageHtml).to.include('evidence.pdf');
-      expect(result.success.messageHtml).to.include('12KB');
-      expect(result.success.messageHtml).to.include('Uploaded');
+      expect(result.success.messageText).to.equal("multiFileUpload.uploadedMessage");
+      expect(result.success.messageHtml).to.include("evidence.pdf");
+      expect(result.success.messageHtml).to.include("12KB");
+      expect(result.success.messageHtml).to.include("common.uploadStatus.uploaded");
     });
 
-    it('escapes file names in the success HTML', async () => {
+    it("escapes file names in the success HTML", async () => {
       const mockApiResponse = {
         data: {
-          type: 'success',
+          type: "success",
           evidenceId: evidence1Id.toString(),
           file: {
-            filename: '<script>.pdf',
-            originalname: '<script>.pdf',
+            filename: "<script>.pdf",
+            originalname: "<script>.pdf",
             filesize: 12345,
           },
           message: `File uploaded with ID: ${evidence1Id} and linked to line item: ${lineItemId}`,
-        }
+        },
       };
 
       const deps = {
@@ -352,27 +326,22 @@ describe("Upload Service", () => {
       };
 
       const file = {
-        originalname: '<script>.pdf',
-        mimetype: 'application/pdf',
+        originalname: "<script>.pdf",
+        mimetype: "application/pdf",
         size: 12345,
-        buffer: Buffer.from('fake pdf content'),
+        buffer: Buffer.from("fake pdf content"),
       } as Express.Multer.File;
 
-      const translations = {
-        uploaded: 'Uploaded',
-        uploadedMessage: '<script>.pdf uploaded',
-      };
-
-      const result = await uploadService.uploadLineItemEvidence(
+      const result = (await uploadService.uploadLineItemEvidence(
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
         file,
-        translations,
-        deps as any
-      ) as AjaxUploadSuccess;
+        mockT,
+        deps as any,
+      )) as AjaxUploadSuccess;
 
-      expect(result.success.messageHtml).to.include('&lt;script&gt;.pdf');
+      expect(result.success.messageHtml).to.include("&lt;script&gt;.pdf");
     });
 
     it("returns error for a non-200 response", async () => {
@@ -398,28 +367,23 @@ describe("Upload Service", () => {
       };
 
       const file = {
-        originalname: 'evidence.pdf',
-        mimetype: 'application/pdf',
+        originalname: "evidence.pdf",
+        mimetype: "application/pdf",
         size: 12345,
-        buffer: Buffer.from('fake pdf content'),
+        buffer: Buffer.from("fake pdf content"),
       } as Express.Multer.File;
 
-      const translations = {
-        uploaded: 'Uploaded',
-        uploadedMessage: 'evidence.pdf uploaded',
-      };
-
-      const result = await uploadService.uploadLineItemEvidence(
+      const result = (await uploadService.uploadLineItemEvidence(
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
         file,
-        translations,
-        deps as any
-      ) as AjaxUploadError;
+        mockT,
+        deps as any,
+      )) as AjaxUploadError;
 
       expect(result.status).to.equal("error");
-      expect(result.error.message).to.equal("evidence.pdf");
+      expect(result.error.message).to.equal("multiFileUpload.errors.uploadFailed");
     });
 
     it("returns error shape when the API call fails", async () => {
@@ -432,28 +396,23 @@ describe("Upload Service", () => {
       };
 
       const file = {
-        originalname: 'evidence.pdf',
-        mimetype: 'application/pdf',
+        originalname: "evidence.pdf",
+        mimetype: "application/pdf",
         size: 12345,
-        buffer: Buffer.from('fake pdf content'),
+        buffer: Buffer.from("fake pdf content"),
       } as Express.Multer.File;
 
-      const translations = {
-        uploaded: 'Uploaded',
-        uploadedMessage: 'evidence.pdf uploaded',
-      };
-
-      const result = await uploadService.uploadLineItemEvidence(
+      const result = (await uploadService.uploadLineItemEvidence(
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
         file,
-        translations,
-        deps as any
-      ) as AjaxUploadError;
+        mockT,
+        deps as any,
+      )) as AjaxUploadError;
 
       expect(result.status).to.equal("error");
-      expect(result.error.message).to.equal("evidence.pdf");
+      expect(result.error.message).to.equal("multiFileUpload.errors.uploadFailed");
     });
   });
 });

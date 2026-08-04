@@ -1,48 +1,193 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call,
 @typescript-eslint/no-unsafe-member-access,
 @typescript-eslint/no-unsafe-assignment,
+@typescript-eslint/no-unsafe-return,
+@typescript-eslint/no-unsafe-argument,
+@typescript-eslint/no-misused-promises,
+@typescript-eslint/no-magic-numbers,
 @typescript-eslint/explicit-function-return-type,
 @typescript-eslint/strict-boolean-expressions,
-@typescript-eslint/prefer-destructuring --
+@typescript-eslint/prefer-destructuring,
+promise/avoid-new,
+no-async-promise-executor --
 https://github.com/ministryofjustice/moj-frontend/blob/main/src/moj/components/multi-file-upload/multi-file-upload.mjs
 This file patches the upstream MOJ MultiFileUpload component to add CSRF
 header support for upload and delete XMLHttpRequests. The upstream component
 is implemented as untyped JavaScript and relies on prototype overrides and
 internal properties, which trigger TypeScript ESLint unsafe-access rules. */
-import { MultiFileUpload } from '@ministryofjustice/frontend';
+import { MultiFileUpload } from "@ministryofjustice/frontend";
+import { FileUploadStatus } from "#src/models/uploadStatus.ts";
 
 /**
  * Applies UI changes to the MOJ MultiFileUpload component.
  */
 export function patchMultiFileUpload() {
-
   const originalSetupStatusBox = MultiFileUpload.prototype.setupStatusBox;
+
   MultiFileUpload.prototype.setupStatusBox = function (...args) {
     originalSetupStatusBox.apply(this, args);
 
-    const originalExitHook = this.config.hooks.exitHook;
-    this.config.hooks.exitHook = (...hookArgs) => {
-      if (typeof originalExitHook === 'function') {
-        originalExitHook.apply(this, hookArgs);
-      }
-
-      amendFeedbackContainer(this.$feedbackContainer);
-    };
-
-    amendFeedbackContainer(this.$feedbackContainer);
+    convertSummaryList();
+    showHintText(this.$feedbackContainer);
+    setupDeleteLinks(this.$feedbackContainer);
+    void convertExistingRows(this.$feedbackContainer);
   };
-  
-  function amendFeedbackContainer(container) {
-    showHintText(container);
-    convertRows(container);
+
+  MultiFileUpload.prototype.uploadFiles = async function (files) {
+    for (const file of files) {
+      await this.uploadFile(file);
+    }
+  };
+
+  MultiFileUpload.prototype.uploadFile = async function (file) {
+    return await new Promise(async (resolve) => {
+      this.config.hooks.entryHook(this, file);
+
+      let row = await createRow(FileUploadStatus.Pending, {
+        fileName: file.name,
+      });
+
+      const list = this.$feedbackContainer.querySelector(
+        ".moj-multi-file-upload__list",
+      );
+
+      list.append(row);
+
+      const progress = row.querySelector(
+        ".moj-multi-file-upload__progress",
+      );
+
+      const xhr = new XMLHttpRequest();
+
+      xhr.upload.addEventListener("progress", (event) => {
+        if (!event.lengthComputable || !progress) {
+          return;
+        }
+
+        const percentComplete = Math.round(
+          (event.loaded / event.total) * 100,
+        );
+
+        progress.textContent = `${percentComplete}%`;
+      });
+
+      xhr.addEventListener("load", async () => {
+        const {response} = xhr;
+
+        if (
+          xhr.status < 200 ||
+          xhr.status >= 300 ||
+          response?.status !== "success" ||
+          !response.file
+        ) {
+          const message =
+            response?.error?.message ?? "Upload failed";
+
+          row = await replaceRow(row, FileUploadStatus.Failed, {
+            fileName: file.name,
+            message,
+          });
+
+          this.config.hooks.errorHook(
+            this,
+            file,
+            xhr,
+            xhr.statusText,
+            new Error(message),
+          );
+
+          resolve();
+          return;
+        }
+
+        row = await replaceRow(row, FileUploadStatus.Success, {
+          fileId: response.file.id,
+          fileName: response.file.originalname,
+          fileSize: response.file.size,
+        });
+
+        this.config.hooks.exitHook(
+          this,
+          file,
+          xhr,
+          xhr.statusText,
+        );
+
+        resolve();
+      });
+
+      xhr.addEventListener("error", async () => {
+        row = await replaceRow(row, FileUploadStatus.Failed, {
+          fileName: file.name,
+          message: "Upload failed",
+        });
+
+        this.config.hooks.errorHook(
+          this,
+          file,
+          xhr,
+          xhr.statusText,
+          new Error("Upload failed"),
+        );
+
+        resolve();
+      });
+
+      xhr.open("POST", this.config.uploadUrl);
+
+      xhr.responseType = "json";
+
+      const formData = new FormData();
+
+      formData.append("documents", file);
+
+      xhr.send(formData);
+    });
+  };
+
+  async function createRow(status, params = {}) {
+    const template = document.createElement("template");
+
+    template.innerHTML = await fetchFileRowHtml(status, params);
+
+    const row = template.content.firstElementChild;
+
+    if (!row) {
+      throw new Error("No row returned from server");
+    }
+
+    return row;
+  }
+
+  async function replaceRow(row, status, params = {}) {
+    const newRow = await createRow(status, params);
+
+    row.replaceWith(newRow);
+
+    return newRow;
+  }
+
+  async function fetchFileRowHtml(status, params = {}) {
+    const query = new URLSearchParams({
+      status,
+      ...params,
+    });
+
+    const response = await fetch(
+      `/evidence-upload/ajax-get-file-row?${query}`,
+    );
+
+    if (!response.ok) {
+      throw new Error("Unable to load file row");
+    }
+
+    const json = await response.json();
+
+    return json.body;
   }
 
   function showHintText(container) {
     if (!container) {
-      return;
-    }
-
-    if (container.classList.contains('moj-hidden')) {
       return;
     }
 
@@ -65,55 +210,91 @@ export function patchMultiFileUpload() {
     }
   }
 
-  function convertRows(root) {
-    const rows = root.querySelectorAll('.moj-multi-file-upload__row');
+  function convertSummaryList() {
+    document
+      .querySelectorAll(".govuk-summary-list.moj-multi-file-upload__list")
+      .forEach((list) => {
+        if (list.tagName === "DL") {
+          return;
+        }
 
-    rows.forEach((row) => {
-      if (row.dataset.converted === 'true') {
-        return;
-      }
+        const dl = document.createElement("dl");
 
-      const fileLink = row.querySelector('.uploaded-file-name');
-      const fileSize = row.querySelector('.uploaded-file-size');
-      const uploadedTag = row.querySelector('.govuk-tag');
-      const deleteButton = row.querySelector('.moj-multi-file-upload__delete');
-      const value = row.querySelector('.govuk-summary-list__value');
-      const actions = row.querySelector('.govuk-summary-list__actions');
+        dl.className = list.className;
 
-      if (!fileLink || !fileSize || !uploadedTag || !deleteButton || !value || !actions) {
-        return;
-      }
+        while (list.firstChild) {
+          dl.appendChild(list.firstChild);
+        }
 
-      let key = row.querySelector('.govuk-summary-list__key');
-      if (!key) {
-        key = document.createElement('div');
-        key.className = 'govuk-summary-list__key';
-        row.prepend(key);
-      }
-      key.innerHTML = '';
-      key.appendChild(fileLink);
-
-      value.innerHTML = '';
-      fileSize.classList.add('govuk-!-margin-right-2'); // spacing
-      value.appendChild(fileSize);
-      value.appendChild(uploadedTag);
-
-      const link = document.createElement('a');
-      link.href = '#';
-      link.className = 'govuk-link';
-      link.textContent = 'Delete';
-      const hidden = document.createElement('span');
-      hidden.className = 'govuk-visually-hidden';
-      hidden.textContent = ` ${fileLink.textContent}`;
-      link.appendChild(hidden);
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        deleteButton.click();
+        list.replaceWith(dl);
       });
-      deleteButton.classList.add('govuk-visually-hidden');
-      actions.appendChild(link);
+  }
 
-      row.setAttribute('data-converted', 'true');
+  function setupDeleteLinks(container) {
+    container.addEventListener("click", (event) => {
+      const link = event.target.closest(
+        ".moj-multi-file-upload__delete-link",
+      );
+
+      if (!link) {
+        return;
+      }
+
+      event.preventDefault();
+
+      const row = link.closest(".moj-multi-file-upload__row");
+
+      if (!row) {
+        return;
+      }
+
+      const deleteButton = row.querySelector(
+        ".moj-multi-file-upload__delete",
+      );
+
+      if (!deleteButton) {
+        return;
+      }
+
+      deleteButton.click();
     });
+  }
+
+  async function convertExistingRows(container) {
+    const rows = container.querySelectorAll(
+      ".moj-multi-file-upload__row",
+    );
+
+    for (const row of rows) {
+      if (row.dataset.converted === "true") {
+        continue;
+      }
+
+      const deleteButton = row.querySelector(
+        ".moj-multi-file-upload__delete",
+      );
+
+      const fileName = row
+        .querySelector(".uploaded-file-name")
+        ?.textContent?.trim();
+
+      const fileSize = row
+        .querySelector(".uploaded-file-size")
+        ?.textContent?.trim();
+
+      if (!fileName || !deleteButton || !fileSize) {
+        continue;
+      }
+
+      const fileId = deleteButton.value;
+
+      const newRow = await replaceRow(row, FileUploadStatus.Success, {
+        fileId,
+        fileName,
+        fileSize,
+      });
+
+      newRow.dataset.converted = "true";
+    }
   }
 }

@@ -32,6 +32,7 @@ export const ROUTES = {
   POA_EVIDENCE_UPLOAD: "/claims/:claimId/poa/evidence-upload",
   AJAX_UPLOAD_POA_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-upload",
   AJAX_DELETE_POA_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-delete",
+  AJAX_GET_FILE_ROW: "/evidence-upload/ajax-get-file-row",
 } as const;
 
 /**

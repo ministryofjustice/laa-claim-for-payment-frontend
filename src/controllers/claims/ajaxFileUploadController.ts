@@ -1,10 +1,13 @@
-import type { NextFunction, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { processError } from "#src/helpers/index.js";
 import type { DeleteFileRequest, MulterRequest } from "#src/types/requests.js";
 import { uploadService } from "#src/services/uploadService.js";
 import { UUID } from "uuidv7";
-import { ClaimStatus } from "#src/types/Claim.js";
 import type { AjaxUploadResponse } from "#src/types/api-types.js";
+import { FileUploadStatus } from "#src/models/uploadStatus.js";
+import { ClaimStatus } from "#src/types/Claim.js";
+import { hasQueryParams, isEnumValue } from "#src/helpers/queryParsers.js";
+
 const BAD_REQUEST = 400;
 
 function validateUploadedFile(
@@ -76,18 +79,11 @@ export async function uploadEvidenceFile(
       return;
     }
 
-    const translations = {
-      uploaded: t("common.uploadStatus.uploaded"),
-      uploadedMessage: t("multiFileUpload.uploadedMessage", {
-        filename: file.originalname,
-      }),
-    };
-
     const response = await uploadService.uploadEvidence(
       axiosMiddleware,
       UUID.parse(claimId),
       file,
-      translations,
+      t,
       claimStatus,
     );
 
@@ -123,19 +119,12 @@ export async function uploadEvidenceFileForLineItem(
       return;
     }
 
-    const translations = {
-      uploaded: t("common.uploadStatus.uploaded"),
-      uploadedMessage: t("multiFileUpload.uploadedMessage", {
-        filename: file.originalname,
-      }),
-    };
-
     const response = await uploadService.uploadLineItemEvidence(
       axiosMiddleware,
       UUID.parse(claimId),
       UUID.parse(lineItemId),
       file,
-      translations,
+      t,
     );
 
     res.json(response);
@@ -246,7 +235,75 @@ export async function unlinkEvidenceFileFromLineItem(
   }
 }
 
+/**
+ * Handles AJAX updates of uploaded evidence file rows.
+ *
+ * @param {Request} req Express request object.
+ * @param {Response} res Express response object.
+ * @param {NextFunction} next Express next function.
+ * @returns {void}
+ */
+  export function getFileRow(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  try {
+    const {
+      query: { status },
+      t,
+    } = req;
+
+    if (!isFileUploadStatus(status)) {
+      res.status(400);
+      return;
+    }
+
+    let body = "";
+
+    switch (status) {
+      case FileUploadStatus.Pending:
+        if (!hasQueryParams(req.query, ["fileName"])) {
+          res.status(400);
+          return;
+        }
+        body = uploadService.getUploadingFileRow(t, {
+          name: req.query.fileName,
+        });
+        break;
+      case FileUploadStatus.Success:
+        if (!hasQueryParams(req.query, ["fileName", "fileId", "fileSize"])) {
+          res.status(400);
+          return;
+        }
+        body = uploadService.getUploadedFileRow(t, {
+          name: req.query.fileName,
+          id: req.query.fileId,
+          size: req.query.fileSize,
+        });
+        break;
+      case FileUploadStatus.Failed:
+        if (!hasQueryParams(req.query, ["fileName", "message"])) {
+          res.status(400);
+          return;
+        }
+        body = uploadService.getFailedFileRow(t, {
+          name: req.query.fileName,
+          message: req.query.message,
+        });
+        break;
+    }
+
+    res.json({ body });
+  } catch (error) {
+    next(error);
+  }
+}
+
 function isClaimStatus(value: unknown): value is ClaimStatus {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
-  return Object.values(ClaimStatus).includes(value as ClaimStatus);
+  return isEnumValue(ClaimStatus, value);
+}
+
+function isFileUploadStatus(value: unknown): value is FileUploadStatus {
+  return isEnumValue(FileUploadStatus, value);
 }

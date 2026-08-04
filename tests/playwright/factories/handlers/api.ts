@@ -1,4 +1,4 @@
-import { http, HttpResponse } from "msw";
+import {delay, http, HttpResponse } from "msw";
 import { UUID } from "uuidv7";
 
 export const claim1Id = UUID.parse("019f5ba6-1dfc-7caf-b276-75ac6373525a");
@@ -99,7 +99,7 @@ export const apiHandlers = [
 
   http.post(
     "/api/v1/claims/:claimId/line-items/:lineItemId/upload-evidence",
-    ({ params }) => {
+    async ({ params }) => {
       const { claimId, lineItemId } = params;
       if (typeof claimId !== "string" || typeof lineItemId !== "string") {
         throw new Error("URL missing valid string id params.");
@@ -109,6 +109,9 @@ export const apiHandlers = [
         claimId,
         lineItemId,
       );
+
+      // This is so the "Uploading" tag briefly shows
+      await delay(1000);
 
       const response = {
         type: "success",
