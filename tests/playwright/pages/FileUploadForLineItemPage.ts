@@ -69,22 +69,23 @@ export class FileUploadForLineItemPage extends BasePage {
 
   /**
    * check the values in the file row
-   * @param {string} fileName The file name
-   * @param {string} fileSize The file size
+   * @param {string} key The row key
+   * @param {string} value The row value
+   * @param {string} status The file upload status
    */
-  async checkFileRow(fileName: string, fileSize: string): Promise<void> {
-    const row = this.getFileRow(fileName);
+  async checkFileRow(key: string, value: string, status: string): Promise<void> {
+    const row = this.getFileRow(key);
 
     await expect(
-      row.locator(".uploaded-file-name")
-    ).toHaveText(fileName);
+      row.locator(".moj-multi-file-upload__key")
+    ).toContainText(key);
 
     await expect(
-      row.locator(".uploaded-file-size")
-    ).toHaveText(fileSize);
+      row.locator(".moj-multi-file-upload__value")
+    ).toContainText(value);
 
     await expect(
       row.locator(".govuk-tag")
-    ).toHaveText("Uploaded");
+    ).toHaveText(status);
   }
 }

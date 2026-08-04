@@ -49,7 +49,7 @@
       "noFileSelected": "You must upload evidence before you can continue",
       "emptyFile": "The selected file is empty",
       "noFileUploaded": "No file uploaded",
-      "fileTooLarge": "File must not be larger than 10mb",
+      "fileTooLarge": "File must not be larger than 10MB",
       "onlyPdf": "Only PDF, Word, RTF or TIFF files can be uploaded",
       "missingFileId": "Missing file id",
       "invalidFilePath": "Invalid file path",

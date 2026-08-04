@@ -191,10 +191,6 @@ export function patchMultiFileUpload() {
       return;
     }
 
-    if (container.classList.contains('moj-hidden')) {
-      return;
-    }
-
     const heading = container.querySelector('h2');
     if (!heading) {
       return;
