@@ -32,9 +32,10 @@ import { expertCostDetails, submitExpertCostDetails } from "#src/controllers/poa
 import { poaEvidenceUploadPage, submitPoaEvidenceUpload } from "#src/controllers/poa/poaEvidenceUploadController.js";
 import {
   deleteEvidenceFileFromClaim,
+  getFileRow,
   unlinkEvidenceFileFromLineItem,
   uploadEvidenceFile,
-  uploadEvidenceFileForLineItem
+  uploadEvidenceFileForLineItem,
 } from "#src/controllers/claims/ajaxFileUploadController.js";
 import type { ViewClaimsActionRequest } from "#src/types/requests.js";
 
@@ -356,6 +357,13 @@ export const buildRouter = (): Router => {
     ROUTES.POA_SUBMISSION_SUCCESSFUL,
     function (req: Request, res: Response, next: NextFunction): void {
       poaSubmissionSuccessfulPage(req, res, next);
+    },
+  );
+
+  router.get(
+    ROUTES.AJAX_GET_FILE_ROW,
+    function (req: Request, res: Response, next: NextFunction): void {
+      getFileRow(req, res, next);
     },
   );
 

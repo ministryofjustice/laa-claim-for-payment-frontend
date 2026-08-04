@@ -39,8 +39,10 @@ export interface AjaxUploadSuccess {
     messageHtml: string;
   };
   file: {
+    id: string;
     filename: string;
     originalname: string;
+    size: string;
   };
 }
 

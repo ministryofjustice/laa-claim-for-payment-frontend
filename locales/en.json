@@ -25,7 +25,12 @@
     "department": "Ministry of Justice",
     "selectDocument": "Select {document}",
     "opensInNewTab": "opens in a new tab",
-    "upload": "Upload"
+    "upload": "Upload",
+    "fileUploadStatus": {
+      "uploaded": "Uploaded",
+      "uploading": "Uploading",
+      "failed": "Failed"
+    }
   },
   "multiFileUpload": {
     "uploadStatusText": "Uploading files, please wait",

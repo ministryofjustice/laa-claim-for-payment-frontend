@@ -1,8 +1,9 @@
 import { expect } from "chai";
 import { afterEach, beforeEach, describe, it } from "mocha";
 import sinon from "sinon";
-import type { NextFunction, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import {
+  getFileRow,
   uploadEvidenceFile,
   uploadEvidenceFileForLineItem,
 } from "#src/controllers/claims/ajaxFileUploadController.js";
@@ -138,8 +139,10 @@ describe("ajaxFileUploadController", () => {
           messageHtml: "<span>Uploaded</span>",
         },
         file: {
+          id: "019fcb9c-2556-747c-a515-9d67143d5fd9",
           filename: evidenceId.toString(),
           originalname: "evidence.pdf",
+          size: "123KB",
         },
       };
 
@@ -226,8 +229,10 @@ describe("ajaxFileUploadController", () => {
           messageHtml: "<span>Uploaded</span>",
         },
         file: {
+          id: "019fcb9c-2556-747c-a515-9d67143d5fd9",
           filename: evidenceId.toString(),
           originalname: "evidence.pdf",
+          size: "123KB",
         },
       };
 
@@ -262,6 +267,149 @@ describe("ajaxFileUploadController", () => {
 
       expect((res.status as sinon.SinonStub).called).to.equal(false);
       expect((next as sinon.SinonStub).called).to.equal(false);
+    });
+  });
+
+  describe("getFileRow", () => {
+    let req: Partial<Request>;
+    let uploadEvidenceStub: sinon.SinonStub;
+
+    describe("uploaded", () => {
+      beforeEach(() => {
+        uploadEvidenceStub = sinon.stub(uploadService, "getUploadedFileRow");
+      });
+
+      it("gets an uploaded row", () => {
+        req = {
+          query: {
+            status: "success",
+            fileName: "evidence.pdf",
+            fileId: "019fcb9c-2556-747c-a515-9d67143d5fd9",
+            fileSize: "123KB",
+          },
+        };
+
+        const dummyHtml = "<div>Something</div>"
+
+        uploadEvidenceStub.returns(dummyHtml);
+
+        getFileRow(req as Request, res, next);
+
+        expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+          body: dummyHtml,
+        });
+      });
+
+      it("fails to get an uploaded row when query params missing", () => {
+        req = {
+          query: {
+            status: "success",
+          },
+        };
+
+        const dummyHtml = "<div>Something</div>"
+
+        uploadEvidenceStub.returns(dummyHtml);
+
+        getFileRow(req as Request, res, next);
+
+        expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
+      });
+    });
+
+    describe("uploading", () => {
+      beforeEach(() => {
+        uploadEvidenceStub = sinon.stub(uploadService, "getUploadingFileRow");
+      });
+
+      it("gets an uploading row", () => {
+        req = {
+          query: {
+            status: "pending",
+            fileName: "evidence.pdf",
+          },
+        };
+
+        const dummyHtml = "<div>Something</div>"
+
+        uploadEvidenceStub.returns(dummyHtml);
+
+        getFileRow(req as Request, res, next);
+
+        expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+          body: dummyHtml,
+        });
+      });
+
+      it("fails to get an uploading row when query params missing", () => {
+        req = {
+          query: {
+            status: "pending",
+          },
+        };
+
+        const dummyHtml = "<div>Something</div>"
+
+        uploadEvidenceStub.returns(dummyHtml);
+
+        getFileRow(req as Request, res, next);
+
+        expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
+      });
+    });
+
+    describe("failed", () => {
+      beforeEach(() => {
+        uploadEvidenceStub = sinon.stub(uploadService, "getFailedFileRow");
+      });
+
+      it("gets a failed row", () => {
+        req = {
+          query: {
+            status: "failed",
+            fileName: "evidence.pdf",
+            message: "Upload failed",
+          },
+        };
+
+        const dummyHtml = "<div>Something</div>"
+
+        uploadEvidenceStub.returns(dummyHtml);
+
+        getFileRow(req as Request, res, next);
+
+        expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+          body: dummyHtml,
+        });
+      });
+
+      it("fails to get a failed row when query params missing", () => {
+        req = {
+          query: {
+            status: "failed",
+          },
+        };
+
+        const dummyHtml = "<div>Something</div>"
+
+        uploadEvidenceStub.returns(dummyHtml);
+
+        getFileRow(req as Request, res, next);
+
+        expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
+      });
+    });
+
+    it("fails to get a row when the status is invalid", () => {
+      req = {
+        query: {
+          status: "foo",
+        },
+      };
+
+      getFileRow(req as Request, res, next);
+
+      expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
     });
   });
 });

@@ -170,8 +170,10 @@ describe("View File Upload For Line Item Controller", () => {
           messageHtml: "<span>Uploaded</span>",
         },
         file: {
-          filename: "1",
+          id: "019fcb9c-2556-747c-a515-9d67143d5fd9",
+          filename: "evidence.pdf",
           originalname: "evidence.pdf",
+          size: "123KB",
         },
       };
 

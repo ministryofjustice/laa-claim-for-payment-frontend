@@ -31,7 +31,7 @@ if (
     hooks: {
       entryHook: () => {
         const errorRows = document.querySelectorAll(
-          '.moj-multi-file-upload__error',
+          '.moj-multi-file-upload__failed',
         );
 
         errorRows.forEach((error) => {
