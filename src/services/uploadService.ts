@@ -285,11 +285,11 @@ class UploadService {
         </dt>
 
         <dd class="govuk-summary-list__value moj-multi-file-upload__value">
-          <span class="uploaded-file-size govuk-!-margin-left-2 govuk-!-margin-right-2">
+          <span class="uploaded-file-size">
             ${file.size}
           </span>
 
-          <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">
+          <strong class="govuk-tag govuk-tag--green">
             ${t("common.fileUploadStatus.uploaded")}
           </strong>
         </dd>
@@ -340,11 +340,11 @@ class UploadService {
         </dt>
 
         <dd class="govuk-summary-list__value moj-multi-file-upload__value">
-          <span class="moj-multi-file-upload__progress govuk-!-margin-left-2 govuk-!-margin-right-2">
+          <span class="moj-multi-file-upload__progress">
             0%
           </span>
 
-          <strong class="govuk-tag govuk-tag--yellow govuk-!-margin-left-4">
+          <strong class="govuk-tag govuk-tag--yellow">
             ${t("common.fileUploadStatus.uploading")}
           </strong>
         </dd>
@@ -374,11 +374,11 @@ class UploadService {
         </dt>
 
         <dd class="govuk-summary-list__value moj-multi-file-upload__value">
-          <span class="moj-multi-file-upload__failed govuk-!-margin-left-2 govuk-!-margin-right-2">
+          <span class="moj-multi-file-upload__failed">
             ${file.message}
           </span>
 
-          <strong class="govuk-tag govuk-tag--red govuk-!-margin-left-4">
+          <strong class="govuk-tag govuk-tag--red">
             ${t("common.fileUploadStatus.failed")}
           </strong>
         </dd>
@@ -420,8 +420,8 @@ class UploadService {
         messageHtml: `
           <span class="uploaded-file-row">
             <a href="#" class="govuk-link uploaded-file-name">${escapeHtml(file.originalname)}</a>
-            <span class="uploaded-file-size govuk-!-margin-left-2">${formatFileSize(file.size)}</span>
-            <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">
+            <span class="uploaded-file-size">${formatFileSize(file.size)}</span>
+            <strong class="govuk-tag govuk-tag--green">
               ${t("common.uploadStatus.uploaded")}
             </strong>
           </span>`,

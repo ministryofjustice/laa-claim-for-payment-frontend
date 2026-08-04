@@ -31,15 +31,9 @@ body:not(.govuk-frontend-supported) a[data-module="back-link"][href="#"] {
   order: 3;
 }
 
-.uploaded-file-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.moj-multi-file-upload__key,
 .moj-multi-file-upload__value {
-  font-size: 16px;
-  line-height: 1.25;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
 }
