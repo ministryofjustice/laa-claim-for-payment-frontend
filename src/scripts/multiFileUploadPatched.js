@@ -83,7 +83,7 @@ export function patchMultiFileUpload() {
           const message =
             response?.error?.message ?? "Upload failed";
 
-          row = await replaceRow(row, "failed", {
+          row = await replaceRow(row, FileUploadStatus.Failed, {
             fileName: file.name,
             message,
           });
