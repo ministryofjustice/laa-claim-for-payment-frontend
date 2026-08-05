@@ -156,7 +156,7 @@ describe("expertCostDetailsController", () => {
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, {
+        buildRoute(ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS, {
           claimId: claimId,
         }),
       ),
@@ -206,7 +206,7 @@ describe("expertCostDetailsController", () => {
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, {
+        buildRoute(ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS, {
           claimId: claimId,
         }),
       ),

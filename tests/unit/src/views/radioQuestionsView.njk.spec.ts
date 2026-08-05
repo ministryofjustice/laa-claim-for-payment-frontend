@@ -45,7 +45,8 @@ describe("views/main/radioQuestionsView.njk", () => {
       title: {
         key: "Page Title"
       },
-      fieldName: "testfieldname",
+      fieldName: "testField",
+      fieldId: "test-field",
       choices: testChoices
   })
 
@@ -87,7 +88,7 @@ describe("views/main/radioQuestionsView.njk", () => {
     });
 
     it("renders the radio options", () => {
-      const radios = $("input[type='radio'][name='testfieldname']");
+      const radios = $("input[type='radio'][name='testField']");
 
       expect(radios).to.have.length(2);
       expect(radios.eq(0).attr("value")).to.equal("first");
@@ -131,12 +132,13 @@ describe("views/main/radioQuestionsView.njk", () => {
         title: {
           key: "Page Title"
         },
-        fieldName: "testfieldname",
+        fieldName: "testField",
+        fieldId: "test-field",
         choices: testChoices,
         errors: [
           {
-            fieldName: "testfieldname",
-            href: "#testfieldname",
+            fieldName: "testField",
+            href: "#testField",
             text: {
               key: "some error",
             },
@@ -162,7 +164,7 @@ describe("views/main/radioQuestionsView.njk", () => {
       const errorLink = $(".govuk-error-summary a");
 
       expect(errorLink).to.have.length(1);
-      expect(errorLink.attr("href")).to.equal("#testfieldname");
+      expect(errorLink.attr("href")).to.equal("#testField");
     });
 
     it("renders an inline radio error", () => {

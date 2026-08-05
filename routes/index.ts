@@ -38,6 +38,10 @@ import {
   uploadEvidenceFileForLineItem,
 } from "#src/controllers/claims/ajaxFileUploadController.js";
 import type { ViewClaimsActionRequest } from "#src/types/requests.js";
+import {
+  addAnotherExpertCost,
+  submitAddAnotherExpertCost,
+} from "#src/controllers/poa/addAnotherExpertCostController.js";
 
 /**
  * Builds the main application router.
@@ -244,6 +248,28 @@ export const buildRouter = (): Router => {
       next: NextFunction,
     ): Promise<void> {
       await submitExpertCostDetails(req, res, next);
+    },
+  );
+
+  router.get(
+    ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await addAnotherExpertCost(req, res, next);
+    },
+  );
+
+  router.post(
+    ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await submitAddAnotherExpertCost(req, res, next);
     },
   );
 

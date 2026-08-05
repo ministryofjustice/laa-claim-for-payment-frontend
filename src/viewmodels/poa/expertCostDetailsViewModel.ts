@@ -52,6 +52,7 @@ export class ExpertCostDetailsViewModel {
       },
       vatApplies: radioQuestionForm<BooleanChoice>(
         "vatApplies",
+        "vatApplies",
         booleanChoices,
         errors,
         form.vatApplies,

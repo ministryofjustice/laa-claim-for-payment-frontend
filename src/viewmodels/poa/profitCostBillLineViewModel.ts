@@ -57,6 +57,7 @@ export class ProfitCostBillLineViewModel {
       },
       vatApplies: radioQuestionForm<BooleanChoice>(
         "vatApplies",
+        "vatApplies",
         booleanChoices,
         errors,
         form.vatApplies,

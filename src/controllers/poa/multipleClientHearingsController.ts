@@ -37,6 +37,7 @@ export async function multipleClientHearings(
             key: "pages.multipleClientHearings.title",
           },
           fieldName: multipleClientHearingsFieldName,
+          fieldId: multipleClientHearingsFieldName,
           choices: booleanChoices,
           selectedValue: formatBooleanChoice(claim.body.multiClientHearingFlag),
         }),
@@ -88,6 +89,7 @@ export async function submitMultipleClientHearings(
             key: "pages.multipleClientHearings.title",
           },
           fieldName: multipleClientHearingsFieldName,
+          fieldId: multipleClientHearingsFieldName,
           choices: booleanChoices,
           selectedValue:
             typeof selectedChoice === "string" ? selectedChoice : undefined,

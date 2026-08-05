@@ -11,9 +11,10 @@ export interface RadioQuestionOptions<ChoiceType> {
   checked?: boolean;
 }
 
-interface RadioQuestionViewModelParams<ChoiceType> {
+export interface RadioQuestionViewModelParams<ChoiceType> {
   title: Message;
   fieldName: string;
+  fieldId: string;
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
   selectedValue?: ChoiceType;
   errors?: FieldValidationError[];
@@ -36,6 +37,7 @@ export class RadioQuestionViewModel<ChoiceType> {
   constructor({
     title,
     fieldName,
+    fieldId,
     choices,
     selectedValue,
     errors = [],
@@ -44,6 +46,7 @@ export class RadioQuestionViewModel<ChoiceType> {
     this.choices = choices;
     this.form = radioQuestionForm<ChoiceType>(
       fieldName,
+      fieldId,
       choices,
       errors,
       selectedValue,
@@ -54,6 +57,7 @@ export class RadioQuestionViewModel<ChoiceType> {
 
 export interface RadioQuestionForm<ChoiceType> {
   fieldName: string;
+  fieldId: string;
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
   error?: FieldValidationError;
 }
@@ -61,19 +65,23 @@ export interface RadioQuestionForm<ChoiceType> {
 /**
  * Radio question form builder.
  * @param {string} fieldName field name
+ * @param {string} fieldId field ID
  * @param {ReadonlyArray<RadioQuestionOptions>} choices radio choices
  * @param {FieldValidationError[]} errors errors
  * @param {unknown} selectedValue selected value
  * @returns {RadioQuestionForm} radio question form object
  */
+// eslint-disable-next-line @typescript-eslint/max-params -- ignore
 export function radioQuestionForm<ChoiceType>(
   fieldName: string,
+  fieldId: string,
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>,
   errors: FieldValidationError[],
   selectedValue?: unknown,
 ): RadioQuestionForm<ChoiceType> {
   return {
     fieldName,
+    fieldId,
     choices: choices.map((choice) => ({
       ...choice,
       checked: choice.value === selectedValue,
