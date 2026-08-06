@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 import type { UUID } from "uuidv7";
-import { FileUploadInput } from "#tests/playwright/pages/Components.js";
-import { EvidenceUploadPage } from "#tests/playwright/pages/EvidenceUploadPage.js";
+import { FileUploadInput } from "#tests/playwright/pages/base/Components.js";
+import { EvidenceUploadPage } from "#tests/playwright/pages/base/EvidenceUploadPage.js";
 
 /**
  * Page object for the choose upload page.

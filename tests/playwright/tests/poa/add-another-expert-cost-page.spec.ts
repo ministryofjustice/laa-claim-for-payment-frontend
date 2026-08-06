@@ -1,10 +1,10 @@
-import { expect, test } from "../fixtures/index.js";
-import { MultipleClientHearingsPage } from "#tests/playwright/pages/MultipleClientHearingsPage.js";
+import { expect, test } from "../../fixtures/index.js";
+import { MultipleClientHearingsPage } from "#tests/playwright/pages/poa/MultipleClientHearingsPage.js";
 import {
   claim1Id,
   expertCostDraftClaim1Id,
 } from "#tests/playwright/factories/handlers/api.js";
-import { AddAnotherExpertCostPage } from "#tests/playwright/pages/AddAnotherExpertCostPage.js";
+import { AddAnotherExpertCostPage } from "#tests/playwright/pages/poa/AddAnotherExpertCostPage.js";
 
 test.describe("Add another expert cost page", () => {
   test("displays the page", async ({

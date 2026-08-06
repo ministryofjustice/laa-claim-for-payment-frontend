@@ -1,5 +1,5 @@
 import type { Locator } from "@playwright/test";
-import { BasePage } from "#tests/playwright/pages/BasePage.js";
+import { BasePage } from "#tests/playwright/pages/base/BasePage.js";
 import { expect } from "@playwright/test";
 import path from "node:path";
 import os from "node:os";
@@ -88,13 +88,8 @@ export abstract class EvidenceUploadPage extends BasePage {
    */
   static createFile(name: string, sizeInBytes: number): string {
     const filePath = path.join(os.tmpdir(), name);
-
-    // Remove any existing file
-    fs.rmSync(filePath, { force: true });
-
     const buffer = Buffer.alloc(sizeInBytes);
     fs.writeFileSync(filePath, buffer);
-
     return filePath;
   }
 }

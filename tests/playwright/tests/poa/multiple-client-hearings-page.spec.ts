@@ -1,5 +1,5 @@
-import { expect, test } from "../fixtures/index.js";
-import { MultipleClientHearingsPage } from "#tests/playwright/pages/MultipleClientHearingsPage.js";
+import { expect, test } from "../../fixtures/index.js";
+import { MultipleClientHearingsPage } from "#tests/playwright/pages/poa/MultipleClientHearingsPage.js";
 import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("Multiple client hearings page", () => {

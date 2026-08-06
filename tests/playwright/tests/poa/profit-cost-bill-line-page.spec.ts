@@ -1,5 +1,5 @@
-import { expect, test } from "../fixtures/index.js";
-import { ProfitCostBillLinePage } from "#tests/playwright/pages/ProfitCostBillLinePage.js";
+import { expect, test } from "../../fixtures/index.js";
+import { ProfitCostBillLinePage } from "#tests/playwright/pages/poa/ProfitCostBillLinePage.js";
 import { profitCostDraftClaim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("Profit cost bill line page", () => {

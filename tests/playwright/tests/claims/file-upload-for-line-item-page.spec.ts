@@ -1,12 +1,12 @@
-import { expect, test } from "../fixtures/index.js";
-import { FileUploadForLineItemPage } from "#tests/playwright/pages/FileUploadForLineItemPage.js";
+import { expect, test } from "../../fixtures/index.js";
+import { FileUploadForLineItemPage } from "#tests/playwright/pages/claims/FileUploadForLineItemPage.js";
 import {
   claim1Id,
   claim3Id,
   lineItemId,
 } from "#tests/playwright/factories/handlers/api.js";
 import { delay } from "msw";
-import { EvidenceUploadPage } from "#tests/playwright/pages/EvidenceUploadPage.js";
+import { EvidenceUploadPage } from "#tests/playwright/pages/base/EvidenceUploadPage.js";
 
 test("upload a file then delete the file", async ({
   page,

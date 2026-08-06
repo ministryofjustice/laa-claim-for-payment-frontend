@@ -1,5 +1,5 @@
-import { expect, test } from "../fixtures/index.js";
-import { HowManyClientsRetainedPage } from "#tests/playwright/pages/HowManyClientsRetainedPage.js";
+import { expect, test } from "../../fixtures/index.js";
+import { HowManyClientsRetainedPage } from "#tests/playwright/pages/poa/HowManyClientsRetainedPage.js";
 import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("How many clients retained page", () => {

@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 import type { UUID } from "uuidv7";
-import { QuestionPage } from "#tests/playwright/pages/QuestionPage.js";
-import { TextInput, YesNoInput } from "#tests/playwright/pages/Components.js";
+import { QuestionPage } from "#tests/playwright/pages/base/QuestionPage.js";
+import { TextInput, YesNoInput } from "#tests/playwright/pages/base/Components.js";
 
 /**
  * Page object for the profit cost bill line page.

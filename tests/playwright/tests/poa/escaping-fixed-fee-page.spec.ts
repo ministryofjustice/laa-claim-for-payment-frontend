@@ -1,5 +1,5 @@
-import { expect, test } from "../fixtures/index.js";
-import { EscapingFixedFeePage } from "#tests/playwright/pages/EscapingFixedFeePage.js";
+import { expect, test } from "../../fixtures/index.js";
+import { EscapingFixedFeePage } from "#tests/playwright/pages/poa/EscapingFixedFeePage.js";
 import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("Escaping the fixed fee page", () => {

@@ -1,5 +1,5 @@
-import { expect, test } from "../fixtures/index.js";
-import { PoaClaimTypePage } from "#tests/playwright/pages/PoaClaimTypePage.js";
+import { expect, test } from "../../fixtures/index.js";
+import { PoaClaimTypePage } from "#tests/playwright/pages/poa/PoaClaimTypePage.js";
 import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("POA claim type page", () => {

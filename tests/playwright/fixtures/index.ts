@@ -1,6 +1,6 @@
 import { test as base, expect } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
-import { PageFactory } from '../pages/PageFactory.js';
+import { PageFactory } from '../pages/base/PageFactory.js';
 
 /**
  * Custom test fixture with accessibility testing

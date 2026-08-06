@@ -1,5 +1,5 @@
-import { expect, test } from "../fixtures/index.js";
-import { NumberOfClientsStartOfCasePage } from "#tests/playwright/pages/NumberOfClientsStartOfCasePage.js";
+import { expect, test } from "../../fixtures/index.js";
+import { NumberOfClientsStartOfCasePage } from "#tests/playwright/pages/poa/NumberOfClientsStartOfCasePage.js";
 import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("Number of clients start of case page", () => {

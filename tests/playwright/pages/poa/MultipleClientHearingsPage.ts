@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 import type { UUID } from "uuidv7";
-import { QuestionPage } from "#tests/playwright/pages/QuestionPage.js";
-import { YesNoInput } from "#tests/playwright/pages/Components.js";
+import { QuestionPage } from "#tests/playwright/pages/base/QuestionPage.js";
+import { YesNoInput } from "#tests/playwright/pages/base/Components.js";
 
 /**
  * Page object for the how many clients retained page.

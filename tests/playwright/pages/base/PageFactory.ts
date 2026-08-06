@@ -1,10 +1,10 @@
 import type { Page } from "@playwright/test";
-import { HomePage } from "./HomePage.js";
-import { ViewClaimPage } from "./ViewClaimPage.js";
+import { HomePage } from "../HomePage.js";
+import { ViewClaimPage } from "../ViewClaimPage.js";
 import { NotFoundPage } from "#tests/playwright/pages/NotFoundPage.js";
 import { InternalServerErrorPage } from "#tests/playwright/pages/InternalServerErrorPage.js";
-import { PoaSubmissionSuccessfulPage } from "#tests/playwright/pages/PoaSubmissionSuccessfulPage.js";
-import { PoaCheckDetailsPage } from "#tests/playwright/pages/PoaCheckDetailsPage.js";
+import { PoaSubmissionSuccessfulPage } from "#tests/playwright/pages/poa/PoaSubmissionSuccessfulPage.js";
+import { PoaCheckDetailsPage } from "#tests/playwright/pages/poa/PoaCheckDetailsPage.js";
 import type { UUID } from "uuidv7";
 
 /**

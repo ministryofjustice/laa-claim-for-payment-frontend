@@ -1,5 +1,5 @@
 import type { Locator } from "@playwright/test";
-import { BasePage } from "#tests/playwright/pages/BasePage.js";
+import { BasePage } from "#tests/playwright/pages/base/BasePage.js";
 
 /**
  * Base question page with shared navigation + utilities
