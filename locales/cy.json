@@ -361,6 +361,12 @@
             "invalid": "Description must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
           }
         }
+      },
+      "removeExpertLineItem": {
+        "title" : "Are you sure you want to remove this expert cost?",
+        "errors": {
+          "empty": "Select yes if you want to remove this expert cost"
+        }
       }
     },
     "escapingFixedFee": {
