@@ -149,7 +149,7 @@ describe("profitCostBillLineController", () => {
     expect(createLineItemStub.firstCall.args[2]).to.deep.equal({
       type: CostType.PROFIT_COST,
       value: {
-        activityDate: new Date(2007, 2, 27),
+        activityDate: new Date(Date.UTC(2007, 2, 27)),
         actualNetProfitCostExcludingAdvocacy: 123.45,
         actualNetAdvocacyCosts: 156,
         vatApplies: true,
@@ -185,7 +185,7 @@ describe("profitCostBillLineController", () => {
     expect(updateLineItemStub.firstCall.args[3]).to.deep.equal({
       type: CostType.PROFIT_COST,
       value: {
-        activityDate: new Date(2007, 2, 27),
+        activityDate: new Date(Date.UTC(2007, 2, 27)),
         actualNetProfitCostExcludingAdvocacy: 123.45,
         actualNetAdvocacyCosts: 156,
         vatApplies: true,

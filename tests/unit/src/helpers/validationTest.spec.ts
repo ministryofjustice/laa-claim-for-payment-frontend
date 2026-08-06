@@ -198,6 +198,28 @@ describe("validateDateInput", () => {
     expect(date.getFullYear()).to.equal(2000);
     expect(date.getMonth()).to.equal(0);
     expect(date.getDate()).to.equal(1);
+    expect(date.toISOString()).to.equal("2000-01-01T00:00:00.000Z");
+  });
+
+  it("returns success for valid input for date after hour change", () => {
+    const result = validateDateInput(
+      {
+        day: "26",
+        month: "3",
+        year: "2007",
+      },
+      "fieldName",
+      "id",
+      "prefix",
+    );
+
+    const success = expectSuccess(result);
+    const date = success.value;
+
+    expect(date.getFullYear()).to.equal(2007);
+    expect(date.getMonth()).to.equal(2);
+    expect(date.getDate()).to.equal(26);
+    expect(date.toISOString()).to.equal("2007-03-26T00:00:00.000Z");
   });
 
   it("returns failure with array of errors for empty day", () => {

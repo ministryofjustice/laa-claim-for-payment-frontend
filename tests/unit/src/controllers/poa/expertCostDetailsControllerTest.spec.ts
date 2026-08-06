@@ -146,7 +146,7 @@ describe("expertCostDetailsController", () => {
     expect(createLineItemStub.firstCall.args[2]).to.deep.equal({
       type: CostType.EXPERT_COST,
       value: {
-        activityDate: new Date(2007, 2, 27),
+        activityDate: new Date(Date.UTC(2007, 2, 27)),
         actualNetValue: 123.45,
         vatApplies: true,
         feeEarnerName: "John Smith",
@@ -196,7 +196,7 @@ describe("expertCostDetailsController", () => {
     expect(updateLineItemStub.firstCall.args[3]).to.deep.equal({
       type: CostType.EXPERT_COST,
       value: {
-        activityDate: new Date(2007, 2, 27),
+        activityDate: new Date(Date.UTC(2007, 2, 27)),
         actualNetValue: 123.45,
         vatApplies: true,
         feeEarnerName: "John Smith",

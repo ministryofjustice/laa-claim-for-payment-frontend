@@ -381,7 +381,7 @@ function buildMissingDateKey(parts: string[]): string {
 }
 
 function parseDate(day: number, month: number, year: number): Date | undefined {
-  const date = new Date(year, month - 1, day);
+  const date = new Date(Date.UTC(year, month - 1, day));
 
   return date.getFullYear() === year &&
     date.getMonth() === month - 1 &&
