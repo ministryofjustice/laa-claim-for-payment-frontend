@@ -1,12 +1,12 @@
 import type { Page } from "@playwright/test";
 import type { UUID } from "#node_modules/uuidv7/dist/index.js";
-import { QuestionPage } from "#tests/playwright/pages/QuestionPage.js";
 import { YesNoInput } from "#tests/playwright/pages/Inputs.js";
+import { QuestionPage } from "#tests/playwright/pages/QuestionPage.js";
 
 /**
- * Page object for escaping the fixed fee page.
+ * Page object for adding another expert cost.
  */
-export class EscapingFixedFeePage extends QuestionPage {
+export class AddAnotherExpertCostPage extends QuestionPage {
   /**
    * Creates a page object.
    *
@@ -14,8 +14,8 @@ export class EscapingFixedFeePage extends QuestionPage {
    * @param {UUID} claimId The claim ID.
    */
   constructor(page: Page, claimId: UUID) {
-    super(page, `claims/${claimId.toString()}/poa/escaping-standard-fixed-fee`);
+    super(page, `claims/${claimId.toString()}/poa/expert-cost-details/add`);
   }
 
-  readonly radio = new YesNoInput(this.page, "escapingFixedFee");
+  readonly radio = new YesNoInput(this.page, "add-another");
 }

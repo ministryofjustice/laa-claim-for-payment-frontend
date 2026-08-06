@@ -1,11 +1,12 @@
-import type { Locator, Page } from "@playwright/test";
-import { BasePage } from "#tests/playwright/pages/BasePage.js";
-import type { UUID } from "uuidv7";
+import type {Locator, Page} from "@playwright/test";
+import type {UUID} from "uuidv7";
+import {QuestionPage} from "#tests/playwright/pages/QuestionPage.js";
+import {RadioInput} from "#tests/playwright/pages/Inputs.js";
 
 /**
  * Page object for the how many clients retained page.
  */
-export class HowManyClientsRetainedPage extends BasePage {
+export class HowManyClientsRetainedPage extends QuestionPage {
   /**
    * Creates a page object.
    *
@@ -16,22 +17,14 @@ export class HowManyClientsRetainedPage extends BasePage {
     super(page, `claims/${claimId.toString()}/poa/how-many-clients-retained`);
   }
 
-  /**
-   * get the page heading
-   * @returns {Locator} The page heading
-   */
-  get heading(): Locator {
-    return this.page.getByRole("heading", {
-      name: "How many clients are retained?",
-    });
-  }
+  readonly radio = new RadioInput(this.page, "howManyClientsRetained");
 
   /**
    * get the none radio
    * @returns {Locator} The none radio
    */
   get noneRadio(): Locator {
-    return this.page.getByLabel("0");
+    return this.radio.getRadio("0");
   }
 
   /**
@@ -39,7 +32,7 @@ export class HowManyClientsRetainedPage extends BasePage {
    * @returns {Locator} The one radio
    */
   get oneRadio(): Locator {
-    return this.page.getByLabel("1");
+    return this.radio.getRadio("1");
   }
 
   /**
@@ -47,16 +40,6 @@ export class HowManyClientsRetainedPage extends BasePage {
    * @returns {Locator} The more than two radio
    */
   get moreThanTwoRadio(): Locator {
-    return this.page.getByLabel("2+");
-  }
-
-  /**
-   * get the save and continue button
-   * @returns {Locator} The save and continue button
-   */
-  get saveAndContinueButton(): Locator {
-    return this.page.getByRole("button", {
-      name: "Save and continue",
-    });
+    return this.radio.getRadio("2+");
   }
 }

@@ -13,6 +13,8 @@ test.describe("How many clients retained page", () => {
     await howManyClientsRetainedPage.waitForLoad();
 
     await expect(howManyClientsRetainedPage.heading).toBeVisible();
+    await expect(howManyClientsRetainedPage.heading).toHaveText("How many clients are retained?");
+
     await expect(howManyClientsRetainedPage.noneRadio).toBeVisible();
     await expect(howManyClientsRetainedPage.oneRadio).toBeVisible();
     await expect(howManyClientsRetainedPage.moreThanTwoRadio).toBeVisible();
