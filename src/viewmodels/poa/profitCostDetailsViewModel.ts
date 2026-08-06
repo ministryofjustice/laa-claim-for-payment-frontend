@@ -41,11 +41,13 @@ export class ProfitCostDetailsViewModel {
     this.form = {
       courtType: radioQuestionForm<CourtType>(
         courtTypeFieldName,
+        courtTypeFieldName,
         courtTypeChoices,
         errors,
         form.courtTypeChoice,
       ),
       clientStatus: radioQuestionForm<ClientPartyStatus>(
+        clientStatusFieldName,
         clientStatusFieldName,
         clientStatusChoices,
         errors,
@@ -53,11 +55,13 @@ export class ProfitCostDetailsViewModel {
       ),
       firstSolicitor: radioQuestionForm<BooleanChoice>(
         firstSolicitorFieldName,
+        firstSolicitorFieldName,
         booleanChoices,
         errors,
         form.firstSolicitorChoice,
       ),
       transferOfSolicitor: radioQuestionForm<BooleanChoice>(
+        transferOfSolicitorFieldName,
         transferOfSolicitorFieldName,
         booleanChoices,
         errors,

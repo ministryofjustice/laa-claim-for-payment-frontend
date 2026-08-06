@@ -361,6 +361,16 @@
             "empty": "Enter a description of the expert cost",
             "invalid": "Description must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
           }
+        },
+        "addAnother": {
+          "title": {
+            "singular": "You have added an expert cost",
+            "multiple": "You have added {count} expert costs"
+          },
+          "question": "Do you need to add another expert cost?",
+          "errors": {
+            "empty": "Select yes if you wish to add another expert cost"
+          }
         }
       },
       "removeExpertLineItem": {

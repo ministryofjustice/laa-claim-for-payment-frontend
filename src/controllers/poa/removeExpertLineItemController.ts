@@ -41,6 +41,7 @@ export async function confirmRemoveExpertLineItem(
             key: "pages.poa.removeExpertLineItem.title",
           },
           fieldName: confirmRemoveExpertLineItemFieldName,
+          fieldId: confirmRemoveExpertLineItemFieldName,
           choices: booleanChoices,
         }),
       });
@@ -93,6 +94,7 @@ export async function submitRemoveExpertLineItem(
             key: "pages.poa.removeExpertLineItem.title",
           },
           fieldName: confirmRemoveExpertLineItemFieldName,
+          fieldId: confirmRemoveExpertLineItemFieldName,
           choices: booleanChoices,
           selectedValue:
             typeof selectedChoice === "string" ? selectedChoice : undefined,
@@ -130,7 +132,7 @@ export async function submitRemoveExpertLineItem(
     } catch (error) {
       const processedError = processError(
         error,
-        "submitting escaping fixed fee page",
+        "deleteing line item for expert cost page",
       );
       next(processedError);
   }

@@ -61,6 +61,7 @@ export async function poaClaimTypePage(
             key: "pages.poaClaimType.title",
           },
           fieldName: poaClaimTypeFieldName,
+          fieldId: poaClaimTypeFieldName,
           choices: poaClaimTypeChoices,
           selectedValue: claim.body.costType,
         }),
@@ -105,6 +106,7 @@ export async function submitPoaClaimType(
             key: "pages.poaClaimType.title",
           },
           fieldName: poaClaimTypeFieldName,
+          fieldId: poaClaimTypeFieldName,
           choices: poaClaimTypeChoices,
           selectedValue:
             typeof selectedChoice === "string" ? selectedChoice : undefined,

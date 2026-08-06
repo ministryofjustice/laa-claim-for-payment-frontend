@@ -58,6 +58,7 @@ export function createRadioQuestionController<ChoiceType extends string>({
             vm: new RadioQuestionViewModel({
               title,
               fieldName,
+              fieldId: fieldName,
               choices,
               selectedValue: getValue(claim.body),
             }),
@@ -89,6 +90,7 @@ export function createRadioQuestionController<ChoiceType extends string>({
             vm: new RadioQuestionViewModel({
               title,
               fieldName,
+              fieldId: fieldName,
               choices,
               selectedValue:
                 typeof selectedChoice === "string" ? selectedChoice : undefined,

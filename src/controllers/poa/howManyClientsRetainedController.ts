@@ -58,6 +58,7 @@ export async function howManyClientsRetained(
             key: "pages.howManyClientsRetained.title",
           },
           fieldName: howManyClientsRetainedFieldName,
+          fieldId: howManyClientsRetainedFieldName,
           choices: howManyClientsRetainedChoices,
           selectedValue: claim.body.clientsRetainedCount,
         }),
@@ -102,6 +103,7 @@ export async function submitHowManyClientsRetained(
             key: "pages.howManyClientsRetained.title"
           },
           fieldName: howManyClientsRetainedFieldName,
+          fieldId: howManyClientsRetainedFieldName,
           choices: howManyClientsRetainedChoices,
           selectedValue:
             typeof selectedChoice === "string" ? selectedChoice : undefined,

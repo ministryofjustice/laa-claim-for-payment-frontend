@@ -1,0 +1,50 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% extends "base.njk" %}
+
+{% set title = vm.title | translate %}
+{% set showBackLink = true %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      {% if vm.radioQuestionViewModel.errorSummary.errorList.length %}
+        {{ govukErrorSummary(vm.radioQuestionViewModel.errorSummary | translate) }}
+      {% endif %}
+
+      <form method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+        <h1 class="govuk-heading-l">
+          {{ vm.title | translate }}
+        </h1>
+
+        {{ govukSummaryList(vm.lineItemsSummaryList | translate) }}
+
+        {{ govukRadios({
+          name: vm.radioQuestionViewModel.form.fieldName,
+          idPrefix: vm.radioQuestionViewModel.form.fieldId,
+          fieldset: {
+            legend: {
+              text: vm.radioQuestionViewModel.title,
+              isPageHeading: false,
+              classes: "govuk-fieldset__legend--m"
+            }
+          },
+          errorMessage: vm.radioQuestionViewModel.form.error and {
+            text: vm.radioQuestionViewModel.form.error.text
+          },
+          items: vm.radioQuestionViewModel.form.choices
+        } | translate) }}
+
+        {{ govukButton({
+          text: t("common.saveAndContinue")
+        }) }}
+      </form>
+    </div>
+  </div>
+{% endblock %}
