@@ -19,7 +19,6 @@ interface AddAnotherLineItemViewModelParams<T extends LineItem> {
   getValue: (lineItem: T) => string;
   summaryListId: string;
   errors?: FieldValidationError[];
-  selectedValue?: BooleanChoice;
 }
 
 export interface AddAnotherExpertCostViewModelParams {

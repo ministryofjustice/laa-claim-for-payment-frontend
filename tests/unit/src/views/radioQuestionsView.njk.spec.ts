@@ -138,7 +138,7 @@ describe("views/main/radioQuestionsView.njk", () => {
         errors: [
           {
             fieldName: "testField",
-            href: "#testField",
+            href: "#test-field",
             text: {
               key: "some error",
             },
@@ -164,7 +164,7 @@ describe("views/main/radioQuestionsView.njk", () => {
       const errorLink = $(".govuk-error-summary a");
 
       expect(errorLink).to.have.length(1);
-      expect(errorLink.attr("href")).to.equal("#testField");
+      expect(errorLink.attr("href")).to.equal("#test-field");
     });
 
     it("renders an inline radio error", () => {
