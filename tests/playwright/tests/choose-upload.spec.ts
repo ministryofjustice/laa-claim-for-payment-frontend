@@ -1,5 +1,5 @@
 import { test, expect } from '../fixtures/index.js';
-import { ChooseUploadPage } from '../pages/ChooseUpload.js';
+import { ChooseUploadPage } from '../pages/ChooseUploadPage.js';
 import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test('choose upload page displays radio options', async ({ page, checkAccessibility }) => {

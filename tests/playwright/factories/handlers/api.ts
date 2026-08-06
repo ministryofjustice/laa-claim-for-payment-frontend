@@ -1,5 +1,6 @@
 import {delay, http, HttpResponse } from "msw";
 import { UUID } from "uuidv7";
+import { Category } from "#src/types/Claim.js";
 
 export const claim1Id = UUID.parse("019f5ba6-1dfc-7caf-b276-75ac6373525a");
 export const claim2Id = UUID.parse("019f5ba6-4c9f-7b54-9f44-a625db7adeab");
@@ -9,6 +10,10 @@ export const evidenceId = UUID.parse("019f6098-3305-70be-82c6-e4b74c5749d0");
 
 export const profitCostDraftClaim1Id = UUID.parse(
   "019faf99-e88a-71f7-b467-cd3aa9f643aa",
+);
+
+export const expertCostDraftClaim1Id = UUID.parse(
+  "019fd69d-1ccd-75ff-bd25-28b7041e1f7a",
 );
 
 /**
@@ -55,6 +60,24 @@ const profitCostDraftClaim1: object = {
   evidence: [],
 };
 
+const expertCostDraftClaim1: object = {
+  id: expertCostDraftClaim1Id.toString(),
+  costType: "EXPERT_COST",
+  lineItems: [
+    {
+      id: lineItemId.toString(),
+      title: "Line item 1",
+      category: "Disbursement",
+      date: "2025-03-18",
+      evidenceItems: [],
+      feeEarnerName: "Joe Bloggs",
+      vatApplicable: true,
+      actualNetValue: 123,
+    }
+  ],
+  evidence: [],
+};
+
 /**
  * API handlers that intercept outbound requests from the Express app
  */
@@ -92,6 +115,8 @@ export const apiHandlers = [
         return HttpResponse.error();
       case profitCostDraftClaim1Id.toString():
         return HttpResponse.json(profitCostDraftClaim1);
+      case expertCostDraftClaim1Id.toString():
+        return HttpResponse.json(expertCostDraftClaim1);
       default:
         return HttpResponse.json(makeFakeClaim(UUID.parse(claimId)));
     }

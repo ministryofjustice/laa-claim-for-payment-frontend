@@ -56,7 +56,9 @@ test("upload a file of invalid type", async ({
 
   const filePath = createFile(fileName, 1024);
 
-  await page.setInputFiles("#documents", filePath);
+  await fileUploadForLineItemPage.uploadFiles([filePath]);
+
+  await delay(1000);
 
   await fileUploadForLineItemPage.checkFileRow(fileName, "Only PDF, Word, RTF or TIFF files can be uploaded", "Failed");
 
@@ -78,6 +80,8 @@ test("upload a file of invalid size", async ({
 
   await page.setInputFiles("#documents", filePath);
 
+  await delay(1000);
+
   await fileUploadForLineItemPage.checkFileRow(fileName, "File must not be larger than 10MB", "Failed");
 
   await checkAccessibility();
@@ -98,7 +102,7 @@ test("upload multiple files", async ({
   const file1Path = createFile(file1Name, 1024);
   const file2Path = createFile(file2Name, 1024);
 
-  await page.setInputFiles("#documents", [file1Path, file2Path]);
+  await fileUploadForLineItemPage.uploadFiles([file1Path, file2Path]);
 
   await fileUploadForLineItemPage.checkFileRow(file1Name, "1KB", "Uploaded");
   await fileUploadForLineItemPage.checkFileRow(file2Name, "0%", "Uploading");
@@ -113,7 +117,7 @@ test("upload multiple files", async ({
 function createFile(name: string, sizeInBytes: number): string {
   const filePath = path.join(os.tmpdir(), name);
 
-  const pdfHeader = Buffer.from(
+  const header = Buffer.from(
     `%PDF-1.4
 1 0 obj <<>> endobj
 2 0 obj <<>> endobj
@@ -121,13 +125,13 @@ trailer <<>>
 %%EOF`,
   );
 
-  if (sizeInBytes < pdfHeader.length) {
-    throw new Error(`Minimum size is ${pdfHeader.length} bytes`);
+  if (sizeInBytes < header.length) {
+    throw new Error(`Minimum size is ${header.length} bytes`);
   }
 
-  const padding = Buffer.alloc(sizeInBytes - pdfHeader.length, 0);
+  const padding = Buffer.alloc(sizeInBytes - header.length, 0);
 
-  fs.writeFileSync(filePath, Buffer.concat([pdfHeader, padding]));
+  fs.writeFileSync(filePath, Buffer.concat([header, padding]));
 
   return filePath;
 }

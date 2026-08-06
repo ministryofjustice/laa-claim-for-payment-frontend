@@ -13,6 +13,7 @@ test.describe("POA claim type page", () => {
     await poaClaimTypePage.waitForLoad();
 
     await expect(poaClaimTypePage.heading).toBeVisible();
+    await expect(poaClaimTypePage.heading).toHaveText("What type of POA are you claiming?");
     await expect(poaClaimTypePage.profitCostRadio).toBeVisible();
     await expect(poaClaimTypePage.expertCostRadio).toBeVisible();
     await expect(poaClaimTypePage.nonExpertDisbursementRadio).toBeVisible();

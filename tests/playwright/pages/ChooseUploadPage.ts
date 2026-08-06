@@ -1,11 +1,13 @@
 import type { Page, Locator } from '@playwright/test';
 import { BasePage } from "#tests/playwright/pages/BasePage.js";
 import type { UUID } from "uuidv7";
+import { QuestionPage } from "#tests/playwright/pages/QuestionPage.js";
+import { RadioInput } from "#tests/playwright/pages/Components.js";
 
 /**
  * Page object for the choose upload page.
  */
-export class ChooseUploadPage extends BasePage {
+export class ChooseUploadPage extends QuestionPage {
 
   /**
    * Creates a choose upload page object.
@@ -17,41 +19,7 @@ export class ChooseUploadPage extends BasePage {
     super(page, `claims/${claimId.toString()}/choose-upload`);
   }
 
-  /**
-   * Gets the choose upload form.
-   *
-   * @returns {Locator} The form locator.
-   */
-  get form(): Locator {
-    return this.page.locator('form');
-  }
-
-  /**
-   * Gets the continue button.
-   *
-   * @returns {Locator} The continue button locator.
-   */
-  get continueButton(): Locator {
-    return this.page.getByRole('button', { name: 'Save and continue' });
-  }
-
-  /**
-   * Gets the error summary.
-   *
-   * @returns {Locator} The error summary locator.
-   */
-  get errorSummary(): Locator {
-    return this.page.locator('.govuk-error-summary');
-  }
-
-  /**
-   * Gets the inline error message.
-   *
-   * @returns {Locator} The inline error message locator.
-   */
-  get inlineError(): Locator {
-    return this.page.locator('.govuk-error-message');
-  }
+  readonly radio = new RadioInput(this.page, "fileUploadChoice");
 
   /**
    * Gets the all at once radio option.
@@ -59,7 +27,7 @@ export class ChooseUploadPage extends BasePage {
    * @returns {Locator} The all at once radio option locator.
    */
   get allAtOnceOption(): Locator {
-    return this.page.locator('input[type="radio"][value="all-at-once"]');
+    return this.radio.getRadio("All at once");
   }
 
   /**
@@ -68,16 +36,7 @@ export class ChooseUploadPage extends BasePage {
    * @returns {Locator} The associated to line items radio option locator.
    */
   get associatedToLineItemsOption(): Locator {
-    return this.page.locator('input[type="radio"][value="associated-to-line-items"]');
-  }
-
-  /**
-   * Submits the choose upload form.
-   *
-   * @returns {Promise<void>} Promise that resolves when the submit action completes.
-   */
-  async submit(): Promise<void> {
-    await this.continueButton.click();
+    return this.radio.getRadio("Associated to specific line items");
   }
 
   /**

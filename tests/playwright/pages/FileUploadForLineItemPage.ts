@@ -47,6 +47,14 @@ export class FileUploadForLineItemPage extends BasePage {
   }
 
   /**
+   * upload a file or files
+   * @param {string[]} fileNames the files to upload
+   */
+  async uploadFiles(fileNames: string[]): Promise<void> {
+    await this.page.setInputFiles("#documents", fileNames);
+  }
+
+  /**
    * click the delete link for a given file name
    * @param {string} fileName the file name to delete
    */

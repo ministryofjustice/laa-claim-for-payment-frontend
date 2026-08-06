@@ -13,8 +13,9 @@ test.describe("Multiple client hearings page", () => {
     await multipleClientHearingsPage.waitForLoad();
 
     await expect(multipleClientHearingsPage.heading).toBeVisible();
-    await expect(multipleClientHearingsPage.yesRadio).toBeVisible();
-    await expect(multipleClientHearingsPage.noRadio).toBeVisible();
+    await expect(multipleClientHearingsPage.heading).toHaveText("Have you attended at least one hearing where you have represented more than one client?");
+    await expect(multipleClientHearingsPage.radio.yesRadio).toBeVisible();
+    await expect(multipleClientHearingsPage.radio.noRadio).toBeVisible();
     await expect(multipleClientHearingsPage.saveAndContinueButton).toBeVisible();
 
     await checkAccessibility();
@@ -26,7 +27,7 @@ test.describe("Multiple client hearings page", () => {
     await multipleClientHearingsPage.navigate();
     await multipleClientHearingsPage.waitForLoad();
 
-    await multipleClientHearingsPage.yesRadio.check();
+    await multipleClientHearingsPage.radio.answerYes();
     await multipleClientHearingsPage.saveAndContinueButton.click();
 
     await expect(page).toHaveURL(
@@ -40,7 +41,7 @@ test.describe("Multiple client hearings page", () => {
     await multipleClientHearingsPage.navigate();
     await multipleClientHearingsPage.waitForLoad();
 
-    await multipleClientHearingsPage.noRadio.check();
+    await multipleClientHearingsPage.radio.answerNo();
     await multipleClientHearingsPage.saveAndContinueButton.click();
 
     await expect(page).toHaveURL(

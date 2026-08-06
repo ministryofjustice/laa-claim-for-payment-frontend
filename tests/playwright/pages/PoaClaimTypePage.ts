@@ -1,11 +1,13 @@
 import type { Locator, Page } from "@playwright/test";
 import { BasePage } from "#tests/playwright/pages/BasePage.js";
 import type { UUID } from "uuidv7";
+import { QuestionPage } from "#tests/playwright/pages/QuestionPage.js";
+import { RadioInput } from "#tests/playwright/pages/Components.js";
 
 /**
  * Page object for the POA claim type page.
  */
-export class PoaClaimTypePage extends BasePage {
+export class PoaClaimTypePage extends QuestionPage {
   /**
    * Creates a page object.
    *
@@ -16,22 +18,14 @@ export class PoaClaimTypePage extends BasePage {
     super(page, `claims/${claimId.toString()}/poa/claim-type`);
   }
 
-  /**
-   * get the page heading
-   * @returns {Locator} The page heading
-   */
-  get heading(): Locator {
-    return this.page.getByRole("heading", {
-      name: "What type of POA are you claiming?",
-    });
-  }
+  readonly radio = new RadioInput(this.page, "poaClaimType");
 
   /**
    * get the profit cost radio
    * @returns {Locator} The profit cost radio
    */
   get profitCostRadio(): Locator {
-    return this.page.getByLabel("Profit cost");
+    return this.radio.getRadio("Profit cost");
   }
 
   /**
@@ -39,7 +33,7 @@ export class PoaClaimTypePage extends BasePage {
    * @returns {Locator} The expert cost radio
    */
   get expertCostRadio(): Locator {
-    return this.page.getByLabel("Expert cost");
+    return this.radio.getRadio("Expert cost");
   }
 
   /**
@@ -47,16 +41,6 @@ export class PoaClaimTypePage extends BasePage {
    * @returns {Locator} The non expert disbursement radio
    */
   get nonExpertDisbursementRadio(): Locator {
-    return this.page.getByLabel("Non expert disbursement");
-  }
-
-  /**
-   * get save and continue button
-   * @returns {Locator} Save and continue button
-   */
-  get saveAndContinueButton(): Locator {
-    return this.page.getByRole("button", {
-      name: "Save and continue",
-    });
+    return this.radio.getRadio("Non expert disbursement");
   }
 }
