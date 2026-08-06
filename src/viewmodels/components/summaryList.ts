@@ -34,6 +34,24 @@ interface SummaryCard {
 }
 
 /**
+ * Summary list builder.
+ * @param {string} id ID
+ * @param {SummaryListRow[]} summaryListRows summary list rows
+ * @returns {SummaryList} a summary list
+ */
+export function buildSummaryList(
+  id: string,
+  summaryListRows: Array<SummaryListRow | undefined>,
+): SummaryList {
+  return {
+    rows: summaryListRows.filter((row) => row !== undefined),
+    attributes: {
+      id: `${id}-rows`,
+    },
+  };
+}
+
+/**
  * Summary list with card builder.
  * @param {string} cardTitle card title
  * @param {string} cardId card ID
@@ -47,7 +65,9 @@ export function buildSummaryListWithCard(
   summaryListRows: Array<SummaryListRow | undefined>,
   cardActions?: SummaryListRowActionItem[],
 ): SummaryList {
+  const summaryList = buildSummaryList(cardId, summaryListRows);
   return {
+    ...summaryList,
     card: {
       title: {
         text: cardTitle,
@@ -61,10 +81,6 @@ export function buildSummaryListWithCard(
       attributes: {
         id: cardId,
       },
-    },
-    rows: summaryListRows.filter((row) => row !== undefined),
-    attributes: {
-      id: `${cardId}-rows`,
     },
   };
 }
@@ -114,6 +130,47 @@ export function buildSummaryListRowWithChangeLink(
           href,
           text: {
             key: "common.change",
+          },
+          visuallyHiddenText: key,
+        },
+      ],
+    },
+  };
+}
+
+/**
+ * Summary list row with change and remove links builder.
+ * @param {string} key row key
+ * @param {string} changeHref row change link href
+ * @param {string} removeHref row remove link href
+ * @param {string} value row value
+ * @returns {SummaryListRow} a summary list row with change and remove links
+ */
+export function buildSummaryListRowWithChangeAndRemoveLinks(
+  key: TextOrMessage,
+  changeHref: string,
+  removeHref: string,
+  value?: SummaryListRowValue,
+): SummaryListRow | undefined {
+  const summaryListRow = buildSummaryListRow(key, value);
+  if (summaryListRow == null) {
+    return undefined;
+  }
+  return {
+    ...summaryListRow,
+    actions: {
+      items: [
+        {
+          href: changeHref,
+          text: {
+            key: "common.change",
+          },
+          visuallyHiddenText: key,
+        },
+        {
+          href: removeHref,
+          text: {
+            key: "common.remove",
           },
           visuallyHiddenText: key,
         },

@@ -128,9 +128,8 @@ export async function submitExpertCostDetails(
       );
     }
 
-    // TODO - redirect to the 'add another work item' page
     res.redirect(
-      buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, {
+      buildRoute(ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS, {
         claimId,
       }),
     );

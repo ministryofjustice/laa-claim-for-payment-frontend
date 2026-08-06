@@ -37,6 +37,7 @@ export async function escapingFixedFee(
             key: "pages.escapingFixedFee.question",
           },
           fieldName: escapingFixedFeeFieldName,
+          fieldId: escapingFixedFeeFieldName,
           choices: booleanChoices,
           selectedValue: formatBooleanChoice(claim.body.escapedFlag),
         }),
@@ -88,6 +89,7 @@ export async function submitEscapingFixedFee(
             key: "pages.escapingFixedFee.question",
           },
           fieldName: escapingFixedFeeFieldName,
+          fieldId: escapingFixedFeeFieldName,
           choices: booleanChoices,
           selectedValue:
             typeof selectedChoice === "string" ? selectedChoice : undefined,

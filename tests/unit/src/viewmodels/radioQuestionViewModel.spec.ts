@@ -41,6 +41,7 @@ describe("radioQuestionViewModel()", () => {
         key: "test title"
       },
       fieldName: testFieldName,
+      fieldId: testFieldName,
       choices: testChoices
     });
 
@@ -54,6 +55,7 @@ describe("radioQuestionViewModel()", () => {
         key: "test title"
       },
       fieldName: testFieldName,
+      fieldId: testFieldName,
       choices: testChoices
     });
 
@@ -103,6 +105,7 @@ describe("radioQuestionViewModel()", () => {
         key: "test title"
       },
       fieldName: testFieldName,
+      fieldId: testFieldName,
       choices: testChoices
     });
 
@@ -121,6 +124,7 @@ describe("radioQuestionViewModel()", () => {
         key: "test title"
       },
       fieldName: testFieldName,
+      fieldId: testFieldName,
       choices: testChoices,
       selectedValue: TestChoice.Second,
     });
@@ -135,6 +139,7 @@ describe("radioQuestionViewModel()", () => {
         key: "test title"
       },
       fieldName: testFieldName,
+      fieldId: testFieldName,
       choices: testChoices,
       selectedValue: TestChoice.First,
       errors: [
