@@ -1,8 +1,7 @@
-import type { Locator, Page } from "@playwright/test";
-import { BasePage } from "#tests/playwright/pages/BasePage.js";
+import type { Page } from "@playwright/test";
 import type { UUID } from "uuidv7";
 import { QuestionPage } from "#tests/playwright/pages/QuestionPage.js";
-import { RadioInput, YesNoInput } from "#tests/playwright/pages/Components.js";
+import { YesNoInput } from "#tests/playwright/pages/Components.js";
 
 /**
  * Page object for the how many clients retained page.

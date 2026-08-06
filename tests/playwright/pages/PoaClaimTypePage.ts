@@ -1,5 +1,4 @@
 import type { Locator, Page } from "@playwright/test";
-import { BasePage } from "#tests/playwright/pages/BasePage.js";
 import type { UUID } from "uuidv7";
 import { QuestionPage } from "#tests/playwright/pages/QuestionPage.js";
 import { RadioInput } from "#tests/playwright/pages/Components.js";

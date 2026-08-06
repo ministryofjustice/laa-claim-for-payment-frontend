@@ -1,6 +1,5 @@
 import {delay, http, HttpResponse } from "msw";
 import { UUID } from "uuidv7";
-import { Category } from "#src/types/Claim.js";
 
 export const claim1Id = UUID.parse("019f5ba6-1dfc-7caf-b276-75ac6373525a");
 export const claim2Id = UUID.parse("019f5ba6-4c9f-7b54-9f44-a625db7adeab");
