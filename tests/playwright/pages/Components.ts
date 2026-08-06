@@ -102,3 +102,35 @@ export class TextInput {
     return this.page.locator(`#${this.id}`);
   }
 }
+
+/**
+ *
+ */
+export class FileUploadInput {
+  /**
+   * Constructs a file upload input.
+   *
+   * @param {Page} page The Playwright page instance.
+   * @param {string} id The input ID.
+   */
+  constructor(
+    private readonly page: Page,
+    private readonly id: string,
+  ) {}
+
+  /**
+   * get the input
+   * @returns {Locator} The input
+   */
+  get input(): Locator {
+    return this.page.locator(`#${this.id}`);
+  }
+
+  /**
+   * upload a file or files
+   * @param {string[]} fileNames the files to upload
+   */
+  async uploadFiles(fileNames: string[]): Promise<void> {
+    await this.input.setInputFiles(fileNames);
+  }
+}

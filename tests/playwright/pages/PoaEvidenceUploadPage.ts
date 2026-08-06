@@ -4,18 +4,17 @@ import { FileUploadInput } from "#tests/playwright/pages/Components.js";
 import { EvidenceUploadPage } from "#tests/playwright/pages/EvidenceUploadPage.js";
 
 /**
- * Page object for the choose upload page.
+ * Page object for the POA evidence upload page.
  */
-export class FileUploadForLineItemPage extends EvidenceUploadPage {
+export class PoaEvidenceUploadPage extends EvidenceUploadPage {
   /**
    * Creates a page object.
    *
    * @param {Page} page The Playwright page instance.
    * @param {UUID} claimId The claim ID.
-   * @param {UUID} lineItemId The line item ID.
    */
-  constructor(page: Page, claimId: UUID, lineItemId: UUID) {
-    super(page, `claims/${claimId.toString()}/upload-evidence-individually/${lineItemId.toString()}/file-upload`);
+  constructor(page: Page, claimId: UUID) {
+    super(page, `claims/${claimId.toString()}/poa/evidence-upload`);
   }
 
   readonly fileUploadInput = new FileUploadInput(this.page, "documents");

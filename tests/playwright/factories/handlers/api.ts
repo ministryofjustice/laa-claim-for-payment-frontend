@@ -148,7 +148,47 @@ export const apiHandlers = [
         message: `File uploaded with ID: ${evidenceId.toString()}`,
       };
 
-      return HttpResponse.json(response, { status: 201 });
+      switch (claimId) {
+        case claim3Id.toString():
+          return HttpResponse.error();
+        default:
+          return HttpResponse.json(response, { status: 201 });
+      }
+    },
+  ),
+
+  http.post(
+    "/api/v1/claims/:claimId/upload-evidence",
+    async ({ params }) => {
+      const { claimId } = params;
+      if (typeof claimId !== "string") {
+        throw new Error("URL missing a valid string id param.");
+      }
+      console.log(
+        "🧩 MSW matched: POST /api/v1/claims/%s/upload-evidence",
+        claimId,
+      );
+
+      // This is so the "Uploading" tag briefly shows
+      await delay(1000);
+
+      const response = {
+        type: "success",
+        evidenceId,
+        file: {
+          filename: "test.pdf",
+          originalname: "test.pdf",
+          filesize: 12345,
+        },
+        message: `File uploaded with ID: ${evidenceId.toString()}`,
+      };
+
+      switch (claimId) {
+        case claim3Id.toString():
+          return HttpResponse.error();
+        default:
+          return HttpResponse.json(response, { status: 201 });
+      }
     },
   ),
 
