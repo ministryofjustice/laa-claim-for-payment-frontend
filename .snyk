@@ -37,3 +37,8 @@ ignore:
     - '*':
         reason: "No direct fix available in dependency tree"
         expires: 2026-12-31
+
+  SNYK-JS-JSYAML-17900054:
+    - '*':
+        reason: "No direct fix available in dependency tree"
+        expires: 2026-12-31

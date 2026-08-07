@@ -38,6 +38,8 @@ import {
   uploadEvidenceFileForLineItem,
 } from "#src/controllers/claims/ajaxFileUploadController.js";
 import type { ViewClaimsActionRequest } from "#src/types/requests.js";
+
+import { confirmRemoveExpertLineItem, submitRemoveExpertLineItem } from "#src/controllers/poa/removeExpertLineItemController.js";
 import {
   addAnotherExpertCost,
   submitAddAnotherExpertCost,
@@ -270,6 +272,28 @@ export const buildRouter = (): Router => {
       next: NextFunction,
     ): Promise<void> {
       await submitAddAnotherExpertCost(req, res, next);
+    },
+  );
+
+  router.get(
+    ROUTES.REMOVE_EXPERT_COST_DETAILS,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await confirmRemoveExpertLineItem(req, res, next);
+    },
+  );
+
+  router.post(
+    ROUTES.REMOVE_EXPERT_COST_DETAILS,
+    async function (
+      req: Request,
+      res: Response,
+      next: NextFunction,
+    ): Promise<void> {
+      await submitRemoveExpertLineItem(req, res, next);
     },
   );
 

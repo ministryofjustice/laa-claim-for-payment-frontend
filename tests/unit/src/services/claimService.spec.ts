@@ -1173,4 +1173,123 @@ describe("Claim Service", () => {
       });
     });
   });
+
+  describe("deleteLineItem", () => {
+    it("returns success", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        deleteLineItem: sinon.stub().resolves(null),
+      };
+
+      const result = await claimService.deleteLineItem(
+        { axiosInstance: {} } as any,
+        claimId,
+        lineItemId,
+        deps as any,
+      );
+
+      expect(result).to.deep.equal({
+        status: "success",
+        body: null,
+      });
+
+      expect(deps.deleteLineItem.firstCall.args[0]).to.deep.equal({
+        path: {
+          claimId: claimId.toString(),
+          lineItemId: lineItemId.toString(),
+        },
+        query: {
+          status: "DRAFT",
+        },
+        client: {},
+      });
+    });
+
+    it("returns success for a 404 response", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        deleteLineItem: sinon.stub().rejects({
+          isAxiosError: true,
+          response: {
+            status: 404,
+            data: {
+              detail: "Request validation failed.",
+              instance:
+                "/api/v1/claims/019f7fd6-c3d1-7706-b518-6bdd409550c1/line-items/019fa90f-346f-7051-9e40-1bf1c2b53217",
+              status: 404,
+              title: "Not found",
+              correlationId: "431063e8-a19a-4991-bc76-78232c54b8e2",
+              errorCode: "NOT_FOUND",
+            },
+          },
+        }),
+      };
+
+      const result = (await claimService.deleteLineItem(
+        { axiosInstance: {} } as any,
+        claimId,
+        lineItemId,
+        deps as any,
+      )) as ApiError;
+
+      expect(result).to.deep.equal({
+        status: "success",
+        body: null,
+      });
+    });
+
+    it("returns error for a non-200 response", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        deleteLineItem: sinon.stub().rejects({
+          isAxiosError: true,
+          response: {
+            status: 400,
+            data: {
+              detail: "Request validation failed.",
+              instance:
+                "/api/v1/claims/019f7fd6-c3d1-7706-b518-6bdd409550c1/line-items/019fa90f-346f-7051-9e40-1bf1c2b53217",
+              status: 400,
+              title: "Invalid request",
+              correlationId: "431063e8-a19a-4991-bc76-78232c54b8e2",
+              errorCode: "VALIDATION_FAILED",
+            },
+          },
+        }),
+      };
+
+      const result = (await claimService.deleteLineItem(
+        { axiosInstance: {} } as any,
+        claimId,
+        lineItemId,
+        deps as any,
+      )) as ApiError;
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 400,
+        message: "Request validation failed.",
+      });
+    });
+
+    it("returns error shape when the API call fails", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        deleteLineItem: sinon.stub().rejects(new Error("boom")),
+      };
+
+      const result = await claimService.deleteLineItem(
+        { axiosInstance: {} } as any,
+        claimId,
+        lineItemId,
+        deps as any,
+      );
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 500,
+        message: "boom",
+      });
+    });
+  });
 });
