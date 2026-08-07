@@ -19,12 +19,10 @@ describe("ClaimViewModel constructor()", () => {
     );
 
     expect(byKey["Claim ID"]).to.equal(String(claim.id));
-    if (claim.client) expect(byKey["Client"]).to.equal(claim.client);
-    if (claim.category) expect(byKey["Category"]).to.equal(claim.category);
-    if (claim.concluded)
-      expect(byKey["Concluded"]).to.equal(formatDate(claim.concluded));
-    if (claim.feeType) expect(byKey["Fee type"]).to.equal(claim.feeType);
-    if (claim.claimed != null)
-      expect(byKey["Claimed"]).to.equal(formatClaimed(claim.claimed));
+    expect(byKey["Client"]).to.equal(claim.client);
+    expect(byKey["Category"]).to.equal(claim.category);
+    expect(byKey["Concluded"]).to.equal("18/03/2025");
+    expect(byKey["Fee type"]).to.equal(claim.feeType);
+    expect(byKey["Claimed"]).to.equal("£234.56");
   });
 });

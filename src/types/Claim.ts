@@ -102,7 +102,7 @@ export const ClaimResponseSchema = z.object({
   providerUserId: z.string().nullish(),
   client: z.string().nullish(),
   category: z.string().nullish(),
-  concluded: z.string().pipe(z.coerce.date()).nullish(),
+  concluded: z.iso.date().nullish(),
   feeType: z.string().nullish(),
   claimed: z.number().nullish(),
   lineItems: z.array(LineItemSchema).nullish(),

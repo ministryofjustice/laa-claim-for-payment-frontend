@@ -3,9 +3,9 @@ import type { TableCell } from "#src/viewmodels/components/index.js";
 import {
   formatClaimed,
   formatClaimId,
-  formatDate,
   formatOptionalString,
-  formatOptionalValue
+  formatOptionalValue,
+  formatZodDate
 } from "#src/helpers/index.js";
 import { Pagination } from "./components/pagination.js";
 import type { PaginationMeta } from "#src/types/api-types.js";
@@ -54,11 +54,11 @@ export class ClaimsTableViewModel {
       { text: formatOptionalString(claim.client) },
       { text: formatOptionalString(claim.category) },
       {
-        text: formatOptionalValue(claim.concluded, formatDate),
+        text: formatOptionalValue(claim.concluded, formatZodDate),
         attributes:
           claim.concluded == null
             ? undefined
-            : { "data-sort-value": claim.concluded.getTime() },
+            : { "data-sort-value": Date.parse(claim.concluded) },
       },
       { text: formatOptionalString(claim.feeType) },
       {

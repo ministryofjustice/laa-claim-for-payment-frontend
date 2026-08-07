@@ -60,7 +60,7 @@ describe("ClaimsViewModel constructor()", () => {
         id: claim1Id,
         client: "Giordano",
         category: "Family",
-        concluded: new Date("2025-03-18"),
+        concluded: "2025-03-18",
         feeType: "Escape",
         claimed: 234.56,
       },
@@ -148,7 +148,7 @@ describe("ClaimsViewModel constructor()", () => {
       id: new V7Generator().generate().toString(),
       client: "Giordano",
       category: "Family",
-      concluded: new Date("2025-03-18"),
+      concluded: "2025-03-18",
       feeType: "Escape",
       claimed: 234.56,
     };

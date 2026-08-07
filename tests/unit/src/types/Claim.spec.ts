@@ -375,13 +375,22 @@ describe("ClaimResponseSchema", () => {
     it("parses a valid date string", () => {
       const result = ClaimResponseSchema.parse({
         id: id.toString(),
-        concluded: "2026-05-07T10:00:00.000Z",
+        concluded: "2026-05-07",
       });
 
-      expect(result.concluded).to.be.instanceof(Date);
-      expect(result.concluded?.toISOString()).to.equal(
-        "2026-05-07T10:00:00.000Z",
-      );
+      expect(result.concluded).to.equal("2026-05-07");
+    });
+
+    it("fails to parse an invalid date string", () => {
+      const inputs = ["2020-1-1", "2020-01-32"];
+      inputs.forEach((input) => {
+        const result = () => ClaimResponseSchema.parse({
+          id: id.toString(),
+          concluded: input,
+        });
+
+        expect(result).to.throw(ZodError);
+      });
     });
   });
 

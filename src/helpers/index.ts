@@ -16,6 +16,7 @@ export {
   formatClaimed,
   formatClaimId,
   formatDate,
+  formatZodDate,
   formatDateReadable,
   formatOptionalString,
   formatOptionalValue,

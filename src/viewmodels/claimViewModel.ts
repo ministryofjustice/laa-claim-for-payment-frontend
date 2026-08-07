@@ -1,8 +1,5 @@
 import type { ClaimDto } from "#src/types/Claim.js";
-import {
-  formatClaimed,
-  formatDate,
-} from "#src/helpers/index.js";
+import { formatClaimed, formatZodDate } from "#src/helpers/index.js";
 import type { SummaryListRow } from "./components/summaryList.js";
 
 /**
@@ -45,7 +42,7 @@ export class ClaimViewModel {
     if (claim.concluded != null) {
       rows.push({
         key: { text: "Concluded" },
-        value: { text: formatDate(claim.concluded) },
+        value: { text: formatZodDate(claim.concluded) },
       });
     }
 
