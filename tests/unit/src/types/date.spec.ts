@@ -12,7 +12,21 @@ describe("LocalDate", () => {
     });
 
     it("fails to create a LocalDate from an invalid ISO string", () => {
-      const result = () => LocalDate.from("foo");
+      const result = () => LocalDate.from("2026-08-32");
+      expect(result).to.throw(Error);
+    });
+  });
+
+  describe("of", () => {
+    it("creates a LocalDate from valid values", () => {
+      const result = LocalDate.of(7, 8, 2026);
+      expect(result.day).to.equal(7);
+      expect(result.month).to.equal(8);
+      expect(result.year).to.equal(2026);
+    });
+
+    it("fails to create a LocalDate from invalid values", () => {
+      const result = () => LocalDate.of(32, 8, 2026);
       expect(result).to.throw(Error);
     });
   });
