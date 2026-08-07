@@ -378,16 +378,19 @@ describe("ClaimResponseSchema", () => {
         concluded: "2026-05-07",
       });
 
-      expect(result.concluded).to.equal("2026-05-07");
+      expect(result.concluded?.day).to.equal(7);
+      expect(result.concluded?.month).to.equal(5);
+      expect(result.concluded?.year).to.equal(2026);
     });
 
     it("fails to parse an invalid date string", () => {
       const inputs = ["2020-1-1", "2020-01-32"];
       inputs.forEach((input) => {
-        const result = () => ClaimResponseSchema.parse({
-          id: id.toString(),
-          concluded: input,
-        });
+        const result = () =>
+          ClaimResponseSchema.parse({
+            id: id.toString(),
+            concluded: input,
+          });
 
         expect(result).to.throw(ZodError);
       });
@@ -504,10 +507,21 @@ describe("ClaimResponseSchema", () => {
         submittedOn: "2026-06-17T14:34:01.226855Z",
       });
 
-      expect(result.submittedOn).to.be.instanceof(Date);
-      expect(result.submittedOn?.toISOString()).to.equal(
-        "2026-06-17T14:34:01.226Z",
-      );
+      expect(result.submittedOn).to.equal("2026-06-17T14:34:01.226855Z");
+    });
+
+    it("fails to parse an invalid date/time string", () => {
+      const inputs = ["2020-1-1T14:34:01.226855Z", "2020-01-32T14:34:01.226855Z"];
+      inputs.forEach((input) => {
+        const result = () => EvidenceItemSchema.parse({
+          id: id.toString(),
+          fileKey: "test.pdf",
+          fileSize: 123456,
+          submittedOn: input,
+        });
+
+        expect(result).to.throw(ZodError);
+      });
     });
 
     it("fails to parse when mandatory field is undefined", () => {
@@ -561,7 +575,9 @@ describe("ClaimResponseSchema", () => {
       expect(result.id).to.equal("019fad29-2579-7544-9961-3b3b6061f64e");
       expect(result.title).to.equal("Title");
       expect(result.category).to.equal(Category.DISBURSEMENT);
-      expect(result.date.toISOString()).to.equal("2007-03-26T00:00:00.000Z");
+      expect(result.date.day).to.equal(26);
+      expect(result.date.month).to.equal(3);
+      expect(result.date.year).to.equal(2007);
       expect(result.evidenceItems).has.length(0);
       expect(result.feeEarnerName).to.equal("Joe Bloggs");
       expect(result.vatApplicable).to.equal(true);
@@ -587,7 +603,9 @@ describe("ClaimResponseSchema", () => {
       expect(result.id).to.equal("019fad29-2579-7544-9961-3b3b6061f64e");
       expect(result.title).to.equal("Title");
       expect(result.category).to.equal(Category.DISBURSEMENT);
-      expect(result.date.toISOString()).to.equal("2007-03-26T00:00:00.000Z");
+      expect(result.date.day).to.equal(26);
+      expect(result.date.month).to.equal(3);
+      expect(result.date.year).to.equal(2007);
       expect(result.evidenceItems).has.length(0);
       expect(result.feeEarnerName).to.equal("Joe Bloggs");
       expect(result.vatApplicable).to.equal(true);
@@ -608,7 +626,9 @@ describe("ClaimResponseSchema", () => {
       expect(result.id).to.equal("019fad29-2579-7544-9961-3b3b6061f64e");
       expect(result.title).to.equal("Title");
       expect(result.category).to.equal(Category.DISBURSEMENT);
-      expect(result.date.toISOString()).to.equal("2007-03-26T00:00:00.000Z");
+      expect(result.date.day).to.equal(26);
+      expect(result.date.month).to.equal(3);
+      expect(result.date.year).to.equal(2007);
       expect(result.evidenceItems).has.length(0);
     });
 

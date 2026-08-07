@@ -5,6 +5,7 @@ import type {
 } from "#src/viewmodels/components/errorSummary.js";
 import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewModel.js";
 import { BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
+import { LocalDate } from "#src/types/date.js";
 
 export interface FieldValidationError {
   fieldName: string;
@@ -261,7 +262,7 @@ export function validateDateInput(
   fieldName: string,
   id: string,
   messagePrefix: string,
-): ValidationResult<Date> {
+): ValidationResult<LocalDate> {
   const day = getStringValue(value.day);
   const month = getStringValue(value.month);
   const year = getStringValue(value.year);
@@ -332,9 +333,30 @@ export function validateDateInput(
     };
   }
 
-  const date = parseDate(Number(day), Number(month), Number(year));
+  try {
+    const date: LocalDate = LocalDate.of(Number(day), Number(month), Number(year));
 
-  if (date == null) {
+    if (date.isFutureDate()) {
+      return {
+        isValid: false,
+        errors: [
+          {
+            fieldName,
+            href: `#${id}-day`,
+            text: {
+              key: `${messagePrefix}.errors.future`,
+            },
+            fields: ["day", "month", "year"],
+          },
+        ],
+      };
+    }
+
+    return {
+      isValid: true,
+      value: date,
+    };
+  } catch {
     return {
       isValid: false,
       errors: [
@@ -349,27 +371,6 @@ export function validateDateInput(
       ],
     };
   }
-
-  if (isFutureDate(date)) {
-    return {
-      isValid: false,
-      errors: [
-        {
-          fieldName,
-          href: `#${id}-day`,
-          text: {
-            key: `${messagePrefix}.errors.future`,
-          },
-          fields: ["day", "month", "year"],
-        },
-      ],
-    };
-  }
-
-  return {
-    isValid: true,
-    value: date,
-  };
 }
 
 function buildMissingDateKey(parts: string[]): string {
@@ -378,27 +379,6 @@ function buildMissingDateKey(parts: string[]): string {
       i === 0 ? p : `And${p.charAt(0).toUpperCase()}${p.slice(1)}`,
     )
     .join("");
-}
-
-function parseDate(day: number, month: number, year: number): Date | undefined {
-  const date = new Date(year, month - 1, day);
-
-  return date.getFullYear() === year &&
-    date.getMonth() === month - 1 &&
-    date.getDate() === day
-    ? date
-    : undefined;
-}
-
-function isFutureDate(date: Date): boolean {
-  const today = new Date();
-
-  const input = new Date(date);
-  input.setHours(0, 0, 0, 0);
-
-  today.setHours(0, 0, 0, 0);
-
-  return input > today;
 }
 
 /**

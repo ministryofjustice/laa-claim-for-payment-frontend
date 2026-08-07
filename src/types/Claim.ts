@@ -1,11 +1,12 @@
 import { z } from "zod";
 import type { ProfitCostDetails } from "#src/types/poa.js";
+import { LocalDate } from "#src/types/date.js";
 
 export const EvidenceItemSchema = z.object({
   id: z.uuidv7(),
   fileKey: z.string(),
   fileSize: z.number(),
-  submittedOn: z.string().pipe(z.coerce.date()),
+  submittedOn: z.iso.datetime(),
 });
 
 export type EvidenceItem = z.infer<typeof EvidenceItemSchema>;
@@ -48,11 +49,13 @@ export enum ClaimStatus {
 
 const NullOrUndefinedSchema = z.union([z.null(), z.undefined()]);
 
+export const IsoDateSchema = z.iso.date().transform((value) => LocalDate.from(value));
+
 const BaseLineItemSchema = z.object({
   id: z.uuidv7(),
   title: z.string(),
   category: z.enum(Category),
-  date: z.string().pipe(z.coerce.date()),
+  date: IsoDateSchema,
   evidenceItems: z.array(z.uuidv7()),
 });
 
@@ -102,7 +105,7 @@ export const ClaimResponseSchema = z.object({
   providerUserId: z.string().nullish(),
   client: z.string().nullish(),
   category: z.string().nullish(),
-  concluded: z.iso.date().nullish(),
+  concluded: IsoDateSchema.nullish(),
   feeType: z.string().nullish(),
   claimed: z.number().nullish(),
   lineItems: z.array(LineItemSchema).nullish(),

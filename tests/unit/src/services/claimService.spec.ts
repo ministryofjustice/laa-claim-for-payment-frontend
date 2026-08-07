@@ -11,6 +11,7 @@ import {
   ProfitCostBillLineItemSchema,
 } from "#src/types/Claim.js";
 import { ExpertCostDetails, LineItemForm } from "#src/types/poa.js";
+import { LocalDate } from "#src/types/date.js";
 
 describe("Claim Service", () => {
   afterEach(() => {
@@ -67,7 +68,7 @@ describe("Claim Service", () => {
           providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
           client: "Jane Doe",
           category: "Category A",
-          concluded: "2026-03-12",
+          concluded: new LocalDate(12, 3, 2026),
           feeType: "Fixed",
           claimed: 123.45,
         },
@@ -181,7 +182,7 @@ describe("Claim Service", () => {
         providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
         client: "Jane Doe",
         category: "Something",
-        concluded: "2024-01-02",
+        concluded: new LocalDate(2, 1, 2024),
         feeType: "Fixed",
         claimed: 4500,
       });
@@ -293,7 +294,7 @@ describe("Claim Service", () => {
         providerUserId: "3fa85f64-5717-4567-b3fc-2c963f66afa6",
         client: "Jane Doe",
         category: "Something",
-        concluded: "2024-01-02",
+        concluded: new LocalDate(2, 1, 2024),
         feeType: "Fixed",
         claimed: 4500,
       });
@@ -668,7 +669,7 @@ describe("Claim Service", () => {
         {
           type: CostType.EXPERT_COST,
           value: {
-            activityDate: new Date(),
+            activityDate: new LocalDate(7, 8, 2026),
             actualNetValue: 123,
             vatApplies: true,
             feeEarnerName: "Joe Bloggs",
@@ -838,7 +839,7 @@ describe("Claim Service", () => {
             id: lineItemId.toString(),
             title: "Some line item",
             category: "Disbursement",
-            date: "2024-01-02T10:00:00Z",
+            date: "2024-01-02",
             evidenceItems: [],
             actualNetValue: 123,
             netProfitCostAmount: null,
@@ -862,7 +863,7 @@ describe("Claim Service", () => {
         id: lineItemId.toString(),
         title: "Some line item",
         category: Category.DISBURSEMENT,
-        date: new Date("2024-01-02T10:00:00Z"),
+        date: new LocalDate(2, 1, 2024),
         evidenceItems: [],
         actualNetValue: 123,
         netProfitCostAmount: null,
@@ -891,7 +892,7 @@ describe("Claim Service", () => {
             id: lineItemId.toString(),
             title: "Some line item",
             category: "Disbursement",
-            date: "2024-01-02T10:00:00Z",
+            date: "2024-01-02",
             evidenceItems: [],
             actualNetValue: null,
             netProfitCostAmount: 123,
@@ -915,7 +916,7 @@ describe("Claim Service", () => {
         id: lineItemId.toString(),
         title: "Some line item",
         category: Category.DISBURSEMENT,
-        date: new Date("2024-01-02T10:00:00Z"),
+        date: new LocalDate(2, 1, 2024),
         evidenceItems: [],
         actualNetValue: null,
         netProfitCostAmount: 123,
@@ -944,7 +945,7 @@ describe("Claim Service", () => {
             id: lineItemId.toString(),
             title: "Some line item",
             category: "Disbursement",
-            date: "2024-01-02T10:00:00Z",
+            date: "2024-01-02",
             evidenceItems: [],
             netProfitCostAmount: 123,
             netAdvocacyCostAmount: 456,
@@ -972,7 +973,7 @@ describe("Claim Service", () => {
             id: lineItemId.toString(),
             title: "Some line item",
             category: "Disbursement",
-            date: "2024-01-02T10:00:00Z",
+            date: "2024-01-02",
             evidenceItems: [],
             actualNetValue: 123,
           },
@@ -1066,7 +1067,7 @@ describe("Claim Service", () => {
 
   describe("updateLineItem", () => {
     const lineItem: ExpertCostDetails = {
-      activityDate: new Date(Date.UTC(2026, 6, 28)),
+      activityDate: new LocalDate(28, 7, 2026),
       actualNetValue: 123.45,
       vatApplies: true,
       feeEarnerName: "Joe Bloggs",
@@ -1108,7 +1109,7 @@ describe("Claim Service", () => {
         body: {
           title: "Lorem ipsum",
           category: "Disbursement",
-          date: "2026-07-28T00:00:00.000Z",
+          date: "2026-07-28",
           actualNetValue: 123.45,
           vatApplicable: true,
           feeEarnerName: "Joe Bloggs",

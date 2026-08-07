@@ -195,9 +195,9 @@ describe("validateDateInput", () => {
     const success = expectSuccess(result);
     const date = success.value;
 
-    expect(date.getFullYear()).to.equal(2000);
-    expect(date.getMonth()).to.equal(0);
-    expect(date.getDate()).to.equal(1);
+    expect(date.year).to.equal(2000);
+    expect(date.month).to.equal(1);
+    expect(date.day).to.equal(1);
   });
 
   it("returns failure with array of errors for empty day", () => {

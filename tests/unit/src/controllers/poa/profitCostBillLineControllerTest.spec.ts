@@ -10,6 +10,7 @@ import { buildRoute, ROUTES } from "#routes/helper.js";
 import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { Category, Claim, CostType } from "#src/types/Claim.js";
+import { LocalDate } from "#src/types/date.js";
 
 describe("profitCostBillLineController", () => {
   let res: Response;
@@ -85,7 +86,7 @@ describe("profitCostBillLineController", () => {
             id: lineItemId.toString(),
             title: "Some line item",
             category: Category.DISBURSEMENT,
-            date: new Date("2024-01-04"),
+            date: new LocalDate(4, 1, 2024),
             evidenceItems: [],
             netProfitCostAmount: 123,
             netAdvocacyCostAmount: 456,
@@ -149,7 +150,7 @@ describe("profitCostBillLineController", () => {
     expect(createLineItemStub.firstCall.args[2]).to.deep.equal({
       type: CostType.PROFIT_COST,
       value: {
-        activityDate: new Date(2007, 2, 27),
+        activityDate: new LocalDate(27, 3, 2007),
         actualNetProfitCostExcludingAdvocacy: 123.45,
         actualNetAdvocacyCosts: 156,
         vatApplies: true,
@@ -185,7 +186,7 @@ describe("profitCostBillLineController", () => {
     expect(updateLineItemStub.firstCall.args[3]).to.deep.equal({
       type: CostType.PROFIT_COST,
       value: {
-        activityDate: new Date(2007, 2, 27),
+        activityDate: new LocalDate(27, 3, 2007),
         actualNetProfitCostExcludingAdvocacy: 123.45,
         actualNetAdvocacyCosts: 156,
         vatApplies: true,

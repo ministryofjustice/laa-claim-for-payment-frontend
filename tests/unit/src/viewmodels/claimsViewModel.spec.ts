@@ -10,6 +10,7 @@ import { PaginationMeta } from "#src/types/api-types.js";
 import { load } from "cheerio";
 import { SortedTableHeader } from "#src/viewmodels/components/tableHeader.js";
 import { V7Generator } from "uuidv7";
+import { LocalDate } from "#src/types/date.js";
 
 describe("ClaimsViewModel constructor()", () => {
   it("creates a series of headers", () => {
@@ -60,7 +61,7 @@ describe("ClaimsViewModel constructor()", () => {
         id: claim1Id,
         client: "Giordano",
         category: "Family",
-        concluded: "2025-03-18",
+        concluded: new LocalDate(18, 3, 2025),
         feeType: "Escape",
         claimed: 234.56,
       },
@@ -148,7 +149,7 @@ describe("ClaimsViewModel constructor()", () => {
       id: new V7Generator().generate().toString(),
       client: "Giordano",
       category: "Family",
-      concluded: "2025-03-18",
+      concluded: new LocalDate(18, 3, 2025),
       feeType: "Escape",
       claimed: 234.56,
     };
