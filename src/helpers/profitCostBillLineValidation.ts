@@ -7,6 +7,7 @@ import {
   type ValidationResult,
 } from "#src/helpers/validation.js";
 import type { ProfitCostBillLine } from "#src/types/poa.js";
+import type { LocalDate } from "#src/types/date.js";
 
 export interface ProfitCostBillLineForm {
   activityDateDay?: unknown;
@@ -45,7 +46,7 @@ export function validateProfitCostBillLine(
 
 function validateActivityDate(
   form: ProfitCostBillLineForm,
-): ValidationResult<Date> {
+): ValidationResult<LocalDate> {
   return validateDateInput(
     {
       day: form.activityDateDay,

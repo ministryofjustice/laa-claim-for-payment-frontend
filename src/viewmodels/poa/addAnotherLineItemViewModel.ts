@@ -7,9 +7,15 @@ import {
 import type { Message } from "#src/viewmodels/components/message.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
-import { type BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
+import {
+  type BooleanChoice,
+  booleanChoices,
+} from "#src/models/booleanChoice.js";
 import type { FieldValidationError } from "#src/helpers/validation.js";
-import { addAnotherExpertCostFieldId, addAnotherExpertCostFieldName } from "#src/controllers/poa/addAnotherExpertCostController.js";
+import {
+  addAnotherExpertCostFieldId,
+  addAnotherExpertCostFieldName,
+} from "#src/controllers/poa/addAnotherExpertCostController.js";
 import { formatClaimed, formatDateReadable } from "#src/helpers/index.js";
 
 interface AddAnotherLineItemViewModelParams<T extends LineItem> {
@@ -53,8 +59,9 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
       };
     }
 
-    const rows = lineItems.map((lineItem) => buildSummaryListRowWithChangeAndRemoveLinks(
-        formatDateReadable(lineItem.date),
+    const rows = lineItems.map((lineItem) =>
+      buildSummaryListRowWithChangeAndRemoveLinks(
+        formatDateReadable(lineItem.date.toDate()),
         buildRoute(
           ROUTES.EXPERT_COST_DETAILS,
           { claimId },
@@ -67,7 +74,8 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
         {
           text: getValue(lineItem),
         },
-      ));
+      ),
+    );
 
     this.lineItemsSummaryList = buildSummaryList(summaryListId, rows);
 
@@ -87,7 +95,6 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
  *
  */
 export class AddAnotherExpertCostViewModel extends AddAnotherLineItemViewModel<ExpertCostLineItem> {
-
   /**
    * Creates an add another expert cost view model.
    *

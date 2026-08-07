@@ -10,19 +10,15 @@ import {
   formatDate,
   formatOptionalString,
 } from "#src/helpers/dataFormatters.js";
-import { expect } from 'chai';
+import { expect } from "chai";
+import { LocalDate } from "#src/types/date.js";
 
 describe("Data Transformation Helpers", () => {
-  describe('formatDate()', () => {
-    it('formats a valid ISO date string correctly', () => {
-      expect(formatDate(new Date('1986-01-06T00:00:00Z'))).to.equal('06/01/1986');
-      expect(formatDate(new Date('2023-07-28'))).to.equal('28/07/2023');
-      expect(formatDate(new Date('2023/07/28'))).to.equal('28/07/2023');
-    });
-
-    it('formats dates with single-digit days with a leading zero', () => {
-      expect(formatDate(new Date('2023-2-5'))).to.equal('05/02/2023');
-      expect(formatDate(new Date('2023/2/5'))).to.equal('05/02/2023')
+  describe("formatDate()", () => {
+    it("formats a valid ISO date correctly", () => {
+      expect(formatDate(new LocalDate(6, 1, 1986))).to.equal("06/01/1986");
+      expect(formatDate(new LocalDate(28, 7, 2023))).to.equal("28/07/2023");
+      expect(formatDate(new LocalDate(28, 11, 2023))).to.equal("28/11/2023");
     });
   });
 
@@ -50,11 +46,11 @@ describe("Data Transformation Helpers", () => {
     });
 
     it("should format 0.10 -> £0.10", async () => {
-      expect(formatClaimed(0.10)).to.equal("£0.10");
+      expect(formatClaimed(0.1)).to.equal("£0.10");
     });
 
     it("should format 1.10 -> £1.10", async () => {
-      expect(formatClaimed(1.10)).to.equal("£1.10");
+      expect(formatClaimed(1.1)).to.equal("£1.10");
     });
   });
 

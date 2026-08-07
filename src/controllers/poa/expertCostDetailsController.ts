@@ -41,9 +41,9 @@ export async function expertCostDetails(
 
       if (lineItem.status === "success") {
         form = {
-          activityDateDay: lineItem.body.date.getDate().toString(),
-          activityDateMonth: (lineItem.body.date.getMonth() + 1).toString(),
-          activityDateYear: lineItem.body.date.getFullYear().toString(),
+          activityDateDay: lineItem.body.date.day.toString(),
+          activityDateMonth: lineItem.body.date.month.toString(),
+          activityDateYear: lineItem.body.date.year.toString(),
           actualNetValue: lineItem.body.actualNetValue.toString(),
           vatApplies: formatBooleanChoice(lineItem.body.vatApplicable),
           feeEarnerName: lineItem.body.feeEarnerName,

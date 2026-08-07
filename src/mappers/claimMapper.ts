@@ -36,7 +36,7 @@ export function toLineItemRequestBody(
       return {
         title: form.value.description,
         category: Category.DISBURSEMENT.toString(),
-        date: form.value.activityDate.toISOString(),
+        date: form.value.activityDate.toIsoString(),
         actualNetValue: form.value.actualNetValue,
         vatApplicable: form.value.vatApplies,
         feeEarnerName: form.value.feeEarnerName,
@@ -45,7 +45,7 @@ export function toLineItemRequestBody(
       return {
         title: "TODO", // TODO - what should this be?
         category: Category.DISBURSEMENT.toString(),
-        date: form.value.activityDate.toISOString(),
+        date: form.value.activityDate.toIsoString(),
         netProfitCostAmount: form.value.actualNetProfitCostExcludingAdvocacy,
         netAdvocacyCostAmount: form.value.actualNetAdvocacyCosts,
         vatApplicable: form.value.vatApplies,

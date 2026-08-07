@@ -39,9 +39,9 @@ export async function profitCostBillLine(
         const lineItem = claim.body.lineItems[0] as ProfitCostBillLineItem;
         ({ id: lineItemId } = lineItem);
         form = {
-          activityDateDay: lineItem.date.getDate().toString(),
-          activityDateMonth: (lineItem.date.getMonth() + 1).toString(),
-          activityDateYear: lineItem.date.getFullYear().toString(),
+          activityDateDay: lineItem.date.day.toString(),
+          activityDateMonth: lineItem.date.month.toString(),
+          activityDateYear: lineItem.date.year.toString(),
           actualNetProfitCostExcludingAdvocacy:
             lineItem.netProfitCostAmount.toString(),
           actualNetAdvocacyCosts: lineItem.netAdvocacyCostAmount.toString(),

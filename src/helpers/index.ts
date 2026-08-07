@@ -13,6 +13,8 @@ export { devLog, devWarn, devError, devDebug, isDevelopment } from "./devLogger.
 
 // Data formatting utilities
 export {
+  formatBoolean,
+  formatBooleanChoice,
   formatClaimed,
   formatClaimId,
   formatDate,

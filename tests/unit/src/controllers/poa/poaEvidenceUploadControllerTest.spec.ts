@@ -115,7 +115,7 @@ describe("poaEvidenceUploadController", () => {
               id: evidenceId.toString(),
               fileKey: "sample.pdf",
               fileSize: 1024,
-              submittedOn: new Date(),
+              submittedOn: "2026-06-17T10:20:05Z",
             },
           ],
         }),

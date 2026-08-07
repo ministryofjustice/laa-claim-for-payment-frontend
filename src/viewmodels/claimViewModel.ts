@@ -1,8 +1,5 @@
 import type { ClaimDto } from "#src/types/Claim.js";
-import {
-  formatClaimed,
-  formatDate,
-} from "#src/helpers/index.js";
+import { formatClaimed, formatDate } from "#src/helpers/index.js";
 import type { SummaryListRow } from "./components/summaryList.js";
 
 /**

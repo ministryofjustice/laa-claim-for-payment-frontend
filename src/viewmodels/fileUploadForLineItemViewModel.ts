@@ -1,13 +1,8 @@
-import { formatDateReadable } from "#src/helpers/dataFormatters.js";
-import {
-  Category,
-  type ClaimDto,
-  type EvidenceItem,
-  type LineItem,
-} from "#src/types/Claim.js";
-import type { Message } from "#src/viewmodels/components/message.js";
-import type { ReusableDocument } from "#src/viewmodels/components/taskList.js";
-import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
+import {Category, type ClaimDto, type EvidenceItem, type LineItem,} from "#src/types/Claim.js";
+import type {Message} from "#src/viewmodels/components/message.js";
+import type {ReusableDocument} from "#src/viewmodels/components/taskList.js";
+import {formatFileSize} from "#src/helpers/fileSizeFormatter.js";
+import { formatDateReadable } from "#src/helpers/index.js";
 
 /**
  *
@@ -77,7 +72,7 @@ export class FileUploadForLineItemViewModel {
       key: "common.onDate",
       args: {
         title: lineItem.title,
-        date: formatDateReadable(lineItem.date),
+        date: formatDateReadable(lineItem.date.toDate()),
       },
     };
   }

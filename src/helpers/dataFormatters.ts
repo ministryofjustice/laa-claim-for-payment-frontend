@@ -5,18 +5,15 @@
  */
 
 import type { BooleanChoice } from "#src/models/booleanChoice.js";
+import type { LocalDate } from "#src/types/date.js";
 
 /**
  * Format date for display in table cells and UI components
- * @param {Date} date Date object
+ * @param {LocalDate} date Date
  * @returns {string} Formatted date in DD/MM/YYYY format (e.g., "06/01/1986")
  */
-export function formatDate(date: Date): string {
-  const day = date.toLocaleString('en-GB', { day: '2-digit' });
-  const month = date.toLocaleString('en-GB', { month: '2-digit' });
-  const year = date.getFullYear();
-
-  return `${day}/${month}/${year}`;
+export function formatDate(date: LocalDate): string {
+  return `${date.toDayString()}/${date.toMonthString()}/${date.toYearString()}`;
 }
 
 /**
