@@ -1,5 +1,5 @@
-import { expect, test } from "../fixtures/index.js";
-import { ProfitCostBillLinePage } from "#tests/playwright/pages/ProfitCostBillLinePage.js";
+import { expect, test } from "../../fixtures/index.js";
+import { ProfitCostBillLinePage } from "#tests/playwright/pages/poa/ProfitCostBillLinePage.js";
 import { profitCostDraftClaim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("Profit cost bill line page", () => {
@@ -16,18 +16,19 @@ test.describe("Profit cost bill line page", () => {
     await profitCostBillLinePage.waitForLoad();
 
     await expect(profitCostBillLinePage.heading).toBeVisible();
-    await expect(profitCostBillLinePage.dayInput).toBeVisible();
-    await expect(profitCostBillLinePage.monthInput).toBeVisible();
-    await expect(profitCostBillLinePage.yearInput).toBeVisible();
+    await expect(profitCostBillLinePage.heading).toHaveText("POA CPGFS profit cost bill line");
+    await expect(profitCostBillLinePage.dayInput.input).toBeVisible();
+    await expect(profitCostBillLinePage.monthInput.input).toBeVisible();
+    await expect(profitCostBillLinePage.yearInput.input).toBeVisible();
     await expect(
-      profitCostBillLinePage.actualNetProfitCostExcludingAdvocacyInput,
+      profitCostBillLinePage.actualNetProfitCostExcludingAdvocacyInput.input,
     ).toBeVisible();
     await expect(
-      profitCostBillLinePage.actualNetAdvocacyCostsInput,
+      profitCostBillLinePage.actualNetAdvocacyCostsInput.input,
     ).toBeVisible();
-    await expect(profitCostBillLinePage.vatYesRadio).toBeVisible();
-    await expect(profitCostBillLinePage.vatNoRadio).toBeVisible();
-    await expect(profitCostBillLinePage.feeEarnerNameInput).toBeVisible();
+    await expect(profitCostBillLinePage.vatRadio.yesRadio).toBeVisible();
+    await expect(profitCostBillLinePage.vatRadio.noRadio).toBeVisible();
+    await expect(profitCostBillLinePage.feeEarnerNameInput.input).toBeVisible();
     await expect(profitCostBillLinePage.saveAndContinueButton).toBeVisible();
 
     await checkAccessibility();

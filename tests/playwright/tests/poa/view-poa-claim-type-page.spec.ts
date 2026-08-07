@@ -1,5 +1,5 @@
-import { expect, test } from "../fixtures/index.js";
-import { PoaClaimTypePage } from "#tests/playwright/pages/PoaClaimTypePage.js";
+import { expect, test } from "../../fixtures/index.js";
+import { PoaClaimTypePage } from "#tests/playwright/pages/poa/PoaClaimTypePage.js";
 import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("POA claim type page", () => {
@@ -13,6 +13,7 @@ test.describe("POA claim type page", () => {
     await poaClaimTypePage.waitForLoad();
 
     await expect(poaClaimTypePage.heading).toBeVisible();
+    await expect(poaClaimTypePage.heading).toHaveText("What type of POA are you claiming?");
     await expect(poaClaimTypePage.profitCostRadio).toBeVisible();
     await expect(poaClaimTypePage.expertCostRadio).toBeVisible();
     await expect(poaClaimTypePage.nonExpertDisbursementRadio).toBeVisible();

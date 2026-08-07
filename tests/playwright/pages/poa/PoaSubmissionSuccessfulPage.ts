@@ -1,5 +1,5 @@
 import type { Locator, Page } from "@playwright/test";
-import { BasePage } from "#tests/playwright/pages/BasePage.js";
+import { BasePage } from "#tests/playwright/pages/base/BasePage.js";
 import type { UUID } from "uuidv7";
 
 /**

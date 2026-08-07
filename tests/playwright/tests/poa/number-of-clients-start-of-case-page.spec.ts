@@ -1,5 +1,5 @@
-import { expect, test } from "../fixtures/index.js";
-import { NumberOfClientsStartOfCasePage } from "#tests/playwright/pages/NumberOfClientsStartOfCasePage.js";
+import { expect, test } from "../../fixtures/index.js";
+import { NumberOfClientsStartOfCasePage } from "#tests/playwright/pages/poa/NumberOfClientsStartOfCasePage.js";
 import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("Number of clients start of case page", () => {
@@ -13,6 +13,7 @@ test.describe("Number of clients start of case page", () => {
     await numberOfClientsPage.waitForLoad();
 
     await expect(numberOfClientsPage.heading).toBeVisible();
+    await expect(numberOfClientsPage.heading).toHaveText("How many clients did you have at the start of the case?");
     await expect(numberOfClientsPage.zeroRadio).toBeVisible();
     await expect(numberOfClientsPage.oneRadio).toBeVisible();
     await expect(numberOfClientsPage.twoPlusRadio).toBeVisible();
@@ -29,7 +30,11 @@ test.describe("Number of clients start of case page", () => {
 
     await numberOfClientsPage.saveAndContinueButton.click();
 
-    await expect(numberOfClientsPage.validationError).toBeVisible();
+    await expect(numberOfClientsPage.errorSummary).toBeVisible();
+    await expect(numberOfClientsPage.errorSummary).toContainText("Select how many clients you had at the start of the case");
+
+    await expect(numberOfClientsPage.inlineError).toBeVisible();
+    await expect(numberOfClientsPage.inlineError).toContainText("Select how many clients you had at the start of the case");
   });
 
   test("redirects to multiple client hearings when 0 is selected", async ({

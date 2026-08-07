@@ -1,5 +1,5 @@
-import { expect, test } from "../fixtures/index.js";
-import { HowManyClientsRetainedPage } from "#tests/playwright/pages/HowManyClientsRetainedPage.js";
+import { expect, test } from "../../fixtures/index.js";
+import { HowManyClientsRetainedPage } from "#tests/playwright/pages/poa/HowManyClientsRetainedPage.js";
 import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("How many clients retained page", () => {
@@ -13,6 +13,8 @@ test.describe("How many clients retained page", () => {
     await howManyClientsRetainedPage.waitForLoad();
 
     await expect(howManyClientsRetainedPage.heading).toBeVisible();
+    await expect(howManyClientsRetainedPage.heading).toHaveText("How many clients are retained?");
+
     await expect(howManyClientsRetainedPage.noneRadio).toBeVisible();
     await expect(howManyClientsRetainedPage.oneRadio).toBeVisible();
     await expect(howManyClientsRetainedPage.moreThanTwoRadio).toBeVisible();

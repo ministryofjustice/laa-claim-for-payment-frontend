@@ -1,5 +1,5 @@
-import { expect, test } from "../fixtures/index.js";
-import { EscapingFixedFeePage } from "#tests/playwright/pages/EscapingFixedFeePage.js";
+import { expect, test } from "../../fixtures/index.js";
+import { EscapingFixedFeePage } from "#tests/playwright/pages/poa/EscapingFixedFeePage.js";
 import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("Escaping the fixed fee page", () => {
@@ -13,8 +13,10 @@ test.describe("Escaping the fixed fee page", () => {
     await escapingFixedFeePage.waitForLoad();
 
     await expect(escapingFixedFeePage.heading).toBeVisible();
-    await expect(escapingFixedFeePage.yesRadio).toBeVisible();
-    await expect(escapingFixedFeePage.noRadio).toBeVisible();
+    await expect(escapingFixedFeePage.heading).toHaveText("Escaping the standard fixed fee");
+
+    await expect(escapingFixedFeePage.radio.yesRadio).toBeVisible();
+    await expect(escapingFixedFeePage.radio.noRadio).toBeVisible();
     await expect(escapingFixedFeePage.saveAndContinueButton).toBeVisible();
 
     await checkAccessibility();
@@ -71,7 +73,7 @@ test.describe("Escaping the fixed fee page", () => {
     await escapingFixedFeePage.navigate();
     await escapingFixedFeePage.waitForLoad();
 
-    await escapingFixedFeePage.yesRadio.check();
+    await escapingFixedFeePage.radio.answerYes();
     await escapingFixedFeePage.saveAndContinueButton.click();
 
     await expect(page).toHaveURL(
@@ -87,7 +89,7 @@ test.describe("Escaping the fixed fee page", () => {
     await escapingFixedFeePage.navigate();
     await escapingFixedFeePage.waitForLoad();
 
-    await escapingFixedFeePage.noRadio.check();
+    await escapingFixedFeePage.radio.answerNo();
     await escapingFixedFeePage.saveAndContinueButton.click();
 
     await expect(page).toHaveURL(

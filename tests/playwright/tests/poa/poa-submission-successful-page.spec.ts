@@ -1,4 +1,4 @@
-import { expect, test } from "../fixtures/index.js";
+import { expect, test } from "../../fixtures/index.js";
 import { claim1Id } from "#tests/playwright/factories/handlers/api.js";
 
 test("page should have the correct title", async ({ page }) => {

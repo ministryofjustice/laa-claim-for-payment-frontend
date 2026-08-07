@@ -1,23 +1,14 @@
-import type { Page, Locator } from '@playwright/test';
-import { BasePage } from "#tests/playwright/pages/BasePage.js";
-import { expect } from "#tests/playwright/fixtures/index.js";
-import type { UUID } from "uuidv7";
+import type { Locator } from "@playwright/test";
+import { BasePage } from "#tests/playwright/pages/base/BasePage.js";
+import { expect } from "@playwright/test";
+import path from "node:path";
+import os from "node:os";
+import fs from "node:fs";
 
 /**
- * Page object for the choose upload page.
+ * Base question page with shared navigation + utilities
  */
-export class FileUploadForLineItemPage extends BasePage {
-  /**
-   * Creates a page object.
-   *
-   * @param {Page} page The Playwright page instance.
-   * @param {UUID} claimId The claim ID.
-   * @param {UUID} lineItemId The line item ID.
-   */
-  constructor(page: Page, claimId: UUID, lineItemId: UUID) {
-    super(page, `claims/${claimId.toString()}/upload-evidence-individually/${lineItemId.toString()}/file-upload`);
-  }
-
+export abstract class EvidenceUploadPage extends BasePage {
   /**
    * get the uploaded files container
    * @returns {Locator} The uploaded files container
@@ -87,5 +78,18 @@ export class FileUploadForLineItemPage extends BasePage {
     await expect(
       row.locator(".govuk-tag")
     ).toHaveText(status);
+  }
+
+  /**
+   * create a file with a given name and size.
+   * @param {string} name file name
+   * @param {number} sizeInBytes file size in bytes
+   * @returns {string} the path to the created file
+   */
+  static createFile(name: string, sizeInBytes: number): string {
+    const filePath = path.join(os.tmpdir(), name);
+    const buffer = Buffer.alloc(sizeInBytes);
+    fs.writeFileSync(filePath, buffer);
+    return filePath;
   }
 }

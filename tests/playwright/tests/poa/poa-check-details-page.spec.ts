@@ -1,4 +1,4 @@
-import { expect, test } from "../fixtures/index.js";
+import { expect, test } from "../../fixtures/index.js";
 import {
   claim1Id,
   profitCostDraftClaim1Id,

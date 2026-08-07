@@ -11,6 +11,10 @@ export const profitCostDraftClaim1Id = UUID.parse(
   "019faf99-e88a-71f7-b467-cd3aa9f643aa",
 );
 
+export const expertCostDraftClaim1Id = UUID.parse(
+  "019fd69d-1ccd-75ff-bd25-28b7041e1f7a",
+);
+
 /**
  * create a stub claim helper method
  * @param { UUID } id id of the claim to create
@@ -55,6 +59,24 @@ const profitCostDraftClaim1: object = {
   evidence: [],
 };
 
+const expertCostDraftClaim1: object = {
+  id: expertCostDraftClaim1Id.toString(),
+  costType: "EXPERT_COST",
+  lineItems: [
+    {
+      id: lineItemId.toString(),
+      title: "Line item 1",
+      category: "Disbursement",
+      date: "2025-03-18",
+      evidenceItems: [],
+      feeEarnerName: "Joe Bloggs",
+      vatApplicable: true,
+      actualNetValue: 123,
+    }
+  ],
+  evidence: [],
+};
+
 /**
  * API handlers that intercept outbound requests from the Express app
  */
@@ -92,6 +114,8 @@ export const apiHandlers = [
         return HttpResponse.error();
       case profitCostDraftClaim1Id.toString():
         return HttpResponse.json(profitCostDraftClaim1);
+      case expertCostDraftClaim1Id.toString():
+        return HttpResponse.json(expertCostDraftClaim1);
       default:
         return HttpResponse.json(makeFakeClaim(UUID.parse(claimId)));
     }
@@ -124,7 +148,47 @@ export const apiHandlers = [
         message: `File uploaded with ID: ${evidenceId.toString()}`,
       };
 
-      return HttpResponse.json(response, { status: 201 });
+      switch (claimId) {
+        case claim3Id.toString():
+          return HttpResponse.error();
+        default:
+          return HttpResponse.json(response, { status: 201 });
+      }
+    },
+  ),
+
+  http.post(
+    "/api/v1/claims/:claimId/upload-evidence",
+    async ({ params }) => {
+      const { claimId } = params;
+      if (typeof claimId !== "string") {
+        throw new Error("URL missing a valid string id param.");
+      }
+      console.log(
+        "🧩 MSW matched: POST /api/v1/claims/%s/upload-evidence",
+        claimId,
+      );
+
+      // This is so the "Uploading" tag briefly shows
+      await delay(1000);
+
+      const response = {
+        type: "success",
+        evidenceId,
+        file: {
+          filename: "test.pdf",
+          originalname: "test.pdf",
+          filesize: 12345,
+        },
+        message: `File uploaded with ID: ${evidenceId.toString()}`,
+      };
+
+      switch (claimId) {
+        case claim3Id.toString():
+          return HttpResponse.error();
+        default:
+          return HttpResponse.json(response, { status: 201 });
+      }
     },
   ),
 
