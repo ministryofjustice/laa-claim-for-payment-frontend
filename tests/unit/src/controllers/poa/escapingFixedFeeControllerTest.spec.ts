@@ -2,16 +2,21 @@ import { expect } from "chai";
 import { describe, it, beforeEach, afterEach } from "mocha";
 import sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
-import { escapingFixedFee, submitEscapingFixedFee } from "#src/controllers/poa/escapingFixedFeeController.js";
+import {
+  escapingFixedFee,
+  submitEscapingFixedFee,
+} from "#src/controllers/poa/escapingFixedFeeController.js";
 import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { Claim } from "#src/types/Claim.js";
+import { Claim, ClaimStatus } from "#src/types/Claim.js";
+import { uploadService } from "#src/services/uploadService.js";
 
 describe("escapingFixedFeeController", () => {
   let res: Response;
   let next: NextFunction;
   let getClaimStub: sinon.SinonStub;
   let updateClaimStub: sinon.SinonStub;
+  let deleteAllEvidenceStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
 
@@ -29,6 +34,10 @@ describe("escapingFixedFeeController", () => {
 
     getClaimStub = sinon.stub(claimService, "getDraftClaim");
     updateClaimStub = sinon.stub(claimService, "updateClaim");
+    deleteAllEvidenceStub = sinon.stub(
+      uploadService,
+      "deleteAllEvidenceFromClaim",
+    );
   });
 
   afterEach(() => {
@@ -97,9 +106,11 @@ describe("escapingFixedFeeController", () => {
       ),
     ).to.be.true;
 
-    expect((res.redirect as sinon.SinonStub).calledWith(
-      `/claims/${claimId.toString()}/poa/cpgfs-profit-cost-bill-line`,
-    )).to.equal(true);
+    expect(
+      (res.redirect as sinon.SinonStub).calledWith(
+        `/claims/${claimId.toString()}/poa/cpgfs-profit-cost-bill-line`,
+      ),
+    ).to.equal(true);
   });
 
   it("rerenders the radio question page with an error when no option is selected", async () => {
@@ -124,7 +135,7 @@ describe("escapingFixedFeeController", () => {
       fieldName: "escapingFixedFee",
       href: "#escapingFixedFee",
       text: {
-        key: "pages.escapingFixedFee.errors.empty"
+        key: "pages.escapingFixedFee.errors.empty",
       },
     });
   });
@@ -147,7 +158,7 @@ describe("escapingFixedFeeController", () => {
       fieldName: "escapingFixedFee",
       href: "#escapingFixedFee",
       text: {
-        key: "pages.escapingFixedFee.errors.empty"
+        key: "pages.escapingFixedFee.errors.empty",
       },
     });
 
@@ -156,5 +167,72 @@ describe("escapingFixedFeeController", () => {
         (choice: { checked: boolean }) => !choice.checked,
       ),
     ).to.equal(true);
+  });
+
+  it("cleans up evidence if there is evidence on the claim and user answers no to escaping fixed fee", async () => {
+    const req = {
+      params: {
+        claimId: claimId.toString(),
+      },
+      body: {
+        escapingFixedFee: "no",
+      },
+    } as unknown as Request;
+
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+        evidence: [
+          {
+            id: "123-123567",
+            fileKey: "fileKey",
+            fileSize: 5,
+            submittedOn: "",
+          },
+        ],
+      }),
+    });
+
+    await submitEscapingFixedFee(req, res, next);
+
+    sinon.assert.calledOnce(deleteAllEvidenceStub);
+
+    expect(deleteAllEvidenceStub.firstCall.args[1].toString()).to.equal(
+      claimId.toString(),
+    );
+
+    expect(deleteAllEvidenceStub.firstCall.args[2]).to.equal(ClaimStatus.DRAFT);
+  });
+
+
+  it("does not delete evidence if there is evidence on the claim and user answers yes to escaping fixed fee", async () => {
+    const req = {
+      params: {
+        claimId: claimId.toString(),
+      },
+      body: {
+        escapingFixedFee: "yes",
+      },
+    } as unknown as Request;
+
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+        evidence: [
+          {
+            id: "123-123567",
+            fileKey: "fileKey",
+            fileSize: 5,
+            submittedOn: "",
+          },
+        ],
+      }),
+    });
+
+    await submitEscapingFixedFee(req, res, next);
+
+    sinon.assert.notCalled(deleteAllEvidenceStub);
   });
 });
