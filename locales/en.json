@@ -372,6 +372,12 @@
             "empty": "Select yes if you wish to add another expert cost"
           }
         }
+      },
+      "removeExpertLineItem": {
+        "title" : "Are you sure you want to remove this expert cost?",
+        "errors": {
+          "empty": "Select yes if you want to remove this expert cost"
+        }
       }
     },
     "escapingFixedFee": {

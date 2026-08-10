@@ -7,6 +7,7 @@ import {
   getLineItem as getLineItemApi,
   updateClaim as updateClaimApi,
   updateLineItem as updateLineItemApi,
+  deleteLineItem as deleteLineItemApi
 } from "#src/generated/claim-api/sdk.gen.js";
 import { createApiError } from "#src/helpers/index.js";
 import type { ApiResponse, Paginated } from "#src/types/api-types.js";
@@ -21,7 +22,7 @@ import {
 } from "#src/types/Claim.js";
 import config from "../../config.js";
 import { UUID } from "uuidv7";
-import type { ClaimRequestBody } from "#src/generated/claim-api/index.js";
+import type { ApiErrorResponse, ClaimRequestBody } from "#src/generated/claim-api/index.js";
 import {
   toClaimRequestBody,
   toLineItemRequestBody,
@@ -29,6 +30,7 @@ import {
 import type { LineItemForm } from "#src/types/poa.js";
 import type { AxiosResponse } from "axios";
 import type { ZodType } from "zod";
+import axios from "axios";
 
 interface ClaimServiceDeps {
   createClient: typeof createClient;
@@ -39,6 +41,7 @@ interface ClaimServiceDeps {
   addLineItemToClaim: typeof addLineItemToClaimApi;
   getLineItem: typeof getLineItemApi;
   updateLineItem: typeof updateLineItemApi;
+  deleteLineItem: typeof deleteLineItemApi;
 }
 
 const defaultDeps: ClaimServiceDeps = {
@@ -50,6 +53,7 @@ const defaultDeps: ClaimServiceDeps = {
   addLineItemToClaim: addLineItemToClaimApi,
   getLineItem: getLineItemApi,
   updateLineItem: updateLineItemApi,
+  deleteLineItem: deleteLineItemApi
 };
 
 /**
@@ -363,6 +367,55 @@ class ClaimService {
         body: null,
       };
     } catch (error) {
+      return createApiError(error);
+    }
+  }
+   
+  /**
+   * Delete a line item.
+   *
+   * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
+   * @param {UUID} claimId - Claim identifier.
+   * @param {UUID} lineItemId - Line item identifier.
+   * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
+   * @returns {Promise<ApiResponse<null>>} App response format.
+   */
+  static async deleteLineItem(
+    axiosMiddleware: AxiosInstanceWrapper,
+    claimId: UUID,
+    lineItemId: UUID,
+    deps: ClaimServiceDeps = defaultDeps,
+  ): Promise<ApiResponse<null>> {
+    const apiClient = deps.createClient({
+      baseURL: config.api.baseUrl,
+      axios: axiosMiddleware.axiosInstance,
+      throwOnError: true,
+    });
+
+    try {
+      await deps.deleteLineItem({
+        path: {
+          claimId: claimId.toString(),
+          lineItemId: lineItemId.toString(),
+        },
+        query: { status: ClaimStatus.DRAFT },
+        client: apiClient,
+      });
+
+      return {
+        status: "success",
+        body: null,
+      };
+    } catch (error) {
+      if (
+        axios.isAxiosError<ApiErrorResponse>(error) &&
+        error.response?.status === 404
+      ) {
+        return {
+          status: "success",
+          body: null,
+        };
+      }
       return createApiError(error);
     }
   }
