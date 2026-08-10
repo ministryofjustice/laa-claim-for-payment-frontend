@@ -1,4 +1,4 @@
-import {delay, http, HttpResponse } from "msw";
+import { http, type HttpHandler, HttpResponse } from "msw";
 import { UUID } from "uuidv7";
 
 export const claim1Id = UUID.parse("019f5ba6-1dfc-7caf-b276-75ac6373525a");
@@ -79,87 +79,90 @@ const expertCostDraftClaim1: object = {
 
 /**
  * API handlers that intercept outbound requests from the Express app
+ * @param {Gate} uploadGate upload gate
+ * @returns {HttpHandler[]} http handlers
  */
-export const apiHandlers = [
-  // match any host or protocol
-  http.get("/api/v1/claims", ({ request }) => {
-    const url = new URL(request.url, "http://localhost:8080");
-    const page = Number(url.searchParams.get("page"));
-    const limit = Number(url.searchParams.get("limit"));
+export function createApiHandlers(uploadGate?: Gate): HttpHandler[] {
+  return [
+    // match any host or protocol
+    http.get("/api/v1/claims", ({ request }) => {
+      const url = new URL(request.url, "http://localhost:8080");
+      const page = Number(url.searchParams.get("page"));
+      const limit = Number(url.searchParams.get("limit"));
 
-    console.log("🧩 MSW matched: GET /api/v1/claims");
-    const claims = [
-      makeFakeClaim(claim1Id),
-      makeFakeClaim(claim2Id),
-      makeFakeClaim(claim3Id),
-    ];
+      console.log("🧩 MSW matched: GET /api/v1/claims");
+      const claims = [
+        makeFakeClaim(claim1Id),
+        makeFakeClaim(claim2Id),
+        makeFakeClaim(claim3Id),
+      ];
 
-    return HttpResponse.json({
-      claims,
-      page,
-      limit,
-      total: 3,
-      totalPages: 1,
-    });
-  }),
+      return HttpResponse.json({
+        claims,
+        page,
+        limit,
+        total: 3,
+        totalPages: 1,
+      });
+    }),
 
-  http.get("/api/v1/claims/:claimId", ({ params }) => {
-    const { claimId } = params;
-    if (typeof claimId !== "string") {
-      throw new Error("URL missing a valid string id param.");
-    }
-    console.log("🧩 MSW matched: GET /api/v1/claims/%s", claimId);
-    switch (claimId) {
-      case claim2Id.toString():
-        return HttpResponse.error();
-      case profitCostDraftClaim1Id.toString():
-        return HttpResponse.json(profitCostDraftClaim1);
-      case expertCostDraftClaim1Id.toString():
-        return HttpResponse.json(expertCostDraftClaim1);
-      default:
-        return HttpResponse.json(makeFakeClaim(UUID.parse(claimId)));
-    }
-  }),
-
-  http.post(
-    "/api/v1/claims/:claimId/line-items/:lineItemId/upload-evidence",
-    async ({ params }) => {
-      const { claimId, lineItemId } = params;
-      if (typeof claimId !== "string" || typeof lineItemId !== "string") {
-        throw new Error("URL missing valid string id params.");
+    http.get("/api/v1/claims/:claimId", ({ params }) => {
+      const { claimId } = params;
+      if (typeof claimId !== "string") {
+        throw new Error("URL missing a valid string id param.");
       }
-      console.log(
-        "🧩 MSW matched: POST /api/v1/claims/%s/line-items/%s/upload-evidence",
-        claimId,
-        lineItemId,
-      );
-
-      // This is so the "Uploading" tag briefly shows
-      await delay(1000);
-
-      const response = {
-        type: "success",
-        evidenceId,
-        file: {
-          filename: "test.pdf",
-          originalname: "test.pdf",
-          filesize: 12345,
-        },
-        message: `File uploaded with ID: ${evidenceId.toString()}`,
-      };
-
+      console.log("🧩 MSW matched: GET /api/v1/claims/%s", claimId);
       switch (claimId) {
-        case claim3Id.toString():
+        case claim2Id.toString():
           return HttpResponse.error();
+        case profitCostDraftClaim1Id.toString():
+          return HttpResponse.json(profitCostDraftClaim1);
+        case expertCostDraftClaim1Id.toString():
+          return HttpResponse.json(expertCostDraftClaim1);
         default:
-          return HttpResponse.json(response, { status: 201 });
+          return HttpResponse.json(makeFakeClaim(UUID.parse(claimId)));
       }
-    },
-  ),
+    }),
 
-  http.post(
-    "/api/v1/claims/:claimId/upload-evidence",
-    async ({ params }) => {
+    http.post(
+      "/api/v1/claims/:claimId/line-items/:lineItemId/upload-evidence",
+      async ({ params }) => {
+        const { claimId, lineItemId } = params;
+        if (typeof claimId !== "string" || typeof lineItemId !== "string") {
+          throw new Error("URL missing valid string id params.");
+        }
+        console.log(
+          "🧩 MSW matched: POST /api/v1/claims/%s/line-items/%s/upload-evidence",
+          claimId,
+          lineItemId,
+        );
+
+        // This is so the "Uploading" tag briefly shows
+        if (uploadGate != null) {
+          await uploadGate.wait;
+        }
+
+        const response = {
+          type: "success",
+          evidenceId,
+          file: {
+            filename: "test.pdf",
+            originalname: "test.pdf",
+            filesize: 12345,
+          },
+          message: `File uploaded with ID: ${evidenceId.toString()}`,
+        };
+
+        switch (claimId) {
+          case claim3Id.toString():
+            return HttpResponse.error();
+          default:
+            return HttpResponse.json(response, { status: 201 });
+        }
+      },
+    ),
+
+    http.post("/api/v1/claims/:claimId/upload-evidence", async ({ params }) => {
       const { claimId } = params;
       if (typeof claimId !== "string") {
         throw new Error("URL missing a valid string id param.");
@@ -170,7 +173,9 @@ export const apiHandlers = [
       );
 
       // This is so the "Uploading" tag briefly shows
-      await delay(1000);
+      if (uploadGate != null) {
+        await uploadGate.wait;
+      }
 
       const response = {
         type: "success",
@@ -189,28 +194,64 @@ export const apiHandlers = [
         default:
           return HttpResponse.json(response, { status: 201 });
       }
-    },
-  ),
+    }),
 
-  http.delete(
-    "/api/v1/claims/:claimId/line-items/:lineItemId/evidence/:evidenceId",
-    ({ params }) => {
-      const { claimId, lineItemId, evidenceId } = params;
-      if (
-        typeof claimId !== "string" ||
-        typeof lineItemId !== "string" ||
-        typeof evidenceId !== "string"
-      ) {
-        throw new Error("URL missing valid string id params.");
-      }
-      console.log(
-        "🧩 MSW matched: DELETE /api/v1/claims/%s/line-items/%s/evidence/%s",
-        claimId,
-        lineItemId,
-        evidenceId,
-      );
+    http.delete(
+      "/api/v1/claims/:claimId/line-items/:lineItemId/evidence/:evidenceId",
+      ({ params }) => {
+        const { claimId, lineItemId, evidenceId } = params;
+        if (
+          typeof claimId !== "string" ||
+          typeof lineItemId !== "string" ||
+          typeof evidenceId !== "string"
+        ) {
+          throw new Error("URL missing valid string id params.");
+        }
+        console.log(
+          "🧩 MSW matched: DELETE /api/v1/claims/%s/line-items/%s/evidence/%s",
+          claimId,
+          lineItemId,
+          evidenceId,
+        );
 
-      return HttpResponse.json(null, { status: 204 });
+        return HttpResponse.json(null, { status: 204 });
+      },
+    ),
+  ];
+}
+
+interface Gate {
+  readonly wait: Promise<void>;
+  release: () => void;
+  reset: () => void;
+}
+
+/**
+ * Creates a manually controlled promise gate.
+ * @returns {Gate} promise gate
+ */
+export function createGate(): Gate {
+  /* eslint-disable-next-line  @typescript-eslint/no-empty-function -- ignore */
+  let resolveGate: () => void = () => {};
+  let wait = /* eslint-disable-next-line promise/avoid-new -- ignore */
+    new Promise<void>((resolve) => {
+      resolveGate = resolve;
+    });
+
+  return {
+    get wait() {
+      return wait;
     },
-  ),
-];
+
+    release() {
+      resolveGate();
+    },
+
+    reset() {
+      wait = /* eslint-disable-next-line promise/avoid-new -- ignore */
+        new Promise<void>((resolve) => {
+          resolveGate = resolve;
+        });
+    },
+  };
+}

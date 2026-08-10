@@ -7,9 +7,7 @@
 @typescript-eslint/no-magic-numbers,
 @typescript-eslint/explicit-function-return-type,
 @typescript-eslint/strict-boolean-expressions,
-@typescript-eslint/prefer-destructuring,
-promise/avoid-new,
-no-async-promise-executor --
+@typescript-eslint/prefer-destructuring --
 https://github.com/ministryofjustice/moj-frontend/blob/main/src/moj/components/multi-file-upload/multi-file-upload.mjs
 This file patches the upstream MOJ MultiFileUpload component to add CSRF
 header support for upload and delete XMLHttpRequests. The upstream component
@@ -33,93 +31,51 @@ export function patchMultiFileUpload() {
     void convertExistingRows(this.$feedbackContainer);
   };
 
-  MultiFileUpload.prototype.uploadFiles = async function (files) {
-    for (const file of files) {
-      await this.uploadFile(file);
-    }
-  };
-
   MultiFileUpload.prototype.uploadFile = async function (file) {
-    return await new Promise(async (resolve) => {
-      this.config.hooks.entryHook(this, file);
+    this.config.hooks.entryHook(this, file);
 
-      let row = await createRow(FileUploadStatus.Pending, {
-        fileName: file.name,
-      });
+    let row = await createRow(FileUploadStatus.Pending, {
+      fileName: file.name,
+    });
 
-      const list = this.$feedbackContainer.querySelector(
-        ".moj-multi-file-upload__list",
+    const list = this.$feedbackContainer.querySelector(
+      ".moj-multi-file-upload__list",
+    );
+
+    list.append(row);
+
+    const progress = row.querySelector(
+      ".moj-multi-file-upload__progress",
+    );
+
+    const xhr = new XMLHttpRequest();
+
+    xhr.upload.addEventListener("progress", (event) => {
+      if (!event.lengthComputable || !progress) {
+        return;
+      }
+
+      const percentComplete = Math.round(
+        (event.loaded / event.total) * 100,
       );
 
-      list.append(row);
+      progress.textContent = `${percentComplete}%`;
+    });
 
-      const progress = row.querySelector(
-        ".moj-multi-file-upload__progress",
-      );
+    xhr.addEventListener("load", async () => {
+      const { response } = xhr;
 
-      const xhr = new XMLHttpRequest();
+      if (
+        xhr.status < 200 ||
+        xhr.status >= 300 ||
+        response?.status !== "success" ||
+        !response.file
+      ) {
+        const message = response?.error?.message;
 
-      xhr.upload.addEventListener("progress", (event) => {
-        if (!event.lengthComputable || !progress) {
-          return;
-        }
-
-        const percentComplete = Math.round(
-          (event.loaded / event.total) * 100,
-        );
-
-        progress.textContent = `${percentComplete}%`;
-      });
-
-      xhr.addEventListener("load", async () => {
-        const {response} = xhr;
-
-        if (
-          xhr.status < 200 ||
-          xhr.status >= 300 ||
-          response?.status !== "success" ||
-          !response.file
-        ) {
-          const message =
-            response?.error?.message ?? "Upload failed";
-
-          row = await replaceRow(row, FileUploadStatus.Failed, {
-            fileName: file.name,
-            message,
-          });
-
-          this.config.hooks.errorHook(
-            this,
-            file,
-            xhr,
-            xhr.statusText,
-            new Error(message),
-          );
-
-          resolve();
-          return;
-        }
-
-        row = await replaceRow(row, FileUploadStatus.Success, {
-          fileId: response.file.id,
-          fileName: response.file.originalname,
-          fileSize: response.file.size,
-        });
-
-        this.config.hooks.exitHook(
-          this,
-          file,
-          xhr,
-          xhr.statusText,
-        );
-
-        resolve();
-      });
-
-      xhr.addEventListener("error", async () => {
         row = await replaceRow(row, FileUploadStatus.Failed, {
           fileName: file.name,
-          message: "Upload failed",
+          message,
         });
 
         this.config.hooks.errorHook(
@@ -127,22 +83,47 @@ export function patchMultiFileUpload() {
           file,
           xhr,
           xhr.statusText,
-          new Error("Upload failed"),
+          new Error(message ?? "Upload failed"),
         );
 
-        resolve();
+        return;
+      }
+
+      row = await replaceRow(row, FileUploadStatus.Success, {
+        fileId: response.file.id,
+        fileName: response.file.originalname,
+        fileSize: response.file.size,
       });
 
-      xhr.open("POST", this.config.uploadUrl);
-
-      xhr.responseType = "json";
-
-      const formData = new FormData();
-
-      formData.append("documents", file);
-
-      xhr.send(formData);
+      this.config.hooks.exitHook(
+        this,
+        file,
+        xhr,
+        xhr.statusText,
+      );
     });
+
+    xhr.addEventListener("error", async () => {
+      row = await replaceRow(row, FileUploadStatus.Failed, {
+        fileName: file.name,
+      });
+
+      this.config.hooks.errorHook(
+        this,
+        file,
+        xhr,
+        xhr.statusText,
+        new Error("Upload failed"),
+      );
+    });
+
+    xhr.open("POST", this.config.uploadUrl);
+    xhr.responseType = "json";
+
+    const formData = new FormData();
+    formData.append("documents", file);
+
+    xhr.send(formData);
   };
 
   async function createRow(status, params = {}) {

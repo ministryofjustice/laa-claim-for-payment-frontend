@@ -5,7 +5,6 @@ import {
   claim3Id,
   lineItemId,
 } from "#tests/playwright/factories/handlers/api.js";
-import { delay } from "msw";
 import { EvidenceUploadPage } from "#tests/playwright/pages/base/EvidenceUploadPage.js";
 
 test("upload a file then delete the file", async ({
@@ -35,7 +34,11 @@ test("upload a file then delete the file", async ({
     fileUploadForLineItemPage.uploadedFilesHintText,
   ).not.toBeVisible();
 
+  await fileUploadForLineItemPage.resetGate();
+
   await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
+
+  await fileUploadForLineItemPage.releaseGate();
 
   await expect(
     fileUploadForLineItemPage.uploadedFilesContainer,
@@ -74,9 +77,11 @@ test("upload a file of invalid type", async ({ page, checkAccessibility }) => {
 
   const filePath = EvidenceUploadPage.createFile(fileName, 1024);
 
+  await fileUploadForLineItemPage.resetGate();
+
   await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
 
-  await delay(1000);
+  await fileUploadForLineItemPage.releaseGate();
 
   await fileUploadForLineItemPage.checkFileRow(
     fileName,
@@ -101,9 +106,11 @@ test("upload a file of invalid size", async ({ page, checkAccessibility }) => {
 
   const filePath = EvidenceUploadPage.createFile(fileName, 10 * 1024 * 1024);
 
+  await fileUploadForLineItemPage.resetGate();
+
   await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
 
-  await delay(1000);
+  await fileUploadForLineItemPage.releaseGate();
 
   await fileUploadForLineItemPage.checkFileRow(
     fileName,
@@ -128,9 +135,11 @@ test("fail to upload a file", async ({ page, checkAccessibility }) => {
 
   const filePath = EvidenceUploadPage.createFile(fileName, 1024);
 
+  await fileUploadForLineItemPage.resetGate();
+
   await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
 
-  await delay(1000);
+  await fileUploadForLineItemPage.releaseGate();
 
   await fileUploadForLineItemPage.checkFileRow(
     fileName,
@@ -155,9 +164,11 @@ test("upload an empty file", async ({ page, checkAccessibility }) => {
 
   const filePath = EvidenceUploadPage.createFile(fileName, 0);
 
+  await fileUploadForLineItemPage.resetGate();
+
   await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
 
-  await delay(1000);
+  await fileUploadForLineItemPage.releaseGate();
 
   await fileUploadForLineItemPage.checkFileRow(
     fileName,
@@ -169,6 +180,7 @@ test("upload an empty file", async ({ page, checkAccessibility }) => {
 });
 
 test("upload multiple files", async ({ page, checkAccessibility }) => {
+
   const file1Name = `${crypto.randomUUID()}.pdf`;
   const file2Name = `${crypto.randomUUID()}.pdf`;
 
@@ -182,19 +194,22 @@ test("upload multiple files", async ({ page, checkAccessibility }) => {
   await fileUploadForLineItemPage.waitForLoad();
 
   const file1Path = EvidenceUploadPage.createFile(file1Name, 1024);
-  const file2Path = EvidenceUploadPage.createFile(file2Name, 1024);
+  const file2Path = EvidenceUploadPage.createFile(file2Name, 2 * 1024);
+
+  await fileUploadForLineItemPage.resetGate();
 
   await fileUploadForLineItemPage.fileUploadInput.uploadFiles([
     file1Path,
     file2Path,
   ]);
 
+  await fileUploadForLineItemPage.checkFileRow(file1Name, "%", "Uploading");
+  await fileUploadForLineItemPage.checkFileRow(file2Name, "%", "Uploading");
+
+  await fileUploadForLineItemPage.releaseGate();
+
   await fileUploadForLineItemPage.checkFileRow(file1Name, "1KB", "Uploaded");
-  await fileUploadForLineItemPage.checkFileRow(file2Name, "0%", "Uploading");
-
-  await delay(1000);
-
-  await fileUploadForLineItemPage.checkFileRow(file2Name, "1KB", "Uploaded");
+  await fileUploadForLineItemPage.checkFileRow(file2Name, "2KB", "Uploaded");
 
   await checkAccessibility();
 });
