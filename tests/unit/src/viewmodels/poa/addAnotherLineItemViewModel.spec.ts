@@ -15,14 +15,12 @@ describe("AddAnotherLineItemViewModel", () => {
 
   describe("AddAnotherExpertCostViewModel", () => {
     it("when one line item", () => {
-      const date = new LocalDate(18, 3, 2025);
-
       const lineItems: ExpertCostLineItem[] = [
         {
           id: lineItem1Id.toString(),
           title: "Line item 1",
           category: Category.DISBURSEMENT,
-          date: date,
+          date: new LocalDate(18, 3, 2025),
           evidenceItems: [],
           feeEarnerName: "Joe Bloggs",
           vatApplicable: true,
