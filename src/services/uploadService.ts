@@ -1,6 +1,7 @@
 import { createClient } from "#src/generated/claim-api/client/client.gen.js";
 import {
   deleteEvidenceFromClaim as deleteEvidenceFromClaimApi,
+  deleteAllEvidenceFromClaim as deleteAllEvidenceFromClaimApi,
   linkEvidenceToLineItem as linkEvidenceToLineItemApi,
   unlinkEvidenceFromLineItem as unlinkEvidenceFromLineItemApi,
   uploadClaimEvidence as uploadClaimEvidenceApi,
@@ -22,6 +23,7 @@ interface UploadServiceDeps {
   linkEvidenceToLineItem: typeof linkEvidenceToLineItemApi;
   uploadClaimEvidence: typeof uploadClaimEvidenceApi;
   deleteEvidenceFromClaim: typeof deleteEvidenceFromClaimApi;
+  deleteAllEvidenceFromClaim: typeof deleteAllEvidenceFromClaimApi;
   uploadLineItemEvidence: typeof uploadLineItemEvidenceApi;
   unlinkEvidenceFromLineItem: typeof unlinkEvidenceFromLineItemApi;
 }
@@ -31,6 +33,7 @@ const defaultDeps: UploadServiceDeps = {
   linkEvidenceToLineItem: linkEvidenceToLineItemApi,
   uploadClaimEvidence: uploadClaimEvidenceApi,
   deleteEvidenceFromClaim: deleteEvidenceFromClaimApi,
+  deleteAllEvidenceFromClaim: deleteAllEvidenceFromClaimApi,
   uploadLineItemEvidence: uploadLineItemEvidenceApi,
   unlinkEvidenceFromLineItem: unlinkEvidenceFromLineItemApi,
 };
@@ -250,6 +253,46 @@ class UploadService {
         },
       });
 
+      return {
+        body: null,
+        status: "success",
+      };
+    } catch (error) {
+      return createApiError(error);
+    }
+  }
+
+  /**
+   * Delete all evidence from a claim.
+   *
+   * @param {AxiosInstanceWrapper} axiosMiddleware Wrapped Axios client from request middleware.
+   * @param {UUID} claimId Claim identifier.
+   * @param {ClaimStatus} claimStatus Claim status (DRAFT or SUBMITTED).
+   * @param {UploadServiceDeps} deps Service dependencies used to create the client and call the generated API.
+   * @returns {Promise<ApiResponse<null>>} Null response in app response format.
+   */
+  static async deleteAllEvidenceFromClaim(
+    axiosMiddleware: AxiosInstanceWrapper,
+    claimId: UUID,
+    claimStatus: ClaimStatus,
+    deps: UploadServiceDeps = defaultDeps,
+  ): Promise<ApiResponse<null>> {
+    try {
+      const apiClient = deps.createClient({
+        baseURL: config.api.baseUrl,
+        axios: axiosMiddleware.axiosInstance,
+        throwOnError: true,
+      });
+
+      await deps.deleteAllEvidenceFromClaim({
+        client: apiClient,
+        path: {
+          claimId: claimId.toString(),
+        },
+        query: {
+          status: claimStatus,
+        },
+      });
       return {
         body: null,
         status: "success",

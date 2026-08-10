@@ -7,6 +7,8 @@ import { validateBooleanInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { formatBooleanChoice } from "#src/helpers/dataFormatters.js";
+import { uploadService } from "#src/services/uploadService.js";
+import { ClaimStatus } from "#src/types/Claim.js";
 
 const escapingFixedFeeFieldName = "escapingFixedFee" as const;
 
@@ -107,7 +109,15 @@ export async function submitEscapingFixedFee(
     );
 
     if (claim.status === "success") {
-      // TODO - cleanup evidence when answer is No
+      const hasEvidence = (claim.body.value.evidence?.length ?? 0) > 0;
+
+      if (hasEvidence && !validationResult.value) {
+        await uploadService.deleteAllEvidenceFromClaim(
+          req.axiosMiddleware,
+          claimId,
+          ClaimStatus.DRAFT,
+        );
+      }
       await claimService.updateClaim(
         req.axiosMiddleware,
         claim.body.setEscapedFlag(validationResult.value),
