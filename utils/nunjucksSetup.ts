@@ -3,7 +3,10 @@ import path from "node:path";
 import type { Application } from "express";
 import { getLatestBuildFile } from "./buildHelper.js";
 import type { TFunction } from "#node_modules/i18next/index.js";
-import type { Message } from "#src/viewmodels/components/message.js";
+import type {
+  LocalizedText,
+  Message,
+} from "#src/viewmodels/components/message.js";
 
 /**
  * Sets up Nunjucks as the template engine for the given Express application.
@@ -29,7 +32,8 @@ export const nunjucksSetup = (app: Application): void => {
    * @returns {string} The path to the latest build file.
    */
   locals.getAsset = (prefix: string, ext: string): string => {
-    const directory = ext === "js" || ext === "min.js" ? "public/js" : "public/css";
+    const directory =
+      ext === "js" || ext === "min.js" ? "public/js" : "public/css";
     return getLatestBuildFile(directory, prefix, ext);
   };
 
@@ -45,7 +49,7 @@ export const nunjucksSetup = (app: Application): void => {
       autoescape: true, // Enable auto escaping to prevent XSS attacks
       express: appInstance, // Bind Nunjucks to the Express app instance
       watch: true, // Watch for changes in template files during development
-    }
+    },
   );
 
   app.use((req, res, next) => {
@@ -53,7 +57,9 @@ export const nunjucksSetup = (app: Application): void => {
     const env = app.get("nunjucksEnv") as nunjucks.Environment;
 
     // add custom filters here
-    env.addFilter("translate", (value: unknown) => translate(value, req.t));
+    env.addFilter("translate", (value: unknown) =>
+      translate(value, req.t, req.language),
+    );
 
     next();
   });
@@ -63,22 +69,35 @@ export const nunjucksSetup = (app: Application): void => {
  * Recursive translation of object
  * @param {unknown} value the value to resolve
  * @param {TFunction} t the translation function
+ * @param {string} language the translation language
  * @returns {unknown} the resolved object
  */
-export function translate(value: unknown, t: TFunction): unknown {
+export function translate(
+  value: unknown,
+  t: TFunction,
+  language: string,
+): unknown {
+  if (isLocalizedText(value)) {
+    return value(language);
+  }
+
   if (isMessage(value)) {
-    return t(value.key, value.args);
+    const args =
+      value.args == null ? undefined : translate(value.args, t, language);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
+    return t(value.key, args as Record<string, unknown>);
   }
 
   if (Array.isArray(value)) {
-    return value.map(v => translate(v, t));
+    return value.map((v) => translate(v, t, language));
   }
 
   if (value != null && typeof value === "object") {
     const out: Record<string, unknown> = {};
 
     for (const [k, v] of Object.entries(value)) {
-      out[k] = translate(v, t);
+      out[k] = translate(v, t, language);
     }
 
     return out;
@@ -99,4 +118,10 @@ function isMessage(value: unknown): value is Message {
     typeof record.key === "string" &&
     (record.args === undefined || typeof record.args === "object")
   );
+}
+
+function isLocalizedText(
+  value: unknown,
+): value is LocalizedText {
+  return typeof value === "function";
 }

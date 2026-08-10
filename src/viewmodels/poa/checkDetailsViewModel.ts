@@ -249,7 +249,7 @@ export class CheckDetailsViewModel {
                 {
                   key: "pages.poa.checkYourDetails.cya.profitCostBillLine.date",
                 },
-                { text: formatDateReadable(lineItem.date.toDate()) },
+                { text: language => formatDateReadable(lineItem.date.toDate())(language) },
               ),
               buildSummaryListRow(
                 {
