@@ -11,7 +11,10 @@
   @typescript-eslint/prefer-destructuring -- test helper: dynamic MSW→Express adapter, intentionally loose types
 */
 
-import { apiHandlers } from '#tests/playwright/factories/handlers/api.js'
+import {
+  createApiHandlers,
+  createGate,
+} from "#tests/playwright/factories/handlers/api.js";
 import express from 'express'
 
 const VALID_METHODS = ['get', 'post', 'put', 'patch', 'delete'] as const
@@ -50,7 +53,19 @@ function applyHandlers(app: express.Express, handlers: any[]) {
 const app = express()
 app.use(express.json())
 
-applyHandlers(app, apiHandlers)
+const uploadGate = createGate();
+
+applyHandlers(app, createApiHandlers(uploadGate));
+
+app.post("/test/release-upload", (_req, res) => {
+  uploadGate.release();
+  res.sendStatus(204);
+});
+
+app.post("/test/reset-upload", (_req, res) => {
+  uploadGate.reset();
+  res.sendStatus(204);
+});
 
 const PORT = 8080
 app.listen(PORT, () => { console.log(`🟢 Mock backend running on port ${PORT}`); })

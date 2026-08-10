@@ -26,7 +26,7 @@ export function parseNumberQueryParam(value: unknown, defaultValue: number): num
 export function hasQueryParams<T extends string>(
   params: Record<string, unknown>,
   keys: T[],
-): params is Record<T, string> {
+): params is Record<string, unknown> & Record<T, string> {
   return keys.every(
     (key) => typeof params[key] === "string",
   );
