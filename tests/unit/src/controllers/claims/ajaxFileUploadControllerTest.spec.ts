@@ -378,6 +378,36 @@ describe("ajaxFileUploadController", () => {
 
         getFileRow(req as Request, res, next);
 
+        expect(uploadEvidenceStub.firstCall.args[1]).to.deep.equal({
+          name: "evidence.pdf",
+          message: "Upload failed",
+        });
+
+        expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+          body: dummyHtml,
+        });
+      });
+
+      it("gets a failed row with default message", () => {
+        req = {
+          query: {
+            status: "failed",
+            fileName: "evidence.pdf",
+          },
+          t: mockT,
+        };
+
+        const dummyHtml = "<div>Something</div>"
+
+        uploadEvidenceStub.returns(dummyHtml);
+
+        getFileRow(req as Request, res, next);
+
+        expect(uploadEvidenceStub.firstCall.args[1]).to.deep.equal({
+          name: "evidence.pdf",
+          message: "multiFileUpload.errors.uploadFailed",
+        });
+
         expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
           body: dummyHtml,
         });

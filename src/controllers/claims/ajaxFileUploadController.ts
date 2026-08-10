@@ -243,7 +243,7 @@ export async function unlinkEvidenceFileFromLineItem(
  * @param {NextFunction} next Express next function.
  * @returns {void}
  */
-  export function getFileRow(
+export function getFileRow(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -283,13 +283,16 @@ export async function unlinkEvidenceFileFromLineItem(
         });
         break;
       case FileUploadStatus.Failed:
-        if (!hasQueryParams(req.query, ["fileName", "message"])) {
+        if (!hasQueryParams(req.query, ["fileName"])) {
           res.status(400);
           return;
         }
         body = uploadService.getFailedFileRow(t, {
           name: req.query.fileName,
-          message: req.query.message,
+          message:
+            typeof req.query.message === "string"
+              ? req.query.message
+              : t("multiFileUpload.errors.uploadFailed"),
         });
         break;
     }

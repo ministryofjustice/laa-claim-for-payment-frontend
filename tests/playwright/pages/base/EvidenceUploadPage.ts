@@ -92,4 +92,18 @@ export abstract class EvidenceUploadPage extends BasePage {
     fs.writeFileSync(filePath, buffer);
     return filePath;
   }
+
+  /**
+   * Resets the promise gate
+   */
+  async resetGate(): Promise<void> {
+    await this.page.request.post("http://localhost:8080/test/reset-upload");
+  }
+
+  /**
+   * Releases the promise gate
+   */
+  async releaseGate(): Promise<void> {
+    await this.page.request.post("http://localhost:8080/test/release-upload");
+  }
 }

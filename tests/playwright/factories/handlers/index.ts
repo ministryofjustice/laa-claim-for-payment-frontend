@@ -8,7 +8,7 @@
  */
 
 import { http, HttpResponse, passthrough } from 'msw';
-import { apiHandlers } from './api.js';
+import { createApiHandlers } from './api.js';
 
 const debugHandler = http.all('*', ({ request }) => 
   passthrough()
@@ -20,7 +20,7 @@ const debugHandler = http.all('*', ({ request }) =>
  */
 export const handlers = [
   debugHandler,
-  ...apiHandlers,
+  ...createApiHandlers(),
   
   // Health check endpoint for testing
   http.get('/health', () => HttpResponse.json({ 
