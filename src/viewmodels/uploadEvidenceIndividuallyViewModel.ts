@@ -3,8 +3,9 @@ import { UploadStatus } from "#src/models/uploadStatus.js";
 import { UploadStatusTagClass } from "#src/viewmodels/components/status.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { Category, type ClaimDto, type LineItem } from "#src/types/Claim.js";
-import { formatDateReadable } from "#src/helpers/dataFormatters.js";
 import type { Message } from "./components/message.js";
+import type { LocalDate } from "#src/types/date.js";
+import { formatDateReadable } from "#src/helpers/index.js";
 
 /**
  *
@@ -42,12 +43,12 @@ export class UploadEvidenceIndividuallyViewModel {
     };
   }
 
-  private static buildLineItemTitle(title: string, date: Date): Message {
+  private static buildLineItemTitle(title: string, date: LocalDate): Message {
     return {
       key: 'common.onDate',
       args: {
         title,
-        date: formatDateReadable(date),
+        date: formatDateReadable(date.toDate()),
       },
     };
   }

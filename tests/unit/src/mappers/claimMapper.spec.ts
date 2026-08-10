@@ -18,6 +18,7 @@ import {
   LineItemForm,
   ProfitCostBillLine,
 } from "#src/types/poa.js";
+import { LocalDate } from "#src/types/date.js";
 
 describe("ClaimMapper", () => {
   const claimId = new V7Generator().generate();
@@ -76,7 +77,7 @@ describe("ClaimMapper", () => {
   describe("toLineItemRequestBody", () => {
     it("when expert cost details", () => {
       const lineItem: ExpertCostDetails = {
-        activityDate: new Date("2026-03-12"),
+        activityDate: new LocalDate(12, 3, 2026),
         actualNetValue: 123,
         vatApplies: true,
         feeEarnerName: "Joe Bloggs",
@@ -90,7 +91,7 @@ describe("ClaimMapper", () => {
 
       const result = toLineItemRequestBody(form);
 
-      expect(result.date).to.equal("2026-03-12T00:00:00.000Z");
+      expect(result.date).to.equal("2026-03-12");
       expect(result.actualNetValue).to.equal(123);
       expect(result.vatApplicable).to.equal(true);
       expect(result.feeEarnerName).to.equal("Joe Bloggs");
@@ -99,7 +100,7 @@ describe("ClaimMapper", () => {
 
     it("when profit cost bill line", () => {
       const lineItem: ProfitCostBillLine = {
-        activityDate: new Date("2026-03-12"),
+        activityDate: new LocalDate(12, 3, 2026),
         actualNetProfitCostExcludingAdvocacy: 123,
         actualNetAdvocacyCosts: 456,
         vatApplies: true,
@@ -113,7 +114,7 @@ describe("ClaimMapper", () => {
 
       const result = toLineItemRequestBody(form);
 
-      expect(result.date).to.equal("2026-03-12T00:00:00.000Z");
+      expect(result.date).to.equal("2026-03-12");
       expect(result.netProfitCostAmount).to.equal(123);
       expect(result.netAdvocacyCostAmount).to.equal(456);
       expect(result.vatApplicable).to.equal(true);

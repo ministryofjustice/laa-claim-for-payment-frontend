@@ -4,12 +4,13 @@ import {
   CostType,
   Count,
   CourtType,
+  IsoDateSchema,
 } from "#src/types/Claim.js";
 
 export const EvidenceSchema = z.object({
   fileKey: z.string(),
   fileSize: z.number(),
-  submittedOn: z.string().pipe(z.coerce.date()),
+  submittedOn: z.iso.datetime(),
 });
 
 export type Evidence = z.infer<typeof EvidenceSchema>;
@@ -24,7 +25,7 @@ export const ProfitCostDetailsSchema = z.object({
 export type ProfitCostDetails = z.infer<typeof ProfitCostDetailsSchema>;
 
 export const ProfitCostBillLineSchema = z.object({
-  activityDate: z.string().pipe(z.coerce.date()),
+  activityDate: IsoDateSchema,
   actualNetProfitCostExcludingAdvocacy: z.number(),
   actualNetAdvocacyCosts: z.number(),
   vatApplies: z.boolean(),
@@ -34,7 +35,7 @@ export const ProfitCostBillLineSchema = z.object({
 export type ProfitCostBillLine = z.infer<typeof ProfitCostBillLineSchema>;
 
 export const ExpertCostDetailsSchema = z.object({
-  activityDate: z.string().pipe(z.coerce.date()),
+  activityDate: IsoDateSchema,
   actualNetValue: z.number(),
   vatApplies: z.boolean(),
   feeEarnerName: z.string(),

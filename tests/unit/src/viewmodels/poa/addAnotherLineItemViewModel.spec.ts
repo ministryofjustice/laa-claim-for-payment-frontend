@@ -5,6 +5,7 @@ import {
   AddAnotherExpertCostViewModelParams,
 } from "#src/viewmodels/poa/addAnotherLineItemViewModel.js";
 import { expect } from "chai";
+import { LocalDate } from "#src/types/date.js";
 
 describe("AddAnotherLineItemViewModel", () => {
   const claimId = new V7Generator().generate();
@@ -18,7 +19,7 @@ describe("AddAnotherLineItemViewModel", () => {
           id: lineItem1Id.toString(),
           title: "Line item 1",
           category: Category.DISBURSEMENT,
-          date: new Date("2025-03-18"),
+          date: new LocalDate(18, 3, 2025),
           evidenceItems: [],
           feeEarnerName: "Joe Bloggs",
           vatApplicable: true,
@@ -63,7 +64,7 @@ describe("AddAnotherLineItemViewModel", () => {
           id: lineItem1Id.toString(),
           title: "Line item 1",
           category: Category.DISBURSEMENT,
-          date: new Date("2025-03-18"),
+          date: new LocalDate(18, 3, 2025),
           evidenceItems: [],
           feeEarnerName: "Joe Bloggs",
           vatApplicable: true,
@@ -75,7 +76,7 @@ describe("AddAnotherLineItemViewModel", () => {
           id: lineItem2Id.toString(),
           title: "Line item 2",
           category: Category.DISBURSEMENT,
-          date: new Date("2026-07-26"),
+          date: new LocalDate(26, 7, 2026),
           evidenceItems: [],
           feeEarnerName: "Jane Doe",
           vatApplicable: false,

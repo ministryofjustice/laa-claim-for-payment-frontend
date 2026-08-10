@@ -7,6 +7,7 @@ import {
   type ValidationResult,
 } from "#src/helpers/validation.js";
 import type { ExpertCostDetails } from "#src/types/poa.js";
+import type { LocalDate } from "#src/types/date.js";
 
 export interface ExpertCostDetailsForm {
   activityDateDay?: unknown;
@@ -41,7 +42,7 @@ export function validateExpertCostDetails(
 
 function validateActivityDate(
   form: ExpertCostDetailsForm,
-): ValidationResult<Date> {
+): ValidationResult<LocalDate> {
   return validateDateInput(
     {
       day: form.activityDateDay,

@@ -10,6 +10,7 @@ import {
 import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { Category, CostType } from "#src/types/Claim.js";
+import { LocalDate } from "#src/types/date.js";
 
 describe("expertCostDetailsController", () => {
   let res: Response;
@@ -85,7 +86,7 @@ describe("expertCostDetailsController", () => {
         id: lineItemId.toString(),
         title: "Interim hearing on 20 December 2023",
         category: Category.DISBURSEMENT,
-        date: new Date("2024-01-04"),
+        date: new LocalDate(4, 1, 2024),
         evidenceItems: [],
         actualNetValue: 123,
         vatApplicable: false,
@@ -146,7 +147,7 @@ describe("expertCostDetailsController", () => {
     expect(createLineItemStub.firstCall.args[2]).to.deep.equal({
       type: CostType.EXPERT_COST,
       value: {
-        activityDate: new Date(2007, 2, 27),
+        activityDate: new LocalDate(27, 3, 2007),
         actualNetValue: 123.45,
         vatApplies: true,
         feeEarnerName: "John Smith",
@@ -196,7 +197,7 @@ describe("expertCostDetailsController", () => {
     expect(updateLineItemStub.firstCall.args[3]).to.deep.equal({
       type: CostType.EXPERT_COST,
       value: {
-        activityDate: new Date(2007, 2, 27),
+        activityDate: new LocalDate(27, 3, 2007),
         actualNetValue: 123.45,
         vatApplies: true,
         feeEarnerName: "John Smith",

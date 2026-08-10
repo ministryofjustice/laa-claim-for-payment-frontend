@@ -9,6 +9,7 @@ import {
   addAnotherExpertCost,
   submitAddAnotherExpertCost,
 } from "#src/controllers/poa/addAnotherExpertCostController.js";
+import { LocalDate } from "#src/types/date.js";
 
 describe("addAnotherExpertCostController", () => {
   let res: Response;
@@ -53,7 +54,7 @@ describe("addAnotherExpertCostController", () => {
             id: lineItemId.toString(),
             title: "Line item 1",
             category: Category.DISBURSEMENT,
-            date: new Date("2025-03-18"),
+            date: new LocalDate(18, 3, 2025),
             evidenceItems: [],
           },
         ],

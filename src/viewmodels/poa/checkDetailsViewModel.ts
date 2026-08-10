@@ -20,17 +20,17 @@ import {
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import {
-  formatBoolean,
-  formatClaimed,
-  formatDateReadable,
-} from "#src/helpers/dataFormatters.js";
-import {
   clientStatusFieldName,
   courtTypeFieldName,
   firstSolicitorFieldName,
   transferOfSolicitorFieldName,
 } from "#src/controllers/poa/profitCostDetailsController.js";
 import { AnswerMissingError } from "#src/types/errors.js";
+import {
+  formatBoolean,
+  formatClaimed,
+  formatDateReadable,
+} from "#src/helpers/index.js";
 
 /**
  *
@@ -249,7 +249,7 @@ export class CheckDetailsViewModel {
                 {
                   key: "pages.poa.checkYourDetails.cya.profitCostBillLine.date",
                 },
-                { text: formatDateReadable(lineItem.date) },
+                { text: formatDateReadable(lineItem.date.toDate()) },
               ),
               buildSummaryListRow(
                 {
@@ -315,7 +315,7 @@ export class CheckDetailsViewModel {
                 {
                   key: "pages.poa.checkYourDetails.cya.expertCostBillLine.date",
                 },
-                { text: formatDateReadable(lineItem.date) },
+                { text: formatDateReadable(lineItem.date.toDate()) },
               ),
               buildSummaryListRow(
                 {
@@ -383,7 +383,7 @@ export class CheckDetailsViewModel {
               key: "pages.poa.checkYourDetails.cya.evidence.value",
               args: {
                 fileSize: formatFileSize(evidence.fileSize),
-                submittedOn: formatDateReadable(evidence.submittedOn),
+                submittedOn: formatDateReadable(new Date(evidence.submittedOn)),
               },
             },
           }),
