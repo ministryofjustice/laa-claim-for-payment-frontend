@@ -3,6 +3,8 @@ import { ClaimDto } from "#src/types/Claim.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
 import { claim11, claim9 } from "#tests/assets/claim.js";
 import { AnswerMissingError } from "#src/types/errors.js";
+import { expectLocalizedText } from "#tests/unit/src/viewmodels/base/base.spec.js";
+import { Message } from "#src/viewmodels/components/message.js";
 
 describe("CheckDetailsViewModel constructor()", () => {
   it("throws for an empty claim", () => {
@@ -226,9 +228,7 @@ describe("CheckDetailsViewModel constructor()", () => {
     expect(vm.lineItemSummaryLists[0].rows[0].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostBillLine.date",
     });
-    expect(vm.lineItemSummaryLists[0].rows[0].value.text).to.equal(
-      "29 July 2026",
-    );
+    expectLocalizedText(vm.lineItemSummaryLists[0].rows[0].value.text!, "29 July 2026");
     expect(vm.lineItemSummaryLists[0].rows[0].actions).to.not.exist;
 
     expect(vm.lineItemSummaryLists[0].rows[1].key.text).to.deep.equal({
@@ -279,10 +279,10 @@ describe("CheckDetailsViewModel constructor()", () => {
     );
 
     expect(vm.evidenceSummaryList.rows[0].key.text).to.equal("evidence1.pdf");
-    expect(vm.evidenceSummaryList.rows[0].value.html).to.deep.equal({
-      key: "pages.poa.checkYourDetails.cya.evidence.value",
-      args: { fileSize: "1KB", submittedOn: "17 June 2026" },
-    });
+    const value = vm.evidenceSummaryList.rows[0].value.html as Message;
+    expect(value.key).to.equal("pages.poa.checkYourDetails.cya.evidence.value");
+    expect(value.args?.["fileSize"]).to.equal("1KB");
+    expectLocalizedText(value.args?.["submittedOn"]!, "17 June 2026");
     expect(vm.evidenceSummaryList.rows[0].actions).to.not.exist;
   });
 
@@ -321,7 +321,7 @@ describe("CheckDetailsViewModel constructor()", () => {
     expect(firstSummaryList.rows[0].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.expertCostBillLine.date",
     });
-    expect(firstSummaryList.rows[0].value.text).to.equal("20 December 2023");
+    expectLocalizedText(firstSummaryList.rows[0].value.text!, "20 December 2023");
 
     expect(firstSummaryList.rows[1].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.expertCostBillLine.actualNetValue",
@@ -370,7 +370,7 @@ describe("CheckDetailsViewModel constructor()", () => {
     expect(secondSummaryList.rows[0].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.expertCostBillLine.date",
     });
-    expect(secondSummaryList.rows[0].value.text).to.equal("30 July 2026");
+    expectLocalizedText(secondSummaryList.rows[0].value.text!, "30 July 2026");
 
     expect(secondSummaryList.rows[1].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.expertCostBillLine.actualNetValue",

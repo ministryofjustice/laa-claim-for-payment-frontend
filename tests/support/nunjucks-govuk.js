@@ -46,7 +46,7 @@ export function setupNunjucksForGovUk() {
   //add t for i18n content rendering
   env.addGlobal("t", t);
 
-  env.addFilter("translate", (key) => translate(key, t));
+  env.addFilter("translate", (key) => translate(key, t, "en"));
 
   return env;
 }

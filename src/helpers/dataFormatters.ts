@@ -19,15 +19,15 @@ export function formatDate(date: LocalDate): string {
 /**
  * Format date for readable display
  * @param {Date} date Date object
- * @returns {string} Formatted date in D MMMM YYYY format (e.g., "6 January 1986")
+ * @returns {Function} Function that formats the date in D MMMM YYYY format (e.g., "6 January 1986") for the supplied language
  */
-export function formatDateReadable(date: Date): string {
-  return date.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-}
+export const formatDateReadable =
+  (date: Date) =>
+    (language: string): string => date.toLocaleDateString(`${language}-GB`, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
 
 /**
  * Format claim ID for display in table cells and UI components

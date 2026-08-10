@@ -8,6 +8,7 @@ import {
   formatClaimed,
   formatClaimId,
   formatDate,
+  formatDateReadable,
   formatOptionalString,
 } from "#src/helpers/dataFormatters.js";
 import { expect } from "chai";
@@ -19,6 +20,74 @@ describe("Data Transformation Helpers", () => {
       expect(formatDate(new LocalDate(6, 1, 1986))).to.equal("06/01/1986");
       expect(formatDate(new LocalDate(28, 7, 2023))).to.equal("28/07/2023");
       expect(formatDate(new LocalDate(28, 11, 2023))).to.equal("28/11/2023");
+    });
+  });
+
+  describe("formatDateReadable", () => {
+    describe("english", () => {
+      const language = "en";
+
+      const months: Record<string, string> = {
+        "01": "January",
+        "02": "February",
+        "03": "March",
+        "04": "April",
+        "05": "May",
+        "06": "June",
+        "07": "July",
+        "08": "August",
+        "09": "September",
+        "10": "October",
+        "11": "November",
+        "12": "December",
+      };
+
+      Object.entries(months).forEach(([month, expected]) => {
+        it(`formats month ${month} as ${expected} when single digit day`, () => {
+          const date = new Date(`2026-${month}-01T00:00:00Z`);
+
+          expect(formatDateReadable(date)(language)).to.equal(`1 ${expected} 2026`);
+        });
+
+        it(`formats month ${month} as ${expected} when double digit day`, () => {
+          const date = new Date(`2026-${month}-10T00:00:00Z`);
+
+          expect(formatDateReadable(date)(language)).to.equal(`10 ${expected} 2026`);
+        });
+      });
+    });
+
+    describe("welsh", () => {
+      const language = "cy";
+
+      const months: Record<string, string> = {
+        "01": "Ionawr",
+        "02": "Chwefror",
+        "03": "Mawrth",
+        "04": "Ebrill",
+        "05": "Mai",
+        "06": "Mehefin",
+        "07": "Gorffennaf",
+        "08": "Awst",
+        "09": "Medi",
+        "10": "Hydref",
+        "11": "Tachwedd",
+        "12": "Rhagfyr",
+      };
+
+      Object.entries(months).forEach(([month, expected]) => {
+        it(`formats month ${month} as ${expected} when single digit day`, () => {
+          const date = new Date(`2026-${month}-01T00:00:00Z`);
+
+          expect(formatDateReadable(date)(language)).to.equal(`1 ${expected} 2026`);
+        });
+
+        it(`formats month ${month} as ${expected} when double digit day`, () => {
+          const date = new Date(`2026-${month}-10T00:00:00Z`);
+
+          expect(formatDateReadable(date)(language)).to.equal(`10 ${expected} 2026`);
+        });
+      });
     });
   });
 
