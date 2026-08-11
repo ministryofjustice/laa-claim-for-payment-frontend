@@ -1,29 +1,35 @@
 import { config as chaiConfig, expect } from "chai";
-import { CheerioAPI, load } from "cheerio";
+import { CheerioAPI } from "cheerio";
 import { UploadEvidenceIndividuallyViewModel } from "#src/viewmodels/uploadEvidenceIndividuallyViewModel.js";
 import { claim2, claim3, claim5, claim8 } from "#tests/assets/claim.js";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
+import { Claim } from "#src/types/Claim.js";
 
 // Show full strings in diffs if something fails
 chaiConfig.truncateThreshold = 0;
-
 
 describe("views/main/claims/uploadEvidenceIndividually.njk", () => {
   let $: CheerioAPI;
 
   describe("when there are bill narrative, work, and disbursement line items", () => {
-    const viewModel = new UploadEvidenceIndividuallyViewModel(claim5);
+    const claim = new Claim({
+      ...claim5,
+    });
+
+    const viewModel = new UploadEvidenceIndividuallyViewModel(claim);
 
     beforeEach(async () => {
-      $ = await renderView('main/claims/uploadEvidenceIndividually.njk', {
-        vm: viewModel
+      $ = await renderView("main/claims/uploadEvidenceIndividually.njk", {
+        vm: viewModel,
       });
     });
 
     it("renders the title in the main H1", () => {
       const h1 = $("h1.govuk-heading-xl");
       expect(h1).to.have.length(1);
-      expect(h1.text().trim()).to.equal("pages.uploadEvidenceIndividually.title");
+      expect(h1.text().trim()).to.equal(
+        "pages.uploadEvidenceIndividually.title",
+      );
     });
 
     it("renders a 'Back' link", () => {
@@ -151,11 +157,15 @@ describe("views/main/claims/uploadEvidenceIndividually.njk", () => {
   });
 
   describe("when there is only a bill narrative line item", () => {
-    const viewModel = new UploadEvidenceIndividuallyViewModel(claim2);
+    const claim = new Claim({
+      ...claim2,
+    });
+
+    const viewModel = new UploadEvidenceIndividuallyViewModel(claim);
 
     beforeEach(async () => {
-      $ = await renderView('main/claims/uploadEvidenceIndividually.njk', {
-        vm: viewModel
+      $ = await renderView("main/claims/uploadEvidenceIndividually.njk", {
+        vm: viewModel,
       });
     });
 
@@ -171,11 +181,15 @@ describe("views/main/claims/uploadEvidenceIndividually.njk", () => {
   });
 
   describe("when there is only a work line item", () => {
-    const viewModel = new UploadEvidenceIndividuallyViewModel(claim3);
+    const claim = new Claim({
+      ...claim3,
+    });
+
+    const viewModel = new UploadEvidenceIndividuallyViewModel(claim);
 
     beforeEach(async () => {
-      $ = await renderView('main/claims/uploadEvidenceIndividually.njk', {
-        vm: viewModel
+      $ = await renderView("main/claims/uploadEvidenceIndividually.njk", {
+        vm: viewModel,
       });
     });
 
@@ -191,11 +205,15 @@ describe("views/main/claims/uploadEvidenceIndividually.njk", () => {
   });
 
   describe("when there is only a disbursement line item", () => {
-    const viewModel = new UploadEvidenceIndividuallyViewModel(claim8);
+    const claim = new Claim({
+      ...claim8,
+    });
+
+    const viewModel = new UploadEvidenceIndividuallyViewModel(claim);
 
     beforeEach(async () => {
-      $ = await renderView('main/claims/uploadEvidenceIndividually.njk', {
-        vm: viewModel
+      $ = await renderView("main/claims/uploadEvidenceIndividually.njk", {
+        vm: viewModel,
       });
     });
 

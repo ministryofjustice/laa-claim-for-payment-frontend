@@ -39,6 +39,8 @@ export const draftService = {
       );
     }
 
+    // TODO - delete all line items
+
     return await claimService.updateClaim(
       axiosMiddleware,
       claim.setCostType(value),

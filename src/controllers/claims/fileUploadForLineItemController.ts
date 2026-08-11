@@ -6,7 +6,7 @@ import createHttpError from "http-errors";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { uploadService } from "#src/services/uploadService.js";
 import { UUID } from "uuidv7";
-import { ClaimStatus } from "#src/types/Claim.js";
+import { ClaimStatus, type LineItem } from "#src/types/Claim.js";
 
 /**
  * File upload page for Bill narrative.
@@ -27,11 +27,9 @@ export async function fileUploadForLineItemPage(
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {
-      const {
-        body: { value: claim },
-      } = response;
+      const { body: claim } = response;
 
-      const lineItem = claim.lineItems?.find(
+      const lineItem: LineItem | undefined = claim.lineItems.find(
         (item) => item.id === lineItemId.toString(),
       );
 

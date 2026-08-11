@@ -4,6 +4,7 @@ import { FileUploadForLineItemViewModel } from "#src/viewmodels/fileUploadForLin
 import { claim1, claim2, claim3 } from "#tests/assets/claim.js";
 import { billNarrativeLineItem, workItemLineItem1 } from "#tests/assets/lineItems.js";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
+import { Claim } from "#src/types/Claim.js";
 
 // Show full strings in diffs if something fails
 chaiConfig.truncateThreshold = 0;
@@ -12,8 +13,12 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
   let $: CheerioAPI;
 
   describe("with no reusable documents", () => {
+    const claim = new Claim({
+      ...claim1,
+    });
+
     const viewModel = new FileUploadForLineItemViewModel(
-      claim1,
+      claim,
       billNarrativeLineItem, "/upload", "/delete", "/continue"
     );
 
@@ -175,7 +180,11 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
   describe("with reusable documents", () => {
     let $: CheerioAPI;
 
-    const viewModel = new FileUploadForLineItemViewModel(claim1, workItemLineItem1, "/upload", "/delete", "/continue");
+    const claim = new Claim({
+      ...claim1,
+    });
+
+    const viewModel = new FileUploadForLineItemViewModel(claim, workItemLineItem1, "/upload", "/delete", "/continue");
 
     beforeEach(async () => {
       $ = await renderView('main/claims/fileUploadForLineItemView.njk', {
@@ -210,8 +219,12 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
   describe("with no uploaded files", () => {
     let $: CheerioAPI;
 
+    const claim = new Claim({
+      ...claim3,
+    });
+
     const viewModel = new FileUploadForLineItemViewModel(
-      claim3,
+      claim,
       workItemLineItem1, "/upload", "/delete", "/continue"
     );
 
@@ -240,8 +253,12 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
   describe("with uploaded files", () => {
     let $: CheerioAPI;
 
+    const claim = new Claim({
+      ...claim2,
+    });
+
     const viewModel = new FileUploadForLineItemViewModel(
-      claim2,
+      claim,
       billNarrativeLineItem, "/upload", "/delete", "/continue"
     );
 

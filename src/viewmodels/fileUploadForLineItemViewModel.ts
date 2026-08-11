@@ -1,7 +1,7 @@
-import {Category, type ClaimDto, type EvidenceItem, type LineItem,} from "#src/types/Claim.js";
-import type {Message} from "#src/viewmodels/components/message.js";
-import type {ReusableDocument} from "#src/viewmodels/components/taskList.js";
-import {formatFileSize} from "#src/helpers/fileSizeFormatter.js";
+import { Category, type Claim, type EvidenceItem, type LineItem } from "#src/types/Claim.js";
+import type { Message } from "#src/viewmodels/components/message.js";
+import type { ReusableDocument } from "#src/viewmodels/components/taskList.js";
+import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import { formatDateReadable } from "#src/helpers/index.js";
 
 /**
@@ -17,7 +17,7 @@ export class FileUploadForLineItemViewModel {
 
   /**
    * Creates a view model containing the summary rows derived from the claim data
-   * @param {ClaimDto} claim Array of claims
+   * @param {Claim} claim Array of claims
    * @param {LineItem} lineItem Line item
    * @param {string} uploadUrl url for upload
    * @param {string} deleteUrl url for delete
@@ -25,7 +25,7 @@ export class FileUploadForLineItemViewModel {
    */
   // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   constructor(
-    claim: ClaimDto,
+    claim: Claim,
     lineItem: LineItem,
     uploadUrl: string,
     deleteUrl: string,
@@ -40,17 +40,17 @@ export class FileUploadForLineItemViewModel {
 
     this.reusableDocuments =
       claim.evidence
-        ?.filter((evidence) => !existingIds.has(evidence.id))
+        .filter((evidence) => !existingIds.has(evidence.id))
         .map((evidence) =>
           FileUploadForLineItemViewModel.buildReusableDocument(evidence),
-        ) ?? [];
+        );
 
     this.uploadedFiles =
       claim.evidence
-        ?.filter((evidence) => existingIds.has(evidence.id))
+        .filter((evidence) => existingIds.has(evidence.id))
         .map((evidence) =>
           FileUploadForLineItemViewModel.buildReusableDocument(evidence),
-        ) ?? [];
+        );
   }
 
   private static buildReusableDocument(

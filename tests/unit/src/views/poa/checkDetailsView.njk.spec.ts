@@ -1,7 +1,7 @@
 import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
-import { ClaimDto } from "#src/types/Claim.js";
+import { Claim } from "#src/types/Claim.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
 import { claim10, claim11, claim9 } from "#tests/assets/claim.js";
 
@@ -10,7 +10,11 @@ chaiConfig.truncateThreshold = 0;
 describe("views/main/poa/checkDetailsView.njk", () => {
   let $: CheerioAPI;
 
-  const viewModel = new CheckDetailsViewModel(claim9);
+  const claim: Claim = new Claim({
+    ...claim9,
+  });
+
+  const viewModel = new CheckDetailsViewModel(claim);
 
   beforeEach(async () => {
     $ = await renderView("main/poa/checkDetailsView.njk", {
@@ -84,7 +88,11 @@ describe("views/main/poa/checkDetailsView.njk", () => {
     });
 
     describe("with expert cost line items", () => {
-      const viewModel = new CheckDetailsViewModel(claim11);
+      const claim: Claim = new Claim({
+        ...claim11,
+      });
+
+      const viewModel = new CheckDetailsViewModel(claim);
 
       beforeEach(async () => {
         $ = await renderView("main/poa/checkDetailsView.njk", {
@@ -94,14 +102,16 @@ describe("views/main/poa/checkDetailsView.njk", () => {
 
       it("renders the expert cost bill line cards", () => {
         const cards = $('[id^="expert-cost-bill-line-"]').filter((_, el) =>
-          /^expert-cost-bill-line-\d+$/.test($(el).attr("id") ?? "")
+          /^expert-cost-bill-line-\d+$/.test($(el).attr("id") ?? ""),
         );
 
         expect(cards.length).to.equal(2);
 
         cards.each((index, el) => {
           const card = $(el);
-          expect(card.attr("id")).to.equal(`expert-cost-bill-line-${index + 1}`);
+          expect(card.attr("id")).to.equal(
+            `expert-cost-bill-line-${index + 1}`,
+          );
           expect(
             card.find(".govuk-summary-card__title").first().text().trim(),
           ).to.equal("pages.poa.checkYourDetails.cya.expertCostBillLine.title");
@@ -125,7 +135,11 @@ describe("views/main/poa/checkDetailsView.njk", () => {
     });
 
     describe("without evidence", () => {
-      const viewModel = new CheckDetailsViewModel(claim10);
+      const claim: Claim = new Claim({
+        ...claim10,
+      });
+
+      const viewModel = new CheckDetailsViewModel(claim);
 
       beforeEach(async () => {
         $ = await renderView("main/poa/checkDetailsView.njk", {
