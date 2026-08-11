@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { describe, it, beforeEach, afterEach } from "mocha";
+import { afterEach, beforeEach, describe, it } from "mocha";
 import sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
 import {
@@ -8,15 +8,14 @@ import {
 } from "#src/controllers/poa/escapingFixedFeeController.js";
 import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { Claim, ClaimStatus } from "#src/types/Claim.js";
-import { uploadService } from "#src/services/uploadService.js";
+import { Claim } from "#src/types/Claim.js";
+import { draftService } from "#src/services/draftService.js";
 
 describe("escapingFixedFeeController", () => {
   let res: Response;
   let next: NextFunction;
   let getClaimStub: sinon.SinonStub;
-  let updateClaimStub: sinon.SinonStub;
-  let deleteAllEvidenceStub: sinon.SinonStub;
+  let setEscapedFlagStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
 
@@ -33,11 +32,7 @@ describe("escapingFixedFeeController", () => {
     next = sinon.stub() as unknown as NextFunction;
 
     getClaimStub = sinon.stub(claimService, "getDraftClaim");
-    updateClaimStub = sinon.stub(claimService, "updateClaim");
-    deleteAllEvidenceStub = sinon.stub(
-      uploadService,
-      "deleteAllEvidenceFromClaim",
-    );
+    setEscapedFlagStub = sinon.stub(draftService, "setEscapedFlag");
   });
 
   afterEach(() => {
@@ -89,7 +84,7 @@ describe("escapingFixedFeeController", () => {
       }),
     });
 
-    updateClaimStub.resolves({
+    setEscapedFlagStub.resolves({
       status: "success",
       body: null,
     });
@@ -97,11 +92,10 @@ describe("escapingFixedFeeController", () => {
     await submitEscapingFixedFee(req, res, next);
 
     expect(
-      updateClaimStub.calledWith(
+      setEscapedFlagStub.calledWith(
         req.axiosMiddleware,
         sinon.match({
           id: claimId.toString(),
-          escapedFlag: true,
         }),
       ),
     ).to.be.true;
@@ -167,72 +161,5 @@ describe("escapingFixedFeeController", () => {
         (choice: { checked: boolean }) => !choice.checked,
       ),
     ).to.equal(true);
-  });
-
-  it("cleans up evidence if there is evidence on the claim and user answers no to escaping fixed fee", async () => {
-    const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
-      body: {
-        escapingFixedFee: "no",
-      },
-    } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-        evidence: [
-          {
-            id: "123-123567",
-            fileKey: "fileKey",
-            fileSize: 5,
-            submittedOn: "",
-          },
-        ],
-      }),
-    });
-
-    await submitEscapingFixedFee(req, res, next);
-
-    sinon.assert.calledOnce(deleteAllEvidenceStub);
-
-    expect(deleteAllEvidenceStub.firstCall.args[1].toString()).to.equal(
-      claimId.toString(),
-    );
-
-    expect(deleteAllEvidenceStub.firstCall.args[2]).to.equal(ClaimStatus.DRAFT);
-  });
-
-
-  it("does not delete evidence if there is evidence on the claim and user answers yes to escaping fixed fee", async () => {
-    const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
-      body: {
-        escapingFixedFee: "yes",
-      },
-    } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-        evidence: [
-          {
-            id: "123-123567",
-            fileKey: "fileKey",
-            fileSize: 5,
-            submittedOn: "",
-          },
-        ],
-      }),
-    });
-
-    await submitEscapingFixedFee(req, res, next);
-
-    sinon.assert.notCalled(deleteAllEvidenceStub);
   });
 });

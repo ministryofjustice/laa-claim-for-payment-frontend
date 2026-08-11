@@ -125,7 +125,7 @@ export async function submitAddAnotherExpertCost(
 }
 
 function getLineItems(claim: Claim): ExpertCostLineItem[] {
-  return (claim.lineItems ?? []).map(
+  return claim.lineItems.map(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
     (lineItem) => lineItem as ExpertCostLineItem,
   );

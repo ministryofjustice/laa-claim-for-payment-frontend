@@ -9,13 +9,14 @@ import {
 import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { Claim } from "#src/types/Claim.js";
+import { draftService } from "#src/services/draftService.js";
 
 describe("poaClaimTypeController", () => {
   let req: Partial<Request>;
   let res: Response;
   let next: NextFunction;
   let getClaimStub: sinon.SinonStub;
-  let updateClaimStub: sinon.SinonStub;
+  let setCostTypeStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
 
@@ -32,7 +33,7 @@ describe("poaClaimTypeController", () => {
     next = sinon.stub() as unknown as NextFunction;
 
     getClaimStub = sinon.stub(claimService, "getDraftClaim");
-    updateClaimStub = sinon.stub(claimService, "updateClaim");
+    setCostTypeStub = sinon.stub(draftService, "setCostType");
   });
 
   afterEach(() => {
@@ -91,7 +92,7 @@ describe("poaClaimTypeController", () => {
       }),
     });
 
-    updateClaimStub.resolves({
+    setCostTypeStub.resolves({
       status: "success",
       body: null,
     });
@@ -121,7 +122,7 @@ describe("poaClaimTypeController", () => {
       }),
     });
 
-    updateClaimStub.resolves({
+    setCostTypeStub.resolves({
       status: "success",
       body: null,
     });
@@ -151,7 +152,7 @@ describe("poaClaimTypeController", () => {
       }),
     });
 
-    updateClaimStub.resolves({
+    setCostTypeStub.resolves({
       status: "success",
       body: null,
     });

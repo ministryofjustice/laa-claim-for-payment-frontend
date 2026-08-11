@@ -235,10 +235,28 @@ export class Claim {
   /**
    * Gets the line items.
    *
-   * @returns {LineItem[] | null | undefined} the line items.
+   * @returns {LineItem[]} the line items.
    */
-  get lineItems(): LineItem[] | null | undefined {
-    return this.data.lineItems;
+  get lineItems(): LineItem[] {
+    return this.data.lineItems ?? [];
+  }
+
+  /**
+   * Gets the evidence.
+   *
+   * @returns {EvidenceItem[]} the evidence.
+   */
+  get evidence(): EvidenceItem[] {
+    return this.data.evidence ?? [];
+  }
+
+  /**
+   * Gets whether the claim has evidence.
+   *
+   * @returns {boolean} whether the claim has evidence.
+   */
+  get hasEvidence(): boolean {
+    return this.evidence.length > 0;
   }
 
   /**
