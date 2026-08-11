@@ -62,7 +62,7 @@ export class LocalDate {
    * @returns {string} string representation of the year value
    */
   toYearString(): string {
-    return String(this.year);
+    return String(this.year).padStart(4, "0");
   }
 
   /**

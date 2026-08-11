@@ -56,6 +56,21 @@ describe("LocalDate", () => {
   });
 
   describe("toYearString", () => {
+    it("returns string representation of single-digit year", () => {
+      const date = new LocalDate(1, 1, 6);
+      expect(date.toYearString()).to.equal("0006");
+    });
+
+    it("returns string representation of double-digit year", () => {
+      const date = new LocalDate(1, 1, 26);
+      expect(date.toYearString()).to.equal("0026");
+    });
+
+    it("returns string representation of triple-digit year", () => {
+      const date = new LocalDate(1, 1, 226);
+      expect(date.toYearString()).to.equal("0226");
+    });
+
     it("returns string representation of year", () => {
       const date = new LocalDate(1, 1, 2026);
       expect(date.toYearString()).to.equal("2026");
