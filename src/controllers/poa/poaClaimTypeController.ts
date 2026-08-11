@@ -140,9 +140,8 @@ export async function submitPoaClaimType(
         [CostType.PROFIT_COST]: buildRoute(ROUTES.PROFIT_COST_DETAILS, {
           claimId,
         }),
-        [CostType.EXPERT_COST]: buildRoute(ROUTES.EXPERT_COST_DETAILS, {
+        [CostType.EXPERT_COST]: buildRoute(ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS, {
           claimId,
-          expertCostId: 1,
         }),
         [CostType.NON_EXPERT_DISBURSEMENT]: buildRoute(
           ROUTES.NON_EXPERT_COST_DETAILS,
