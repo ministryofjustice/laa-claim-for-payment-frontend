@@ -1,26 +1,33 @@
 import { AxiosInstanceWrapper } from "middleware-axios";
 import sinon from "sinon";
-import { Claim, ClaimStatus, CostType } from "#src/types/Claim.js";
+import { Category, Claim, ClaimStatus, CostType } from "#src/types/Claim.js";
 import { V7Generator } from "uuidv7";
 import { beforeEach } from "mocha";
 import { claimService } from "#src/services/claimService.js";
 import { uploadService } from "#src/services/uploadService.js";
 import { expect } from "chai";
 import { draftService } from "#src/services/draftService.js";
+import { LocalDate } from "#src/types/date.js";
 
 describe("draftService", () => {
   const axiosMiddleware = {} as AxiosInstanceWrapper;
 
-  let updateClaimStub: sinon.SinonStub;
   let deleteAllEvidenceStub: sinon.SinonStub;
+  let deleteAllLineItemsStub: sinon.SinonStub;
+  let updateClaimStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
+  const lineItemId = new V7Generator().generate();
   const evidenceId = new V7Generator().generate();
 
   beforeEach(() => {
     deleteAllEvidenceStub = sinon.stub(
       uploadService,
       "deleteAllEvidenceFromClaim",
+    );
+    deleteAllLineItemsStub = sinon.stub(
+      claimService,
+      "deleteAllLineItemsFromClaim",
     );
     updateClaimStub = sinon.stub(claimService, "updateClaim");
   });
@@ -110,7 +117,7 @@ describe("draftService", () => {
   describe("setCostType", () => {
     const costTypes = Object.values(CostType);
 
-    describe("deletes evidence when claim has evidence and changing answer", () => {
+    describe("deletes collections when present and changing answer", () => {
       costTypes.forEach((newAnswer: CostType) => {
         costTypes
           .filter((costType: CostType) => costType !== newAnswer)
@@ -119,6 +126,15 @@ describe("draftService", () => {
               const claim = new Claim({
                 id: claimId.toString(),
                 costType: oldAnswer,
+                lineItems: [
+                  {
+                    id: lineItemId.toString(),
+                    title: "Some line item",
+                    category: Category.DISBURSEMENT,
+                    date: new LocalDate(4, 1, 2024),
+                    evidenceItems: [],
+                  },
+                ],
                 evidence: [
                   {
                     id: evidenceId.toString(),
@@ -130,6 +146,11 @@ describe("draftService", () => {
               });
 
               deleteAllEvidenceStub.resolves({
+                status: "success",
+                body: null,
+              });
+
+              deleteAllLineItemsStub.resolves({
                 status: "success",
                 body: null,
               });
@@ -148,6 +169,10 @@ describe("draftService", () => {
                 ClaimStatus.DRAFT,
               );
 
+              expect(deleteAllLineItemsStub.firstCall.args[1]).to.deep.equal(
+                claimId,
+              );
+
               expect(
                 (updateClaimStub.firstCall.args[1] as Claim).costType,
               ).to.equal(newAnswer);
@@ -156,7 +181,7 @@ describe("draftService", () => {
       });
     });
 
-    describe("doesn't delete evidence when claim has no evidence and changing answer", () => {
+    describe("doesn't delete collections when not present and changing answer", () => {
       costTypes.forEach((newAnswer: CostType) => {
         costTypes
           .filter((costType: CostType) => costType !== newAnswer)
@@ -175,6 +200,8 @@ describe("draftService", () => {
               await draftService.setCostType(axiosMiddleware, claim, newAnswer);
 
               sinon.assert.notCalled(deleteAllEvidenceStub);
+
+              sinon.assert.notCalled(deleteAllLineItemsStub);
 
               expect(
                 (updateClaimStub.firstCall.args[1] as Claim).costType,
@@ -200,6 +227,8 @@ describe("draftService", () => {
           await draftService.setCostType(axiosMiddleware, claim, answer);
 
           sinon.assert.notCalled(deleteAllEvidenceStub);
+
+          sinon.assert.notCalled(deleteAllLineItemsStub);
 
           expect(
             (updateClaimStub.firstCall.args[1] as Claim).costType,
