@@ -32,15 +32,14 @@ export async function poaEvidenceUploadPage(
       return;
     }
 
-    const {
-      body: { value: claim },
-    } = response;
-    const uploadedFiles: ReusableDocument[] =
-      claim.evidence?.map((evidence) => ({
+    const { body: claim } = response;
+    const uploadedFiles: ReusableDocument[] = claim.evidence.map(
+      (evidence) => ({
         id: evidence.id,
         name: evidence.fileKey,
         size: formatFileSize(evidence.fileSize),
-      })) ?? [];
+      }),
+    );
 
     const vm = new PoaEvidenceUploadViewModel({
       uploadUrl: buildRoute(
@@ -93,12 +92,8 @@ export async function submitPoaEvidenceUpload(
       return;
     }
 
-    const {
-      body: { value: claim },
-    } = response;
-    const uploadedFiles = claim.evidence ?? [];
-
-    if (uploadedFiles.length === 0) {
+    const { body: claim } = response;
+    if (!claim.hasEvidence) {
       const vm = new PoaEvidenceUploadViewModel({
         uploadUrl: buildRoute(
           ROUTES.AJAX_UPLOAD_POA_EVIDENCE,

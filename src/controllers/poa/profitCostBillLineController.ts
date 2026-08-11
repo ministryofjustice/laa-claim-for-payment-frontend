@@ -34,7 +34,7 @@ export async function profitCostBillLine(
       let lineItemId: string | undefined = undefined;
       let form: ProfitCostBillLineForm = {};
 
-      if (claim.body.lineItems?.length === 1) {
+      if (claim.body.lineItems.length === 1) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
         const lineItem = claim.body.lineItems[0] as ProfitCostBillLineItem;
         ({ id: lineItemId } = lineItem);

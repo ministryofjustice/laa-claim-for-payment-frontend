@@ -1,21 +1,18 @@
 import {
-  type ClaimDto,
+  type Claim,
   CostType,
   type EvidenceItem,
   type ExpertCostLineItem,
-  type ProfitCostBillLineItem,
+  type ProfitCostBillLineItem
 } from "#src/types/Claim.js";
 import type { Table } from "#src/viewmodels/components/table.js";
-import type {
-  TableCell,
-  TableHeader,
-} from "#src/viewmodels/components/index.js";
+import type { TableCell, TableHeader } from "#src/viewmodels/components/index.js";
 import {
   buildSummaryListRow,
   buildSummaryListRowWithChangeLink,
   buildSummaryListWithCard,
   type SummaryList,
-  type SummaryListRow,
+  type SummaryListRow
 } from "#src/viewmodels/components/summaryList.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
@@ -23,14 +20,10 @@ import {
   clientStatusFieldName,
   courtTypeFieldName,
   firstSolicitorFieldName,
-  transferOfSolicitorFieldName,
+  transferOfSolicitorFieldName
 } from "#src/controllers/poa/profitCostDetailsController.js";
 import { AnswerMissingError } from "#src/types/errors.js";
-import {
-  formatBoolean,
-  formatClaimed,
-  formatDateReadable,
-} from "#src/helpers/index.js";
+import { formatBoolean, formatClaimed, formatDateReadable } from "#src/helpers/index.js";
 
 /**
  *
@@ -43,9 +36,9 @@ export class CheckDetailsViewModel {
 
   /**
    * Creates a view model containing the summary rows derived from the claim data
-   * @param {ClaimDto} claim Array of claims
+   * @param {Claim} claim Claim
    */
-  constructor(claim: ClaimDto) {
+  constructor(claim: Claim) {
     this.assessmentSummaryTable = {
       caption: {
         key: "pages.poa.checkYourDetails.assessmentSummary.title",
@@ -131,9 +124,7 @@ export class CheckDetailsViewModel {
     ];
   }
 
-  private static buildProfitCostDetailsSummaryList(
-    claim: ClaimDto,
-  ): SummaryList {
+  private static buildProfitCostDetailsSummaryList(claim: Claim): SummaryList {
     const { id: claimId } = claim;
     return buildSummaryListWithCard(
       { key: "pages.poa.checkYourDetails.cya.profitCostDetails.title" },
@@ -221,20 +212,20 @@ export class CheckDetailsViewModel {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.escapedStandardFixedFee",
           },
           buildRoute(ROUTES.ESCAPING_FIXED_FEE, { claimId }),
-          claim.escaped == null
+          claim.escapedFlag == null
             ? undefined
-            : { text: { key: formatBoolean(claim.escaped) } },
+            : { text: { key: formatBoolean(claim.escapedFlag) } },
         ),
       ],
     );
   }
 
   private static buildProfitCostBillLineItemSummaryLists(
-    claim: ClaimDto,
+    claim: Claim,
   ): SummaryList[] {
     const result: SummaryList[] = [];
     const { id: claimId } = claim;
-    (claim.lineItems ?? [])
+    claim.lineItems
       // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
       .map((lineItem) => lineItem as ProfitCostBillLineItem)
       .forEach((lineItem: ProfitCostBillLineItem) => {
@@ -296,11 +287,11 @@ export class CheckDetailsViewModel {
   }
 
   private static buildExpertCostLineItemSummaryLists(
-    claim: ClaimDto,
+    claim: Claim,
   ): SummaryList[] {
     const result: SummaryList[] = [];
     const { id: claimId } = claim;
-    (claim.lineItems ?? [])
+    claim.lineItems
       // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
       .map((lineItem) => lineItem as ExpertCostLineItem)
       .forEach((lineItem: ExpertCostLineItem, index: number) => {
@@ -344,7 +335,10 @@ export class CheckDetailsViewModel {
             ],
             [
               {
-                href: "#",
+                href: buildRoute(ROUTES.REMOVE_EXPERT_COST_DETAILS, {
+                  claimId,
+                  lineItemId: lineItem.id,
+                }),
                 text: {
                   key: "common.delete",
                 },
@@ -372,12 +366,12 @@ export class CheckDetailsViewModel {
     return result;
   }
 
-  private static buildEvidenceSummaryList(claim: ClaimDto): SummaryList {
+  private static buildEvidenceSummaryList(claim: Claim): SummaryList {
     return buildSummaryListWithCard(
       { key: "pages.poa.checkYourDetails.cya.evidence.title" },
       "evidence",
       claim.evidence
-        ?.map((evidence: EvidenceItem): SummaryListRow | undefined =>
+        .map((evidence: EvidenceItem): SummaryListRow | undefined =>
           buildSummaryListRow(evidence.fileKey, {
             html: {
               key: "pages.poa.checkYourDetails.cya.evidence.value",
@@ -388,7 +382,7 @@ export class CheckDetailsViewModel {
             },
           }),
         )
-        .filter((row) => row !== undefined) ?? [],
+        .filter((row) => row !== undefined),
       [
         {
           href: buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, { claimId: claim.id }),

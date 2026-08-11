@@ -56,6 +56,21 @@ describe("LocalDate", () => {
   });
 
   describe("toYearString", () => {
+    it("returns string representation of single-digit year", () => {
+      const date = new LocalDate(1, 1, 6);
+      expect(date.toYearString()).to.equal("0006");
+    });
+
+    it("returns string representation of double-digit year", () => {
+      const date = new LocalDate(1, 1, 26);
+      expect(date.toYearString()).to.equal("0026");
+    });
+
+    it("returns string representation of triple-digit year", () => {
+      const date = new LocalDate(1, 1, 226);
+      expect(date.toYearString()).to.equal("0226");
+    });
+
     it("returns string representation of year", () => {
       const date = new LocalDate(1, 1, 2026);
       expect(date.toYearString()).to.equal("2026");
@@ -105,6 +120,11 @@ describe("LocalDate", () => {
     it("converts to ISO string for single-digit day and month values", () => {
       const date = new LocalDate(11, 12, 2026);
       expect(date.toIsoString()).to.equal("2026-12-11");
+    });
+
+    it("converts to ISO string for a year < 1000", () => {
+      const date = new LocalDate(11, 12, 999);
+      expect(date.toIsoString()).to.equal("0999-12-11");
     });
   });
 

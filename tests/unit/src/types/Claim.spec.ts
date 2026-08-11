@@ -50,6 +50,85 @@ describe("ClaimResponseSchema", () => {
 
       expect(result.costType).to.equal(CostType.PROFIT_COST);
     });
+
+    it("gets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        costType: CostType.PROFIT_COST,
+      });
+
+      expect(claim.costType).to.equal(CostType.PROFIT_COST);
+    });
+
+    it("sets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+      });
+
+      claim.setCostType(CostType.PROFIT_COST);
+
+      expect(claim.value.costType).to.equal(CostType.PROFIT_COST);
+    });
+
+    it("cleans up profit cost answers when answer is not PROFIT_COST", () => {
+      const inputs: CostType[] = [
+        CostType.EXPERT_COST,
+        CostType.NON_EXPERT_DISBURSEMENT,
+      ];
+      inputs.forEach((input) => {
+        const claim = new Claim({
+          id: id.toString(),
+          costType: CostType.PROFIT_COST,
+          courtType: CourtType.COUNTY_COURT,
+          clientPartyStatus: ClientPartyStatus.CHILD,
+          firstActingSolicitorFlag: true,
+          transferOfSolicitorFlag: true,
+          clientsRetainedCount: Count.ZERO,
+          clientsStartCount: Count.ZERO,
+          multiClientHearingFlag: true,
+          escaped: true,
+        });
+
+        claim.setCostType(input);
+
+        expect(claim.value.costType).to.equal(input);
+        expect(claim.value.courtType).to.be.undefined;
+        expect(claim.value.clientPartyStatus).to.be.undefined;
+        expect(claim.value.firstActingSolicitorFlag).to.be.undefined;
+        expect(claim.value.transferOfSolicitorFlag).to.be.undefined;
+        expect(claim.value.clientsRetainedCount).to.be.undefined;
+        expect(claim.value.clientsStartCount).to.be.undefined;
+        expect(claim.value.multiClientHearingFlag).to.be.undefined;
+        expect(claim.value.escaped).to.be.undefined;
+      });
+    });
+
+    it("doesn't clean up profit cost answers when answer is PROFIT_COST", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        costType: CostType.PROFIT_COST,
+        courtType: CourtType.COUNTY_COURT,
+        clientPartyStatus: ClientPartyStatus.CHILD,
+        firstActingSolicitorFlag: true,
+        transferOfSolicitorFlag: true,
+        clientsRetainedCount: Count.ZERO,
+        clientsStartCount: Count.ZERO,
+        multiClientHearingFlag: true,
+        escaped: true,
+      });
+
+      claim.setCostType(CostType.PROFIT_COST);
+
+      expect(claim.value.costType).to.not.be.undefined;
+      expect(claim.value.courtType).to.not.be.undefined;
+      expect(claim.value.clientPartyStatus).to.not.be.undefined;
+      expect(claim.value.firstActingSolicitorFlag).to.not.be.undefined;
+      expect(claim.value.transferOfSolicitorFlag).to.not.be.undefined;
+      expect(claim.value.clientsRetainedCount).to.not.be.undefined;
+      expect(claim.value.clientsStartCount).to.not.be.undefined;
+      expect(claim.value.multiClientHearingFlag).to.not.be.undefined;
+      expect(claim.value.escaped).to.not.be.undefined;
+    });
   });
 
   describe("profit cost details", () => {
@@ -69,6 +148,19 @@ describe("ClaimResponseSchema", () => {
       expect(claim.value.clientPartyStatus).to.equal(ClientPartyStatus.CHILD);
       expect(claim.value.firstActingSolicitorFlag).to.equal(true);
       expect(claim.value.transferOfSolicitorFlag).to.equal(false);
+    });
+
+    it("resets", () => {
+      const claim = new Claim({
+        id: id.toString(),
+      });
+
+      claim.setProfitCostDetails(undefined);
+
+      expect(claim.value.courtType).to.be.undefined;
+      expect(claim.value.clientPartyStatus).to.be.undefined;
+      expect(claim.value.firstActingSolicitorFlag).to.be.undefined;
+      expect(claim.value.transferOfSolicitorFlag).to.be.undefined;
     });
   });
 
@@ -511,14 +603,18 @@ describe("ClaimResponseSchema", () => {
     });
 
     it("fails to parse an invalid date/time string", () => {
-      const inputs = ["2020-1-1T14:34:01.226855Z", "2020-01-32T14:34:01.226855Z"];
+      const inputs = [
+        "2020-1-1T14:34:01.226855Z",
+        "2020-01-32T14:34:01.226855Z",
+      ];
       inputs.forEach((input) => {
-        const result = () => EvidenceItemSchema.parse({
-          id: id.toString(),
-          fileKey: "test.pdf",
-          fileSize: 123456,
-          submittedOn: input,
-        });
+        const result = () =>
+          EvidenceItemSchema.parse({
+            id: id.toString(),
+            fileKey: "test.pdf",
+            fileSize: 123456,
+            submittedOn: input,
+          });
 
         expect(result).to.throw(ZodError);
       });

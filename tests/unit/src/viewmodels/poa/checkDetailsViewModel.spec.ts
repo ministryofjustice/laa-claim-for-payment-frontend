@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ClaimDto } from "#src/types/Claim.js";
+import { Claim } from "#src/types/Claim.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
 import { claim11, claim9 } from "#tests/assets/claim.js";
 import { AnswerMissingError } from "#src/types/errors.js";
@@ -8,14 +8,17 @@ import { Message } from "#src/viewmodels/components/message.js";
 
 describe("CheckDetailsViewModel constructor()", () => {
   it("throws for an empty claim", () => {
-    const claim: ClaimDto = {
+    const claim: Claim = new Claim({
       id: "019fae76-b6bd-76ec-ae50-38d76da01631",
-    };
+    });
     expect(() => new CheckDetailsViewModel(claim)).to.throw(AnswerMissingError);
   });
 
   it("builds the assessment summary table", () => {
-    const vm = new CheckDetailsViewModel(claim9);
+    const claim: Claim = new Claim({
+      ...claim9,
+    });
+    const vm = new CheckDetailsViewModel(claim);
 
     expect(vm.assessmentSummaryTable.head.length).to.equal(2);
     expect(vm.assessmentSummaryTable.head[0].text).to.deep.equal({
@@ -53,7 +56,9 @@ describe("CheckDetailsViewModel constructor()", () => {
   });
 
   it("builds the profit cost details summary list", () => {
-    const claim: ClaimDto = claim9;
+    const claim: Claim = new Claim({
+      ...claim9,
+    });
     const claimId = claim.id;
     const vm = new CheckDetailsViewModel(claim);
 
@@ -206,7 +211,9 @@ describe("CheckDetailsViewModel constructor()", () => {
   });
 
   it("builds the profit cost bill line summary list", () => {
-    const claim: ClaimDto = claim9;
+    const claim: Claim = new Claim({
+      ...claim9,
+    });
     const claimId = claim.id;
     const vm = new CheckDetailsViewModel(claim);
 
@@ -228,7 +235,10 @@ describe("CheckDetailsViewModel constructor()", () => {
     expect(vm.lineItemSummaryLists[0].rows[0].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostBillLine.date",
     });
-    expectLocalizedText(vm.lineItemSummaryLists[0].rows[0].value.text!, "29 July 2026");
+    expectLocalizedText(
+      vm.lineItemSummaryLists[0].rows[0].value.text!,
+      "29 July 2026",
+    );
     expect(vm.lineItemSummaryLists[0].rows[0].actions).to.not.exist;
 
     expect(vm.lineItemSummaryLists[0].rows[1].key.text).to.deep.equal({
@@ -261,7 +271,9 @@ describe("CheckDetailsViewModel constructor()", () => {
   });
 
   it("builds the evidence summary list", () => {
-    const claim: ClaimDto = claim9;
+    const claim: Claim = new Claim({
+      ...claim9,
+    });
     const claimId = claim.id;
     const vm = new CheckDetailsViewModel(claim);
 
@@ -287,7 +299,9 @@ describe("CheckDetailsViewModel constructor()", () => {
   });
 
   it("builds the expert cost bill line summary lists", () => {
-    const claim: ClaimDto = claim11;
+    const claim: Claim = new Claim({
+      ...claim11,
+    });
     const claimId = claim.id;
     const vm = new CheckDetailsViewModel(claim);
 
@@ -304,7 +318,9 @@ describe("CheckDetailsViewModel constructor()", () => {
     expect(firstSummaryList.card?.actions?.items[0].text).to.deep.equal({
       key: "common.delete",
     });
-    expect(firstSummaryList.card?.actions?.items[0].href).to.equal("#");
+    expect(firstSummaryList.card?.actions?.items[0].href).to.equal(
+      `/claims/${claimId.toString()}/poa/expert-cost-details/019fae76-e8a7-73bc-af8d-990543ec4a65/remove`,
+    );
     expect(firstSummaryList.card?.actions?.items[1].text).to.deep.equal({
       key: "common.change",
     });
@@ -321,7 +337,10 @@ describe("CheckDetailsViewModel constructor()", () => {
     expect(firstSummaryList.rows[0].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.expertCostBillLine.date",
     });
-    expectLocalizedText(firstSummaryList.rows[0].value.text!, "20 December 2023");
+    expectLocalizedText(
+      firstSummaryList.rows[0].value.text!,
+      "20 December 2023",
+    );
 
     expect(firstSummaryList.rows[1].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.expertCostBillLine.actualNetValue",
@@ -353,7 +372,9 @@ describe("CheckDetailsViewModel constructor()", () => {
     expect(secondSummaryList.card?.actions?.items[0].text).to.deep.equal({
       key: "common.delete",
     });
-    expect(secondSummaryList.card?.actions?.items[0].href).to.equal("#");
+    expect(secondSummaryList.card?.actions?.items[0].href).to.equal(
+      `/claims/${claimId.toString()}/poa/expert-cost-details/019fae77-87c3-734c-a38d-54624d48d7e5/remove`,
+    );
     expect(secondSummaryList.card?.actions?.items[1].text).to.deep.equal({
       key: "common.change",
     });

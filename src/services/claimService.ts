@@ -7,7 +7,8 @@ import {
   getLineItem as getLineItemApi,
   updateClaim as updateClaimApi,
   updateLineItem as updateLineItemApi,
-  deleteLineItem as deleteLineItemApi
+  deleteLineItem as deleteLineItemApi,
+  deleteAllLineItems as deleteAllLineItemsApi,
 } from "#src/generated/claim-api/sdk.gen.js";
 import { createApiError } from "#src/helpers/index.js";
 import type { ApiResponse, Paginated } from "#src/types/api-types.js";
@@ -42,6 +43,7 @@ interface ClaimServiceDeps {
   getLineItem: typeof getLineItemApi;
   updateLineItem: typeof updateLineItemApi;
   deleteLineItem: typeof deleteLineItemApi;
+  deleteAllLineItems: typeof deleteAllLineItemsApi;
 }
 
 const defaultDeps: ClaimServiceDeps = {
@@ -53,7 +55,8 @@ const defaultDeps: ClaimServiceDeps = {
   addLineItemToClaim: addLineItemToClaimApi,
   getLineItem: getLineItemApi,
   updateLineItem: updateLineItemApi,
-  deleteLineItem: deleteLineItemApi
+  deleteLineItem: deleteLineItemApi,
+  deleteAllLineItems: deleteAllLineItemsApi,
 };
 
 /**
@@ -370,7 +373,7 @@ class ClaimService {
       return createApiError(error);
     }
   }
-   
+
   /**
    * Delete a line item.
    *
@@ -416,6 +419,44 @@ class ClaimService {
           body: null,
         };
       }
+      return createApiError(error);
+    }
+  }
+
+  /**
+   * Delete all line items from a claim.
+   *
+   * @param {AxiosInstanceWrapper} axiosMiddleware Wrapped Axios client from request middleware.
+   * @param {UUID} claimId Claim identifier.
+   * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
+   * @returns {Promise<ApiResponse<null>>} Null response in app response format.
+   */
+  static async deleteAllLineItemsFromClaim(
+    axiosMiddleware: AxiosInstanceWrapper,
+    claimId: UUID,
+    deps: ClaimServiceDeps = defaultDeps,
+  ): Promise<ApiResponse<null>> {
+    try {
+      const apiClient = deps.createClient({
+        baseURL: config.api.baseUrl,
+        axios: axiosMiddleware.axiosInstance,
+        throwOnError: true,
+      });
+
+      await deps.deleteAllLineItems({
+        client: apiClient,
+        path: {
+          claimId: claimId.toString(),
+        },
+        query: {
+          status: ClaimStatus.DRAFT,
+        },
+      });
+      return {
+        body: null,
+        status: "success",
+      };
+    } catch (error) {
       return createApiError(error);
     }
   }

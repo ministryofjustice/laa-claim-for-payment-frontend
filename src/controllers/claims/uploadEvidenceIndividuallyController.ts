@@ -21,7 +21,7 @@ export async function viewUploadEvidenceIndividuallyPage(
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {
-      const { body: { value: claim } } = response;
+      const { body: claim } = response;
       const vm = new UploadEvidenceIndividuallyViewModel(claim);
       res.render("main/claims/uploadEvidenceIndividually.njk", { vm });
     } else {

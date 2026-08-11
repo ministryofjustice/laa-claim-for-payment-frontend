@@ -1293,4 +1293,85 @@ describe("Claim Service", () => {
       });
     });
   });
+
+  describe("deleteAllLineItems", () => {
+    it("returns success", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        deleteAllLineItems: sinon.stub().resolves(null),
+      };
+
+      const result = await claimService.deleteAllLineItemsFromClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        deps as any,
+      );
+
+      expect(result).to.deep.equal({
+        status: "success",
+        body: null,
+      });
+
+      expect(deps.deleteAllLineItems.firstCall.args[0]).to.deep.equal({
+        path: {
+          claimId: claimId.toString(),
+        },
+        query: {
+          status: "DRAFT",
+        },
+        client: {},
+      });
+    });
+
+    it("returns error for a non-200 response", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        deleteAllLineItems: sinon.stub().rejects({
+          isAxiosError: true,
+          response: {
+            status: 404,
+            data: {
+              detail: "Resource not found",
+              instance: "/api/v1/claims/019febc7-b2a4-7677-8a2c-422845d6551a/line-items",
+              status: 404,
+              title: "Not found",
+              correlationId: "e742c7d7-f2c9-43af-8e13-4e1c591e1ca6",
+              errorCode: "NOT_FOUND"
+            },
+          },
+        }),
+      };
+
+      const result = (await claimService.deleteAllLineItemsFromClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        deps as any,
+      )) as ApiError;
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 404,
+        message: "Resource not found",
+      });
+    });
+
+    it("returns error shape when the API call fails", async () => {
+      const deps = {
+        createClient: sinon.stub().returns({}),
+        deleteAllLineItems: sinon.stub().rejects(new Error("boom")),
+      };
+
+      const result = await claimService.deleteAllLineItemsFromClaim(
+        { axiosInstance: {} } as any,
+        claimId,
+        deps as any,
+      );
+
+      expect(result).to.deep.equal({
+        status: "error",
+        statusCode: 500,
+        message: "boom",
+      });
+    });
+  });
 });

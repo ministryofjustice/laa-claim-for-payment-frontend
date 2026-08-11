@@ -235,10 +235,37 @@ export class Claim {
   /**
    * Gets the line items.
    *
-   * @returns {LineItem[] | null | undefined} the line items.
+   * @returns {LineItem[]} the line items.
    */
-  get lineItems(): LineItem[] | null | undefined {
-    return this.data.lineItems;
+  get lineItems(): LineItem[] {
+    return this.data.lineItems ?? [];
+  }
+
+  /**
+   * Gets the evidence.
+   *
+   * @returns {EvidenceItem[]} the evidence.
+   */
+  get evidence(): EvidenceItem[] {
+    return this.data.evidence ?? [];
+  }
+
+  /**
+   * Gets whether the claim has line items.
+   *
+   * @returns {boolean} whether the claim has line items.
+   */
+  get hasLineItems(): boolean {
+    return this.lineItems.length > 0;
+  }
+
+  /**
+   * Gets whether the claim has evidence.
+   *
+   * @returns {boolean} whether the claim has evidence.
+   */
+  get hasEvidence(): boolean {
+    return this.evidence.length > 0;
   }
 
   /**
@@ -248,22 +275,35 @@ export class Claim {
    * @returns {Claim} updated claim
    */
   setCostType(value: CostType): this {
+    if (value !== CostType.PROFIT_COST) {
+      this.setProfitCostDetails(undefined);
+      this.setClientsRetainedCount(undefined);
+      this.setClientsStartCount(undefined);
+      this.setMultiClientHearingFlag(undefined);
+      this.setEscapedFlag(undefined);
+    }
     this.data.costType = value;
-    // cleanup logic here
     return this;
   }
 
   /**
    * Sets the profit cost details.
    *
-   * @param {ProfitCostDetails} value profit cost details
+   * @param {ProfitCostDetails | undefined} value profit cost details
    * @returns {Claim} updated claim
    */
-  setProfitCostDetails(value: ProfitCostDetails): this {
-    this.setCourtType(value.courtType);
-    this.setClientPartyStatus(value.clientStatus);
-    this.setFirstActingSolicitorFlag(value.firstSolicitor);
-    this.setTransferOfSolicitorFlag(value.transferOfSolicitor);
+  setProfitCostDetails(value: ProfitCostDetails | undefined): this {
+    if (value === undefined) {
+      this.setCourtType(undefined);
+      this.setClientPartyStatus(undefined);
+      this.setFirstActingSolicitorFlag(undefined);
+      this.setTransferOfSolicitorFlag(undefined);
+    } else {
+      this.setCourtType(value.courtType);
+      this.setClientPartyStatus(value.clientStatus);
+      this.setFirstActingSolicitorFlag(value.firstSolicitor);
+      this.setTransferOfSolicitorFlag(value.transferOfSolicitor);
+    }
     return this;
   }
 

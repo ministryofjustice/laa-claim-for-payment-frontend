@@ -9,6 +9,7 @@ import { validateRadioInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { CostType } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
+import { draftService } from "#src/services/draftService.js";
 
 const poaClaimTypeFieldName = "poaClaimType" as const;
 
@@ -67,7 +68,12 @@ export async function poaClaimTypePage(
         }),
       });
     } else {
-      next(processApiError(claim, "retrieving claim for rendering POA claim type page"));
+      next(
+        processApiError(
+          claim,
+          "retrieving claim for rendering POA claim type page",
+        ),
+      );
     }
   } catch (error) {
     next(processError(error, "rendering POA claim type page"));
@@ -124,18 +130,18 @@ export async function submitPoaClaimType(
     );
 
     if (claim.status === "success") {
-      await claimService.updateClaim(
+      await draftService.setCostType(
         req.axiosMiddleware,
-        claim.body.setCostType(validationResult.value),
+        claim.body,
+        validationResult.value,
       );
 
       const redirectByChoice: Record<CostType, string> = {
         [CostType.PROFIT_COST]: buildRoute(ROUTES.PROFIT_COST_DETAILS, {
           claimId,
         }),
-        [CostType.EXPERT_COST]: buildRoute(ROUTES.EXPERT_COST_DETAILS, {
+        [CostType.EXPERT_COST]: buildRoute(ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS, {
           claimId,
-          expertCostId: 1,
         }),
         [CostType.NON_EXPERT_DISBURSEMENT]: buildRoute(
           ROUTES.NON_EXPERT_COST_DETAILS,
@@ -145,7 +151,12 @@ export async function submitPoaClaimType(
 
       res.redirect(redirectByChoice[validationResult.value]);
     } else {
-      next(processApiError(claim, "retrieving claim for submitting POA claim type page"));
+      next(
+        processApiError(
+          claim,
+          "retrieving claim for submitting POA claim type page",
+        ),
+      );
     }
   } catch (error) {
     next(processError(error, "submitting POA claim type page"));
