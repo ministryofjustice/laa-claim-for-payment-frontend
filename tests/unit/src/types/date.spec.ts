@@ -121,6 +121,11 @@ describe("LocalDate", () => {
       const date = new LocalDate(11, 12, 2026);
       expect(date.toIsoString()).to.equal("2026-12-11");
     });
+
+    it("converts to ISO string for a year < 1000", () => {
+      const date = new LocalDate(11, 12, 999);
+      expect(date.toIsoString()).to.equal("0999-12-11");
+    });
   });
 
   describe("isValid", () => {
