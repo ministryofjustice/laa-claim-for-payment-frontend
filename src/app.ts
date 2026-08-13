@@ -27,6 +27,7 @@ import { requiresAuth } from "#utils/openidSetup.js";
 import { initializeI18nextSync } from "./scripts/helpers/i18nLoader.js";
 import { initRedis } from "#utils/redisClient.js";
 import createHttpError from "http-errors";
+import { validateLanguage } from "#src/helpers/validateLanguage.js";
 
 const TRUST_FIRST_PROXY = 1;
 const SUCCESSFUL_REQUEST = 200;
@@ -55,6 +56,8 @@ const createApp = async (): Promise<express.Application> => {
   setupRedisSession(app, redisClient);
 
   app.use(axiosMiddleware);
+
+  app.use(validateLanguage);
 
   app.use(setupLocaleMiddleware);
 
