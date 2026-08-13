@@ -1,7 +1,6 @@
 import createHttpError from "http-errors";
 import type { NextFunction, Request, Response } from "express";
-
-const SUPPORTED_LANGUAGES: readonly string[] = ["en", "cy"];
+import { SUPPORTED_LANGUAGES } from "#src/scripts/helpers/i18nLoader.js";
 
 /**
  * Validates that the language query parameter contains a supported language.
@@ -17,19 +16,20 @@ export function validateLanguage(
   next: NextFunction,
 ): void {
     const { query: { lng } } = req
-  if (lng === undefined) {
+
+    if (lng === undefined) {
+        next();
+        return;
+    }
+
+    if (
+        typeof lng !== "string" ||
+        !SUPPORTED_LANGUAGES.includes(lng)
+    ) {
+        const { BadRequest } = createHttpError;
+        next(new BadRequest("Unsupported language"));
+        return;
+    }
+    
     next();
-    return;
-  }
-
-  if (
-    typeof lng !== "string" ||
-    !SUPPORTED_LANGUAGES.includes(lng)
-  ) {
-    const { BadRequest } = createHttpError;
-    next(new BadRequest("Unsupported language"));
-    return;
-  }
-
-  next();
 }
