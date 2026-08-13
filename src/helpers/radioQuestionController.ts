@@ -5,13 +5,11 @@ import {
   RadioQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
 import { validateRadioInput } from "#src/helpers/validation.js";
-import type { Message } from "#src/viewmodels/components/message.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import type { Claim } from "#src/types/Claim.js";
 
 interface RadioQuestionControllerParams<ChoiceType extends string> {
-  title: Message;
   fieldName: string;
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
   messagePrefix: string;
@@ -29,7 +27,6 @@ interface RadioQuestionControllerParams<ChoiceType extends string> {
  * @returns {object} GET and POST Express handlers.
  */
 export function createRadioQuestionController<ChoiceType extends string>({
-  title,
   fieldName,
   choices,
   messagePrefix,
@@ -56,7 +53,7 @@ export function createRadioQuestionController<ChoiceType extends string>({
           res.render("main/radioQuestionPage.njk", {
             csrfToken: res.locals.csrfToken,
             vm: new RadioQuestionViewModel({
-              title,
+              prefix: messagePrefix,
               fieldName,
               fieldId: fieldName,
               choices,
@@ -81,20 +78,18 @@ export function createRadioQuestionController<ChoiceType extends string>({
           selectedChoice,
           fieldName,
           fieldName,
-          messagePrefix,
         );
 
         if (!validationResult.isValid) {
           res.status(400).render("main/radioQuestionPage.njk", {
             csrfToken: res.locals.csrfToken,
             vm: new RadioQuestionViewModel({
-              title,
+              prefix: messagePrefix,
               fieldName,
               fieldId: fieldName,
               choices,
-              selectedValue:
-                typeof selectedChoice === "string" ? selectedChoice : undefined,
-              errors: validationResult.errors,
+              selectedValue: undefined,
+              getErrors: validationResult.getErrors,
             }),
           });
           return;

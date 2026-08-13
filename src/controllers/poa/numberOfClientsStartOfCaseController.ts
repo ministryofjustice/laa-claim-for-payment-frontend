@@ -30,9 +30,6 @@ const numberOfClientsStartOfCaseChoices: ReadonlyArray<RadioQuestionOptions<Coun
   ];
 
 const controller = createRadioQuestionController({
-  title: {
-    key: "pages.numberOfClientsStartOfCase.title",
-  },
   fieldName: numberOfClientsStartOfCaseFieldName,
   choices: numberOfClientsStartOfCaseChoices,
   messagePrefix: "pages.numberOfClientsStartOfCase",

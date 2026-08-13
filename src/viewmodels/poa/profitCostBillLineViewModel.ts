@@ -1,19 +1,23 @@
 import type { ProfitCostBillLineForm } from "#src/helpers/profitCostBillLineValidation.js";
 import {
   type FieldValidationError,
+  type FieldValidationErrorsBuilder,
   getError,
   getErrorSummary,
   getStringValue,
 } from "#src/helpers/validation.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
 import { radioQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
-import { type BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
+import {
+  type BooleanChoice,
+  booleanChoices,
+} from "#src/models/booleanChoice.js";
 import type { UUID } from "uuidv7";
 
 export interface ProfitCostBillLineViewModelParams {
   claimId: UUID;
   form?: ProfitCostBillLineForm;
-  errors?: FieldValidationError[];
+  getErrors?: FieldValidationErrorsBuilder;
 }
 
 /**
@@ -33,10 +37,40 @@ export class ProfitCostBillLineViewModel {
   constructor({
     claimId,
     form = {},
-    errors = [],
+    getErrors = (_: string) => [],
   }: ProfitCostBillLineViewModelParams) {
     this.claimId = claimId.toString();
-    this.title = "pages.profitCostBillLine.title";
+    const prefix = "pages.profitCostBillLine";
+    this.title = `${prefix}.title`;
+
+    const activityDateError = getError(
+      getErrors(`${prefix}.activityDate`),
+      "activityDate",
+    );
+    const actualNetProfitCostExcludingAdvocacyError = getError(
+      getErrors(`${prefix}.actualNetProfitCostExcludingAdvocacy`),
+      "actualNetProfitCostExcludingAdvocacy",
+    );
+    const actualNetAdvocacyCostsError = getError(
+      getErrors(`${prefix}.actualNetAdvocacyCosts`),
+      "actualNetAdvocacyCosts",
+    );
+    const vatAppliesError = getError(
+      getErrors(`${prefix}.vatApplies`),
+      "vatApplies",
+    );
+    const feeEarnerNameError = getError(
+      getErrors(`${prefix}.feeEarnerName`),
+      "feeEarnerName",
+    );
+
+    const errors = [
+      activityDateError,
+      actualNetProfitCostExcludingAdvocacyError,
+      actualNetAdvocacyCostsError,
+      vatAppliesError,
+      feeEarnerNameError,
+    ].filter((error): error is FieldValidationError => error !== undefined);
 
     this.form = {
       activityDate: {
@@ -45,26 +79,26 @@ export class ProfitCostBillLineViewModel {
           month: getStringValue(form.activityDateMonth),
           year: getStringValue(form.activityDateYear),
         },
-        error: getError(errors, "activityDate"),
+        error: activityDateError,
       },
       actualNetProfitCostExcludingAdvocacy: {
         value: getStringValue(form.actualNetProfitCostExcludingAdvocacy),
-        error: getError(errors, "actualNetProfitCostExcludingAdvocacy"),
+        error: actualNetProfitCostExcludingAdvocacyError,
       },
       actualNetAdvocacyCosts: {
         value: getStringValue(form.actualNetAdvocacyCosts),
-        error: getError(errors, "actualNetAdvocacyCosts"),
+        error: actualNetAdvocacyCostsError,
       },
       vatApplies: radioQuestionForm<BooleanChoice>(
         "vatApplies",
         "vatApplies",
         booleanChoices,
-        errors,
+        vatAppliesError,
         form.vatApplies,
       ),
       feeEarnerName: {
         value: getStringValue(form.feeEarnerName),
-        error: getError(errors, "feeEarnerName"),
+        error: feeEarnerNameError,
       },
     };
 

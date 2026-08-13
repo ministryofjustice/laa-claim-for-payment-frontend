@@ -58,9 +58,7 @@ export async function poaClaimTypePage(
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.poaClaimType.title",
-          },
+          prefix: "pages.poaClaimType",
           fieldName: poaClaimTypeFieldName,
           fieldId: poaClaimTypeFieldName,
           choices: poaClaimTypeChoices,
@@ -101,22 +99,18 @@ export async function submitPoaClaimType(
       selectedChoice,
       poaClaimTypeFieldName,
       poaClaimTypeFieldName,
-      "pages.poaClaimType",
     );
 
     if (!validationResult.isValid) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.poaClaimType.title",
-          },
+          prefix: "pages.poaClaimType",
           fieldName: poaClaimTypeFieldName,
           fieldId: poaClaimTypeFieldName,
           choices: poaClaimTypeChoices,
-          selectedValue:
-            typeof selectedChoice === "string" ? selectedChoice : undefined,
-          errors: validationResult.errors,
+          selectedValue: undefined,
+          getErrors: validationResult.getErrors,
         }),
       });
       return;

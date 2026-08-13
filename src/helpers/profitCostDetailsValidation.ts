@@ -32,26 +32,22 @@ export function validateProfitCostDetails(
       form.courtTypeChoice,
       "courtTypeChoice",
       "courtTypeChoice",
-      "pages.profitCostDetails.courtType",
     ),
     clientStatus: validateRadioInput(
       clientStatusChoices,
       form.clientStatusChoice,
       "clientStatusChoice",
       "clientStatusChoice",
-      "pages.profitCostDetails.clientStatus",
     ),
     firstSolicitor: validateBooleanInput(
       form.firstSolicitorChoice,
       "firstSolicitorChoice",
       "firstSolicitorChoice",
-      "pages.profitCostDetails.firstSolicitor",
     ),
     transferOfSolicitor: validateBooleanInput(
       form.transferOfSolicitorChoice,
       "transferOfSolicitorChoice",
       "transferOfSolicitorChoice",
-      "pages.profitCostDetails.transferOfSolicitor",
     ),
   });
 }

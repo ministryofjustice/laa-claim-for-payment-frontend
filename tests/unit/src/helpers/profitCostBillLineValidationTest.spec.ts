@@ -39,8 +39,8 @@ describe("profitCostBillLineValidation", () => {
     });
 
     const failure = expectFailure(result);
-    expect(failure.errors[0].text.key).to.equal(
-      "pages.profitCostBillLine.activityDate.errors.empty",
+    expect(failure.getErrors("foo.activityDate")[0].text.key).to.equal(
+      "foo.activityDate.errors.empty",
     );
   });
 
@@ -53,8 +53,8 @@ describe("profitCostBillLineValidation", () => {
     });
 
     const failure = expectFailure(result);
-    expect(failure.errors[0].text.key).to.equal(
-      "pages.profitCostBillLine.activityDate.errors.incomplete.month",
+    expect(failure.getErrors("foo.activityDate")[0].text.key).to.equal(
+      "foo.activityDate.errors.incomplete.month",
     );
   });
 
@@ -67,8 +67,8 @@ describe("profitCostBillLineValidation", () => {
     });
 
     const failure = expectFailure(result);
-    expect(failure.errors[0].text.key).to.equal(
-      "pages.profitCostBillLine.activityDate.errors.invalid",
+    expect(failure.getErrors("foo.activityDate")[0].text.key).to.equal(
+      "foo.activityDate.errors.invalid",
     );
   });
 
@@ -92,8 +92,8 @@ describe("profitCostBillLineValidation", () => {
     });
 
     const failure = expectFailure(result);
-    expect(failure.errors[0].text.key).to.equal(
-      "pages.profitCostBillLine.activityDate.errors.invalid",
+    expect(failure.getErrors("foo.activityDate")[0].text.key).to.equal(
+      "foo.activityDate.errors.invalid",
     );
   });
 
@@ -108,8 +108,8 @@ describe("profitCostBillLineValidation", () => {
     });
 
     const failure = expectFailure(result);
-    expect(failure.errors[0].text.key).to.equal(
-      "pages.profitCostBillLine.activityDate.errors.future",
+    expect(failure.getErrors("foo.activityDate")[0].text.key).to.equal(
+      "foo.activityDate.errors.future",
     );
   });
 
@@ -121,8 +121,8 @@ describe("profitCostBillLineValidation", () => {
 
     const failure = expectFailure(result);
 
-    expect(failure.errors[0].text.key).to.equal(
-      "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.errors.empty",
+    expect(failure.getErrors("foo.actualNetProfitCostExcludingAdvocacy")[0].text.key).to.equal(
+      "foo.actualNetProfitCostExcludingAdvocacy.errors.empty",
     );
   });
 
@@ -134,8 +134,8 @@ describe("profitCostBillLineValidation", () => {
 
     const failure = expectFailure(result);
 
-    expect(failure.errors[0].text.key).to.equal(
-      "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.errors.invalid",
+    expect(failure.getErrors("foo.actualNetProfitCostExcludingAdvocacy")[0].text.key).to.equal(
+      "foo.actualNetProfitCostExcludingAdvocacy.errors.invalid",
     );
   });
 
@@ -147,8 +147,8 @@ describe("profitCostBillLineValidation", () => {
 
     const failure = expectFailure(result);
 
-    expect(failure.errors[0].text.key).to.equal(
-      "pages.profitCostBillLine.actualNetAdvocacyCosts.errors.empty",
+    expect(failure.getErrors("foo.actualNetAdvocacyCosts")[0].text.key).to.equal(
+      "foo.actualNetAdvocacyCosts.errors.empty",
     );
   });
 
@@ -160,8 +160,8 @@ describe("profitCostBillLineValidation", () => {
 
     const failure = expectFailure(result);
 
-    expect(failure.errors[0].text.key).to.equal(
-      "pages.profitCostBillLine.actualNetAdvocacyCosts.errors.invalid",
+    expect(failure.getErrors("foo.actualNetAdvocacyCosts")[0].text.key).to.equal(
+      "foo.actualNetAdvocacyCosts.errors.invalid",
     );
   });
 
@@ -173,8 +173,8 @@ describe("profitCostBillLineValidation", () => {
 
     const failure = expectFailure(result);
 
-    expect(failure.errors[0].text.key).to.equal(
-      "pages.profitCostBillLine.vatApplies.errors.empty",
+    expect(failure.getErrors("foo.vatApplies")[0].text.key).to.equal(
+      "foo.vatApplies.errors.empty",
     );
   });
 
@@ -186,8 +186,8 @@ describe("profitCostBillLineValidation", () => {
 
     const failure = expectFailure(result);
 
-    expect(failure.errors[0].text.key).to.equal(
-      "pages.profitCostBillLine.feeEarnerName.errors.empty",
+    expect(failure.getErrors("foo.feeEarnerName")[0].text.key).to.equal(
+      "foo.feeEarnerName.errors.empty",
     );
   });
 
@@ -199,8 +199,8 @@ describe("profitCostBillLineValidation", () => {
 
     const failure = expectFailure(result);
 
-    expect(failure.errors[0].text.key).to.equal(
-      "pages.profitCostBillLine.feeEarnerName.errors.invalid",
+    expect(failure.getErrors("foo.feeEarnerName")[0].text.key).to.equal(
+      "foo.feeEarnerName.errors.invalid",
     );
   });
 });

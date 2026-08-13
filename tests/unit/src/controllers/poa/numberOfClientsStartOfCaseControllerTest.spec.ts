@@ -63,7 +63,7 @@ describe("numberOfClientsStartOfCaseController", () => {
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
     expect(renderArgs.vm.title.key).to.equal(
-      "pages.numberOfClientsStartOfCase.title",
+      "pages.numberOfClientsStartOfCase.question",
     );
     expect(renderArgs.vm.form.fieldName).to.equal(
       "numberOfClientsStartOfCase",

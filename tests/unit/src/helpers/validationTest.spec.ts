@@ -57,7 +57,6 @@ describe("validateStringInput", () => {
       "foo",
       "fieldName",
       "id",
-      "prefix",
       /^[A-Za-z]+$/,
     );
 
@@ -71,17 +70,16 @@ describe("validateStringInput", () => {
       "",
       "fieldName",
       "id",
-      "prefix",
       /^[A-Za-z]+$/,
     );
 
-    const errors = expectFailure(result).errors;
+    const getErrors = expectFailure(result).getErrors("prefix");
 
-    expect(errors).to.have.length(1);
-    expect(errors[0].fieldName).to.equal("fieldName");
-    expect(errors[0].href).to.equal("#id");
-    expect(errors[0].text.key).to.equal("prefix.errors.empty");
-    expect(errors[0].fields).to.be.undefined;
+    expect(getErrors).to.have.length(1);
+    expect(getErrors[0].fieldName).to.equal("fieldName");
+    expect(getErrors[0].href).to.equal("#id");
+    expect(getErrors[0].text.key).to.equal("prefix.errors.empty");
+    expect(getErrors[0].fields).to.be.undefined;
   });
 
   it("returns failure with array of errors for input that fails against regex", () => {
@@ -89,11 +87,10 @@ describe("validateStringInput", () => {
       "§§§",
       "fieldName",
       "id",
-      "prefix",
       /^[A-Za-z]+$/,
     );
 
-    const errors = expectFailure(result).errors;
+    const errors = expectFailure(result).getErrors("prefix");
 
     expect(errors).to.have.length(1);
     expect(errors[0].fieldName).to.equal("fieldName");
@@ -105,7 +102,7 @@ describe("validateStringInput", () => {
 
 describe("validateBooleanInput", () => {
   it("returns success for valid yes input", () => {
-    const result = validateBooleanInput("yes", "fieldName", "id", "prefix");
+    const result = validateBooleanInput("yes", "fieldName", "id");
 
     const success = expectSuccess(result);
 
@@ -113,7 +110,7 @@ describe("validateBooleanInput", () => {
   });
 
   it("returns success for valid no input", () => {
-    const result = validateBooleanInput("no", "fieldName", "id", "prefix");
+    const result = validateBooleanInput("no", "fieldName", "id");
 
     const success = expectSuccess(result);
 
@@ -121,9 +118,9 @@ describe("validateBooleanInput", () => {
   });
 
   it("returns failure with array of errors for empty input", () => {
-    const result = validateBooleanInput("", "fieldName", "id", "prefix");
+    const result = validateBooleanInput("", "fieldName", "id");
 
-    const errors = expectFailure(result).errors;
+    const errors = expectFailure(result).getErrors("prefix");
 
     expect(errors).to.have.length(1);
     expect(errors[0].fieldName).to.equal("fieldName");
@@ -135,7 +132,7 @@ describe("validateBooleanInput", () => {
 
 describe("validateMoneyInput", () => {
   it("returns success for valid input", () => {
-    const result = validateMoneyInput("1.23", "fieldName", "id", "prefix");
+    const result = validateMoneyInput("1.23", "fieldName", "id");
 
     const success = expectSuccess(result);
 
@@ -143,9 +140,9 @@ describe("validateMoneyInput", () => {
   });
 
   it("returns failure with array of errors for empty input", () => {
-    const result = validateMoneyInput("", "fieldName", "id", "prefix");
+    const result = validateMoneyInput("", "fieldName", "id");
 
-    const errors = expectFailure(result).errors;
+    const errors = expectFailure(result).getErrors("prefix");
 
     expect(errors).to.have.length(1);
     expect(errors[0].fieldName).to.equal("fieldName");
@@ -155,9 +152,9 @@ describe("validateMoneyInput", () => {
   });
 
   it("returns failure with array of errors for non-numeric input", () => {
-    const result = validateMoneyInput("foo", "fieldName", "id", "prefix");
+    const result = validateMoneyInput("foo", "fieldName", "id");
 
-    const errors = expectFailure(result).errors;
+    const errors = expectFailure(result).getErrors("prefix");
 
     expect(errors).to.have.length(1);
     expect(errors[0].fieldName).to.equal("fieldName");
@@ -167,9 +164,9 @@ describe("validateMoneyInput", () => {
   });
 
   it("returns failure with array of errors for numeric input with too many decimal places", () => {
-    const result = validateMoneyInput("1.123", "fieldName", "id", "prefix");
+    const result = validateMoneyInput("1.123", "fieldName", "id");
 
-    const errors = expectFailure(result).errors;
+    const errors = expectFailure(result).getErrors("prefix");
 
     expect(errors).to.have.length(1);
     expect(errors[0].fieldName).to.equal("fieldName");
@@ -189,7 +186,6 @@ describe("validateDateInput", () => {
       },
       "fieldName",
       "id",
-      "prefix",
     );
 
     const success = expectSuccess(result);
@@ -209,10 +205,9 @@ describe("validateDateInput", () => {
       },
       "fieldName",
       "id",
-      "prefix",
     );
 
-    const errors = expectFailure(result).errors;
+    const errors = expectFailure(result).getErrors("prefix");
 
     expect(errors).to.have.length(1);
     expect(errors[0].fieldName).to.equal("fieldName");
@@ -230,10 +225,9 @@ describe("validateDateInput", () => {
       },
       "fieldName",
       "id",
-      "prefix",
     );
 
-    const errors = expectFailure(result).errors;
+    const errors = expectFailure(result).getErrors("prefix");
 
     expect(errors).to.have.length(1);
     expect(errors[0].fieldName).to.equal("fieldName");
@@ -251,10 +245,9 @@ describe("validateDateInput", () => {
       },
       "fieldName",
       "id",
-      "prefix",
     );
 
-    const errors = expectFailure(result).errors;
+    const errors = expectFailure(result).getErrors("prefix");
 
     expect(errors).to.have.length(1);
     expect(errors[0].fieldName).to.equal("fieldName");
@@ -272,10 +265,9 @@ describe("validateDateInput", () => {
       },
       "fieldName",
       "id",
-      "prefix",
     );
 
-    const errors = expectFailure(result).errors;
+    const errors = expectFailure(result).getErrors("prefix");
 
     expect(errors).to.have.length(1);
     expect(errors[0].fieldName).to.equal("fieldName");
@@ -293,10 +285,9 @@ describe("validateDateInput", () => {
       },
       "fieldName",
       "id",
-      "prefix",
     );
 
-    const errors = expectFailure(result).errors;
+    const errors = expectFailure(result).getErrors("prefix");
 
     expect(errors).to.have.length(1);
     expect(errors[0].fieldName).to.equal("fieldName");
@@ -314,10 +305,9 @@ describe("validateDateInput", () => {
       },
       "fieldName",
       "id",
-      "prefix",
     );
 
-    const errors = expectFailure(result).errors;
+    const errors = expectFailure(result).getErrors("prefix");
 
     expect(errors).to.have.length(1);
     expect(errors[0].fieldName).to.equal("fieldName");
@@ -350,10 +340,9 @@ describe("validateDateInput", () => {
         input,
         "fieldName",
         "id",
-        "prefix",
       );
 
-      const errors = expectFailure(result).errors;
+      const errors = expectFailure(result).getErrors("prefix");
 
       expect(errors).to.have.length(1);
       expect(errors[0].fieldName).to.equal("fieldName");
@@ -387,10 +376,9 @@ describe("validateDateInput", () => {
         input,
         "fieldName",
         "id",
-        "prefix",
       );
 
-      const errors = expectFailure(result).errors;
+      const errors = expectFailure(result).getErrors("prefix");
 
       expect(errors).to.have.length(1);
       expect(errors[0].fieldName).to.equal("fieldName");
@@ -414,10 +402,9 @@ describe("validateDateInput", () => {
       },
       "fieldName",
       "id",
-      "prefix",
     );
 
-    const errors = expectFailure(result).errors;
+    const errors = expectFailure(result).getErrors("prefix");
 
     expect(errors).to.have.length(1);
     expect(errors[0].fieldName).to.equal("fieldName");

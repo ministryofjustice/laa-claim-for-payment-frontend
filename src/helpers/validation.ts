@@ -14,6 +14,12 @@ export interface FieldValidationError {
   fields?: string[];
 }
 
+export type FieldValidationErrors = FieldValidationError[];
+
+export type FieldValidationErrorsBuilder = (
+  messagePrefix: string,
+) => FieldValidationErrors;
+
 export interface ValidationSuccess<T> {
   isValid: true;
   value: T;
@@ -21,7 +27,7 @@ export interface ValidationSuccess<T> {
 
 export interface ValidationFailure {
   isValid: false;
-  errors: FieldValidationError[];
+  getErrors: FieldValidationErrorsBuilder;
 }
 
 export type ValidationResult<T> = ValidationSuccess<T> | ValidationFailure;
@@ -40,16 +46,13 @@ export function getStringValue(value: unknown): string {
  * @param {unknown} value value to validate as string
  * @param {string} fieldName field name
  * @param {string} id ID of input
- * @param {string} messagePrefix message prefix for error messages
  * @param {RegExp} regex regex to validate input against
  * @returns {FieldValidationError[]} field validation errors
  */
-// eslint-disable-next-line @typescript-eslint/max-params -- ignore
 export function validateStringInput(
   value: unknown,
   fieldName: string,
   id: string,
-  messagePrefix: string,
   regex: RegExp,
 ): ValidationResult<string> {
   const stringValue = getStringValue(value);
@@ -57,7 +60,7 @@ export function validateStringInput(
   if (stringValue === "") {
     return {
       isValid: false,
-      errors: [
+      getErrors: (messagePrefix) => [
         {
           fieldName,
           href: `#${id}`,
@@ -72,7 +75,7 @@ export function validateStringInput(
   if (!regex.test(stringValue)) {
     return {
       isValid: false,
-      errors: [
+      getErrors: (messagePrefix) => [
         {
           fieldName,
           href: `#${id}`,
@@ -97,23 +100,20 @@ export function validateStringInput(
  * @param {unknown} value value to validate as boolean
  * @param {string} fieldName field name
  * @param {string} id ID of input
- * @param {string} messagePrefix message prefix for error messages
  * @returns {FieldValidationError[]} field validation errors
  */
 export function validateBooleanInput(
   value: unknown,
   fieldName: string,
   id: string,
-  messagePrefix: string,
 ): ValidationResult<boolean> {
-  const selection: RadioQuestionOptions<BooleanChoice> | undefined = booleanChoices.find(
-    (choice) => choice.value === value,
-  );
+  const selection: RadioQuestionOptions<BooleanChoice> | undefined =
+    booleanChoices.find((choice) => choice.value === value);
 
   if (selection == null) {
     return {
       isValid: false,
-      errors: [
+      getErrors: (messagePrefix) => [
         {
           fieldName,
           href: `#${id}`,
@@ -137,16 +137,13 @@ export function validateBooleanInput(
  * @param {unknown} value value to validate as radio option
  * @param {string} fieldName field name
  * @param {string} id ID of input
- * @param {string} messagePrefix message prefix for error messages
  * @returns {FieldValidationError[]} field validation errors
  */
-// eslint-disable-next-line @typescript-eslint/max-params -- ignore
 export function validateRadioInput<T>(
   choices: ReadonlyArray<RadioQuestionOptions<T>>,
   value: unknown,
   fieldName: string,
   id: string,
-  messagePrefix: string,
 ): ValidationResult<T> {
   const selection: RadioQuestionOptions<T> | undefined = choices.find(
     (choice) => choice.value === value,
@@ -155,7 +152,7 @@ export function validateRadioInput<T>(
   if (selection == null) {
     return {
       isValid: false,
-      errors: [
+      getErrors: (messagePrefix) => [
         {
           fieldName,
           href: `#${id}`,
@@ -178,21 +175,19 @@ export function validateRadioInput<T>(
  * @param {unknown} value value to validate as monetary value
  * @param {string} fieldName field name
  * @param {string} id ID of input
- * @param {string} messagePrefix message prefix for error messages
  * @returns {FieldValidationError[]} field validation errors
  */
 export function validateMoneyInput(
   value: unknown,
   fieldName: string,
   id: string,
-  messagePrefix: string,
 ): ValidationResult<number> {
   const stringValue = getStringValue(value);
 
   if (stringValue === "") {
     return {
       isValid: false,
-      errors: [
+      getErrors: (messagePrefix) => [
         {
           fieldName,
           href: `#${id}`,
@@ -207,7 +202,7 @@ export function validateMoneyInput(
   if (!/^[\d.]+$/.test(stringValue)) {
     return {
       isValid: false,
-      errors: [
+      getErrors: (messagePrefix) => [
         {
           fieldName,
           href: `#${id}`,
@@ -224,7 +219,7 @@ export function validateMoneyInput(
   if (!MONEY_REGEX.test(stringValue)) {
     return {
       isValid: false,
-      errors: [
+      getErrors: (messagePrefix) => [
         {
           fieldName,
           href: `#${id}`,
@@ -250,7 +245,6 @@ export function validateMoneyInput(
  * @param {unknown} value.year year value
  * @param {string} fieldName field name
  * @param {string} id ID of input
- * @param {string} messagePrefix message prefix for error messages
  * @returns {FieldValidationError[]} field validation errors
  */
 export function validateDateInput(
@@ -261,7 +255,6 @@ export function validateDateInput(
   },
   fieldName: string,
   id: string,
-  messagePrefix: string,
 ): ValidationResult<LocalDate> {
   const day = getStringValue(value.day);
   const month = getStringValue(value.month);
@@ -281,7 +274,7 @@ export function validateDateInput(
     if (missing.length === 3) {
       return {
         isValid: false,
-        errors: [
+        getErrors: (messagePrefix) => [
           {
             fieldName,
             href: `#${id}-day`,
@@ -298,7 +291,7 @@ export function validateDateInput(
 
     return {
       isValid: false,
-      errors: [
+      getErrors: (messagePrefix) => [
         {
           fieldName,
           href: `#${id}-${missing[0]}`,
@@ -320,7 +313,7 @@ export function validateDateInput(
   ) {
     return {
       isValid: false,
-      errors: [
+      getErrors: (messagePrefix) => [
         {
           fieldName,
           href: `#${id}-day`,
@@ -334,12 +327,16 @@ export function validateDateInput(
   }
 
   try {
-    const date: LocalDate = LocalDate.of(Number(day), Number(month), Number(year));
+    const date: LocalDate = LocalDate.of(
+      Number(day),
+      Number(month),
+      Number(year),
+    );
 
     if (date.isFutureDate()) {
       return {
         isValid: false,
-        errors: [
+        getErrors: (messagePrefix) => [
           {
             fieldName,
             href: `#${id}-day`,
@@ -359,7 +356,7 @@ export function validateDateInput(
   } catch {
     return {
       isValid: false,
-      errors: [
+      getErrors: (messagePrefix) => [
         {
           fieldName,
           href: `#${id}-day`,
@@ -438,7 +435,7 @@ export function combine<T>(results: {
   [K in keyof T]: ValidationResult<T[K]>;
 }): ValidationResult<T> {
   const value: Partial<T> = {};
-  const errors: FieldValidationError[] = [];
+  const errors: FieldValidationErrorsBuilder[] = [];
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
   for (const key of Object.keys(results) as Array<keyof T>) {
@@ -449,14 +446,15 @@ export function combine<T>(results: {
       // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
       value[key] = result.value;
     } else {
-      errors.push(...result.errors);
+      errors.push(result.getErrors);
     }
   }
 
   if (errors.length > 0) {
     return {
       isValid: false,
-      errors,
+      getErrors: (messagePrefix) =>
+        errors.flatMap((getErrors) => getErrors(messagePrefix)),
     };
   }
 

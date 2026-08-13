@@ -64,7 +64,7 @@ describe("poaClaimTypeController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
-    expect(renderArgs.vm.title.key).to.equal("pages.poaClaimType.title");
+    expect(renderArgs.vm.title.key).to.equal("pages.poaClaimType.question");
     expect(renderArgs.vm.form.fieldName).to.equal("poaClaimType");
     expect(renderArgs.vm.form.choices).to.deep.include({
       value: "PROFIT_COST",

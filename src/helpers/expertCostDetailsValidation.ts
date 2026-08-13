@@ -51,7 +51,6 @@ function validateActivityDate(
     },
     "activityDate",
     "activity-date",
-    "pages.poa.expertCostDetails.activityDate",
   );
 }
 
@@ -60,7 +59,6 @@ function validateActualNetValue(value: unknown): ValidationResult<number> {
     value,
     "actualNetValue",
     "actual-net-value",
-    "pages.poa.expertCostDetails.actualNetValue",
   );
 }
 
@@ -69,7 +67,6 @@ function validateVatApplies(value: unknown): ValidationResult<boolean> {
     value,
     "vatApplies",
     "vat-applies",
-    "pages.poa.expertCostDetails.vatApplies",
   );
 }
 
@@ -78,7 +75,6 @@ function validateFeeEarnerName(value: unknown): ValidationResult<string> {
     value,
     "feeEarnerName",
     "fee-earner-name",
-    "pages.poa.expertCostDetails.feeEarnerName",
     FEE_EARNER_NAME_REGEX,
   );
 }
@@ -88,7 +84,6 @@ function validateDescription(value: unknown): ValidationResult<string> {
     value,
     "description",
     "description",
-    "pages.poa.expertCostDetails.description",
     DESCRIPTION_REGEX,
   );
 }

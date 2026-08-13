@@ -78,7 +78,6 @@ export async function submitAddAnotherExpertCost(
       selectedChoice,
       addAnotherExpertCostFieldName,
       addAnotherExpertCostFieldId,
-      "pages.poa.expertCostDetails.addAnother",
     );
 
     const claimId = UUID.parse(req.params.claimId);
@@ -96,7 +95,7 @@ export async function submitAddAnotherExpertCost(
           vm: new AddAnotherExpertCostViewModel({
             claimId: claimId.toString(),
             lineItems,
-            errors: validationResult.errors,
+            getErrors: validationResult.getErrors,
           }),
         });
         return;

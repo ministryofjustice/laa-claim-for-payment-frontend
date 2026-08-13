@@ -1,5 +1,10 @@
 import type { Message } from "#src/viewmodels/components/message.js";
-import { type FieldValidationError, getError, getErrorSummary } from "#src/helpers/validation.js";
+import {
+  type FieldValidationError,
+  type FieldValidationErrorsBuilder,
+  getError,
+  getErrorSummary,
+} from "#src/helpers/validation.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
 
 export interface RadioQuestionOptions<ChoiceType> {
@@ -12,12 +17,12 @@ export interface RadioQuestionOptions<ChoiceType> {
 }
 
 export interface RadioQuestionViewModelParams<ChoiceType> {
-  title: Message;
+  prefix: string;
   fieldName: string;
   fieldId: string;
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
   selectedValue?: ChoiceType;
-  errors?: FieldValidationError[];
+  getErrors?: FieldValidationErrorsBuilder;
 }
 
 /**
@@ -35,20 +40,23 @@ export class RadioQuestionViewModel<ChoiceType> {
    * @param {RadioQuestionViewModelParams} params The selected value and error state.
    */
   constructor({
-    title,
+    prefix,
     fieldName,
     fieldId,
     choices,
     selectedValue,
-    errors = [],
+    getErrors = (_: string) => [],
   }: RadioQuestionViewModelParams<ChoiceType>) {
-    this.title = title;
+    this.title = {
+      key: `${prefix}.question`,
+    };
     this.choices = choices;
+    const errors= getErrors(prefix);
     this.form = radioQuestionForm<ChoiceType>(
       fieldName,
       fieldId,
       choices,
-      errors,
+      getError(errors, fieldName),
       selectedValue,
     );
     this.errorSummary = getErrorSummary(errors)
@@ -67,7 +75,7 @@ export interface RadioQuestionForm<ChoiceType> {
  * @param {string} fieldName field name
  * @param {string} fieldId field ID
  * @param {ReadonlyArray<RadioQuestionOptions>} choices radio choices
- * @param {FieldValidationError[]} errors errors
+ * @param {FieldValidationError | undefined} error error
  * @param {unknown} selectedValue selected value
  * @returns {RadioQuestionForm} radio question form object
  */
@@ -76,7 +84,7 @@ export function radioQuestionForm<ChoiceType>(
   fieldName: string,
   fieldId: string,
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>,
-  errors: FieldValidationError[],
+  error?: FieldValidationError,
   selectedValue?: unknown,
 ): RadioQuestionForm<ChoiceType> {
   return {
@@ -86,6 +94,6 @@ export function radioQuestionForm<ChoiceType>(
       ...choice,
       checked: choice.value === selectedValue,
     })),
-    error: getError(errors, fieldName),
+    error
   };
 }

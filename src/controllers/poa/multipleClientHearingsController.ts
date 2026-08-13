@@ -33,9 +33,7 @@ export async function multipleClientHearings(
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.multipleClientHearings.title",
-          },
+          prefix: "pages.multipleClientHearings",
           fieldName: multipleClientHearingsFieldName,
           fieldId: multipleClientHearingsFieldName,
           choices: booleanChoices,
@@ -78,22 +76,18 @@ export async function submitMultipleClientHearings(
       selectedChoice,
       multipleClientHearingsFieldName,
       multipleClientHearingsFieldName,
-      "pages.multipleClientHearings",
     );
 
     if (!validationResult.isValid) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.multipleClientHearings.title",
-          },
+          prefix: "pages.multipleClientHearings",
           fieldName: multipleClientHearingsFieldName,
           fieldId: multipleClientHearingsFieldName,
           choices: booleanChoices,
-          selectedValue:
-            typeof selectedChoice === "string" ? selectedChoice : undefined,
-          errors: validationResult.errors,
+          selectedValue: undefined,
+          getErrors: validationResult.getErrors,
         }),
       });
       return;

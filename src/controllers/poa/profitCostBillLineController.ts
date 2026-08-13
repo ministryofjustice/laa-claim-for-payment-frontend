@@ -102,7 +102,7 @@ export async function submitProfitCostBillLine(
         vm: new ProfitCostBillLineViewModel({
           claimId,
           form,
-          errors: validationResult.errors,
+          getErrors: validationResult.getErrors,
         }),
       });
       return;

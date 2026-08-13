@@ -98,7 +98,7 @@ export async function submitExpertCostDetails(
         claimId,
         lineItemId,
         form,
-        errors: validationResult.errors,
+        getErrors: validationResult.getErrors,
       };
 
       res.status(400).render("main/poa/expertCostDetailsView.njk", {

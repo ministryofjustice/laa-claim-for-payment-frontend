@@ -42,9 +42,7 @@ describe("views/main/radioQuestionsView.njk", () => {
   ] as const;
 
   const vm = new RadioQuestionViewModel({
-      title: {
-        key: "Page Title"
-      },
+    prefix: "prefix",
       fieldName: "testField",
       fieldId: "test-field",
       choices: testChoices
@@ -84,7 +82,7 @@ describe("views/main/radioQuestionsView.njk", () => {
       const legend = $("legend.govuk-fieldset__legend");
 
       expect(legend).to.have.length(1);
-      expect(legend.text().trim()).to.equal("Page Title");
+      expect(legend.text().trim()).to.equal("prefix.question");
     });
 
     it("renders the radio options", () => {
@@ -129,13 +127,11 @@ describe("views/main/radioQuestionsView.njk", () => {
     beforeEach(async () => {
 
       const vm = new RadioQuestionViewModel({
-        title: {
-          key: "Page Title"
-        },
+        prefix: "prefix",
         fieldName: "testField",
         fieldId: "test-field",
         choices: testChoices,
-        errors: [
+        getErrors: (_: string) => [
           {
             fieldName: "testField",
             href: "#test-field",

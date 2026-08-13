@@ -1,20 +1,24 @@
 import type { ExpertCostDetailsForm } from "#src/helpers/expertCostDetailsValidation.js";
 import {
   type FieldValidationError,
+  type FieldValidationErrorsBuilder,
   getError,
   getErrorSummary,
   getStringValue,
 } from "#src/helpers/validation.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
 import { radioQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
-import { type BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
+import {
+  type BooleanChoice,
+  booleanChoices,
+} from "#src/models/booleanChoice.js";
 import type { UUID } from "uuidv7";
 
 export interface ExpertCostDetailsViewModelParams {
   claimId: UUID;
   lineItemId?: UUID;
   form?: ExpertCostDetailsForm;
-  errors?: FieldValidationError[];
+  getErrors?: FieldValidationErrorsBuilder;
 }
 
 /**
@@ -32,10 +36,40 @@ export class ExpertCostDetailsViewModel {
    * @param {ExpertCostDetailsViewModelParams} params View model params.
    */
   constructor(params: ExpertCostDetailsViewModelParams) {
-    const { claimId, form = {}, errors = [] } = params;
+    const { claimId, form = {}, getErrors = (_: string) => [] } = params;
 
     this.claimId = claimId.toString();
-    this.title = "pages.poa.expertCostDetails.title";
+    const prefix = "pages.poa.expertCostDetails";
+    this.title = `${prefix}.title`;
+
+    const activityDateError = getError(
+      getErrors(`${prefix}.activityDate`),
+      "activityDate",
+    );
+    const actualNetValueError = getError(
+      getErrors(`${prefix}.actualNetValue`),
+      "actualNetValue",
+    );
+    const vatAppliesError = getError(
+      getErrors(`${prefix}.vatApplies`),
+      "vatApplies",
+    );
+    const feeEarnerNameError = getError(
+      getErrors(`${prefix}.feeEarnerName`),
+      "feeEarnerName",
+    );
+    const descriptionError = getError(
+      getErrors(`${prefix}.description`),
+      "description",
+    );
+
+    const errors = [
+      activityDateError,
+      actualNetValueError,
+      vatAppliesError,
+      feeEarnerNameError,
+      descriptionError,
+    ].filter((error): error is FieldValidationError => error !== undefined);
 
     this.form = {
       activityDate: {
@@ -44,26 +78,26 @@ export class ExpertCostDetailsViewModel {
           month: getStringValue(form.activityDateMonth),
           year: getStringValue(form.activityDateYear),
         },
-        error: getError(errors, "activityDate"),
+        error: activityDateError,
       },
       actualNetValue: {
         value: getStringValue(form.actualNetValue),
-        error: getError(errors, "actualNetValue"),
+        error: actualNetValueError,
       },
       vatApplies: radioQuestionForm<BooleanChoice>(
         "vatApplies",
         "vatApplies",
         booleanChoices,
-        errors,
+        vatAppliesError,
         form.vatApplies,
       ),
       feeEarnerName: {
         value: getStringValue(form.feeEarnerName),
-        error: getError(errors, "feeEarnerName"),
+        error: feeEarnerNameError,
       },
       description: {
         value: getStringValue(form.description),
-        error: getError(errors, "description"),
+        error: descriptionError,
       },
     };
 

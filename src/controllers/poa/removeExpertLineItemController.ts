@@ -37,9 +37,7 @@ export async function confirmRemoveExpertLineItem(
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.poa.removeExpertLineItem.title",
-          },
+          prefix: "pages.poa.removeExpertLineItem",
           fieldName: confirmRemoveExpertLineItemFieldName,
           fieldId: confirmRemoveExpertLineItemFieldName,
           choices: booleanChoices,
@@ -83,22 +81,18 @@ export async function submitRemoveExpertLineItem(
       selectedChoice,
       confirmRemoveExpertLineItemFieldName,
       confirmRemoveExpertLineItemFieldName,
-      "pages.poa.removeExpertLineItem",
     );
 
     if (!validationResult.isValid) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.poa.removeExpertLineItem.title",
-          },
+          prefix: "pages.poa.removeExpertLineItem",
           fieldName: confirmRemoveExpertLineItemFieldName,
           fieldId: confirmRemoveExpertLineItemFieldName,
           choices: booleanChoices,
-          selectedValue:
-            typeof selectedChoice === "string" ? selectedChoice : undefined,
-          errors: validationResult.errors,
+          selectedValue: undefined,
+          getErrors: validationResult.getErrors,
         }),
       });
       return;

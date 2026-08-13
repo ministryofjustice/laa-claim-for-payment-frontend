@@ -55,7 +55,6 @@ function validateActivityDate(
     },
     "activityDate",
     "activityDate",
-    "pages.profitCostBillLine.activityDate",
   );
 }
 
@@ -66,7 +65,6 @@ function validateActualNetProfitCostExcludingAdvocacy(
     value,
     "actualNetProfitCostExcludingAdvocacy",
     "actualNetProfitCostExcludingAdvocacy",
-    "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy",
   );
 }
 
@@ -77,7 +75,6 @@ function validateActualNetAdvocacyCosts(
     value,
     "actualNetAdvocacyCosts",
     "actualNetAdvocacyCosts",
-    "pages.profitCostBillLine.actualNetAdvocacyCosts",
   );
 }
 
@@ -86,7 +83,6 @@ function validateVatApplies(value: unknown): ValidationResult<boolean> {
     value,
     "vatApplies",
     "vatApplies",
-    "pages.profitCostBillLine.vatApplies",
   );
 }
 
@@ -95,7 +91,6 @@ function validateFeeEarnerName(value: unknown): ValidationResult<string> {
     value,
     "feeEarnerName",
     "feeEarnerName",
-    "pages.profitCostBillLine.feeEarnerName",
     FEE_EARNER_NAME_REGEX,
   );
 }

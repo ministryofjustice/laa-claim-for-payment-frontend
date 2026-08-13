@@ -72,7 +72,7 @@ export async function submitProfitCostDetails(
     if (!validationResult.isValid) {
       const params: ProfitCostDetailsViewModelParams = {
         form,
-        errors: validationResult.errors
+        getErrors: validationResult.getErrors
       };
 
       res.status(400).render("main/poa/profitCostDetailsView.njk", {

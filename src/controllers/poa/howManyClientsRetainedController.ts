@@ -54,9 +54,7 @@ export async function howManyClientsRetained(
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.howManyClientsRetained.title",
-          },
+          prefix: "pages.howManyClientsRetained",
           fieldName: howManyClientsRetainedFieldName,
           fieldId: howManyClientsRetainedFieldName,
           choices: howManyClientsRetainedChoices,
@@ -92,22 +90,18 @@ export async function submitHowManyClientsRetained(
       selectedChoice,
       howManyClientsRetainedFieldName,
       howManyClientsRetainedFieldName,
-      "pages.howManyClientsRetained",
     );
 
     if (!validationResult.isValid) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.howManyClientsRetained.title"
-          },
+          prefix: "pages.howManyClientsRetained",
           fieldName: howManyClientsRetainedFieldName,
           fieldId: howManyClientsRetainedFieldName,
           choices: howManyClientsRetainedChoices,
-          selectedValue:
-            typeof selectedChoice === "string" ? selectedChoice : undefined,
-          errors: validationResult.errors,
+          selectedValue: undefined,
+          getErrors: validationResult.getErrors,
         }),
       });
       return;

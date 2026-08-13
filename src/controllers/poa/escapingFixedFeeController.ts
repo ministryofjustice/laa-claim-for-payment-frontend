@@ -34,9 +34,7 @@ export async function escapingFixedFee(
       res.render("main/poa/escapingFixedFeeView.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.escapingFixedFee.question",
-          },
+          prefix: "pages.escapingFixedFee",
           fieldName: escapingFixedFeeFieldName,
           fieldId: escapingFixedFeeFieldName,
           choices: booleanChoices,
@@ -79,22 +77,19 @@ export async function submitEscapingFixedFee(
       selectedChoice,
       escapingFixedFeeFieldName,
       escapingFixedFeeFieldName,
-      "pages.escapingFixedFee",
     );
 
     if (!validationResult.isValid) {
       res.status(400).render("main/poa/escapingFixedFeeView.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.escapingFixedFee.question",
-          },
+          prefix: "pages.escapingFixedFee",
           fieldName: escapingFixedFeeFieldName,
           fieldId: escapingFixedFeeFieldName,
           choices: booleanChoices,
           selectedValue:
             typeof selectedChoice === "string" ? selectedChoice : undefined,
-          errors: validationResult.errors,
+          getErrors: validationResult.getErrors,
         }),
       });
       return;

@@ -11,7 +11,7 @@ import {
   type BooleanChoice,
   booleanChoices,
 } from "#src/models/booleanChoice.js";
-import type { FieldValidationError } from "#src/helpers/validation.js";
+import type { FieldValidationErrorsBuilder } from "#src/helpers/validation.js";
 import {
   addAnotherExpertCostFieldId,
   addAnotherExpertCostFieldName,
@@ -24,13 +24,13 @@ interface AddAnotherLineItemViewModelParams<T extends LineItem> {
   prefix: string;
   getValue: (lineItem: T) => string;
   summaryListId: string;
-  errors?: FieldValidationError[];
+  getErrors?: FieldValidationErrorsBuilder;
 }
 
 export interface AddAnotherExpertCostViewModelParams {
   claimId: string;
   lineItems: ExpertCostLineItem[];
-  errors?: FieldValidationError[];
+  getErrors?: FieldValidationErrorsBuilder;
 }
 
 /**
@@ -47,7 +47,7 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
    * @param {AddAnotherLineItemViewModelParams} params View model params.
    */
   constructor(params: AddAnotherLineItemViewModelParams<T>) {
-    const { claimId, lineItems, prefix, getValue, summaryListId, errors } =
+    const { claimId, lineItems, prefix, getValue, summaryListId, getErrors } =
       params;
 
     if (lineItems.length === 1) {
@@ -80,13 +80,11 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
     this.lineItemsSummaryList = buildSummaryList(summaryListId, rows);
 
     this.radioQuestionViewModel = new RadioQuestionViewModel({
-      title: {
-        key: `${prefix}.question`,
-      },
+      prefix,
       fieldName: addAnotherExpertCostFieldName,
       fieldId: addAnotherExpertCostFieldId,
       choices: booleanChoices,
-      errors,
+      getErrors,
     });
   }
 }

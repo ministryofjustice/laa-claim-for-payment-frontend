@@ -155,7 +155,7 @@
       }
     },
     "howManyClientsRetained" : {
-      "title" : "How many clients are retained?",
+      "question" : "How many clients are retained?",
       "ZERO": {
         "text" : "0"
       },
@@ -170,7 +170,7 @@
       }
     },    
     "poaClaimType": {
-      "title": "What type of POA are you claiming?",
+      "question": "What type of POA are you claiming?",
       "profitCost": {
         "text": "Profit cost"
       },
@@ -233,13 +233,13 @@
       }
     },
     "multipleClientHearings": {
-      "title": "Have you attended at least one hearing where you have represented more than one client?",
+      "question": "Have you attended at least one hearing where you have represented more than one client?",
       "errors": {
         "empty": "Select yes if you have attended at least one hearing where you have represented more than one client."
       }
     },
     "numberOfClientsStartOfCase": {
-      "title": "How many clients did you have at the start of the case?",
+      "question": "How many clients did you have at the start of the case?",
       "ZERO": {
         "text": "0"
       },
@@ -374,7 +374,7 @@
         }
       },
       "removeExpertLineItem": {
-        "title" : "Are you sure you want to remove this expert cost?",
+        "question" : "Are you sure you want to remove this expert cost?",
         "errors": {
           "empty": "Select yes if you want to remove this expert cost"
         }

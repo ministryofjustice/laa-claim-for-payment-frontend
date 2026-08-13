@@ -76,7 +76,7 @@ describe("removeExpertLineItemController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
-    expect(renderArgs.vm.title.key).to.equal("pages.poa.removeExpertLineItem.title");
+    expect(renderArgs.vm.title.key).to.equal("pages.poa.removeExpertLineItem.question");
     expect(renderArgs.vm.form.fieldName).to.equal("confirmRemoveExpertLineItem");
   });
 
