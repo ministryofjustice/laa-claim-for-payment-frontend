@@ -16,9 +16,7 @@ export function validateLanguage(
   _res: Response,
   next: NextFunction,
 ): void {
-  const { query } = req;
-  const { lng } = query;
-
+    const { query: { lng } } = req
   if (lng === undefined) {
     next();
     return;
