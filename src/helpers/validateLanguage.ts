@@ -1,6 +1,6 @@
 import createHttpError from "http-errors";
 import type { NextFunction, Request, Response } from "express";
-import { SUPPORTED_LANGUAGES } from "#src/scripts/helpers/i18nLoader.js";
+import { SUPPORTED_LANGUAGES } from "#src/helpers/supportedLanguages.js";
 
 /**
  * Validates that the language query parameter contains a supported language.
