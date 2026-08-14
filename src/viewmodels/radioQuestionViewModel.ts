@@ -1,6 +1,12 @@
 import type { Message } from "#src/viewmodels/components/message.js";
-import { type FieldValidationError, getError, getErrorSummary } from "#src/helpers/validation.js";
+import {
+  type Field,
+  type FieldValidationError,
+  getError,
+  getErrorSummary,
+} from "#src/helpers/validation.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
+import { type BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
 
 export interface RadioQuestionOptions<ChoiceType> {
   value: ChoiceType;
@@ -12,9 +18,8 @@ export interface RadioQuestionOptions<ChoiceType> {
 }
 
 export interface RadioQuestionViewModelParams<ChoiceType> {
-  title: Message;
-  fieldName: string;
-  fieldId: string;
+  title: string;
+  field: Field;
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
   selectedValue?: ChoiceType;
   errors?: FieldValidationError[];
@@ -36,17 +41,17 @@ export class RadioQuestionViewModel<ChoiceType> {
    */
   constructor({
     title,
-    fieldName,
-    fieldId,
+    field,
     choices,
     selectedValue,
     errors = [],
   }: RadioQuestionViewModelParams<ChoiceType>) {
-    this.title = title;
+    this.title = {
+      key: title
+    };
     this.choices = choices;
     this.form = radioQuestionForm<ChoiceType>(
-      fieldName,
-      fieldId,
+      field,
       choices,
       errors,
       selectedValue,
@@ -64,28 +69,45 @@ export interface RadioQuestionForm<ChoiceType> {
 
 /**
  * Radio question form builder.
- * @param {string} fieldName field name
- * @param {string} fieldId field ID
+ * @param {Field} field field
  * @param {ReadonlyArray<RadioQuestionOptions>} choices radio choices
  * @param {FieldValidationError[]} errors errors
  * @param {unknown} selectedValue selected value
  * @returns {RadioQuestionForm} radio question form object
  */
-// eslint-disable-next-line @typescript-eslint/max-params -- ignore
 export function radioQuestionForm<ChoiceType>(
-  fieldName: string,
-  fieldId: string,
+  field: Field,
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>,
   errors: FieldValidationError[],
   selectedValue?: unknown,
 ): RadioQuestionForm<ChoiceType> {
   return {
-    fieldName,
-    fieldId,
+    fieldName: field.name,
+    fieldId: field.id,
     choices: choices.map((choice) => ({
       ...choice,
       checked: choice.value === selectedValue,
     })),
-    error: getError(errors, fieldName),
+    error: getError(errors, field),
   };
+}
+
+/**
+ * Yes/No question form builder.
+ * @param {Field} field field
+ * @param {FieldValidationError[]} errors errors
+ * @param {unknown} selectedValue selected value
+ * @returns {RadioQuestionForm} radio question form object
+ */
+export function yesNoQuestionForm(
+  field: Field,
+  errors: FieldValidationError[],
+  selectedValue?: unknown,
+): RadioQuestionForm<BooleanChoice> {
+  return radioQuestionForm(
+    field,
+    booleanChoices,
+    errors,
+    selectedValue,
+  );
 }

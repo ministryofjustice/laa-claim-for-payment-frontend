@@ -1,21 +1,17 @@
-import {
-  type BooleanChoice,
-  booleanChoices,
-} from "#src/models/booleanChoice.js";
 import type { ProfitCostDetailsForm } from "#src/helpers/profitCostDetailsValidation.js";
 import {
   type FieldValidationError,
   getErrorSummary,
 } from "#src/helpers/validation.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
-import { radioQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
+import {
+  radioQuestionForm,
+  yesNoQuestionForm,
+} from "#src/viewmodels/radioQuestionViewModel.js";
 import {
   clientStatusChoices,
-  clientStatusFieldName,
   courtTypeChoices,
-  courtTypeFieldName,
-  firstSolicitorFieldName,
-  transferOfSolicitorFieldName,
+  PROFIT_COST_DETAILS_FIELDS,
 } from "#src/controllers/poa/profitCostDetailsController.js";
 import type { ClientPartyStatus, CourtType } from "#src/types/Claim.js";
 
@@ -40,30 +36,24 @@ export class ProfitCostDetailsViewModel {
 
     this.form = {
       courtType: radioQuestionForm<CourtType>(
-        courtTypeFieldName,
-        courtTypeFieldName,
+        PROFIT_COST_DETAILS_FIELDS.courtType,
         courtTypeChoices,
         errors,
         form.courtTypeChoice,
       ),
       clientStatus: radioQuestionForm<ClientPartyStatus>(
-        clientStatusFieldName,
-        clientStatusFieldName,
+        PROFIT_COST_DETAILS_FIELDS.clientStatus,
         clientStatusChoices,
         errors,
         form.clientStatusChoice,
       ),
-      firstSolicitor: radioQuestionForm<BooleanChoice>(
-        firstSolicitorFieldName,
-        firstSolicitorFieldName,
-        booleanChoices,
+      firstSolicitor: yesNoQuestionForm(
+        PROFIT_COST_DETAILS_FIELDS.firstSolicitor,
         errors,
         form.firstSolicitorChoice,
       ),
-      transferOfSolicitor: radioQuestionForm<BooleanChoice>(
-        transferOfSolicitorFieldName,
-        transferOfSolicitorFieldName,
-        booleanChoices,
+      transferOfSolicitor: yesNoQuestionForm(
+        PROFIT_COST_DETAILS_FIELDS.transferOfSolicitor,
         errors,
         form.transferOfSolicitorChoice,
       ),

@@ -7,6 +7,12 @@ import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewMode
 import { BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
 import { LocalDate } from "#src/types/date.js";
 
+export interface Field {
+  messagePrefix: string;
+  name: string;
+  id: string;
+}
+
 export interface FieldValidationError {
   fieldName: string;
   href: string;
@@ -38,18 +44,13 @@ export function getStringValue(value: unknown): string {
 /**
  * Validate string input.
  * @param {unknown} value value to validate as string
- * @param {string} fieldName field name
- * @param {string} id ID of input
- * @param {string} messagePrefix message prefix for error messages
+ * @param {Field} field field
  * @param {RegExp} regex regex to validate input against
  * @returns {FieldValidationError[]} field validation errors
  */
-// eslint-disable-next-line @typescript-eslint/max-params -- ignore
 export function validateStringInput(
   value: unknown,
-  fieldName: string,
-  id: string,
-  messagePrefix: string,
+  field: Field,
   regex: RegExp,
 ): ValidationResult<string> {
   const stringValue = getStringValue(value);
@@ -59,10 +60,10 @@ export function validateStringInput(
       isValid: false,
       errors: [
         {
-          fieldName,
-          href: `#${id}`,
+          fieldName: field.name,
+          href: `#${field.id}`,
           text: {
-            key: `${messagePrefix}.errors.empty`,
+            key: `${field.messagePrefix}.errors.empty`,
           },
         },
       ],
@@ -74,10 +75,10 @@ export function validateStringInput(
       isValid: false,
       errors: [
         {
-          fieldName,
-          href: `#${id}`,
+          fieldName: field.name,
+          href: `#${field.id}`,
           text: {
-            key: `${messagePrefix}.errors.invalid`,
+            key: `${field.messagePrefix}.errors.invalid`,
           },
         },
       ],
@@ -95,16 +96,12 @@ export function validateStringInput(
 /**
  * Validate boolean input.
  * @param {unknown} value value to validate as boolean
- * @param {string} fieldName field name
- * @param {string} id ID of input
- * @param {string} messagePrefix message prefix for error messages
+ * @param {Field} field field
  * @returns {FieldValidationError[]} field validation errors
  */
 export function validateBooleanInput(
   value: unknown,
-  fieldName: string,
-  id: string,
-  messagePrefix: string,
+  field: Field,
 ): ValidationResult<boolean> {
   const selection: RadioQuestionOptions<BooleanChoice> | undefined = booleanChoices.find(
     (choice) => choice.value === value,
@@ -115,10 +112,10 @@ export function validateBooleanInput(
       isValid: false,
       errors: [
         {
-          fieldName,
-          href: `#${id}`,
+          fieldName: field.name,
+          href: `#${field.id}`,
           text: {
-            key: `${messagePrefix}.errors.empty`,
+            key: `${field.messagePrefix}.errors.empty`,
           },
         },
       ],
@@ -135,18 +132,13 @@ export function validateBooleanInput(
  * Validate radio input.
  * @param {ReadonlyArray<RadioQuestionOptions>} choices available radio options
  * @param {unknown} value value to validate as radio option
- * @param {string} fieldName field name
- * @param {string} id ID of input
- * @param {string} messagePrefix message prefix for error messages
+ * @param {Field} field field
  * @returns {FieldValidationError[]} field validation errors
  */
-// eslint-disable-next-line @typescript-eslint/max-params -- ignore
 export function validateRadioInput<T>(
   choices: ReadonlyArray<RadioQuestionOptions<T>>,
   value: unknown,
-  fieldName: string,
-  id: string,
-  messagePrefix: string,
+  field: Field,
 ): ValidationResult<T> {
   const selection: RadioQuestionOptions<T> | undefined = choices.find(
     (choice) => choice.value === value,
@@ -157,10 +149,10 @@ export function validateRadioInput<T>(
       isValid: false,
       errors: [
         {
-          fieldName,
-          href: `#${id}`,
+          fieldName: field.name,
+          href: `#${field.id}`,
           text: {
-            key: `${messagePrefix}.errors.empty`,
+            key: `${field.messagePrefix}.errors.empty`,
           },
         },
       ],
@@ -176,16 +168,12 @@ export function validateRadioInput<T>(
 /**
  * Validate monetary value input.
  * @param {unknown} value value to validate as monetary value
- * @param {string} fieldName field name
- * @param {string} id ID of input
- * @param {string} messagePrefix message prefix for error messages
+ * @param {Field} field field
  * @returns {FieldValidationError[]} field validation errors
  */
 export function validateMoneyInput(
   value: unknown,
-  fieldName: string,
-  id: string,
-  messagePrefix: string,
+  field: Field
 ): ValidationResult<number> {
   const stringValue = getStringValue(value);
 
@@ -194,10 +182,10 @@ export function validateMoneyInput(
       isValid: false,
       errors: [
         {
-          fieldName,
-          href: `#${id}`,
+          fieldName: field.name,
+          href: `#${field.id}`,
           text: {
-            key: `${messagePrefix}.errors.empty`,
+            key: `${field.messagePrefix}.errors.empty`,
           },
         },
       ],
@@ -209,10 +197,10 @@ export function validateMoneyInput(
       isValid: false,
       errors: [
         {
-          fieldName,
-          href: `#${id}`,
+          fieldName: field.name,
+          href: `#${field.id}`,
           text: {
-            key: `${messagePrefix}.errors.invalid`,
+            key: `${field.messagePrefix}.errors.invalid`,
           },
         },
       ],
@@ -226,10 +214,10 @@ export function validateMoneyInput(
       isValid: false,
       errors: [
         {
-          fieldName,
-          href: `#${id}`,
+          fieldName: field.name,
+          href: `#${field.id}`,
           text: {
-            key: `${messagePrefix}.errors.pence`,
+            key: `${field.messagePrefix}.errors.pence`,
           },
         },
       ],
@@ -248,9 +236,7 @@ export function validateMoneyInput(
  * @param {unknown} value.day day value
  * @param {unknown} value.month month value
  * @param {unknown} value.year year value
- * @param {string} fieldName field name
- * @param {string} id ID of input
- * @param {string} messagePrefix message prefix for error messages
+ * @param {Field} field field
  * @returns {FieldValidationError[]} field validation errors
  */
 export function validateDateInput(
@@ -259,9 +245,7 @@ export function validateDateInput(
     month: unknown;
     year: unknown;
   },
-  fieldName: string,
-  id: string,
-  messagePrefix: string,
+  field: Field,
 ): ValidationResult<LocalDate> {
   const day = getStringValue(value.day);
   const month = getStringValue(value.month);
@@ -283,10 +267,10 @@ export function validateDateInput(
         isValid: false,
         errors: [
           {
-            fieldName,
-            href: `#${id}-day`,
+            fieldName: field.name,
+            href: `#${field.id}-day`,
             text: {
-              key: `${messagePrefix}.errors.empty`,
+              key: `${field.messagePrefix}.errors.empty`,
             },
             fields: ["day", "month", "year"],
           },
@@ -300,10 +284,10 @@ export function validateDateInput(
       isValid: false,
       errors: [
         {
-          fieldName,
-          href: `#${id}-${missing[0]}`,
+          fieldName: field.name,
+          href: `#${field.id}-${missing[0]}`,
           text: {
-            key: `${messagePrefix}.errors.incomplete.${errorKey}`,
+            key: `${field.messagePrefix}.errors.incomplete.${errorKey}`,
           },
           fields: missing,
         },
@@ -322,10 +306,10 @@ export function validateDateInput(
       isValid: false,
       errors: [
         {
-          fieldName,
-          href: `#${id}-day`,
+          fieldName: field.name,
+          href: `#${field.id}-day`,
           text: {
-            key: `${messagePrefix}.errors.invalid`,
+            key: `${field.messagePrefix}.errors.invalid`,
           },
           fields: ["day", "month", "year"],
         },
@@ -341,10 +325,10 @@ export function validateDateInput(
         isValid: false,
         errors: [
           {
-            fieldName,
-            href: `#${id}-day`,
+            fieldName: field.name,
+            href: `#${field.id}-day`,
             text: {
-              key: `${messagePrefix}.errors.future`,
+              key: `${field.messagePrefix}.errors.future`,
             },
             fields: ["day", "month", "year"],
           },
@@ -361,10 +345,10 @@ export function validateDateInput(
       isValid: false,
       errors: [
         {
-          fieldName,
-          href: `#${id}-day`,
+          fieldName: field.name,
+          href: `#${field.id}-day`,
           text: {
-            key: `${messagePrefix}.errors.invalid`,
+            key: `${field.messagePrefix}.errors.invalid`,
           },
           fields: ["day", "month", "year"],
         },
@@ -384,14 +368,14 @@ function buildMissingDateKey(parts: string[]): string {
 /**
  * Find the field validation error for a given field name.
  * @param {FieldValidationError[]} errors field validation errors
- * @param {string} fieldName field name
+ * @param {Field} field field
  * @returns {FieldValidationError} field validation error
  */
 export function getError(
   errors: FieldValidationError[],
-  fieldName: string,
+  field: Field,
 ): FieldValidationError | undefined {
-  return errors.find((item) => item.fieldName === fieldName);
+  return errors.find((item) => item.fieldName === field.name);
 }
 
 /**

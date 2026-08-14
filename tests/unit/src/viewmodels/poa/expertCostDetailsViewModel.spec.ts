@@ -35,7 +35,7 @@ describe("expertCostDetailsViewModel constructor", () => {
       },
       vatApplies: {
         fieldName: "vatApplies",
-        fieldId: "vatApplies",
+        fieldId: "vat-applies",
         choices: [
           {
             value: "yes",
@@ -114,7 +114,7 @@ describe("expertCostDetailsViewModel constructor", () => {
       },
       vatApplies: {
         fieldName: "vatApplies",
-        fieldId: "vatApplies",
+        fieldId: "vat-applies",
         choices: [
           {
             value: "yes",

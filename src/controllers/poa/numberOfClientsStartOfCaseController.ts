@@ -4,38 +4,40 @@ import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewMode
 import { UUID } from "uuidv7";
 import { Count } from "#src/types/Claim.js";
 
-const numberOfClientsStartOfCaseFieldName =
-  "numberOfClientsStartOfCase" as const;
+const PREFIX = "pages.numberOfClientsStartOfCase" as const;
+
+export const NUMBER_OF_CLIENTS_START_OF_CASE_FIELD = {
+  name: "numberOfClientsStartOfCase",
+  id: "numberOfClientsStartOfCase",
+  messagePrefix: PREFIX,
+} as const;
 
 const numberOfClientsStartOfCaseChoices: ReadonlyArray<RadioQuestionOptions<Count>> =
   [
     {
       value: Count.ZERO,
       text: {
-        key: "pages.numberOfClientsStartOfCase.ZERO.text",
+        key: `${PREFIX}.ZERO.text`,
       },
     },
     {
       value: Count.ONE,
       text: {
-        key: "pages.numberOfClientsStartOfCase.ONE.text",
+        key: `${PREFIX}.ONE.text`,
       },
     },
     {
       value: Count.TWO_OR_MORE,
       text: {
-        key: "pages.numberOfClientsStartOfCase.TWO_OR_MORE.text",
+        key: `${PREFIX}.TWO_OR_MORE.text`,
       },
     },
   ];
 
 const controller = createRadioQuestionController({
-  title: {
-    key: "pages.numberOfClientsStartOfCase.title",
-  },
-  fieldName: numberOfClientsStartOfCaseFieldName,
+  title: `${PREFIX}.title`,
+  field: NUMBER_OF_CLIENTS_START_OF_CASE_FIELD,
   choices: numberOfClientsStartOfCaseChoices,
-  messagePrefix: "pages.numberOfClientsStartOfCase",
   renderErrorContext: "rendering number of clients start of case page",
   submitErrorContext: "submitting number of clients start of case page",
   getRedirectUrl: (req) =>

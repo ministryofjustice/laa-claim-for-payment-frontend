@@ -147,3 +147,33 @@ function getLineItemId(req: Request): UUID | undefined {
     ? UUID.parse(req.query.lineItemId)
     : undefined;
 }
+
+const PAGE_PREFIX = "pages.poa.expertCostDetails" as const;
+
+export const EXPERT_COST_DETAILS_FIELDS = {
+  activityDate: {
+    name: "activityDate",
+    id: "activity-date",
+    messagePrefix: `${PAGE_PREFIX}.activityDate`,
+  },
+  actualNetValue: {
+    name: "actualNetValue",
+    id: "actual-net-value",
+    messagePrefix: `${PAGE_PREFIX}.actualNetValue`,
+  },
+  vatApplies: {
+    name: "vatApplies",
+    id: "vat-applies",
+    messagePrefix: `${PAGE_PREFIX}.vatApplies`,
+  },
+  feeEarnerName: {
+    name: "feeEarnerName",
+    id: "fee-earner-name",
+    messagePrefix: `${PAGE_PREFIX}.feeEarnerName`,
+  },
+  description: {
+    name: "description",
+    id: "description",
+    messagePrefix: `${PAGE_PREFIX}.description`,
+  },
+} as const;

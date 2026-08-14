@@ -8,6 +8,7 @@ import type { ProfitCostDetails } from "#src/types/poa.js";
 import {
   clientStatusChoices,
   courtTypeChoices,
+  PROFIT_COST_DETAILS_FIELDS,
 } from "#src/controllers/poa/profitCostDetailsController.js";
 
 export interface ProfitCostDetailsForm {
@@ -30,28 +31,20 @@ export function validateProfitCostDetails(
     courtType: validateRadioInput(
       courtTypeChoices,
       form.courtTypeChoice,
-      "courtTypeChoice",
-      "courtTypeChoice",
-      "pages.profitCostDetails.courtType",
+      PROFIT_COST_DETAILS_FIELDS.courtType,
     ),
     clientStatus: validateRadioInput(
       clientStatusChoices,
       form.clientStatusChoice,
-      "clientStatusChoice",
-      "clientStatusChoice",
-      "pages.profitCostDetails.clientStatus",
+      PROFIT_COST_DETAILS_FIELDS.clientStatus,
     ),
     firstSolicitor: validateBooleanInput(
       form.firstSolicitorChoice,
-      "firstSolicitorChoice",
-      "firstSolicitorChoice",
-      "pages.profitCostDetails.firstSolicitor",
+      PROFIT_COST_DETAILS_FIELDS.firstSolicitor,
     ),
     transferOfSolicitor: validateBooleanInput(
       form.transferOfSolicitorChoice,
-      "transferOfSolicitorChoice",
-      "transferOfSolicitorChoice",
-      "pages.profitCostDetails.transferOfSolicitor",
+      PROFIT_COST_DETAILS_FIELDS.transferOfSolicitor,
     ),
   });
 }

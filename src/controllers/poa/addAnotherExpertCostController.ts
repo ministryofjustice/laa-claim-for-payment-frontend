@@ -7,9 +7,6 @@ import { claimService } from "#src/services/claimService.js";
 import { AddAnotherExpertCostViewModel } from "#src/viewmodels/poa/addAnotherLineItemViewModel.js";
 import type { Claim, ExpertCostLineItem } from "#src/types/Claim.js";
 
-export const addAnotherExpertCostFieldName = "addAnother" as const;
-export const addAnotherExpertCostFieldId = "add-another" as const;
-
 /**
  * get add another expert cost view
  * @param {Request} req Express request object
@@ -72,13 +69,11 @@ export async function submitAddAnotherExpertCost(
 ): Promise<void> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[addAnotherExpertCostFieldName];
+    const selectedChoice: unknown = req.body?.[ADD_ANOTHER_EXPERT_COST_FIELD.name];
 
     const validationResult = validateBooleanInput(
       selectedChoice,
-      addAnotherExpertCostFieldName,
-      addAnotherExpertCostFieldId,
-      "pages.poa.expertCostDetails.addAnother",
+      ADD_ANOTHER_EXPERT_COST_FIELD,
     );
 
     const claimId = UUID.parse(req.params.claimId);
@@ -130,3 +125,9 @@ function getLineItems(claim: Claim): ExpertCostLineItem[] {
     (lineItem) => lineItem as ExpertCostLineItem,
   );
 }
+
+export const ADD_ANOTHER_EXPERT_COST_FIELD = {
+  name: "addAnother",
+  id: "add-another",
+  messagePrefix: "pages.poa.expertCostDetails.addAnother",
+} as const;

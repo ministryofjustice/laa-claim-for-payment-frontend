@@ -7,42 +7,44 @@ import {
   RadioQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
 import { expect } from "chai";
+import { Field } from "#src/helpers/validation.js";
 
 const testFieldName = "test" as const;
 
-  const TestChoice = {
-    First: "first",
-    Second: "second",
-  } as const;
+const testField: Field = {
+  messagePrefix: "prefix",
+  name: testFieldName,
+  id: "id",
+}
 
-  type TestChoice =
-    (typeof TestChoice)[keyof typeof TestChoice];
+const TestChoice = {
+  First: "first",
+  Second: "second",
+} as const;
 
-  const testChoices: RadioQuestionOptions<TestChoice>[] = [
-    {
-      value: TestChoice.First,
-      text: {
-        key: "first text"
-      },
+type TestChoice = (typeof TestChoice)[keyof typeof TestChoice];
+
+const testChoices: RadioQuestionOptions<TestChoice>[] = [
+  {
+    value: TestChoice.First,
+    text: {
+      key: "first text",
     },
-      {
-      value: TestChoice.Second,
-      text: {
-        key: "second text"
-      },
+  },
+  {
+    value: TestChoice.Second,
+    text: {
+      key: "second text",
     },
-  ] as const;
+  },
+] as const;
 
 describe("radioQuestionViewModel()", () => {
-
   it("creates the form field name", () => {
     const viewModel = new RadioQuestionViewModel({
-      title: {
-        key: "test title"
-      },
-      fieldName: testFieldName,
-      fieldId: testFieldName,
-      choices: testChoices
+      title: "test",
+      field: testField,
+      choices: testChoices,
     });
 
     expect(viewModel.form.fieldName).to.equal(testFieldName);
@@ -51,25 +53,22 @@ describe("radioQuestionViewModel()", () => {
 
   it("creates the radio choices", () => {
     const viewModel = new RadioQuestionViewModel({
-      title: {
-        key: "test title"
-      },
-      fieldName: testFieldName,
-      fieldId: testFieldName,
-      choices: testChoices
+      title: "test",
+      field: testField,
+      choices: testChoices,
     });
 
     expect(viewModel.form.choices).to.have.length(2);
 
     expect(viewModel.form.choices[0].value).to.equal("first");
     expect(viewModel.form.choices[0].text).to.deep.equal({
-      key: "first text"
+      key: "first text",
     });
     expect(viewModel.form.choices[0].checked).to.equal(false);
 
     expect(viewModel.form.choices[1].value).to.equal("second");
     expect(viewModel.form.choices[1].text).to.deep.equal({
-      key: "second text"
+      key: "second text",
     });
     expect(viewModel.form.choices[1].checked).to.equal(false);
   });
@@ -79,52 +78,45 @@ describe("radioQuestionViewModel()", () => {
       {
         value: TestChoice.First,
         text: {
-          key: "first text"
+          key: "first text",
         },
         hint: {
           text: {
-            key: "hint 1"
-          }
-        }
+            key: "hint 1",
+          },
+        },
       },
-        {
+      {
         value: TestChoice.Second,
         text: {
-          key: "second text"
+          key: "second text",
         },
         hint: {
           text: {
-            key: "hint 2"
-          }
-        }
+            key: "hint 2",
+          },
+        },
       },
     ] as const;
 
     const viewModel = new RadioQuestionViewModel({
-      title: {
-        key: "test title"
-      },
-      fieldName: testFieldName,
-      fieldId: testFieldName,
-      choices: testChoices
+      title: "test",
+      field: testField,
+      choices: testChoices,
     });
-
 
     expect(viewModel.form.choices[0].hint?.text).to.deep.equal({
-      key: "hint 1"
+      key: "hint 1",
     });
     expect(viewModel.form.choices[1].hint?.text).to.deep.equal({
-      key: "hint 2"
+      key: "hint 2",
     });
   });
 
   it("marks the selected choice as checked", () => {
     const viewModel = new RadioQuestionViewModel({
-      title: {
-        key: "test title"
-      },
-      fieldName: testFieldName,
-      fieldId: testFieldName,
+      title: "test",
+      field: testField,
       choices: testChoices,
       selectedValue: TestChoice.Second,
     });
@@ -135,11 +127,8 @@ describe("radioQuestionViewModel()", () => {
 
   it("adds an error when provided", () => {
     const viewModel = new RadioQuestionViewModel({
-      title: {
-        key: "test title"
-      },
-      fieldName: testFieldName,
-      fieldId: testFieldName,
+      title: "test",
+      field: testField,
       choices: testChoices,
       selectedValue: TestChoice.First,
       errors: [
@@ -147,14 +136,14 @@ describe("radioQuestionViewModel()", () => {
           fieldName: testFieldName,
           href: "#field-name",
           text: {
-            key: "some.errors.empty"
+            key: "some.errors.empty",
           },
-        }
+        },
       ],
     });
 
     expect(viewModel.form.error?.text).to.deep.equal({
-      key: "some.errors.empty"
+      key: "some.errors.empty",
     });
   });
 });

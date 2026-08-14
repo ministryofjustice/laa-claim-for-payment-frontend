@@ -8,6 +8,7 @@ import {
 } from "#src/helpers/validation.js";
 import type { ExpertCostDetails } from "#src/types/poa.js";
 import type { LocalDate } from "#src/types/date.js";
+import { EXPERT_COST_DETAILS_FIELDS } from "#src/controllers/poa/expertCostDetailsController.js";
 
 export interface ExpertCostDetailsForm {
   activityDateDay?: unknown;
@@ -49,36 +50,28 @@ function validateActivityDate(
       month: form.activityDateMonth,
       year: form.activityDateYear,
     },
-    "activityDate",
-    "activity-date",
-    "pages.poa.expertCostDetails.activityDate",
+    EXPERT_COST_DETAILS_FIELDS.activityDate,
   );
 }
 
 function validateActualNetValue(value: unknown): ValidationResult<number> {
   return validateMoneyInput(
     value,
-    "actualNetValue",
-    "actual-net-value",
-    "pages.poa.expertCostDetails.actualNetValue",
+    EXPERT_COST_DETAILS_FIELDS.actualNetValue,
   );
 }
 
 function validateVatApplies(value: unknown): ValidationResult<boolean> {
   return validateBooleanInput(
     value,
-    "vatApplies",
-    "vat-applies",
-    "pages.poa.expertCostDetails.vatApplies",
+    EXPERT_COST_DETAILS_FIELDS.vatApplies,
   );
 }
 
 function validateFeeEarnerName(value: unknown): ValidationResult<string> {
   return validateStringInput(
     value,
-    "feeEarnerName",
-    "fee-earner-name",
-    "pages.poa.expertCostDetails.feeEarnerName",
+    EXPERT_COST_DETAILS_FIELDS.feeEarnerName,
     FEE_EARNER_NAME_REGEX,
   );
 }
@@ -86,9 +79,7 @@ function validateFeeEarnerName(value: unknown): ValidationResult<string> {
 function validateDescription(value: unknown): ValidationResult<string> {
   return validateStringInput(
     value,
-    "description",
-    "description",
-    "pages.poa.expertCostDetails.description",
+    EXPERT_COST_DETAILS_FIELDS.description,
     DESCRIPTION_REGEX,
   );
 }

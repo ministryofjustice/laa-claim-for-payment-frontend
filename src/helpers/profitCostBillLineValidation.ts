@@ -8,6 +8,7 @@ import {
 } from "#src/helpers/validation.js";
 import type { ProfitCostBillLine } from "#src/types/poa.js";
 import type { LocalDate } from "#src/types/date.js";
+import { PROFIT_COST_BILL_LINE_FIELDS } from "#src/controllers/poa/profitCostBillLineController.js";
 
 export interface ProfitCostBillLineForm {
   activityDateDay?: unknown;
@@ -53,9 +54,7 @@ function validateActivityDate(
       month: form.activityDateMonth,
       year: form.activityDateYear,
     },
-    "activityDate",
-    "activityDate",
-    "pages.profitCostBillLine.activityDate",
+    PROFIT_COST_BILL_LINE_FIELDS.activityDate,
   );
 }
 
@@ -64,9 +63,7 @@ function validateActualNetProfitCostExcludingAdvocacy(
 ): ValidationResult<number> {
   return validateMoneyInput(
     value,
-    "actualNetProfitCostExcludingAdvocacy",
-    "actualNetProfitCostExcludingAdvocacy",
-    "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy",
+    PROFIT_COST_BILL_LINE_FIELDS.actualNetProfitCostExcludingAdvocacy,
   );
 }
 
@@ -75,27 +72,21 @@ function validateActualNetAdvocacyCosts(
 ): ValidationResult<number> {
   return validateMoneyInput(
     value,
-    "actualNetAdvocacyCosts",
-    "actualNetAdvocacyCosts",
-    "pages.profitCostBillLine.actualNetAdvocacyCosts",
+    PROFIT_COST_BILL_LINE_FIELDS.actualNetAdvocacyCosts,
   );
 }
 
 function validateVatApplies(value: unknown): ValidationResult<boolean> {
   return validateBooleanInput(
     value,
-    "vatApplies",
-    "vatApplies",
-    "pages.profitCostBillLine.vatApplies",
+    PROFIT_COST_BILL_LINE_FIELDS.vatApplies,
   );
 }
 
 function validateFeeEarnerName(value: unknown): ValidationResult<string> {
   return validateStringInput(
     value,
-    "feeEarnerName",
-    "feeEarnerName",
-    "pages.profitCostBillLine.feeEarnerName",
+    PROFIT_COST_BILL_LINE_FIELDS.feeEarnerName,
     FEE_EARNER_NAME_REGEX,
   );
 }

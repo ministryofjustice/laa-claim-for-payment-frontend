@@ -4,17 +4,15 @@ import {
   type RadioQuestionOptions,
   RadioQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
-import { validateRadioInput } from "#src/helpers/validation.js";
-import type { Message } from "#src/viewmodels/components/message.js";
+import { type Field, validateRadioInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import type { Claim } from "#src/types/Claim.js";
 
 interface RadioQuestionControllerParams<ChoiceType extends string> {
-  title: Message;
-  fieldName: string;
+  title: string;
+  field: Field;
   choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
-  messagePrefix: string;
   renderErrorContext: string;
   submitErrorContext: string;
   getRedirectUrl: (req: Request, selectedChoice: ChoiceType) => string;
@@ -30,9 +28,8 @@ interface RadioQuestionControllerParams<ChoiceType extends string> {
  */
 export function createRadioQuestionController<ChoiceType extends string>({
   title,
-  fieldName,
+  field,
   choices,
-  messagePrefix,
   renderErrorContext,
   submitErrorContext,
   getRedirectUrl,
@@ -57,14 +54,18 @@ export function createRadioQuestionController<ChoiceType extends string>({
             csrfToken: res.locals.csrfToken,
             vm: new RadioQuestionViewModel({
               title,
-              fieldName,
-              fieldId: fieldName,
+              field,
               choices,
               selectedValue: getValue(claim.body),
             }),
           });
         } else {
-          next(processApiError(claim, `retrieving claim for ${renderErrorContext}`));
+          next(
+            processApiError(
+              claim,
+              `retrieving claim for ${renderErrorContext}`,
+            ),
+          );
         }
       } catch (error) {
         next(processError(error, renderErrorContext));
@@ -74,14 +75,12 @@ export function createRadioQuestionController<ChoiceType extends string>({
     async post(req: Request, res: Response, next: NextFunction): Promise<void> {
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-        const selectedChoice: unknown = req.body?.[fieldName];
+        const selectedChoice: unknown = req.body?.[field.name];
 
         const validationResult = validateRadioInput(
           choices,
           selectedChoice,
-          fieldName,
-          fieldName,
-          messagePrefix,
+          field,
         );
 
         if (!validationResult.isValid) {
@@ -89,11 +88,8 @@ export function createRadioQuestionController<ChoiceType extends string>({
             csrfToken: res.locals.csrfToken,
             vm: new RadioQuestionViewModel({
               title,
-              fieldName,
-              fieldId: fieldName,
+              field,
               choices,
-              selectedValue:
-                typeof selectedChoice === "string" ? selectedChoice : undefined,
               errors: validationResult.errors,
             }),
           });
@@ -115,7 +111,12 @@ export function createRadioQuestionController<ChoiceType extends string>({
 
           res.redirect(getRedirectUrl(req, validationResult.value));
         } else {
-          next(processApiError(claim, `retrieving claim for ${submitErrorContext}`));
+          next(
+            processApiError(
+              claim,
+              `retrieving claim for ${submitErrorContext}`,
+            ),
+          );
         }
       } catch (error) {
         next(processError(error, submitErrorContext));

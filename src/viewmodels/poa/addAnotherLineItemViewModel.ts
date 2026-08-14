@@ -12,11 +12,8 @@ import {
   booleanChoices,
 } from "#src/models/booleanChoice.js";
 import type { FieldValidationError } from "#src/helpers/validation.js";
-import {
-  addAnotherExpertCostFieldId,
-  addAnotherExpertCostFieldName,
-} from "#src/controllers/poa/addAnotherExpertCostController.js";
 import { formatClaimed, formatDateReadable } from "#src/helpers/index.js";
+import { ADD_ANOTHER_EXPERT_COST_FIELD } from "#src/controllers/poa/addAnotherExpertCostController.js";
 
 interface AddAnotherLineItemViewModelParams<T extends LineItem> {
   claimId: string;
@@ -80,11 +77,8 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
     this.lineItemsSummaryList = buildSummaryList(summaryListId, rows);
 
     this.radioQuestionViewModel = new RadioQuestionViewModel({
-      title: {
-        key: `${prefix}.question`,
-      },
-      fieldName: addAnotherExpertCostFieldName,
-      fieldId: addAnotherExpertCostFieldId,
+      title: `${prefix}.question`,
+      field: ADD_ANOTHER_EXPERT_COST_FIELD,
       choices: booleanChoices,
       errors,
     });

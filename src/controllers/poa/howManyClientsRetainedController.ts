@@ -7,8 +7,6 @@ import { UUID } from "uuidv7";
 import { Count } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
 
-const howManyClientsRetainedFieldName = "howManyClientsRetained" as const;
-
 const howManyClientsRetainedChoices: ReadonlyArray<RadioQuestionOptions<Count>> =
   [
     {
@@ -54,11 +52,8 @@ export async function howManyClientsRetained(
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.howManyClientsRetained.title",
-          },
-          fieldName: howManyClientsRetainedFieldName,
-          fieldId: howManyClientsRetainedFieldName,
+          title: `${PREFIX}.title`,
+          field: HOW_MANY_CLIENTS_RETAINED_FIELD,
           choices: howManyClientsRetainedChoices,
           selectedValue: claim.body.clientsRetainedCount,
         }),
@@ -85,28 +80,21 @@ export async function submitHowManyClientsRetained(
 ): Promise<void> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[howManyClientsRetainedFieldName];
+    const selectedChoice: unknown = req.body?.[HOW_MANY_CLIENTS_RETAINED_FIELD.name];
 
     const validationResult = validateRadioInput(
       howManyClientsRetainedChoices,
       selectedChoice,
-      howManyClientsRetainedFieldName,
-      howManyClientsRetainedFieldName,
-      "pages.howManyClientsRetained",
+      HOW_MANY_CLIENTS_RETAINED_FIELD,
     );
 
     if (!validationResult.isValid) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.howManyClientsRetained.title"
-          },
-          fieldName: howManyClientsRetainedFieldName,
-          fieldId: howManyClientsRetainedFieldName,
+          title: `${PREFIX}.title`,
+          field: HOW_MANY_CLIENTS_RETAINED_FIELD,
           choices: howManyClientsRetainedChoices,
-          selectedValue:
-            typeof selectedChoice === "string" ? selectedChoice : undefined,
           errors: validationResult.errors,
         }),
       });
@@ -145,3 +133,11 @@ export async function submitHowManyClientsRetained(
     next(processedError);
   }
 }
+
+const PREFIX = "pages.howManyClientsRetained" as const;
+
+export const HOW_MANY_CLIENTS_RETAINED_FIELD = {
+  name: "howManyClientsRetained",
+  id: "howManyClientsRetained",
+  messagePrefix: PREFIX,
+} as const;

@@ -157,3 +157,33 @@ export async function submitProfitCostBillLine(
     next(processError(error, "submitting profit cost bill line page"));
   }
 }
+
+const PAGE_PREFIX = "pages.profitCostBillLine" as const;
+
+export const PROFIT_COST_BILL_LINE_FIELDS = {
+  activityDate: {
+    name: "activityDate",
+    id: "activityDate",
+    messagePrefix: `${PAGE_PREFIX}.activityDate`,
+  },
+  actualNetProfitCostExcludingAdvocacy: {
+    name: "actualNetProfitCostExcludingAdvocacy",
+    id: "actualNetProfitCostExcludingAdvocacy",
+    messagePrefix: `${PAGE_PREFIX}.actualNetProfitCostExcludingAdvocacy`,
+  },
+  actualNetAdvocacyCosts: {
+    name: "actualNetAdvocacyCosts",
+    id: "actualNetAdvocacyCosts",
+    messagePrefix: `${PAGE_PREFIX}.actualNetAdvocacyCosts`,
+  },
+  vatApplies: {
+    name: "vatApplies",
+    id: "vatApplies",
+    messagePrefix: `${PAGE_PREFIX}.vatApplies`,
+  },
+  feeEarnerName: {
+    name: "feeEarnerName",
+    id: "feeEarnerName",
+    messagePrefix: `${PAGE_PREFIX}.feeEarnerName`,
+  },
+} as const;

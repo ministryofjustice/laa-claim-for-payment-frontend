@@ -37,11 +37,8 @@ export async function confirmRemoveExpertLineItem(
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.poa.removeExpertLineItem.title",
-          },
-          fieldName: confirmRemoveExpertLineItemFieldName,
-          fieldId: confirmRemoveExpertLineItemFieldName,
+          title: `${PREFIX}.title`,
+          field: REMOVE_EXPERT_LINE_ITEM_FIELD,
           choices: booleanChoices,
         }),
       });
@@ -81,23 +78,16 @@ export async function submitRemoveExpertLineItem(
 
     const validationResult = validateBooleanInput(
       selectedChoice,
-      confirmRemoveExpertLineItemFieldName,
-      confirmRemoveExpertLineItemFieldName,
-      "pages.poa.removeExpertLineItem",
+      REMOVE_EXPERT_LINE_ITEM_FIELD,
     );
 
     if (!validationResult.isValid) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.poa.removeExpertLineItem.title",
-          },
-          fieldName: confirmRemoveExpertLineItemFieldName,
-          fieldId: confirmRemoveExpertLineItemFieldName,
+          title: `${PREFIX}.title`,
+          field: REMOVE_EXPERT_LINE_ITEM_FIELD,
           choices: booleanChoices,
-          selectedValue:
-            typeof selectedChoice === "string" ? selectedChoice : undefined,
           errors: validationResult.errors,
         }),
       });
@@ -137,4 +127,12 @@ export async function submitRemoveExpertLineItem(
       next(processedError);
   }
 }
+
+const PREFIX = "pages.poa.removeExpertLineItem" as const;
+
+export const REMOVE_EXPERT_LINE_ITEM_FIELD = {
+  name: "confirmRemoveExpertLineItem",
+  id: "confirmRemoveExpertLineItem",
+  messagePrefix: PREFIX,
+} as const;
 

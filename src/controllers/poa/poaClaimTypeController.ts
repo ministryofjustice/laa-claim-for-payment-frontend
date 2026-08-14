@@ -11,8 +11,6 @@ import { CostType } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
 import { draftService } from "#src/services/draftService.js";
 
-const poaClaimTypeFieldName = "poaClaimType" as const;
-
 const poaClaimTypeChoices: ReadonlyArray<RadioQuestionOptions<CostType>> = [
   {
     value: CostType.PROFIT_COST,
@@ -58,11 +56,8 @@ export async function poaClaimTypePage(
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.poaClaimType.title",
-          },
-          fieldName: poaClaimTypeFieldName,
-          fieldId: poaClaimTypeFieldName,
+          title: `${PREFIX}.title`,
+          field: COST_TYPE_FIELD,
           choices: poaClaimTypeChoices,
           selectedValue: claim.body.costType,
         }),
@@ -94,28 +89,21 @@ export async function submitPoaClaimType(
 ): Promise<void> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[poaClaimTypeFieldName];
+    const selectedChoice: unknown = req.body?.[COST_TYPE_FIELD.name];
 
     const validationResult = validateRadioInput(
       poaClaimTypeChoices,
       selectedChoice,
-      poaClaimTypeFieldName,
-      poaClaimTypeFieldName,
-      "pages.poaClaimType",
+      COST_TYPE_FIELD,
     );
 
     if (!validationResult.isValid) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.poaClaimType.title",
-          },
-          fieldName: poaClaimTypeFieldName,
-          fieldId: poaClaimTypeFieldName,
+          title: `${PREFIX}.title`,
+          field: COST_TYPE_FIELD,
           choices: poaClaimTypeChoices,
-          selectedValue:
-            typeof selectedChoice === "string" ? selectedChoice : undefined,
           errors: validationResult.errors,
         }),
       });
@@ -162,3 +150,11 @@ export async function submitPoaClaimType(
     next(processError(error, "submitting POA claim type page"));
   }
 }
+
+const PREFIX = "pages.poaClaimType" as const;
+
+export const COST_TYPE_FIELD = {
+  name: "poaClaimType",
+  id: "poaClaimType",
+  messagePrefix: PREFIX,
+} as const;

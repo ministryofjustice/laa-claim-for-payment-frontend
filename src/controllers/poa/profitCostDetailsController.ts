@@ -109,6 +109,31 @@ export async function submitProfitCostDetails(
   }
 }
 
+const PAGE_PREFIX = "pages.profitCostDetails" as const;
+
+export const PROFIT_COST_DETAILS_FIELDS = {
+  courtType: {
+    name: "courtTypeChoice",
+    id: "courtTypeChoice",
+    messagePrefix: `${PAGE_PREFIX}.courtType`,
+  },
+  clientStatus: {
+    name: "clientStatusChoice",
+    id: "clientStatusChoice",
+    messagePrefix: `${PAGE_PREFIX}.clientStatus`,
+  },
+  firstSolicitor: {
+    name: "firstSolicitorChoice",
+    id: "firstSolicitorChoice",
+    messagePrefix: `${PAGE_PREFIX}.firstSolicitor`,
+  },
+  transferOfSolicitor: {
+    name: "transferOfSolicitorChoice",
+    id: "transferOfSolicitorChoice",
+    messagePrefix: `${PAGE_PREFIX}.transferOfSolicitor`,
+  },
+} as const;
+
 export const courtTypeFieldName = "courtTypeChoice" as const;
 export const clientStatusFieldName = "clientStatusChoice" as const;
 export const firstSolicitorFieldName = "firstSolicitorChoice" as const;

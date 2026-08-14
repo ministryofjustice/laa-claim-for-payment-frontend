@@ -6,9 +6,9 @@ import {
   getStringValue,
 } from "#src/helpers/validation.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
-import { radioQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
-import { type BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
+import { yesNoQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { UUID } from "uuidv7";
+import { EXPERT_COST_DETAILS_FIELDS } from "#src/controllers/poa/expertCostDetailsController.js";
 
 export interface ExpertCostDetailsViewModelParams {
   claimId: UUID;
@@ -44,26 +44,24 @@ export class ExpertCostDetailsViewModel {
           month: getStringValue(form.activityDateMonth),
           year: getStringValue(form.activityDateYear),
         },
-        error: getError(errors, "activityDate"),
+        error: getError(errors, EXPERT_COST_DETAILS_FIELDS.activityDate),
       },
       actualNetValue: {
         value: getStringValue(form.actualNetValue),
-        error: getError(errors, "actualNetValue"),
+        error: getError(errors, EXPERT_COST_DETAILS_FIELDS.actualNetValue),
       },
-      vatApplies: radioQuestionForm<BooleanChoice>(
-        "vatApplies",
-        "vatApplies",
-        booleanChoices,
+      vatApplies: yesNoQuestionForm(
+        EXPERT_COST_DETAILS_FIELDS.vatApplies,
         errors,
         form.vatApplies,
       ),
       feeEarnerName: {
         value: getStringValue(form.feeEarnerName),
-        error: getError(errors, "feeEarnerName"),
+        error: getError(errors, EXPERT_COST_DETAILS_FIELDS.feeEarnerName),
       },
       description: {
         value: getStringValue(form.description),
-        error: getError(errors, "description"),
+        error: getError(errors, EXPERT_COST_DETAILS_FIELDS.description),
       },
     };
 

@@ -8,8 +8,6 @@ import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { formatBooleanChoice } from "#src/helpers/dataFormatters.js";
 
-const multipleClientHearingsFieldName = "multipleClientHearings" as const;
-
 /**
  * get how many clients retained view
  * @param {Request} req Express request object
@@ -33,11 +31,8 @@ export async function multipleClientHearings(
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.multipleClientHearings.title",
-          },
-          fieldName: multipleClientHearingsFieldName,
-          fieldId: multipleClientHearingsFieldName,
+          title: `${PREFIX}.title`,
+          field: MULTIPLE_CLIENT_HEARINGS_FIELD,
           choices: booleanChoices,
           selectedValue: formatBooleanChoice(claim.body.multiClientHearingFlag),
         }),
@@ -72,27 +67,20 @@ export async function submitMultipleClientHearings(
 ): Promise<void> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[multipleClientHearingsFieldName];
+    const selectedChoice: unknown = req.body?.[MULTIPLE_CLIENT_HEARINGS_FIELD.name];
 
     const validationResult = validateBooleanInput(
       selectedChoice,
-      multipleClientHearingsFieldName,
-      multipleClientHearingsFieldName,
-      "pages.multipleClientHearings",
+      MULTIPLE_CLIENT_HEARINGS_FIELD,
     );
 
     if (!validationResult.isValid) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.multipleClientHearings.title",
-          },
-          fieldName: multipleClientHearingsFieldName,
-          fieldId: multipleClientHearingsFieldName,
+          title: `${PREFIX}.title`,
+          field: MULTIPLE_CLIENT_HEARINGS_FIELD,
           choices: booleanChoices,
-          selectedValue:
-            typeof selectedChoice === "string" ? selectedChoice : undefined,
           errors: validationResult.errors,
         }),
       });
@@ -129,3 +117,11 @@ export async function submitMultipleClientHearings(
     next(processedError);
   }
 }
+
+const PREFIX = "pages.multipleClientHearings" as const;
+
+export const MULTIPLE_CLIENT_HEARINGS_FIELD = {
+  name: "multipleClientHearings",
+  id: "multipleClientHearings",
+  messagePrefix: PREFIX,
+} as const;
