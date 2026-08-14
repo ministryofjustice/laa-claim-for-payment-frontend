@@ -1,7 +1,3 @@
-import {
-  type BooleanChoice,
-  booleanChoices,
-} from "#src/models/booleanChoice.js";
 import type { ProfitCostDetailsForm } from "#src/helpers/profitCostDetailsValidation.js";
 import {
   type FieldValidationError,
@@ -10,7 +6,10 @@ import {
   getErrorSummary,
 } from "#src/helpers/validation.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
-import { radioQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
+import {
+  radioQuestionForm,
+  yesNoQuestionForm,
+} from "#src/viewmodels/radioQuestionViewModel.js";
 import {
   clientStatusChoices,
   clientStatusFieldName,
@@ -30,7 +29,6 @@ export interface ProfitCostDetailsViewModelParams {
  *
  */
 export class ProfitCostDetailsViewModel {
-  readonly prefix: string;
   readonly form;
   readonly errorSummary: ErrorSummary;
 
@@ -39,27 +37,27 @@ export class ProfitCostDetailsViewModel {
    * @param { ProfitCostDetailsViewModelParams } params The selected value and error state
    */
   constructor(params: ProfitCostDetailsViewModelParams = {}) {
-    const { form = {}, getErrors = (_: string) => [] } = params;
+    const { form = {}, getErrors = () => [] } = params;
 
-    this.prefix = "pages.profitCostDetails";
+    const prefix = "pages.profitCostDetails";
 
     const courtTypeError = getError(
-      getErrors(`${this.prefix}.courtType`),
+      getErrors(`${prefix}.courtType`),
       courtTypeFieldName,
     );
 
     const clientStatusError = getError(
-      getErrors(`${this.prefix}.clientStatus`),
+      getErrors(`${prefix}.clientStatus`),
       clientStatusFieldName,
     );
 
     const firstSolicitorError = getError(
-      getErrors(`${this.prefix}.firstSolicitor`),
+      getErrors(`${prefix}.firstSolicitor`),
       firstSolicitorFieldName,
     );
 
     const transferOfSolicitorError = getError(
-      getErrors(`${this.prefix}.transferOfSolicitor`),
+      getErrors(`${prefix}.transferOfSolicitor`),
       transferOfSolicitorFieldName,
     );
 
@@ -68,9 +66,7 @@ export class ProfitCostDetailsViewModel {
       clientStatusError,
       firstSolicitorError,
       transferOfSolicitorError,
-    ].filter(
-      (error): error is FieldValidationError => error !== undefined,
-    );
+    ].filter((error): error is FieldValidationError => error !== undefined);
 
     this.form = {
       courtType: radioQuestionForm<CourtType>(
@@ -87,17 +83,15 @@ export class ProfitCostDetailsViewModel {
         clientStatusError,
         form.clientStatusChoice,
       ),
-      firstSolicitor: radioQuestionForm<BooleanChoice>(
+      firstSolicitor: yesNoQuestionForm(
         firstSolicitorFieldName,
         firstSolicitorFieldName,
-        booleanChoices,
         firstSolicitorError,
         form.firstSolicitorChoice,
       ),
-      transferOfSolicitor: radioQuestionForm<BooleanChoice>(
+      transferOfSolicitor: yesNoQuestionForm(
         transferOfSolicitorFieldName,
         transferOfSolicitorFieldName,
-        booleanChoices,
         transferOfSolicitorError,
         form.transferOfSolicitorChoice,
       ),

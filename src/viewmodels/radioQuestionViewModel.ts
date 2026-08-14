@@ -6,6 +6,10 @@ import {
   getErrorSummary,
 } from "#src/helpers/validation.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
+import {
+  type BooleanChoice,
+  booleanChoices,
+} from "#src/models/booleanChoice.js";
 
 export interface RadioQuestionOptions<ChoiceType> {
   value: ChoiceType;
@@ -45,13 +49,13 @@ export class RadioQuestionViewModel<ChoiceType> {
     fieldId,
     choices,
     selectedValue,
-    getErrors = (_: string) => [],
+    getErrors = () => [],
   }: RadioQuestionViewModelParams<ChoiceType>) {
     this.title = {
       key: `${prefix}.question`,
     };
     this.choices = choices;
-    const errors= getErrors(prefix);
+    const errors = getErrors(prefix);
     this.form = radioQuestionForm<ChoiceType>(
       fieldName,
       fieldId,
@@ -59,7 +63,7 @@ export class RadioQuestionViewModel<ChoiceType> {
       getError(errors, fieldName),
       selectedValue,
     );
-    this.errorSummary = getErrorSummary(errors)
+    this.errorSummary = getErrorSummary(errors);
   }
 }
 
@@ -96,4 +100,27 @@ export function radioQuestionForm<ChoiceType>(
     })),
     error
   };
+}
+
+/**
+ * Yes/No question form builder.
+ * @param {string} fieldName field name
+ * @param {string} fieldId field ID
+ * @param {FieldValidationError | undefined} error error
+ * @param {unknown} selectedValue selected value
+ * @returns {RadioQuestionForm} radio question form object
+ */
+export function yesNoQuestionForm(
+  fieldName: string,
+  fieldId: string,
+  error?: FieldValidationError,
+  selectedValue?: unknown,
+): RadioQuestionForm<BooleanChoice> {
+  return radioQuestionForm(
+    fieldName,
+    fieldId,
+    booleanChoices,
+    error,
+    selectedValue,
+  );
 }

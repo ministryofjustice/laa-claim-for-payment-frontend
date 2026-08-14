@@ -132,7 +132,7 @@ describe("radioQuestionViewModel()", () => {
       fieldId: testFieldName,
       choices: testChoices,
       selectedValue: TestChoice.First,
-      getErrors: (_: string) => [
+      getErrors: () => [
         {
           fieldName: testFieldName,
           href: "#field-name",

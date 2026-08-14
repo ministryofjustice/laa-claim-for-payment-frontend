@@ -33,7 +33,7 @@ describe("ProfitCostDetailsViewModel", () => {
 
     it("adds an error when provided", () => {
       const vm = new ProfitCostDetailsViewModel({
-        getErrors: (_: string) => [
+        getErrors: () => [
           {
             fieldName: "courtTypeChoice",
             text: {
@@ -82,7 +82,7 @@ describe("ProfitCostDetailsViewModel", () => {
 
     it("adds an error when provided", () => {
       const vm = new ProfitCostDetailsViewModel({
-        getErrors: (_: string) => [
+        getErrors: () => [
           {
             fieldName: "clientStatusChoice",
             text: {
@@ -131,7 +131,7 @@ describe("ProfitCostDetailsViewModel", () => {
 
     it("adds an error when provided", () => {
       const vm = new ProfitCostDetailsViewModel({
-        getErrors: (_: string) => [
+        getErrors: () => [
           {
             fieldName: "firstSolicitorChoice",
             text: {
@@ -183,7 +183,7 @@ describe("ProfitCostDetailsViewModel", () => {
     });
     it("adds an error when provided", () => {
       const vm = new ProfitCostDetailsViewModel({
-        getErrors: (_: string) => [
+        getErrors: () => [
           {
             fieldName: "transferOfSolicitorChoice",
             text: {
@@ -206,7 +206,7 @@ describe("ProfitCostDetailsViewModel", () => {
 
   it("adds multiple errors to the error list", () => {
     const vm = new ProfitCostDetailsViewModel({
-      getErrors: (_: string) => [
+      getErrors: () => [
         {
           fieldName: "courtTypeChoice",
           href: "#",

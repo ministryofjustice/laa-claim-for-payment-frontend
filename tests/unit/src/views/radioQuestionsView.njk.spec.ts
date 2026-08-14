@@ -131,7 +131,7 @@ describe("views/main/radioQuestionsView.njk", () => {
         fieldName: "testField",
         fieldId: "test-field",
         choices: testChoices,
-        getErrors: (_: string) => [
+        getErrors: () => [
           {
             fieldName: "testField",
             href: "#test-field",

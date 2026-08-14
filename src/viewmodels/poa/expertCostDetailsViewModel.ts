@@ -7,11 +7,7 @@ import {
   getStringValue,
 } from "#src/helpers/validation.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
-import { radioQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
-import {
-  type BooleanChoice,
-  booleanChoices,
-} from "#src/models/booleanChoice.js";
+import { yesNoQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { UUID } from "uuidv7";
 
 export interface ExpertCostDetailsViewModelParams {
@@ -36,7 +32,7 @@ export class ExpertCostDetailsViewModel {
    * @param {ExpertCostDetailsViewModelParams} params View model params.
    */
   constructor(params: ExpertCostDetailsViewModelParams) {
-    const { claimId, form = {}, getErrors = (_: string) => [] } = params;
+    const { claimId, form = {}, getErrors = () => [] } = params;
 
     this.claimId = claimId.toString();
     const prefix = "pages.poa.expertCostDetails";
@@ -84,10 +80,9 @@ export class ExpertCostDetailsViewModel {
         value: getStringValue(form.actualNetValue),
         error: actualNetValueError,
       },
-      vatApplies: radioQuestionForm<BooleanChoice>(
+      vatApplies: yesNoQuestionForm(
         "vatApplies",
         "vatApplies",
-        booleanChoices,
         vatAppliesError,
         form.vatApplies,
       ),

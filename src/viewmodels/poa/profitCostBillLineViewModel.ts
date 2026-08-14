@@ -7,11 +7,7 @@ import {
   getStringValue,
 } from "#src/helpers/validation.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
-import { radioQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
-import {
-  type BooleanChoice,
-  booleanChoices,
-} from "#src/models/booleanChoice.js";
+import { yesNoQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { UUID } from "uuidv7";
 
 export interface ProfitCostBillLineViewModelParams {
@@ -37,7 +33,7 @@ export class ProfitCostBillLineViewModel {
   constructor({
     claimId,
     form = {},
-    getErrors = (_: string) => [],
+    getErrors = () => [],
   }: ProfitCostBillLineViewModelParams) {
     this.claimId = claimId.toString();
     const prefix = "pages.profitCostBillLine";
@@ -89,10 +85,9 @@ export class ProfitCostBillLineViewModel {
         value: getStringValue(form.actualNetAdvocacyCosts),
         error: actualNetAdvocacyCostsError,
       },
-      vatApplies: radioQuestionForm<BooleanChoice>(
+      vatApplies: yesNoQuestionForm(
         "vatApplies",
         "vatApplies",
-        booleanChoices,
         vatAppliesError,
         form.vatApplies,
       ),

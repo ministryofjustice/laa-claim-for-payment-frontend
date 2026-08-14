@@ -81,7 +81,7 @@ describe("profitCostBillLineViewModel constructor", () => {
         vatApplies: "yes",
         feeEarnerName: "Joe Bloggs",
       },
-      getErrors: (_: string) => [
+      getErrors: () => [
         {
           fieldName: "feeEarnerName",
           href: "#feeEarnerName",

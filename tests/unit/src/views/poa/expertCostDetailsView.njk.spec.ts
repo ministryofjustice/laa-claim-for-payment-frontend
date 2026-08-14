@@ -91,7 +91,7 @@ describe("views/main/poa/expertCostDetailsView.njk", () => {
         feeEarnerName: "",
         description: "",
       },
-      getErrors: (_: string) => [
+      getErrors: () => [
         {
           fieldName: "activityDate",
           href: "#activity-date-day",

@@ -143,7 +143,7 @@ describe("views/main/poa/profitCostBillLineView.njk with errors", () => {
           vatApplies: "",
           feeEarnerName: "",
         },
-        getErrors: (_: string) => [
+        getErrors: () => [
           {
             fieldName: "activityDate",
             href: "#activityDate-day",

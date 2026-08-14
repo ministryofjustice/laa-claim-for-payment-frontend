@@ -84,7 +84,7 @@ describe("expertCostDetailsViewModel constructor", () => {
         feeEarnerName: "Joe Bloggs",
         description: "",
       },
-      getErrors: (_: string) => [
+      getErrors: () => [
         {
           fieldName: "description",
           href: "#description",

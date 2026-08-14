@@ -126,7 +126,7 @@ describe("views/main/poa/profitCostDetailsView.njk", () => {
   describe("with errors", () => {
     beforeEach(async () => {
       const params: ProfitCostDetailsViewModelParams = {
-        getErrors: (_: string) => [
+        getErrors: () => [
           {
             fieldName: "courtTypeChoice",
             href: "#courtTypeChoice",
