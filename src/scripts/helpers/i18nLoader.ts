@@ -16,8 +16,7 @@ import i18next, {
 import path from 'node:path';
 import { readFileSync } from 'node:fs';
 import { LanguageDetector } from 'i18next-http-middleware';
-
-export const SUPPORTED_LANGUAGES: readonly string[] = ['en', 'cy'];
+import { SUPPORTED_LANGUAGES } from "#src/helpers/supportedLanguages.js";
 
 /**
  * Initialise i18next synchronously using Node.js fs methods
@@ -29,12 +28,12 @@ export function initializeI18nextSync(): void {
   for (const locale of SUPPORTED_LANGUAGES) {
     const localePath = path.join(
       process.cwd(),
-      'locales',
+      "locales",
       `${locale}.json`,
     );
 
     const localeResource: ResourceLanguage = JSON.parse(
-      readFileSync(localePath, 'utf8'),
+      readFileSync(localePath, "utf8"),
     );
 
     resources[locale] = localeResource;
