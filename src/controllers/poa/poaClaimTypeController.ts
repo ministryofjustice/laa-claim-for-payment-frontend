@@ -11,27 +11,6 @@ import { CostType } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
 import { draftService } from "#src/services/draftService.js";
 
-const poaClaimTypeChoices: ReadonlyArray<RadioQuestionOptions<CostType>> = [
-  {
-    value: CostType.PROFIT_COST,
-    text: {
-      key: "pages.poaClaimType.profitCost.text",
-    },
-  },
-  {
-    value: CostType.EXPERT_COST,
-    text: {
-      key: "pages.poaClaimType.expertCost.text",
-    },
-  },
-  {
-    value: CostType.NON_EXPERT_DISBURSEMENT,
-    text: {
-      key: "pages.poaClaimType.nonExpertDisbursement.text",
-    },
-  },
-];
-
 /**
  * Display POA claim type page.
  *
@@ -158,3 +137,24 @@ export const COST_TYPE_FIELD = {
   id: "poaClaimType",
   messagePrefix: PREFIX,
 } as const;
+
+const poaClaimTypeChoices: ReadonlyArray<RadioQuestionOptions<CostType>> = [
+  {
+    value: CostType.PROFIT_COST,
+    text: {
+      key: `${PREFIX}.profitCost.text`,
+    },
+  },
+  {
+    value: CostType.EXPERT_COST,
+    text: {
+      key: `${PREFIX}.expertCost.text`,
+    },
+  },
+  {
+    value: CostType.NON_EXPERT_DISBURSEMENT,
+    text: {
+      key: `${PREFIX}.nonExpertDisbursement.text`,
+    },
+  },
+];

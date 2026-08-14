@@ -109,59 +109,54 @@ export async function submitProfitCostDetails(
   }
 }
 
-const PAGE_PREFIX = "pages.profitCostDetails" as const;
+const PREFIX = "pages.profitCostDetails" as const;
 
 export const PROFIT_COST_DETAILS_FIELDS = {
   courtType: {
     name: "courtTypeChoice",
     id: "courtTypeChoice",
-    messagePrefix: `${PAGE_PREFIX}.courtType`,
+    messagePrefix: `${PREFIX}.courtType`,
   },
   clientStatus: {
     name: "clientStatusChoice",
     id: "clientStatusChoice",
-    messagePrefix: `${PAGE_PREFIX}.clientStatus`,
+    messagePrefix: `${PREFIX}.clientStatus`,
   },
   firstSolicitor: {
     name: "firstSolicitorChoice",
     id: "firstSolicitorChoice",
-    messagePrefix: `${PAGE_PREFIX}.firstSolicitor`,
+    messagePrefix: `${PREFIX}.firstSolicitor`,
   },
   transferOfSolicitor: {
     name: "transferOfSolicitorChoice",
     id: "transferOfSolicitorChoice",
-    messagePrefix: `${PAGE_PREFIX}.transferOfSolicitor`,
+    messagePrefix: `${PREFIX}.transferOfSolicitor`,
   },
 } as const;
-
-export const courtTypeFieldName = "courtTypeChoice" as const;
-export const clientStatusFieldName = "clientStatusChoice" as const;
-export const firstSolicitorFieldName = "firstSolicitorChoice" as const;
-export const transferOfSolicitorFieldName = "transferOfSolicitorChoice" as const;
 
 export const courtTypeChoices: ReadonlyArray<RadioQuestionOptions<CourtType>> = [
   {
     value: CourtType.COUNTY_COURT,
     text: {
-      key: "pages.profitCostDetails.courtType.COUNTY_COURT.text"
+      key: `${PREFIX}.courtType.COUNTY_COURT.text`
     },
   },
   {
     value: CourtType.HIGH_COURT,
     text: {
-      key: "pages.profitCostDetails.courtType.HIGH_COURT.text"
+      key: `${PREFIX}.courtType.HIGH_COURT.text`
     },
   },
   {
     value: CourtType.MAGISTRATES_COURT,
     text: {
-      key: "pages.profitCostDetails.courtType.MAGISTRATES_COURT.text"
+      key: `${PREFIX}.courtType.MAGISTRATES_COURT.text`
     },
   },
   {
     value: CourtType.OTHER_JUDGE,
     text: {
-      key: "pages.profitCostDetails.courtType.OTHER_JUDGE.text"
+      key: `${PREFIX}.courtType.OTHER_JUDGE.text`
     },
   },
 ] as const;
@@ -170,19 +165,19 @@ export const clientStatusChoices: ReadonlyArray<RadioQuestionOptions<ClientParty
   {
     value: ClientPartyStatus.CHILD,
     text: {
-      key: "pages.profitCostDetails.clientStatus.CHILD.text"
+      key: `${PREFIX}.clientStatus.CHILD.text`
     },
   },
   {
     value: ClientPartyStatus.JOINED_PARTY,
     text: {
-      key: "pages.profitCostDetails.clientStatus.JOINED_PARTY.text"
+      key: `${PREFIX}.clientStatus.JOINED_PARTY.text`
     },
   },
   {
     value: ClientPartyStatus.PARENT,
     text: {
-      key: "pages.profitCostDetails.clientStatus.PARENT.text"
+      key: `${PREFIX}.clientStatus.PARENT.text`
     },
   },
 ] as const;

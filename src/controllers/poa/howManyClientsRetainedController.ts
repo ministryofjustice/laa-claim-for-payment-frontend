@@ -7,28 +7,6 @@ import { UUID } from "uuidv7";
 import { Count } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
 
-const howManyClientsRetainedChoices: ReadonlyArray<RadioQuestionOptions<Count>> =
-  [
-    {
-      value: Count.ZERO,
-      text: {
-        key: "pages.howManyClientsRetained.ZERO.text",
-      },
-    },
-    {
-      value: Count.ONE,
-      text: {
-        key: "pages.howManyClientsRetained.ONE.text",
-      },
-    },
-    {
-      value: Count.TWO_OR_MORE,
-      text: {
-        key: "pages.howManyClientsRetained.TWO_OR_MORE.text",
-      },
-    },
-  ];
-
 /**
  * get how many clients retained view
  * @param {Request} req Express request object
@@ -141,3 +119,25 @@ export const HOW_MANY_CLIENTS_RETAINED_FIELD = {
   id: "howManyClientsRetained",
   messagePrefix: PREFIX,
 } as const;
+
+const howManyClientsRetainedChoices: ReadonlyArray<RadioQuestionOptions<Count>> =
+  [
+    {
+      value: Count.ZERO,
+      text: {
+        key: `${PREFIX}.ZERO.text`,
+      },
+    },
+    {
+      value: Count.ONE,
+      text: {
+        key: `${PREFIX}.ONE.text`,
+      },
+    },
+    {
+      value: Count.TWO_OR_MORE,
+      text: {
+        key: `${PREFIX}.TWO_OR_MORE.text`,
+      },
+    },
+  ];

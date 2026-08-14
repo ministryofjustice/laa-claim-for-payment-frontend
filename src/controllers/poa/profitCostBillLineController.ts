@@ -1,6 +1,9 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processApiError, processError } from "#src/helpers/index.js";
-import { type ProfitCostBillLineForm, validateProfitCostBillLine } from "#src/helpers/profitCostBillLineValidation.js";
+import {
+  type ProfitCostBillLineForm,
+  validateProfitCostBillLine,
+} from "#src/helpers/profitCostBillLineValidation.js";
 import { ProfitCostBillLineViewModel } from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { UUID } from "uuidv7";
@@ -144,7 +147,7 @@ export async function submitProfitCostBillLine(
             ? ROUTES.POA_CHECK_YOUR_DETAILS
             : ROUTES.ESCAPING_FIXED_FEE;
 
-      res.redirect(buildRoute(route, { claimId })); 
+      res.redirect(buildRoute(route, { claimId }));
     } else {
       next(
         processApiError(
@@ -158,32 +161,32 @@ export async function submitProfitCostBillLine(
   }
 }
 
-const PAGE_PREFIX = "pages.profitCostBillLine" as const;
+const PREFIX = "pages.profitCostBillLine" as const;
 
 export const PROFIT_COST_BILL_LINE_FIELDS = {
   activityDate: {
     name: "activityDate",
     id: "activityDate",
-    messagePrefix: `${PAGE_PREFIX}.activityDate`,
+    messagePrefix: `${PREFIX}.activityDate`,
   },
   actualNetProfitCostExcludingAdvocacy: {
     name: "actualNetProfitCostExcludingAdvocacy",
     id: "actualNetProfitCostExcludingAdvocacy",
-    messagePrefix: `${PAGE_PREFIX}.actualNetProfitCostExcludingAdvocacy`,
+    messagePrefix: `${PREFIX}.actualNetProfitCostExcludingAdvocacy`,
   },
   actualNetAdvocacyCosts: {
     name: "actualNetAdvocacyCosts",
     id: "actualNetAdvocacyCosts",
-    messagePrefix: `${PAGE_PREFIX}.actualNetAdvocacyCosts`,
+    messagePrefix: `${PREFIX}.actualNetAdvocacyCosts`,
   },
   vatApplies: {
     name: "vatApplies",
     id: "vatApplies",
-    messagePrefix: `${PAGE_PREFIX}.vatApplies`,
+    messagePrefix: `${PREFIX}.vatApplies`,
   },
   feeEarnerName: {
     name: "feeEarnerName",
     id: "feeEarnerName",
-    messagePrefix: `${PAGE_PREFIX}.feeEarnerName`,
+    messagePrefix: `${PREFIX}.feeEarnerName`,
   },
 } as const;

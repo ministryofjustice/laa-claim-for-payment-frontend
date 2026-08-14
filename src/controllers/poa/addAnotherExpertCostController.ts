@@ -126,8 +126,10 @@ function getLineItems(claim: Claim): ExpertCostLineItem[] {
   );
 }
 
+const PREFIX = "pages.poa.expertCostDetails.addAnother" as const;
+
 export const ADD_ANOTHER_EXPERT_COST_FIELD = {
   name: "addAnother",
   id: "add-another",
-  messagePrefix: "pages.poa.expertCostDetails.addAnother",
+  messagePrefix: PREFIX,
 } as const;

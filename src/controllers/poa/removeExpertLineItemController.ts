@@ -111,7 +111,7 @@ export async function submitRemoveExpertLineItem(
         next(
           processApiError(
             deleted,
-            "deleteing line item for expert cost page",
+            "deleting line item for expert cost page",
           ),
         );
       }
@@ -122,7 +122,7 @@ export async function submitRemoveExpertLineItem(
     } catch (error) {
       const processedError = processError(
         error,
-        "deleteing line item for expert cost page",
+        "deleting line item for expert cost page",
       );
       next(processedError);
   }
