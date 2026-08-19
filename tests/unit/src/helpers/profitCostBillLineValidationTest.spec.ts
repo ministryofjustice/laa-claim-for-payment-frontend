@@ -18,7 +18,7 @@ describe("profitCostBillLineValidation", () => {
   };
 
   it("returns valid when all fields are valid", () => {
-    const result = validateProfitCostBillLine(validBody);
+    const result = validateProfitCostBillLine(validBody).validation;
 
     const success = expectSuccess(result);
     expect(success.value.activityDate.day).to.equal(27);
@@ -36,7 +36,7 @@ describe("profitCostBillLineValidation", () => {
       activityDateDay: "",
       activityDateMonth: "",
       activityDateYear: "",
-    });
+    }).validation;
 
     const failure = expectFailure(result);
     expect(failure.errors[0].text.key).to.equal(
@@ -50,7 +50,7 @@ describe("profitCostBillLineValidation", () => {
       activityDateDay: "27",
       activityDateMonth: "",
       activityDateYear: "2007",
-    });
+    }).validation;
 
     const failure = expectFailure(result);
     expect(failure.errors[0].text.key).to.equal(
@@ -64,7 +64,7 @@ describe("profitCostBillLineValidation", () => {
       activityDateDay: "30",
       activityDateMonth: "2",
       activityDateYear: "2025",
-    });
+    }).validation;
 
     const failure = expectFailure(result);
     expect(failure.errors[0].text.key).to.equal(
@@ -78,9 +78,12 @@ describe("profitCostBillLineValidation", () => {
       activityDateDay: "29",
       activityDateMonth: "2",
       activityDateYear: "2024",
-    });
+    }).validation;
 
-    expect(result.isValid).to.equal(true);
+    const success = expectSuccess(result);
+    expect(success.value.activityDate.day).to.equal(29);
+    expect(success.value.activityDate.month).to.equal(2);
+    expect(success.value.activityDate.year).to.equal(2024);
   });
 
   it("rejects 29 February in a non-leap year", () => {
@@ -89,7 +92,7 @@ describe("profitCostBillLineValidation", () => {
       activityDateDay: "29",
       activityDateMonth: "2",
       activityDateYear: "2025",
-    });
+    }).validation;
 
     const failure = expectFailure(result);
     expect(failure.errors[0].text.key).to.equal(
@@ -105,7 +108,7 @@ describe("profitCostBillLineValidation", () => {
       activityDateDay: "1",
       activityDateMonth: "1",
       activityDateYear: nextYear,
-    });
+    }).validation;
 
     const failure = expectFailure(result);
     expect(failure.errors[0].text.key).to.equal(
@@ -117,7 +120,7 @@ describe("profitCostBillLineValidation", () => {
     const result = validateProfitCostBillLine({
       ...validBody,
       actualNetProfitCostExcludingAdvocacy: "",
-    });
+    }).validation;
 
     const failure = expectFailure(result);
 
@@ -130,7 +133,7 @@ describe("profitCostBillLineValidation", () => {
     const result = validateProfitCostBillLine({
       ...validBody,
       actualNetProfitCostExcludingAdvocacy: "abc",
-    });
+    }).validation;
 
     const failure = expectFailure(result);
 
@@ -143,7 +146,7 @@ describe("profitCostBillLineValidation", () => {
     const result = validateProfitCostBillLine({
       ...validBody,
       actualNetAdvocacyCosts: "",
-    });
+    }).validation;
 
     const failure = expectFailure(result);
 
@@ -156,7 +159,7 @@ describe("profitCostBillLineValidation", () => {
     const result = validateProfitCostBillLine({
       ...validBody,
       actualNetAdvocacyCosts: "abc",
-    });
+    }).validation;
 
     const failure = expectFailure(result);
 
@@ -169,7 +172,7 @@ describe("profitCostBillLineValidation", () => {
     const result = validateProfitCostBillLine({
       ...validBody,
       vatApplies: undefined,
-    });
+    }).validation;
 
     const failure = expectFailure(result);
 
@@ -182,7 +185,7 @@ describe("profitCostBillLineValidation", () => {
     const result = validateProfitCostBillLine({
       ...validBody,
       feeEarnerName: "",
-    });
+    }).validation;
 
     const failure = expectFailure(result);
 
@@ -195,7 +198,7 @@ describe("profitCostBillLineValidation", () => {
     const result = validateProfitCostBillLine({
       ...validBody,
       feeEarnerName: "John Smith 123",
-    });
+    }).validation;
 
     const failure = expectFailure(result);
 

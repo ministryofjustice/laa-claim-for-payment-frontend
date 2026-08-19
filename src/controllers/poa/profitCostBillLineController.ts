@@ -1,15 +1,15 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processApiError, processError } from "#src/helpers/index.js";
 import {
-  type ProfitCostBillLineForm,
-  validateProfitCostBillLine,
+  buildProfitCostBillLineForm,
+  type ProfitCostBillLineRequestBody,
+  validateProfitCostBillLine
 } from "#src/helpers/profitCostBillLineValidation.js";
 import { ProfitCostBillLineViewModel } from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { getForm } from "#src/helpers/validation.js";
-import { formatBooleanChoice } from "#src/helpers/dataFormatters.js";
+import { getRequestBody } from "#src/helpers/validation.js";
 import { CostType, type ProfitCostBillLineItem } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
 
@@ -35,30 +35,20 @@ export async function profitCostBillLine(
 
     if (claim.status === "success") {
       let lineItemId: string | undefined = undefined;
-      let form: ProfitCostBillLineForm = {};
+
+      let lineItem: ProfitCostBillLineItem | undefined = undefined;
 
       if (claim.body.lineItems.length === 1) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
-        const lineItem = claim.body.lineItems[0] as ProfitCostBillLineItem;
+        lineItem = claim.body.lineItems[0] as ProfitCostBillLineItem;
         ({ id: lineItemId } = lineItem);
-        form = {
-          activityDateDay: lineItem.date.day.toString(),
-          activityDateMonth: lineItem.date.month.toString(),
-          activityDateYear: lineItem.date.year.toString(),
-          actualNetProfitCostExcludingAdvocacy:
-            lineItem.netProfitCostAmount.toString(),
-          actualNetAdvocacyCosts: lineItem.netAdvocacyCostAmount.toString(),
-          vatApplies: formatBooleanChoice(lineItem.vatApplicable),
-          feeEarnerName: lineItem.feeEarnerName,
-        };
       }
 
       res.render("main/poa/profitCostBillLineView.njk", {
         csrfToken: res.locals.csrfToken,
         lineItemId,
         vm: new ProfitCostBillLineViewModel({
-          claimId,
-          form,
+          form: buildProfitCostBillLineForm(lineItem),
         }),
       });
     } else {
@@ -95,17 +85,16 @@ export async function submitProfitCostBillLine(
         ? UUID.parse(body.lineItemId)
         : undefined;
 
-    const form = getForm(req.body) as ProfitCostBillLineForm;
+    const requestBody = getRequestBody(
+      req.body,
+    ) as ProfitCostBillLineRequestBody;
+    const form = validateProfitCostBillLine(requestBody);
 
-    const validationResult = validateProfitCostBillLine(form);
-
-    if (!validationResult.isValid) {
+    if (form.isNotValid()) {
       res.status(400).render("main/poa/profitCostBillLineView.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new ProfitCostBillLineViewModel({
-          claimId,
           form,
-          errors: validationResult.errors,
         }),
       });
       return;
@@ -113,7 +102,7 @@ export async function submitProfitCostBillLine(
 
     const lineItemForm: LineItemForm = {
       type: CostType.PROFIT_COST,
-      value: validationResult.value,
+      value: form.getValue(),
     };
 
     if (lineItemId == null) {
@@ -160,33 +149,3 @@ export async function submitProfitCostBillLine(
     next(processError(error, "submitting profit cost bill line page"));
   }
 }
-
-const PREFIX = "pages.profitCostBillLine" as const;
-
-export const PROFIT_COST_BILL_LINE_FIELDS = {
-  activityDate: {
-    name: "activityDate",
-    id: "activityDate",
-    messagePrefix: `${PREFIX}.activityDate`,
-  },
-  actualNetProfitCostExcludingAdvocacy: {
-    name: "actualNetProfitCostExcludingAdvocacy",
-    id: "actualNetProfitCostExcludingAdvocacy",
-    messagePrefix: `${PREFIX}.actualNetProfitCostExcludingAdvocacy`,
-  },
-  actualNetAdvocacyCosts: {
-    name: "actualNetAdvocacyCosts",
-    id: "actualNetAdvocacyCosts",
-    messagePrefix: `${PREFIX}.actualNetAdvocacyCosts`,
-  },
-  vatApplies: {
-    name: "vatApplies",
-    id: "vatApplies",
-    messagePrefix: `${PREFIX}.vatApplies`,
-  },
-  feeEarnerName: {
-    name: "feeEarnerName",
-    id: "feeEarnerName",
-    messagePrefix: `${PREFIX}.feeEarnerName`,
-  },
-} as const;

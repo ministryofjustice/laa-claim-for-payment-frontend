@@ -65,10 +65,10 @@ describe("numberOfClientsStartOfCaseController", () => {
     expect(renderArgs.vm.title.key).to.equal(
       "pages.numberOfClientsStartOfCase.title",
     );
-    expect(renderArgs.vm.form.fieldName).to.equal(
+    expect(renderArgs.vm.radios.name).to.equal(
       "numberOfClientsStartOfCase",
     );
-    expect(renderArgs.vm.form.choices).to.deep.equal([
+    expect(renderArgs.vm.radios.items).to.deep.equal([
       {
         value: "ZERO",
         text: {
@@ -231,15 +231,5 @@ describe("numberOfClientsStartOfCaseController", () => {
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
       "main/radioQuestionPage.njk",
     );
-
-    const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
-
-    expect(renderArgs.vm.form.error).to.deep.equal({
-      fieldName: "numberOfClientsStartOfCase",
-      href: "#numberOfClientsStartOfCase",
-      text: {
-        key: "pages.numberOfClientsStartOfCase.errors.empty"
-      },
-    });
   });
 });

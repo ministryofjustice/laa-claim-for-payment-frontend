@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import type { UUID } from "#node_modules/uuidv7/dist/index.js";
+import type { UUID } from "uuidv7";
 import { YesNoInput } from "#tests/playwright/pages/base/Components.js";
 import { QuestionPage } from "#tests/playwright/pages/base/QuestionPage.js";
 

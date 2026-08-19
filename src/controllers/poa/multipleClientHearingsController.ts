@@ -1,12 +1,10 @@
-import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel, yesNoQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { booleanChoices } from "#src/models/booleanChoice.js";
-import { validateBooleanInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { formatBooleanChoice } from "#src/helpers/dataFormatters.js";
+import { BooleanField } from "#src/helpers/fields.js";
 
 /**
  * get how many clients retained view
@@ -28,13 +26,14 @@ export async function multipleClientHearings(
     );
 
     if (claim.status === "success") {
+      const field = buildField();
+      const form = yesNoQuestionForm(field);
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
           title: `${PREFIX}.title`,
-          field: MULTIPLE_CLIENT_HEARINGS_FIELD,
-          choices: booleanChoices,
-          selectedValue: formatBooleanChoice(claim.body.multiClientHearingFlag),
+          form,
+          isLegendPageHeading: true,
         }),
       });
     } else {
@@ -66,22 +65,20 @@ export async function submitMultipleClientHearings(
   next: NextFunction,
 ): Promise<void> {
   try {
+    const field = buildField();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[MULTIPLE_CLIENT_HEARINGS_FIELD.name];
+    const selectedChoice: unknown = req.body?.[field.name];
+    field.validate(selectedChoice);
 
-    const validationResult = validateBooleanInput(
-      selectedChoice,
-      MULTIPLE_CLIENT_HEARINGS_FIELD,
-    );
+    const form = yesNoQuestionForm(field);
 
-    if (!validationResult.isValid) {
+    if (form.isNotValid()) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
           title: `${PREFIX}.title`,
-          field: MULTIPLE_CLIENT_HEARINGS_FIELD,
-          choices: booleanChoices,
-          errors: validationResult.errors,
+          form,
+          isLegendPageHeading: true,
         }),
       });
       return;
@@ -97,7 +94,7 @@ export async function submitMultipleClientHearings(
     if (claim.status === "success") {
       await claimService.updateClaim(
         req.axiosMiddleware,
-        claim.body.setMultiClientHearingFlag(validationResult.value),
+        claim.body.setMultiClientHearingFlag(form.getValue()),
       );
 
       res.redirect(buildRoute(ROUTES.ESCAPING_FIXED_FEE, { claimId }));
@@ -120,8 +117,10 @@ export async function submitMultipleClientHearings(
 
 const PREFIX = "pages.multipleClientHearings" as const;
 
-export const MULTIPLE_CLIENT_HEARINGS_FIELD = {
-  name: "multipleClientHearings",
-  id: "multipleClientHearings",
-  messagePrefix: PREFIX,
-} as const;
+function buildField(): BooleanField {
+  return new BooleanField(
+    PREFIX,
+    "multipleClientHearings",
+    "multipleClientHearings",
+  );
+}

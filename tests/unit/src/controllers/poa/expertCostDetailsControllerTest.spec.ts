@@ -61,13 +61,15 @@ describe("expertCostDetailsController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
-    expect(renderArgs.vm.form.activityDate.value.day).to.equal("");
-    expect(renderArgs.vm.form.activityDate.value.month).to.equal("");
-    expect(renderArgs.vm.form.activityDate.value.year).to.equal("");
-    expect(renderArgs.vm.form.actualNetValue.value).to.equal("");
-    expect(renderArgs.vm.form.vatApplies.value).to.equal(undefined);
-    expect(renderArgs.vm.form.feeEarnerName.value).to.equal("");
-    expect(renderArgs.vm.form.description.value).to.equal("");
+
+    expect(renderArgs.vm.activityDateInput.items[0].value).to.be.undefined;
+    expect(renderArgs.vm.activityDateInput.items[1].value).to.be.undefined;
+    expect(renderArgs.vm.activityDateInput.items[2].value).to.be.undefined;
+    expect(renderArgs.vm.actualNetValueInput.value).to.be.undefined;
+    expect(renderArgs.vm.vatApplicableRadios.items[0].checked).to.equal(false);
+    expect(renderArgs.vm.vatApplicableRadios.items[1].checked).to.equal(false);
+    expect(renderArgs.vm.feeEarnerNameInput.value).to.be.undefined;
+    expect(renderArgs.vm.descriptionInput.value).to.be.undefined;
   });
 
   it("renders the page when there is a line item ID", async () => {
@@ -104,16 +106,15 @@ describe("expertCostDetailsController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
-    expect(renderArgs.vm.form.activityDate.value.day).to.equal("4");
-    expect(renderArgs.vm.form.activityDate.value.month).to.equal("1");
-    expect(renderArgs.vm.form.activityDate.value.year).to.equal("2024");
-    expect(renderArgs.vm.form.actualNetValue.value).to.equal("123");
-    expect(renderArgs.vm.form.vatApplies.choices[0].value).to.equal("yes");
-    expect(renderArgs.vm.form.vatApplies.choices[0].checked).to.equal(false);
-    expect(renderArgs.vm.form.vatApplies.choices[1].value).to.equal("no");
-    expect(renderArgs.vm.form.vatApplies.choices[1].checked).to.equal(true);
-    expect(renderArgs.vm.form.feeEarnerName.value).to.equal("Joe Bloggs");
-    expect(renderArgs.vm.form.description.value).to.equal(
+
+    expect(renderArgs.vm.activityDateInput.items[0].value).to.equal(4);
+    expect(renderArgs.vm.activityDateInput.items[1].value).to.equal(1);
+    expect(renderArgs.vm.activityDateInput.items[2].value).to.equal(2024);
+    expect(renderArgs.vm.actualNetValueInput.value).to.equal(123);
+    expect(renderArgs.vm.vatApplicableRadios.items[0].checked).to.equal(false);
+    expect(renderArgs.vm.vatApplicableRadios.items[1].checked).to.equal(true);
+    expect(renderArgs.vm.feeEarnerNameInput.value).to.equal("Joe Bloggs");
+    expect(renderArgs.vm.descriptionInput.value).to.equal(
       "Interim hearing on 20 December 2023",
     );
   });

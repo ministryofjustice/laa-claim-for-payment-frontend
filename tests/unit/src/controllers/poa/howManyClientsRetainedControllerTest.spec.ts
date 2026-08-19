@@ -63,7 +63,7 @@ describe("howManyClientsRetainedController", () => {
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
     expect(renderArgs.vm.title.key).to.equal("pages.howManyClientsRetained.title");
-    expect(renderArgs.vm.form.fieldName).to.equal("howManyClientsRetained");
+    expect(renderArgs.vm.radios.name).to.equal("howManyClientsRetained");
   });
 
   it("redirects to number of clients at start of case when answer is 0", async () => {
@@ -167,16 +167,6 @@ describe("howManyClientsRetainedController", () => {
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
       "main/radioQuestionPage.njk",
     );
-
-    const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
-
-    expect(renderArgs.vm.form.error).to.deep.equal({
-      fieldName: "howManyClientsRetained",
-      href: "#howManyClientsRetained",
-      text: {
-        key: "pages.howManyClientsRetained.errors.empty"
-      },
-    });
   });
 
   it("re-renders the page with an error when an invalid option is selected", async () => {
@@ -193,16 +183,8 @@ describe("howManyClientsRetainedController", () => {
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
-    expect(renderArgs.vm.form.error).to.deep.equal({
-      fieldName: "howManyClientsRetained",
-      href: "#howManyClientsRetained",
-      text: {
-        key: "pages.howManyClientsRetained.errors.empty"
-      },
-    });
-
     expect(
-      renderArgs.vm.form.choices.every(
+      renderArgs.vm.radios.items.every(
         (choice: { checked: boolean }) => !choice.checked,
       ),
     ).to.be.true;

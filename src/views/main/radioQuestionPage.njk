@@ -18,20 +18,7 @@
       <form method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
-        {{ govukRadios({
-          name: vm.form.fieldName,
-          fieldset: {
-            legend: {
-              text: vm.title,
-              isPageHeading: true,
-              classes: "govuk-fieldset__legend--l"
-            }
-          },
-          errorMessage: vm.form.error and {
-            text: vm.form.error.text
-          },
-          items: vm.form.choices
-        } | translate ) }}
+        {{ govukRadios(vm.radios | translate ) }}
 
         {{ govukButton({
           text: t("common.saveAndContinue")

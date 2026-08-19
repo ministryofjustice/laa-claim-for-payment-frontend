@@ -1,15 +1,12 @@
-import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel, yesNoQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { booleanChoices } from "#src/models/booleanChoice.js";
-import { validateBooleanInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { type ExpertCostLineItem, ExpertCostLineItemSchema } from "#src/types/Claim.js";
 import type { ApiResponse } from "#src/types/api-types.js";
-
-const confirmRemoveExpertLineItemFieldName = "confirmRemoveExpertLineItem" as const;
+import { BooleanField } from "#src/helpers/fields.js";
 
 /**
  * get confirm remove expert line item page
@@ -34,19 +31,21 @@ export async function confirmRemoveExpertLineItem(
     );
 
     if (lineItem.status === "success") {
+      const field = buildField();
+      const form = yesNoQuestionForm(field);
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
           title: `${PREFIX}.title`,
-          field: REMOVE_EXPERT_LINE_ITEM_FIELD,
-          choices: booleanChoices,
+          form,
+          isLegendPageHeading: true,
         }),
       });
     } else {
       next(
         processApiError(
           lineItem,
-          "retrieving lineitem for rendering confirm remove expert line item page",
+          "retrieving line item for rendering confirm remove expert line item page",
         ),
       );
     }
@@ -71,24 +70,22 @@ export async function submitRemoveExpertLineItem(
   next: NextFunction,
 ): Promise<void> {
   try {
+    const field = buildField();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[confirmRemoveExpertLineItemFieldName];
+    const selectedChoice: unknown = req.body?.[field.name];
+    field.validate(selectedChoice);
+    const form = yesNoQuestionForm(field);
+
     const claimId = UUID.parse(req.params.claimId);
     const lineItemId = UUID.parse(req.params.lineItemId);
 
-    const validationResult = validateBooleanInput(
-      selectedChoice,
-      REMOVE_EXPERT_LINE_ITEM_FIELD,
-    );
-
-    if (!validationResult.isValid) {
+    if (form.isNotValid()) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
           title: `${PREFIX}.title`,
-          field: REMOVE_EXPERT_LINE_ITEM_FIELD,
-          choices: booleanChoices,
-          errors: validationResult.errors,
+          form,
+          isLegendPageHeading: true,
         }),
       });
       return;
@@ -96,7 +93,7 @@ export async function submitRemoveExpertLineItem(
 
     const nextPage = buildRoute(ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS, { claimId });
 
-    if(validationResult.value) {
+    if (form.getValue()) {
 
       const deleted = await claimService.deleteLineItem(
         req.axiosMiddleware,
@@ -130,9 +127,11 @@ export async function submitRemoveExpertLineItem(
 
 const PREFIX = "pages.poa.removeExpertLineItem" as const;
 
-export const REMOVE_EXPERT_LINE_ITEM_FIELD = {
-  name: "confirmRemoveExpertLineItem",
-  id: "confirmRemoveExpertLineItem",
-  messagePrefix: PREFIX,
-} as const;
+function buildField(): BooleanField {
+  return new BooleanField(
+    "pages.escapingFixedFee",
+    "confirmRemoveExpertLineItem",
+    "confirmRemoveExpertLineItem",
+  );
+}
 

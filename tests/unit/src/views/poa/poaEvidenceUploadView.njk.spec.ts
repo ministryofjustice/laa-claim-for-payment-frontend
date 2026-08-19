@@ -2,17 +2,21 @@ import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
 import { PoaEvidenceUploadViewModel } from "#src/viewmodels/profitCostDetails/profitCostDetailsEvidenceUploadViewModel.js";
+import { V7Generator } from "uuidv7";
+import { Form } from "#src/helpers/validation.js";
 
 chaiConfig.truncateThreshold = 0;
 
 describe("views/main/poa/poaEvidenceUploadView.njk", () => {
   let $: CheerioAPI;
 
+  const claimId = new V7Generator().generate();
+
+  const form = new Form({});
+
   const viewModel = new PoaEvidenceUploadViewModel({
-    uploadUrl: "/upload",
-    deleteUrl: "/delete",
-    saveAndContinueHref: "/continue",
-    saveAndComeBackLaterHref: "#",
+    claimId,
+    form,
   });
 
   beforeEach(async () => {
@@ -80,8 +84,8 @@ describe("views/main/poa/poaEvidenceUploadView.njk", () => {
     const config = $("#multi-file-upload-config");
 
     expect(config).to.have.length(1);
-    expect(config.attr("data-upload-url")).to.equal("/upload");
-    expect(config.attr("data-delete-url")).to.equal("/delete");
+    expect(config.attr("data-upload-url")).to.equal(`/claims/${claimId.toString()}/poa/evidence-upload/ajax-upload?claimStatus=DRAFT`);
+    expect(config.attr("data-delete-url")).to.equal(`/claims/${claimId.toString()}/poa/evidence-upload/ajax-delete?claimStatus=DRAFT`);
   });
 
   it("renders the multi-file upload component", () => {
@@ -102,9 +106,7 @@ describe("views/main/poa/poaEvidenceUploadView.njk", () => {
     const uploadButton = $(".moj-multi-file-upload__button");
 
     expect(uploadButton).to.have.length(1);
-    expect(uploadButton.text().trim()).to.equal(
-      "common.upload",
-    );
+    expect(uploadButton.text().trim()).to.equal("common.upload");
   });
 
   it("renders a Save and continue button", () => {

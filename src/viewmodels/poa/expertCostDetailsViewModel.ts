@@ -1,30 +1,32 @@
 import type { ExpertCostDetailsForm } from "#src/helpers/expertCostDetailsValidation.js";
+import { buildRadios, type Radios } from "#src/viewmodels/components/radios.js";
+import type { BooleanChoice } from "#src/models/booleanChoice.js";
 import {
-  type FieldValidationError,
-  getError,
-  getErrorSummary,
-  getStringValue,
-} from "#src/helpers/validation.js";
+  buildDateInput,
+  type DateInput,
+} from "#src/viewmodels/components/dateInput.js";
+import {
+  buildInput,
+  buildMonetaryInput,
+  type Input,
+} from "#src/viewmodels/components/input.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
-import { yesNoQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
-import type { UUID } from "uuidv7";
-import { EXPERT_COST_DETAILS_FIELDS } from "#src/controllers/poa/expertCostDetailsController.js";
 
 export interface ExpertCostDetailsViewModelParams {
-  claimId: UUID;
-  lineItemId?: UUID;
-  form?: ExpertCostDetailsForm;
-  errors?: FieldValidationError[];
+  form: ExpertCostDetailsForm;
 }
 
 /**
  * View model for the POA expert cost details page.
  */
 export class ExpertCostDetailsViewModel {
-  readonly claimId: string;
   readonly title: string;
-  readonly form;
-  readonly errorSummary: ErrorSummary;
+  readonly activityDateInput: DateInput;
+  readonly actualNetValueInput: Input;
+  readonly vatApplicableRadios: Radios<BooleanChoice>;
+  readonly feeEarnerNameInput: Input;
+  readonly descriptionInput: Input;
+  readonly errorSummary?: ErrorSummary;
 
   /**
    * Creates a profit cost bill line page view model.
@@ -32,39 +34,26 @@ export class ExpertCostDetailsViewModel {
    * @param {ExpertCostDetailsViewModelParams} params View model params.
    */
   constructor(params: ExpertCostDetailsViewModelParams) {
-    const { claimId, form = {}, errors = [] } = params;
+    const { form } = params;
 
-    this.claimId = claimId.toString();
     this.title = "pages.poa.expertCostDetails.title";
 
-    this.form = {
-      activityDate: {
-        value: {
-          day: getStringValue(form.activityDateDay),
-          month: getStringValue(form.activityDateMonth),
-          year: getStringValue(form.activityDateYear),
-        },
-        error: getError(errors, EXPERT_COST_DETAILS_FIELDS.activityDate),
-      },
-      actualNetValue: {
-        value: getStringValue(form.actualNetValue),
-        error: getError(errors, EXPERT_COST_DETAILS_FIELDS.actualNetValue),
-      },
-      vatApplies: yesNoQuestionForm(
-        EXPERT_COST_DETAILS_FIELDS.vatApplies,
-        errors,
-        form.vatApplies,
-      ),
-      feeEarnerName: {
-        value: getStringValue(form.feeEarnerName),
-        error: getError(errors, EXPERT_COST_DETAILS_FIELDS.feeEarnerName),
-      },
-      description: {
-        value: getStringValue(form.description),
-        error: getError(errors, EXPERT_COST_DETAILS_FIELDS.description),
-      },
-    };
+    this.activityDateInput = buildDateInput(form.fields.activityDate);
 
-    this.errorSummary = getErrorSummary(errors);
+    this.actualNetValueInput = buildMonetaryInput(form.fields.actualNetValue);
+
+    this.vatApplicableRadios = buildRadios(
+      form.fields.vatApplies,
+      {
+        key: `${form.fields.vatApplies.messagePrefix}.title`,
+      },
+      false,
+    );
+
+    this.feeEarnerNameInput = buildInput(form.fields.feeEarnerName);
+
+    this.descriptionInput = buildInput(form.fields.description);
+
+    this.errorSummary = form.getErrorSummary();
   }
 }

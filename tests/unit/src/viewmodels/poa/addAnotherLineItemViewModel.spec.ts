@@ -7,6 +7,8 @@ import {
 import { expect } from "chai";
 import { LocalDate } from "#src/types/date.js";
 import { expectLocalizedText } from "#tests/unit/src/viewmodels/base/base.spec.js";
+import { BooleanField } from "#src/helpers/fields.js";
+import { yesNoQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
 
 describe("AddAnotherLineItemViewModel", () => {
   const claimId = new V7Generator().generate();
@@ -30,9 +32,12 @@ describe("AddAnotherLineItemViewModel", () => {
         },
       ];
 
+      const field = new BooleanField("test", "test", "test");
+
       const params: AddAnotherExpertCostViewModelParams = {
         claimId: claimId.toString(),
         lineItems,
+        form: yesNoQuestionForm(field),
       };
 
       const result = new AddAnotherExpertCostViewModel(params);
@@ -48,15 +53,42 @@ describe("AddAnotherLineItemViewModel", () => {
       expect(result.lineItemsSummaryList.card).to.be.undefined;
       expect(result.lineItemsSummaryList.rows.length).to.equal(1);
 
-      expectLocalizedText(result.lineItemsSummaryList.rows[0].key.text, "18 March 2025");
-      expect(result.lineItemsSummaryList.rows[0].value.text).to.equal("£123.00");
-      expect(result.lineItemsSummaryList.rows[0].actions?.items.length).to.equal(2);
-      expect(result.lineItemsSummaryList.rows[0].actions?.items[0].text).to.deep.equal({ key: "common.change" });
-      expect(result.lineItemsSummaryList.rows[0].actions?.items[0].href).to.equal(`/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=${lineItem1Id.toString()}`);
-      expectLocalizedText(result.lineItemsSummaryList.rows[0].actions?.items[0].visuallyHiddenText!, "18 March 2025");
-      expect(result.lineItemsSummaryList.rows[0].actions?.items[1].text).to.deep.equal({ key: "common.remove" });
-      expect(result.lineItemsSummaryList.rows[0].actions?.items[1].href).to.equal(`/claims/${claimId.toString()}/poa/expert-cost-details/${lineItem1Id.toString()}/remove`);
-      expectLocalizedText(result.lineItemsSummaryList.rows[0].actions?.items[1].visuallyHiddenText!, "18 March 2025");
+      expectLocalizedText(
+        result.lineItemsSummaryList.rows[0].key.text,
+        "18 March 2025",
+      );
+      expect(result.lineItemsSummaryList.rows[0].value.text).to.equal(
+        "£123.00",
+      );
+      expect(
+        result.lineItemsSummaryList.rows[0].actions?.items.length,
+      ).to.equal(2);
+      expect(
+        result.lineItemsSummaryList.rows[0].actions?.items[0].text,
+      ).to.deep.equal({ key: "common.change" });
+      expect(
+        result.lineItemsSummaryList.rows[0].actions?.items[0].href,
+      ).to.equal(
+        `/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=${lineItem1Id.toString()}`,
+      );
+      expectLocalizedText(
+        result.lineItemsSummaryList.rows[0].actions?.items[0]
+          .visuallyHiddenText!,
+        "18 March 2025",
+      );
+      expect(
+        result.lineItemsSummaryList.rows[0].actions?.items[1].text,
+      ).to.deep.equal({ key: "common.remove" });
+      expect(
+        result.lineItemsSummaryList.rows[0].actions?.items[1].href,
+      ).to.equal(
+        `/claims/${claimId.toString()}/poa/expert-cost-details/${lineItem1Id.toString()}/remove`,
+      );
+      expectLocalizedText(
+        result.lineItemsSummaryList.rows[0].actions?.items[1]
+          .visuallyHiddenText!,
+        "18 March 2025",
+      );
     });
 
     it("when more than one line item", () => {
@@ -87,9 +119,12 @@ describe("AddAnotherLineItemViewModel", () => {
         },
       ];
 
+      const field = new BooleanField("test", "test", "test");
+
       const params: AddAnotherExpertCostViewModelParams = {
         claimId: claimId.toString(),
         lineItems,
+        form: yesNoQuestionForm(field),
       };
 
       const result = new AddAnotherExpertCostViewModel(params);
@@ -106,25 +141,79 @@ describe("AddAnotherLineItemViewModel", () => {
       expect(result.lineItemsSummaryList.card).to.be.undefined;
       expect(result.lineItemsSummaryList.rows.length).to.equal(2);
 
-      expectLocalizedText(result.lineItemsSummaryList.rows[0].key.text, "18 March 2025");
-      expect(result.lineItemsSummaryList.rows[0].value.text).to.equal("£123.00");
-      expect(result.lineItemsSummaryList.rows[0].actions?.items.length).to.equal(2);
-      expect(result.lineItemsSummaryList.rows[0].actions?.items[0].text).to.deep.equal({ key: "common.change" });
-      expect(result.lineItemsSummaryList.rows[0].actions?.items[0].href).to.equal(`/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=${lineItem1Id.toString()}`);
-      expectLocalizedText(result.lineItemsSummaryList.rows[0].actions?.items[0].visuallyHiddenText!, "18 March 2025");
-      expect(result.lineItemsSummaryList.rows[0].actions?.items[1].text).to.deep.equal({ key: "common.remove" });
-      expect(result.lineItemsSummaryList.rows[0].actions?.items[1].href).to.equal(`/claims/${claimId.toString()}/poa/expert-cost-details/${lineItem1Id.toString()}/remove`);
-      expectLocalizedText(result.lineItemsSummaryList.rows[0].actions?.items[1].visuallyHiddenText!, "18 March 2025");
+      expectLocalizedText(
+        result.lineItemsSummaryList.rows[0].key.text,
+        "18 March 2025",
+      );
+      expect(result.lineItemsSummaryList.rows[0].value.text).to.equal(
+        "£123.00",
+      );
+      expect(
+        result.lineItemsSummaryList.rows[0].actions?.items.length,
+      ).to.equal(2);
+      expect(
+        result.lineItemsSummaryList.rows[0].actions?.items[0].text,
+      ).to.deep.equal({ key: "common.change" });
+      expect(
+        result.lineItemsSummaryList.rows[0].actions?.items[0].href,
+      ).to.equal(
+        `/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=${lineItem1Id.toString()}`,
+      );
+      expectLocalizedText(
+        result.lineItemsSummaryList.rows[0].actions?.items[0]
+          .visuallyHiddenText!,
+        "18 March 2025",
+      );
+      expect(
+        result.lineItemsSummaryList.rows[0].actions?.items[1].text,
+      ).to.deep.equal({ key: "common.remove" });
+      expect(
+        result.lineItemsSummaryList.rows[0].actions?.items[1].href,
+      ).to.equal(
+        `/claims/${claimId.toString()}/poa/expert-cost-details/${lineItem1Id.toString()}/remove`,
+      );
+      expectLocalizedText(
+        result.lineItemsSummaryList.rows[0].actions?.items[1]
+          .visuallyHiddenText!,
+        "18 March 2025",
+      );
 
-      expectLocalizedText(result.lineItemsSummaryList.rows[1].key.text, "26 July 2026");
-      expect(result.lineItemsSummaryList.rows[1].value.text).to.equal("£456.00");
-      expect(result.lineItemsSummaryList.rows[1].actions?.items.length).to.equal(2);
-      expect(result.lineItemsSummaryList.rows[1].actions?.items[0].text).to.deep.equal({ key: "common.change" });
-      expect(result.lineItemsSummaryList.rows[1].actions?.items[0].href).to.equal(`/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=${lineItem2Id.toString()}`);
-      expectLocalizedText(result.lineItemsSummaryList.rows[1].actions?.items[0].visuallyHiddenText!, "26 July 2026");
-      expect(result.lineItemsSummaryList.rows[1].actions?.items[1].text).to.deep.equal({ key: "common.remove" });
-      expect(result.lineItemsSummaryList.rows[1].actions?.items[1].href).to.equal(`/claims/${claimId.toString()}/poa/expert-cost-details/${lineItem2Id.toString()}/remove`);
-      expectLocalizedText(result.lineItemsSummaryList.rows[1].actions?.items[1].visuallyHiddenText!, "26 July 2026");
+      expectLocalizedText(
+        result.lineItemsSummaryList.rows[1].key.text,
+        "26 July 2026",
+      );
+      expect(result.lineItemsSummaryList.rows[1].value.text).to.equal(
+        "£456.00",
+      );
+      expect(
+        result.lineItemsSummaryList.rows[1].actions?.items.length,
+      ).to.equal(2);
+      expect(
+        result.lineItemsSummaryList.rows[1].actions?.items[0].text,
+      ).to.deep.equal({ key: "common.change" });
+      expect(
+        result.lineItemsSummaryList.rows[1].actions?.items[0].href,
+      ).to.equal(
+        `/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=${lineItem2Id.toString()}`,
+      );
+      expectLocalizedText(
+        result.lineItemsSummaryList.rows[1].actions?.items[0]
+          .visuallyHiddenText!,
+        "26 July 2026",
+      );
+      expect(
+        result.lineItemsSummaryList.rows[1].actions?.items[1].text,
+      ).to.deep.equal({ key: "common.remove" });
+      expect(
+        result.lineItemsSummaryList.rows[1].actions?.items[1].href,
+      ).to.equal(
+        `/claims/${claimId.toString()}/poa/expert-cost-details/${lineItem2Id.toString()}/remove`,
+      );
+      expectLocalizedText(
+        result.lineItemsSummaryList.rows[1].actions?.items[1]
+          .visuallyHiddenText!,
+        "26 July 2026",
+      );
     });
   });
 });

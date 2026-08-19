@@ -18,7 +18,6 @@ import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { AnswerMissingError } from "#src/types/errors.js";
 import { formatBoolean, formatClaimed, formatDateReadable } from "#src/helpers/index.js";
-import { PROFIT_COST_DETAILS_FIELDS } from "#src/controllers/poa/profitCostDetailsController.js";
 
 /**
  *
@@ -127,7 +126,7 @@ export class CheckDetailsViewModel {
       [
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.courtType" },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${PROFIT_COST_DETAILS_FIELDS.courtType.name}`,
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#courtTypeChoice`,
           claim.courtType == null
             ? undefined
             : {
@@ -140,7 +139,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientPartyStatus",
           },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${PROFIT_COST_DETAILS_FIELDS.clientStatus.name}`,
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#clientStatusChoice`,
           claim.clientPartyStatus == null
             ? undefined
             : {
@@ -153,7 +152,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.firstSolicitor",
           },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${PROFIT_COST_DETAILS_FIELDS.firstSolicitor.name}`,
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#firstSolicitorChoice`,
           claim.firstActingSolicitorFlag == null
             ? undefined
             : { text: { key: formatBoolean(claim.firstActingSolicitorFlag) } },
@@ -162,7 +161,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.transferOfSolicitor",
           },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${PROFIT_COST_DETAILS_FIELDS.transferOfSolicitor.name}`,
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#transferOfSolicitorChoice`,
           claim.transferOfSolicitorFlag == null
             ? undefined
             : { text: { key: formatBoolean(claim.transferOfSolicitorFlag) } },

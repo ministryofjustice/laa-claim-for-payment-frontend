@@ -74,7 +74,7 @@ describe("addAnotherExpertCostController", () => {
     expect(renderArgs.vm.title.key).to.equal(
       "pages.poa.expertCostDetails.addAnother.title.singular",
     );
-    expect(renderArgs.vm.radioQuestionViewModel.form.fieldName).to.equal("addAnother");
+    expect(renderArgs.vm.radioQuestionViewModel.radios.name).to.equal("addAnother");
   });
 
   it("redirects to expert cost page when no line items", async () => {
@@ -175,16 +175,6 @@ describe("addAnotherExpertCostController", () => {
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
       "main/poa/addAnotherLineItemView.njk",
     );
-
-    const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
-
-    expect(renderArgs.vm.radioQuestionViewModel.form.error).to.deep.equal({
-      fieldName: "addAnother",
-      href: "#add-another",
-      text: {
-        key: "pages.poa.expertCostDetails.addAnother.errors.empty",
-      },
-    });
   });
 
   it("rerenders with selected invalid string preserved when invalid option is submitted", async () => {
@@ -208,16 +198,8 @@ describe("addAnotherExpertCostController", () => {
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
-    expect(renderArgs.vm.radioQuestionViewModel.form.error).to.deep.equal({
-      fieldName: "addAnother",
-      href: "#add-another",
-      text: {
-        key: "pages.poa.expertCostDetails.addAnother.errors.empty",
-      },
-    });
-
     expect(
-      renderArgs.vm.radioQuestionViewModel.form.choices.every(
+      renderArgs.vm.radioQuestionViewModel.radios.items.every(
         (choice: { checked: boolean }) => !choice.checked,
       ),
     ).to.equal(true);

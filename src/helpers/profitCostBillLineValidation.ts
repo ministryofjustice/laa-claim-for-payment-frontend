@@ -1,16 +1,14 @@
-import {
-  combine,
-  validateBooleanInput,
-  validateDateInput,
-  validateMoneyInput,
-  validateStringInput,
-  type ValidationResult,
-} from "#src/helpers/validation.js";
+import { combine, Form } from "#src/helpers/validation.js";
 import type { ProfitCostBillLine } from "#src/types/poa.js";
-import type { LocalDate } from "#src/types/date.js";
-import { PROFIT_COST_BILL_LINE_FIELDS } from "#src/controllers/poa/profitCostBillLineController.js";
+import {
+  BooleanField,
+  DateField,
+  MoneyField,
+  StringField,
+} from "#src/helpers/fields.js";
+import type { ProfitCostBillLineItem } from "#src/types/Claim.js";
 
-export interface ProfitCostBillLineForm {
+export interface ProfitCostBillLineRequestBody {
   activityDateDay?: unknown;
   activityDateMonth?: unknown;
   activityDateYear?: unknown;
@@ -20,73 +18,101 @@ export interface ProfitCostBillLineForm {
   feeEarnerName?: unknown;
 }
 
+export interface ProfitCostBillLineFields {
+  activityDate: DateField;
+  actualNetProfitCostExcludingAdvocacy: MoneyField;
+  actualNetAdvocacyCosts: MoneyField;
+  vatApplies: BooleanField;
+  feeEarnerName: StringField;
+}
+
+function buildProfitCostBillLineFields(): ProfitCostBillLineFields {
+  const prefix = "pages.profitCostBillLine";
+
+  return {
+    activityDate: new DateField(
+      `${prefix}.activityDate`,
+      "activityDate",
+      "activityDate",
+    ),
+
+    actualNetProfitCostExcludingAdvocacy: new MoneyField(
+      `${prefix}.actualNetProfitCostExcludingAdvocacy`,
+      "actualNetProfitCostExcludingAdvocacy",
+      "actualNetProfitCostExcludingAdvocacy",
+    ),
+
+    actualNetAdvocacyCosts: new MoneyField(
+      `${prefix}.actualNetAdvocacyCosts`,
+      "actualNetAdvocacyCosts",
+      "actualNetAdvocacyCosts",
+    ),
+
+    vatApplies: new BooleanField(
+      `${prefix}.vatApplies`,
+      "vatApplies",
+      "vatApplies",
+    ),
+
+    feeEarnerName: new StringField(
+      `${prefix}.feeEarnerName`,
+      "feeEarnerName",
+      "feeEarnerName",
+      FEE_EARNER_NAME_REGEX,
+    ),
+  };
+}
+
+/**
+ *
+ * @param value
+ */
+export function buildProfitCostBillLineForm(
+  value?: ProfitCostBillLineItem,
+): ProfitCostBillLineForm {
+  const fields = buildProfitCostBillLineFields();
+
+  fields.activityDate.setValue(value?.date);
+  fields.actualNetProfitCostExcludingAdvocacy.setValue(
+    value?.netProfitCostAmount,
+  );
+  fields.actualNetAdvocacyCosts.setValue(value?.netAdvocacyCostAmount);
+  fields.vatApplies.setValue(value?.vatApplicable);
+  fields.feeEarnerName.setValue(value?.feeEarnerName);
+
+  return new Form(fields);
+}
+
+export type ProfitCostBillLineForm = Form<
+  ProfitCostBillLineFields,
+  ProfitCostBillLine
+>;
+
 const FEE_EARNER_NAME_REGEX = /^[A-Za-z' -]+$/;
 
 /**
  * Validates the profit cost bill line form.
  *
- * @param {ProfitCostBillLineForm} form The profit cost bill line form.
- * @returns {ValidationResult} Validation result.
+ * @param {ProfitCostBillLineRequestBody} requestBody The profit cost bill line request body.
+ * @returns {ProfitCostBillLineForm} Form.
  */
 export function validateProfitCostBillLine(
-  form: ProfitCostBillLineForm,
-): ValidationResult<ProfitCostBillLine> {
-  return combine({
-    activityDate: validateActivityDate(form),
-    actualNetProfitCostExcludingAdvocacy:
-      validateActualNetProfitCostExcludingAdvocacy(
-        form.actualNetProfitCostExcludingAdvocacy,
-      ),
-    actualNetAdvocacyCosts: validateActualNetAdvocacyCosts(
-      form.actualNetAdvocacyCosts,
-    ),
-    vatApplies: validateVatApplies(form.vatApplies),
-    feeEarnerName: validateFeeEarnerName(form.feeEarnerName),
+  requestBody: ProfitCostBillLineRequestBody,
+): ProfitCostBillLineForm {
+  const fields = buildProfitCostBillLineFields();
+
+  fields.activityDate.validate({
+    day: requestBody.activityDateDay,
+    month: requestBody.activityDateMonth,
+    year: requestBody.activityDateYear,
   });
-}
 
-function validateActivityDate(
-  form: ProfitCostBillLineForm,
-): ValidationResult<LocalDate> {
-  return validateDateInput(
-    {
-      day: form.activityDateDay,
-      month: form.activityDateMonth,
-      year: form.activityDateYear,
-    },
-    PROFIT_COST_BILL_LINE_FIELDS.activityDate,
+  fields.actualNetProfitCostExcludingAdvocacy.validate(
+    requestBody.actualNetProfitCostExcludingAdvocacy,
   );
-}
+  fields.actualNetAdvocacyCosts.validate(requestBody.actualNetAdvocacyCosts);
+  fields.vatApplies.validate(requestBody.vatApplies);
+  fields.feeEarnerName.validate(requestBody.feeEarnerName);
 
-function validateActualNetProfitCostExcludingAdvocacy(
-  value: unknown,
-): ValidationResult<number> {
-  return validateMoneyInput(
-    value,
-    PROFIT_COST_BILL_LINE_FIELDS.actualNetProfitCostExcludingAdvocacy,
-  );
-}
-
-function validateActualNetAdvocacyCosts(
-  value: unknown,
-): ValidationResult<number> {
-  return validateMoneyInput(
-    value,
-    PROFIT_COST_BILL_LINE_FIELDS.actualNetAdvocacyCosts,
-  );
-}
-
-function validateVatApplies(value: unknown): ValidationResult<boolean> {
-  return validateBooleanInput(
-    value,
-    PROFIT_COST_BILL_LINE_FIELDS.vatApplies,
-  );
-}
-
-function validateFeeEarnerName(value: unknown): ValidationResult<string> {
-  return validateStringInput(
-    value,
-    PROFIT_COST_BILL_LINE_FIELDS.feeEarnerName,
-    FEE_EARNER_NAME_REGEX,
-  );
+  return new Form(fields, combine(fields));
 }

@@ -2,9 +2,11 @@ import { expect, config as chaiConfig } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
 import {
+  radioQuestionForm,
   RadioQuestionOptions,
   RadioQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioField } from "#src/helpers/fields.js";
 
 chaiConfig.truncateThreshold = 0;
 
@@ -43,17 +45,23 @@ describe("views/main/radioQuestionsView.njk", () => {
     },
   ] as const;
 
-  const vm = new RadioQuestionViewModel({
-    title: "Page Title",
-    field: {
-      messagePrefix: "prefix",
-      name: "testField",
-      id: "test-field",
-    },
-    choices: testChoices,
-  });
+  const testField: RadioField<TestChoice, TestChoice> = new RadioField(
+    "prefix",
+    "testField",
+    "test-field",
+    testChoices,
+    (value) => value,
+  );
 
   describe("without errors", () => {
+    const form = radioQuestionForm(testField);
+
+    const vm = new RadioQuestionViewModel({
+      title: "Page Title",
+      form,
+      isLegendPageHeading: true,
+    });
+
     beforeEach(async () => {
       $ = await renderView("main/radioQuestionPage.njk", {
         csrfToken: "csrf-token",
@@ -127,26 +135,16 @@ describe("views/main/radioQuestionsView.njk", () => {
   });
 
   describe("with errors", () => {
-    beforeEach(async () => {
-      const vm = new RadioQuestionViewModel({
-        title: "Page Title",
-        field: {
-          messagePrefix: "prefix",
-          name: "testField",
-          id: "test-field",
-        },
-        choices: testChoices,
-        errors: [
-          {
-            fieldName: "testField",
-            href: "#test-field",
-            text: {
-              key: "some error",
-            },
-          },
-        ],
-      });
+    testField.validate("");
+    const form = radioQuestionForm(testField);
 
+    const vm = new RadioQuestionViewModel({
+      title: "Page Title",
+      form,
+      isLegendPageHeading: true,
+    });
+
+    beforeEach(async () => {
       $ = await renderView("main/radioQuestionPage.njk", {
         csrfToken: "csrf-token",
         vm,
@@ -158,7 +156,7 @@ describe("views/main/radioQuestionsView.njk", () => {
 
       expect(errorSummary).to.have.length(1);
       expect(errorSummary.text()).to.contain("common.errorSummaryTitle");
-      expect(errorSummary.text()).to.contain("some error");
+      expect(errorSummary.text()).to.contain("prefix.errors.empty");
     });
 
     it("links the error summary to the radio group", () => {
@@ -172,7 +170,7 @@ describe("views/main/radioQuestionsView.njk", () => {
       const errorMessage = $(".govuk-error-message");
 
       expect(errorMessage).to.have.length(1);
-      expect(errorMessage.text()).to.contain("some error");
+      expect(errorMessage.text()).to.contain("prefix.errors.empty");
     });
   });
 });

@@ -1,18 +1,17 @@
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import {
-  type RadioQuestionOptions,
+  radioQuestionForm,
   RadioQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
-import { type Field, validateRadioInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import type { Claim } from "#src/types/Claim.js";
+import type { RadioField } from "#src/helpers/fields.js";
 
 interface RadioQuestionControllerParams<ChoiceType extends string> {
   title: string;
-  field: Field;
-  choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
+  buildField: () => RadioField<ChoiceType, ChoiceType>;
   renderErrorContext: string;
   submitErrorContext: string;
   getRedirectUrl: (req: Request, selectedChoice: ChoiceType) => string;
@@ -28,8 +27,7 @@ interface RadioQuestionControllerParams<ChoiceType extends string> {
  */
 export function createRadioQuestionController<ChoiceType extends string>({
   title,
-  field,
-  choices,
+  buildField,
   renderErrorContext,
   submitErrorContext,
   getRedirectUrl,
@@ -50,13 +48,15 @@ export function createRadioQuestionController<ChoiceType extends string>({
         );
 
         if (claim.status === "success") {
+          const field = buildField();
+          field.setValue(getValue(claim.body));
+          const form = radioQuestionForm(field);
           res.render("main/radioQuestionPage.njk", {
             csrfToken: res.locals.csrfToken,
             vm: new RadioQuestionViewModel({
               title,
-              field,
-              choices,
-              selectedValue: getValue(claim.body),
+              form,
+              isLegendPageHeading: true,
             }),
           });
         } else {
@@ -74,23 +74,19 @@ export function createRadioQuestionController<ChoiceType extends string>({
 
     async post(req: Request, res: Response, next: NextFunction): Promise<void> {
       try {
+        const field = buildField();
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
         const selectedChoice: unknown = req.body?.[field.name];
+        field.validate(selectedChoice);
+        const form = radioQuestionForm(field);
 
-        const validationResult = validateRadioInput(
-          choices,
-          selectedChoice,
-          field,
-        );
-
-        if (!validationResult.isValid) {
+        if (form.isNotValid()) {
           res.status(400).render("main/radioQuestionPage.njk", {
             csrfToken: res.locals.csrfToken,
             vm: new RadioQuestionViewModel({
               title,
-              field,
-              choices,
-              errors: validationResult.errors,
+              form,
+              isLegendPageHeading: true,
             }),
           });
           return;
@@ -106,10 +102,10 @@ export function createRadioQuestionController<ChoiceType extends string>({
         if (claim.status === "success") {
           await claimService.updateClaim(
             req.axiosMiddleware,
-            setValue(claim.body, validationResult.value),
+            setValue(claim.body, form.getValue()),
           );
 
-          res.redirect(getRedirectUrl(req, validationResult.value));
+          res.redirect(getRedirectUrl(req, form.getValue()));
         } else {
           next(
             processApiError(

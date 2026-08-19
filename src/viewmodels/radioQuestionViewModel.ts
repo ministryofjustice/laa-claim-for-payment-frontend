@@ -1,12 +1,9 @@
 import type { Message } from "#src/viewmodels/components/message.js";
-import {
-  type Field,
-  type FieldValidationError,
-  getError,
-  getErrorSummary,
-} from "#src/helpers/validation.js";
+import { Form } from "#src/helpers/validation.js";
+import type { BooleanChoice } from "#src/models/booleanChoice.js";
+import type { BooleanField, RadioField } from "#src/helpers/fields.js";
+import { buildRadios, type Radios } from "#src/viewmodels/components/radios.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
-import { type BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
 
 export interface RadioQuestionOptions<ChoiceType> {
   value: ChoiceType;
@@ -17,22 +14,19 @@ export interface RadioQuestionOptions<ChoiceType> {
   checked?: boolean;
 }
 
-export interface RadioQuestionViewModelParams<ChoiceType> {
+export interface RadioQuestionViewModelParams<ChoiceType, ValueType> {
   title: string;
-  field: Field;
-  choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
-  selectedValue?: ChoiceType;
-  errors?: FieldValidationError[];
+  form: RadioQuestionForm<ChoiceType, ValueType>;
+  isLegendPageHeading: boolean;
 }
 
 /**
  * View model for the Radio Questions page.
  */
-export class RadioQuestionViewModel<ChoiceType> {
+export class RadioQuestionViewModel<ChoiceType, ValueType> {
   readonly title: Message;
-  readonly choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
-  readonly form: RadioQuestionForm<ChoiceType>;
-  readonly errorSummary: ErrorSummary;
+  readonly radios: Radios<ChoiceType>;
+  readonly errorSummary?: ErrorSummary;
 
   /**
    * Creates a radio question page view model.
@@ -41,73 +35,56 @@ export class RadioQuestionViewModel<ChoiceType> {
    */
   constructor({
     title,
-    field,
-    choices,
-    selectedValue,
-    errors = [],
-  }: RadioQuestionViewModelParams<ChoiceType>) {
+    form,
+    isLegendPageHeading,
+  }: RadioQuestionViewModelParams<ChoiceType, ValueType>) {
     this.title = {
-      key: title
+      key: title,
     };
-    this.choices = choices;
-    this.form = radioQuestionForm<ChoiceType>(
-      field,
-      choices,
-      errors,
-      selectedValue,
-    );
-    this.errorSummary = getErrorSummary(errors)
+    this.radios = buildRadios(form.fields.field, this.title, isLegendPageHeading);
+    this.errorSummary = form.getErrorSummary();
   }
 }
 
-export interface RadioQuestionForm<ChoiceType> {
-  fieldName: string;
-  fieldId: string;
-  choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
-  error?: FieldValidationError;
+export interface RadioQuestionField<ChoiceType, ValueType> {
+  field: RadioField<ChoiceType, ValueType>;
 }
+
+export type RadioQuestionForm<ChoiceType, ValueType> = Form<
+  RadioQuestionField<ChoiceType, ValueType>,
+  ValueType
+>;
+
+export type YesNoQuestionForm = RadioQuestionForm<BooleanChoice, boolean>;
+
+export type YesNoQuestionViewModel = RadioQuestionViewModel<
+  BooleanChoice,
+  boolean
+>;
 
 /**
  * Radio question form builder.
  * @param {Field} field field
- * @param {ReadonlyArray<RadioQuestionOptions>} choices radio choices
- * @param {FieldValidationError[]} errors errors
- * @param {unknown} selectedValue selected value
  * @returns {RadioQuestionForm} radio question form object
  */
-export function radioQuestionForm<ChoiceType>(
-  field: Field,
-  choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>,
-  errors: FieldValidationError[],
-  selectedValue?: unknown,
-): RadioQuestionForm<ChoiceType> {
-  return {
-    fieldName: field.name,
-    fieldId: field.id,
-    choices: choices.map((choice) => ({
-      ...choice,
-      checked: choice.value === selectedValue,
-    })),
-    error: getError(errors, field),
-  };
+export function radioQuestionForm<ChoiceType, ValueType>(
+  field: RadioField<ChoiceType, ValueType>,
+): RadioQuestionForm<ChoiceType, ValueType> {
+  return new Form(
+    {
+      field,
+    },
+    field.validation,
+  );
 }
 
 /**
  * Yes/No question form builder.
  * @param {Field} field field
- * @param {FieldValidationError[]} errors errors
- * @param {unknown} selectedValue selected value
  * @returns {RadioQuestionForm} radio question form object
  */
 export function yesNoQuestionForm(
-  field: Field,
-  errors: FieldValidationError[],
-  selectedValue?: unknown,
-): RadioQuestionForm<BooleanChoice> {
-  return radioQuestionForm(
-    field,
-    booleanChoices,
-    errors,
-    selectedValue,
-  );
+  field: BooleanField,
+): RadioQuestionForm<BooleanChoice, boolean> {
+  return radioQuestionForm(field);
 }

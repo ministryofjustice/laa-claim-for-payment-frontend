@@ -2,11 +2,14 @@ import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import { claimService } from "#src/services/claimService.js";
-import { PoaEvidenceUploadViewModel } from "#src/viewmodels/profitCostDetails/profitCostDetailsEvidenceUploadViewModel.js";
+import {
+  PoaEvidenceUploadViewModel
+} from "#src/viewmodels/profitCostDetails/profitCostDetailsEvidenceUploadViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { UUID } from "uuidv7";
 import type { ReusableDocument } from "#src/viewmodels/components/taskList.js";
-import { ClaimStatus } from "#src/types/Claim.js";
+import { Form } from "#src/helpers/validation.js";
+import { UploadField } from "#src/helpers/fields.js";
 
 /**
  * Display POA evidence upload page.
@@ -41,21 +44,12 @@ export async function poaEvidenceUploadPage(
       }),
     );
 
+    const field = buildField();
+    const form = new Form({ field });
+
     const vm = new PoaEvidenceUploadViewModel({
-      uploadUrl: buildRoute(
-        ROUTES.AJAX_UPLOAD_POA_EVIDENCE,
-        { claimId },
-        { claimStatus: ClaimStatus.DRAFT },
-      ),
-      deleteUrl: buildRoute(
-        ROUTES.AJAX_DELETE_POA_EVIDENCE,
-        { claimId },
-        { claimStatus: ClaimStatus.DRAFT },
-      ),
-      saveAndContinueHref: buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, {
-        claimId,
-      }),
-      saveAndComeBackLaterHref: "#",
+      claimId,
+      form,
       uploadedFiles,
     });
 
@@ -93,31 +87,15 @@ export async function submitPoaEvidenceUpload(
     }
 
     const { body: claim } = response;
-    if (!claim.hasEvidence) {
+
+    const field = buildField();
+    field.validate(claim);
+    const form = new Form({ field }, field.validation,);
+
+    if (form.isNotValid()) {
       const vm = new PoaEvidenceUploadViewModel({
-        uploadUrl: buildRoute(
-          ROUTES.AJAX_UPLOAD_POA_EVIDENCE,
-          { claimId },
-          { claimStatus: ClaimStatus.DRAFT },
-        ),
-        deleteUrl: buildRoute(
-          ROUTES.AJAX_DELETE_POA_EVIDENCE,
-          { claimId },
-          { claimStatus: ClaimStatus.DRAFT },
-        ),
-        saveAndContinueHref: buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, {
-          claimId,
-        }),
-        saveAndComeBackLaterHref: "#",
-        errors: [
-          {
-            fieldName: "documents",
-            href: "#documents",
-            text: {
-              key: "multiFileUpload.errors.noFileSelected",
-            },
-          },
-        ],
+        claimId,
+        form,
       });
 
       res.status(400).render("main/poa/poaEvidenceUploadView.njk", {
@@ -131,4 +109,12 @@ export async function submitPoaEvidenceUpload(
   } catch (error) {
     next(processError(error, "submitting POA evidence upload page"));
   }
+}
+
+function buildField(): UploadField {
+  return new UploadField(
+    "multiFileUpload",
+    "documents",
+    "documents",
+  );
 }
