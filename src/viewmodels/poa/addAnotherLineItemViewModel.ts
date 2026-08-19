@@ -8,11 +8,10 @@ import type { Message } from "#src/viewmodels/components/message.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import {
   RadioQuestionViewModel,
-  type YesNoQuestionForm,
   type YesNoQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
 import { formatClaimed, formatDateReadable } from "#src/helpers/index.js";
-import { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
+import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 interface AddAnotherLineItemViewModelParams<T extends LineItem> {
   claimId: string;

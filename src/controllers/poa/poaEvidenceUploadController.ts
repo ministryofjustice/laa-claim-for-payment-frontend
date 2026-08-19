@@ -1,15 +1,13 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processApiError, processError } from "#src/helpers/index.js";
-import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import { claimService } from "#src/services/claimService.js";
 import {
   PoaEvidenceUploadViewModel
-} from "#src/viewmodels/profitCostDetails/profitCostDetailsEvidenceUploadViewModel.js";
+} from "#src/viewmodels/poa/profitCostDetailsEvidenceUploadViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { UUID } from "uuidv7";
-import type { ReusableDocument } from "#src/viewmodels/components/taskList.js";
-import { Form } from "#src/helpers/validation.js";
 import { UploadField } from "#src/helpers/fields.js";
+import { UploadForm } from "#src/helpers/fileUploadValidation.js";
 
 /**
  * Display POA evidence upload page.
@@ -36,21 +34,13 @@ export async function poaEvidenceUploadPage(
     }
 
     const { body: claim } = response;
-    const uploadedFiles: ReusableDocument[] = claim.evidence.map(
-      (evidence) => ({
-        id: evidence.id,
-        name: evidence.fileKey,
-        size: formatFileSize(evidence.fileSize),
-      }),
-    );
 
-    const field = buildField();
-    const form = new Form({ field });
+    const form = new UploadForm(buildField());
+    form.fill(claim.evidence);
 
     const vm = new PoaEvidenceUploadViewModel({
       claimId,
       form,
-      uploadedFiles,
     });
 
     res.render("main/poa/poaEvidenceUploadView.njk", {
@@ -88,9 +78,8 @@ export async function submitPoaEvidenceUpload(
 
     const { body: claim } = response;
 
-    const field = buildField();
-    field.validate(claim);
-    const form = new Form({ field }, field.validation,);
+    const form = new UploadForm(buildField());
+    form.validate(claim.evidence);
 
     if (form.isNotValid()) {
       const vm = new PoaEvidenceUploadViewModel({

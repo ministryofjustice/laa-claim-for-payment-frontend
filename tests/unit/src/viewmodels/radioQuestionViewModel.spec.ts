@@ -3,12 +3,12 @@
  */
 
 import {
-  radioQuestionForm,
   RadioQuestionOptions,
   RadioQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
 import { expect } from "chai";
 import { RadioField } from "#src/helpers/fields.js";
+import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 const testFieldName = "test" as const;
 
@@ -44,7 +44,7 @@ const testField: RadioField<TestChoice, TestChoice> = new RadioField(
 
 describe("radioQuestionViewModel()", () => {
   it("creates the radios", () => {
-    const form = radioQuestionForm(testField);
+    const form = new RadioQuestionForm(testField);
 
     const viewModel = new RadioQuestionViewModel({
       title: "test",
@@ -59,8 +59,8 @@ describe("radioQuestionViewModel()", () => {
   });
 
   it("creates the radios when value selected", () => {
-    testField.validate("first");
-    const form = radioQuestionForm(testField);
+    const form = new RadioQuestionForm(testField);
+    form.validate("first");
 
     const viewModel = new RadioQuestionViewModel({
       title: "test",
@@ -75,8 +75,8 @@ describe("radioQuestionViewModel()", () => {
   });
 
   it("creates the radios when invalid value", () => {
-    testField.validate("");
-    const form = radioQuestionForm(testField);
+    const form = new RadioQuestionForm(testField);
+    form.validate("");
 
     const viewModel = new RadioQuestionViewModel({
       title: "test",

@@ -1,10 +1,6 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processApiError, processError } from "#src/helpers/index.js";
-import {
-  buildProfitCostBillLineForm,
-  type ProfitCostBillLineRequestBody,
-  validateProfitCostBillLine
-} from "#src/helpers/profitCostBillLineValidation.js";
+import { ProfitCostBillLineForm, type ProfitCostBillLineRequestBody } from "#src/helpers/profitCostBillLineValidation.js";
 import { ProfitCostBillLineViewModel } from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { UUID } from "uuidv7";
@@ -36,19 +32,20 @@ export async function profitCostBillLine(
     if (claim.status === "success") {
       let lineItemId: string | undefined = undefined;
 
-      let lineItem: ProfitCostBillLineItem | undefined = undefined;
+      const form = new ProfitCostBillLineForm();
 
       if (claim.body.lineItems.length === 1) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
-        lineItem = claim.body.lineItems[0] as ProfitCostBillLineItem;
+        const lineItem = claim.body.lineItems[0] as ProfitCostBillLineItem;
         ({ id: lineItemId } = lineItem);
+        form.fill(lineItem);
       }
 
       res.render("main/poa/profitCostBillLineView.njk", {
         csrfToken: res.locals.csrfToken,
         lineItemId,
         vm: new ProfitCostBillLineViewModel({
-          form: buildProfitCostBillLineForm(lineItem),
+          form,
         }),
       });
     } else {
@@ -88,7 +85,9 @@ export async function submitProfitCostBillLine(
     const requestBody = getRequestBody(
       req.body,
     ) as ProfitCostBillLineRequestBody;
-    const form = validateProfitCostBillLine(requestBody);
+
+    const form = new ProfitCostBillLineForm();
+    form.validate(requestBody);
 
     if (form.isNotValid()) {
       res.status(400).render("main/poa/profitCostBillLineView.njk", {

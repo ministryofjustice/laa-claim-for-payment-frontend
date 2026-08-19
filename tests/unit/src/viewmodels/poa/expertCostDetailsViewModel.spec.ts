@@ -4,23 +4,15 @@ import {
 } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
 import { expect } from "chai";
 import { V7Generator } from "uuidv7";
-import {
-  buildExpertCostDetailsForm,
-  validateExpertCostDetails,
-} from "#src/helpers/expertCostDetailsValidation.js";
 import { Category, ExpertCostLineItem } from "#src/types/Claim.js";
 import { LocalDate } from "#src/types/date.js";
-import { validateProfitCostBillLine } from "#src/helpers/profitCostBillLineValidation.js";
-import {
-  ProfitCostBillLineViewModel,
-  ProfitCostBillLineViewModelParams,
-} from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
+import { ExpertCostDetailsForm } from "#src/helpers/expertCostDetailsValidation.js";
 
 describe("expertCostDetailsViewModel constructor", () => {
   const lineItemId = new V7Generator().generate();
 
   it("constructs view model when empty form", () => {
-    const form = buildExpertCostDetailsForm(undefined);
+    const form = new ExpertCostDetailsForm();
 
     const params: ExpertCostDetailsViewModelParams = {
       form,
@@ -54,7 +46,8 @@ describe("expertCostDetailsViewModel constructor", () => {
       netAdvocacyCostAmount: null,
     };
 
-    const form = buildExpertCostDetailsForm(lineItem);
+    const form = new ExpertCostDetailsForm();
+    form.fill(lineItem);
 
     const params: ExpertCostDetailsViewModelParams = { form };
 
@@ -73,7 +66,9 @@ describe("expertCostDetailsViewModel constructor", () => {
   });
 
   it("constructs view model when form has errors", () => {
-    const form = validateExpertCostDetails({
+    const form = new ExpertCostDetailsForm();
+
+    form.validate({
       activityDateDay: "",
       activityDateMonth: "",
       activityDateYear: "",

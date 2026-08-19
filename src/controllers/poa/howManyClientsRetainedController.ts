@@ -1,4 +1,4 @@
-import { radioQuestionForm, RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
@@ -6,6 +6,7 @@ import { UUID } from "uuidv7";
 import { Count } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
 import { RadioField } from "#src/helpers/fields.js";
+import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 /**
  * get how many clients retained view
@@ -27,9 +28,10 @@ export async function howManyClientsRetained(
     );
 
     if (claim.status === "success") {
-      const field = buildField();
-      field.setValue(claim.body.clientsRetainedCount);
-      const form = radioQuestionForm(field);
+      const form = new RadioQuestionForm(buildField());
+      if (claim.body.clientsStartCount != null) {
+        form.fill(claim.body.clientsStartCount);
+      }
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
@@ -62,8 +64,8 @@ export async function submitHowManyClientsRetained(
     const field = buildField();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedChoice: unknown = req.body?.[field.name];
-    field.validate(selectedChoice);
-    const form = radioQuestionForm(field);
+    const form = new RadioQuestionForm(field);
+    form.validate(selectedChoice);
 
     if (form.isNotValid()) {
       res.status(400).render("main/radioQuestionPage.njk", {

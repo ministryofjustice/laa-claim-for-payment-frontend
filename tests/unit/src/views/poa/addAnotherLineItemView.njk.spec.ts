@@ -8,8 +8,8 @@ import {
 } from "#src/viewmodels/poa/addAnotherLineItemViewModel.js";
 import { Category } from "#src/types/Claim.js";
 import { LocalDate } from "#src/types/date.js";
-import { yesNoQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
 import { BooleanField } from "#src/helpers/fields.js";
+import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 chaiConfig.truncateThreshold = 0;
 
@@ -21,7 +21,7 @@ describe("views/main/poa/addAnotherLineItemView.njk", () => {
 
   const field = new BooleanField("prefix", "name", "id");
 
-  const form = yesNoQuestionForm(field);
+  const form = new YesNoQuestionForm(field);
 
   const params: AddAnotherExpertCostViewModelParams = {
     claimId: claimId.toString(),

@@ -2,11 +2,7 @@ import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processApiError, processError } from "#src/helpers/index.js";
 import type { NextFunction, Request, Response } from "express";
 import { ExpertCostDetailsViewModel } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
-import {
-  buildExpertCostDetailsForm,
-  type ExpertCostDetailsRequestBody,
-  validateExpertCostDetails
-} from "#src/helpers/expertCostDetailsValidation.js";
+import { ExpertCostDetailsForm, type ExpertCostDetailsRequestBody } from "#src/helpers/expertCostDetailsValidation.js";
 import { getRequestBody } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
@@ -29,7 +25,7 @@ export async function expertCostDetails(
     const claimId = getClaimId(req);
     const lineItemId = getLineItemId(req);
 
-    let lineItem: ExpertCostLineItem | undefined = undefined;
+    const form = new ExpertCostDetailsForm();
 
     if (lineItemId != null) {
       const lineItemResponse =
@@ -41,7 +37,7 @@ export async function expertCostDetails(
         );
 
       if (lineItemResponse.status === "success") {
-        ({ body: lineItem } = lineItemResponse);
+        form.fill(lineItemResponse.body);
       } else {
         next(
           processApiError(
@@ -51,8 +47,6 @@ export async function expertCostDetails(
         );
       }
     }
-
-    const form = buildExpertCostDetailsForm(lineItem);
 
     res.render("main/poa/expertCostDetailsView.njk", {
       csrfToken: res.locals.csrfToken,
@@ -82,8 +76,9 @@ export async function submitExpertCostDetails(
     const requestBody = getRequestBody(
       req.body,
     ) as ExpertCostDetailsRequestBody;
-    const form = validateExpertCostDetails(requestBody);
 
+    const form = new ExpertCostDetailsForm();
+    form.validate(requestBody);
     if (form.isNotValid()) {
       res.status(400).render("main/poa/expertCostDetailsView.njk", {
         csrfToken: res.locals.csrfToken,

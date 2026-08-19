@@ -1,13 +1,9 @@
-import {
-  type FieldValidationError,
-  getStringValue,
-  type ValidationResult,
-} from "#src/helpers/validation.js";
+import { type FieldValidationError, getStringValue, type ValidationResult } from "#src/helpers/validation.js";
 import { BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
 import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewModel.js";
 import { LocalDate } from "#src/types/date.js";
 import type { Message } from "#src/viewmodels/components/message.js";
-import type { Claim, EvidenceItem } from "#src/types/Claim.js";
+import type { EvidenceItem } from "#src/types/Claim.js";
 
 /**
  *
@@ -111,7 +107,7 @@ export abstract class Field<RawType, ValidatedType> {
 /**
  *
  */
-export class UploadField extends Field<Claim, EvidenceItem[]> {
+export class UploadField extends Field<EvidenceItem[], EvidenceItem[]> {
   /**
    *
    * @param messagePrefix
@@ -126,9 +122,9 @@ export class UploadField extends Field<Claim, EvidenceItem[]> {
    *
    * @param value
    */
-  validate(value: Claim): void {
-    if (value.hasEvidence) {
-      this.valid(value.evidence);
+  validate(value: EvidenceItem[]): void {
+    if (value.length > 0) {
+      this.valid(value);
     } else {
       this.error({
         href: `#${this.id}`,

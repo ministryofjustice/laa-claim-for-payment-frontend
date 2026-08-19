@@ -8,7 +8,7 @@ import { expect } from "chai";
 import { LocalDate } from "#src/types/date.js";
 import { expectLocalizedText } from "#tests/unit/src/viewmodels/base/base.spec.js";
 import { BooleanField } from "#src/helpers/fields.js";
-import { yesNoQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
+import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 describe("AddAnotherLineItemViewModel", () => {
   const claimId = new V7Generator().generate();
@@ -37,7 +37,7 @@ describe("AddAnotherLineItemViewModel", () => {
       const params: AddAnotherExpertCostViewModelParams = {
         claimId: claimId.toString(),
         lineItems,
-        form: yesNoQuestionForm(field),
+        form: new YesNoQuestionForm(field),
       };
 
       const result = new AddAnotherExpertCostViewModel(params);
@@ -124,7 +124,7 @@ describe("AddAnotherLineItemViewModel", () => {
       const params: AddAnotherExpertCostViewModelParams = {
         claimId: claimId.toString(),
         lineItems,
-        form: yesNoQuestionForm(field),
+        form: new YesNoQuestionForm(field),
       };
 
       const result = new AddAnotherExpertCostViewModel(params);

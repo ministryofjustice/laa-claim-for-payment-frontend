@@ -1,15 +1,13 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processApiError, processError } from "#src/helpers/index.js";
-import {
-  radioQuestionForm,
-  RadioQuestionViewModel,
-} from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { UUID } from "uuidv7";
 import { CostType } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
 import { draftService } from "#src/services/draftService.js";
 import { RadioField } from "#src/helpers/fields.js";
+import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 /**
  * Display POA claim type page.
@@ -32,9 +30,10 @@ export async function poaClaimTypePage(
     );
 
     if (claim.status === "success") {
-      const field = buildField();
-      field.setValue(claim.body.costType);
-      const form = radioQuestionForm(field);
+      const form = new RadioQuestionForm(buildField());
+      if (claim.body.costType != null) {
+        form.fill(claim.body.costType);
+      }
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
@@ -72,8 +71,8 @@ export async function submitPoaClaimType(
     const field = buildField();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedChoice: unknown = req.body?.[field.name];
-    field.validate(selectedChoice);
-    const form = radioQuestionForm(field);
+    const form = new RadioQuestionForm(field);
+    form.validate(selectedChoice);
 
     if (form.isNotValid()) {
       res.status(400).render("main/radioQuestionPage.njk", {

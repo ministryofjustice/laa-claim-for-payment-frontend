@@ -1,8 +1,4 @@
-import {
-  type RadioQuestionForm,
-  RadioQuestionViewModel,
-  yesNoQuestionForm,
-} from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
@@ -11,6 +7,7 @@ import { claimService } from "#src/services/claimService.js";
 import { draftService } from "#src/services/draftService.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import type { BooleanChoice } from "#src/models/booleanChoice.js";
+import { RadioQuestionForm, YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 /**
  * get how many clients retained view
@@ -32,9 +29,10 @@ export async function escapingFixedFee(
     );
 
     if (claim.status === "success") {
-      const field = buildField();
-      field.setValue(claim.body.escapedFlag);
-      const form = yesNoQuestionForm(field);
+      const form = new YesNoQuestionForm(buildField());
+      if (claim.body.escapedFlag != null) {
+        form.fill(claim.body.escapedFlag);
+      }
       res.render("main/poa/escapingFixedFeeView.njk", {
         csrfToken: res.locals.csrfToken,
         vm: buildViewModel(form),
@@ -71,9 +69,8 @@ export async function submitEscapingFixedFee(
     const field = buildField();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedChoice: unknown = req.body?.[field.name];
-    field.validate(selectedChoice);
-
-    const form = yesNoQuestionForm(field);
+    const form = new YesNoQuestionForm(field);
+    form.validate(selectedChoice);
 
     if (form.isNotValid()) {
       res.status(400).render("main/poa/escapingFixedFeeView.njk", {

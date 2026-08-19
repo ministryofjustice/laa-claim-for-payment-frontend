@@ -2,17 +2,14 @@ import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
 import { ProfitCostBillLineViewModel } from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
-import {
-  buildProfitCostBillLineForm,
-  validateProfitCostBillLine,
-} from "#src/helpers/profitCostBillLineValidation.js";
+import { ProfitCostBillLineForm } from "#src/helpers/profitCostBillLineValidation.js";
 
 chaiConfig.truncateThreshold = 0;
 
 describe("views/main/poa/profitCostBillLineView.njk", () => {
   let $: CheerioAPI;
 
-  const form = buildProfitCostBillLineForm(undefined);
+  const form = new ProfitCostBillLineForm();
 
   beforeEach(async () => {
     $ = await renderView("main/poa/profitCostBillLineView.njk", {
@@ -130,7 +127,9 @@ describe("views/main/poa/profitCostBillLineView.njk", () => {
 describe("views/main/poa/profitCostBillLineView.njk with errors", () => {
   let $: CheerioAPI;
 
-  const form = validateProfitCostBillLine({
+  const form = new ProfitCostBillLineForm();
+
+  form.validate({
     activityDateDay: "",
     activityDateMonth: "",
     activityDateYear: "",
@@ -191,7 +190,9 @@ describe("views/main/poa/profitCostBillLineView.njk with errors", () => {
   });
 
   it("preserves submitted values", async () => {
-    const form = validateProfitCostBillLine({
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
       activityDateDay: "27",
       activityDateMonth: "3",
       activityDateYear: "2007",

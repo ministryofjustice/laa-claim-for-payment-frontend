@@ -1,10 +1,11 @@
 import type { ReusableDocument } from "#src/viewmodels/components/taskList.js";
 import type { Message } from "#src/viewmodels/components/message.js";
-import type { FieldValidationError, Form } from "#src/helpers/validation.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import type { UUID } from "uuidv7";
 import { ClaimStatus } from "#src/types/Claim.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
+import { UploadForm } from "#src/helpers/fileUploadValidation.js";
+import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 
 /**
  * View model for the POA evidence upload page.
@@ -31,29 +32,37 @@ export class PoaEvidenceUploadViewModel {
    * @param {ReusableDocument[]} [options.uploadedFiles] Files already uploaded to the claim.
    * @param {FieldValidationError[]} [options.errors] Validation errors.
    */
-  constructor(options: {
-    claimId: UUID;
-    form: Form<unknown, unknown>;
-    uploadedFiles?: ReusableDocument[];
-  }) {
-    const { claimId, form, uploadedFiles = [] } = options;
+  constructor(options: { claimId: UUID; form: UploadForm }) {
+    const { claimId, form } = options;
 
     this.title = "pages.poaEvidenceUpload.title";
+
     this.uploadUrl = buildRoute(
       ROUTES.AJAX_UPLOAD_POA_EVIDENCE,
       { claimId },
       { claimStatus: ClaimStatus.DRAFT },
     );
+
     this.deleteUrl = buildRoute(
       ROUTES.AJAX_DELETE_POA_EVIDENCE,
       { claimId },
       { claimStatus: ClaimStatus.DRAFT },
     );
+
     this.saveAndContinueHref = buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, {
       claimId,
     });
+
     this.saveAndComeBackLaterHref = "#";
-    this.uploadedFiles = uploadedFiles;
+
+    this.uploadedFiles = (form.fields.field.getValue() ?? []).map(
+      (evidence) => ({
+        id: evidence.id,
+        name: evidence.fileKey,
+        size: formatFileSize(evidence.fileSize),
+      }),
+    );
+
     this.errorSummary = form.getErrorSummary();
   }
 }

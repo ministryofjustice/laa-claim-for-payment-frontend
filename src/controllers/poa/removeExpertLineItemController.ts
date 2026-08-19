@@ -1,4 +1,4 @@
-import { RadioQuestionViewModel, yesNoQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
@@ -7,6 +7,7 @@ import { claimService } from "#src/services/claimService.js";
 import { type ExpertCostLineItem, ExpertCostLineItemSchema } from "#src/types/Claim.js";
 import type { ApiResponse } from "#src/types/api-types.js";
 import { BooleanField } from "#src/helpers/fields.js";
+import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 /**
  * get confirm remove expert line item page
@@ -31,8 +32,7 @@ export async function confirmRemoveExpertLineItem(
     );
 
     if (lineItem.status === "success") {
-      const field = buildField();
-      const form = yesNoQuestionForm(field);
+      const form = new YesNoQuestionForm(buildField());
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new RadioQuestionViewModel({
@@ -73,8 +73,8 @@ export async function submitRemoveExpertLineItem(
     const field = buildField();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedChoice: unknown = req.body?.[field.name];
-    field.validate(selectedChoice);
-    const form = yesNoQuestionForm(field);
+    const form = new YesNoQuestionForm(field);
+    form.validate(selectedChoice);
 
     const claimId = UUID.parse(req.params.claimId);
     const lineItemId = UUID.parse(req.params.lineItemId);

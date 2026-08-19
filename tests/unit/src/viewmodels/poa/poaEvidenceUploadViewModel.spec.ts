@@ -1,14 +1,17 @@
 import { expect } from "chai";
-import { PoaEvidenceUploadViewModel } from "#src/viewmodels/profitCostDetails/profitCostDetailsEvidenceUploadViewModel.js";
+import { PoaEvidenceUploadViewModel } from "#src/viewmodels/poa/profitCostDetailsEvidenceUploadViewModel.js";
 import { V7Generator } from "uuidv7";
-import { Form } from "#src/helpers/validation.js";
+import { UploadForm } from "#src/helpers/fileUploadValidation.js";
+import { UploadField } from "#src/helpers/fields.js";
+import { EvidenceItem } from "#src/types/Claim.js";
 
 describe("PoaEvidenceUploadViewModel constructor()", () => {
   const claimId = new V7Generator().generate();
   const evidenceId = new V7Generator().generate();
 
   it("builds the POA evidence upload view model", () => {
-    const form = new Form({});
+    const field = new UploadField("prefix", "name", "id");
+    const form = new UploadForm(field);
 
     const vm = new PoaEvidenceUploadViewModel({
       claimId,
@@ -16,26 +19,35 @@ describe("PoaEvidenceUploadViewModel constructor()", () => {
     });
 
     expect(vm.title).to.equal("pages.poaEvidenceUpload.title");
-    expect(vm.uploadUrl).to.equal(`/claims/${claimId.toString()}/poa/evidence-upload/ajax-upload?claimStatus=DRAFT`);
-    expect(vm.deleteUrl).to.equal(`/claims/${claimId.toString()}/poa/evidence-upload/ajax-delete?claimStatus=DRAFT`);
-    expect(vm.saveAndContinueHref).to.equal(`/claims/${claimId.toString()}/poa/check-details`);
+    expect(vm.uploadUrl).to.equal(
+      `/claims/${claimId.toString()}/poa/evidence-upload/ajax-upload?claimStatus=DRAFT`,
+    );
+    expect(vm.deleteUrl).to.equal(
+      `/claims/${claimId.toString()}/poa/evidence-upload/ajax-delete?claimStatus=DRAFT`,
+    );
+    expect(vm.saveAndContinueHref).to.equal(
+      `/claims/${claimId.toString()}/poa/check-details`,
+    );
     expect(vm.saveAndComeBackLaterHref).to.equal("#");
     expect(vm.uploadedFiles).to.deep.equal([]);
   });
 
   it("uses uploaded files when provided", () => {
-    const form = new Form({});
+    const uploadedFiles: EvidenceItem[] = [
+      {
+        id: evidenceId.toString(),
+        fileKey: "evidence.pdf",
+        fileSize: 1000,
+        submittedOn: "2026-06-17T14:34:01.226855Z",
+      },
+    ];
+    const field = new UploadField("prefix", "name", "id");
+    const form = new UploadForm(field);
+    form.fill(uploadedFiles);
 
     const vm = new PoaEvidenceUploadViewModel({
       claimId,
       form,
-      uploadedFiles: [
-        {
-          id: evidenceId.toString(),
-          name: "evidence.pdf",
-          size: "1KB",
-        },
-      ],
     });
 
     expect(vm.uploadedFiles).to.deep.equal([

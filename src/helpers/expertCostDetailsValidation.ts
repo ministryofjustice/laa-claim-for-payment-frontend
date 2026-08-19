@@ -26,6 +26,46 @@ export interface ExpertCostDetailsFields {
   description: StringField;
 }
 
+export class ExpertCostDetailsForm extends Form<
+  ExpertCostDetailsFields,
+  ExpertCostLineItem,
+  ExpertCostDetailsRequestBody,
+  ExpertCostDetails
+> {
+  constructor() {
+    super(buildExpertCostDetailsFields());
+  }
+
+  fill(value: ExpertCostLineItem): void {
+    this.fields.activityDate.setValue(value.date);
+    this.fields.actualNetValue.setValue(value.actualNetValue);
+    this.fields.vatApplies.setValue(value.vatApplicable);
+    this.fields.feeEarnerName.setValue(value.feeEarnerName);
+    this.fields.description.setValue(value.title);
+  }
+
+  validate(value: ExpertCostDetailsRequestBody): void {
+    this.fields.activityDate.validate({
+      day: value.activityDateDay,
+      month: value.activityDateMonth,
+      year: value.activityDateYear,
+    });
+
+    this.fields.actualNetValue.validate(value.actualNetValue);
+    this.fields.vatApplies.validate(value.vatApplies);
+    this.fields.feeEarnerName.validate(value.feeEarnerName);
+    this.fields.description.validate(value.description);
+
+    this.validation = combine({
+      activityDate: this.fields.activityDate.getResult(),
+      actualNetValue: this.fields.actualNetValue.getResult(),
+      vatApplies: this.fields.vatApplies.getResult(),
+      feeEarnerName: this.fields.feeEarnerName.getResult(),
+      description: this.fields.description.getResult(),
+    });
+  }
+}
+
 function buildExpertCostDetailsFields(): ExpertCostDetailsFields {
   const prefix = "pages.poa.expertCostDetails";
 
@@ -52,65 +92,14 @@ function buildExpertCostDetailsFields(): ExpertCostDetailsFields {
       `${prefix}.feeEarnerName`,
       "feeEarnerName",
       "fee-earner-name",
-      FEE_EARNER_NAME_REGEX,
+      /^[A-Za-z' -]+$/,
     ),
 
     description: new StringField(
       `${prefix}.description`,
       "description",
       "description",
-      DESCRIPTION_REGEX,
+      /^[\p{L}\p{N}\p{P}\p{Zs}\n\r]*$/u,
     ),
   };
-}
-
-/**
- *
- * @param value
- */
-export function buildExpertCostDetailsForm(
-  value?: ExpertCostLineItem,
-): ExpertCostDetailsForm {
-  const fields = buildExpertCostDetailsFields();
-
-  fields.activityDate.setValue(value?.date);
-  fields.actualNetValue.setValue(value?.actualNetValue);
-  fields.vatApplies.setValue(value?.vatApplicable);
-  fields.feeEarnerName.setValue(value?.feeEarnerName);
-  fields.description.setValue(value?.title);
-
-  return new Form(fields);
-}
-
-export type ExpertCostDetailsForm = Form<
-  ExpertCostDetailsFields,
-  ExpertCostDetails
->;
-
-const FEE_EARNER_NAME_REGEX = /^[A-Za-z' -]+$/;
-const DESCRIPTION_REGEX = /^[\p{L}\p{N}\p{P}\p{Zs}\n\r]*$/u;
-
-/**
- * Validates the expert cost details form.
- *
- * @param {ExpertCostDetailsRequestBody} requestBody The expert cost details request body.
- * @returns {ExpertCostDetailsForm} Validated form.
- */
-export function validateExpertCostDetails(
-  requestBody: ExpertCostDetailsRequestBody,
-): ExpertCostDetailsForm {
-  const fields = buildExpertCostDetailsFields();
-
-  fields.activityDate.validate({
-    day: requestBody.activityDateDay,
-    month: requestBody.activityDateMonth,
-    year: requestBody.activityDateYear,
-  });
-
-  fields.actualNetValue.validate(requestBody.actualNetValue);
-  fields.vatApplies.validate(requestBody.vatApplies);
-  fields.feeEarnerName.validate(requestBody.feeEarnerName);
-  fields.description.validate(requestBody.description);
-
-  return new Form(fields, combine(fields));
 }

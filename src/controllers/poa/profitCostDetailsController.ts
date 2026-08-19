@@ -2,15 +2,11 @@ import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import {
   ProfitCostDetailsViewModel,
-  type ProfitCostDetailsViewModelParams,
+  type ProfitCostDetailsViewModelParams
 } from "#src/viewmodels/poa/profitCostDetailsViewModel.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { getRequestBody } from "#src/helpers/validation.js";
-import {
-  buildProfitCostDetailsForm,
-  type ProfitCostDetailsRequestBody,
-  validateProfitCostDetails,
-} from "#src/helpers/profitCostDetailsValidation.js";
+import { ProfitCostDetailsForm, type ProfitCostDetailsRequestBody } from "#src/helpers/profitCostDetailsValidation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 
@@ -33,7 +29,8 @@ export async function profitCostDetails(
       claimId,
     );
 
-    const form = buildProfitCostDetailsForm({
+    const form = new ProfitCostDetailsForm();
+    form.fill({
       courtType: claim.body?.courtType,
       clientStatus: claim.body?.clientPartyStatus,
       firstSolicitor: claim.body?.firstActingSolicitorFlag,
@@ -68,8 +65,9 @@ export async function submitProfitCostDetails(
     const requestBody = getRequestBody(
       req.body,
     ) as ProfitCostDetailsRequestBody;
-    const form = validateProfitCostDetails(requestBody);
 
+    const form = new ProfitCostDetailsForm();
+    form.validate(requestBody);
     if (form.isNotValid()) {
       const params: ProfitCostDetailsViewModelParams = {
         form,

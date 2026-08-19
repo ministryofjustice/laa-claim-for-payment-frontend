@@ -5,8 +5,8 @@ import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { AddAnotherExpertCostViewModel } from "#src/viewmodels/poa/addAnotherLineItemViewModel.js";
 import type { Claim, ExpertCostLineItem } from "#src/types/Claim.js";
-import { yesNoQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
 import { BooleanField } from "#src/helpers/fields.js";
+import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 /**
  * get add another expert cost view
@@ -32,8 +32,7 @@ export async function addAnotherExpertCost(
       if (lineItems.length === 0) {
         res.redirect(buildRoute(ROUTES.EXPERT_COST_DETAILS, { claimId }));
       } else {
-        const field = buildField();
-        const form = yesNoQuestionForm(field);
+        const form = new YesNoQuestionForm(buildField());
         res.render("main/poa/addAnotherLineItemView.njk", {
           csrfToken: res.locals.csrfToken,
           vm: new AddAnotherExpertCostViewModel({
@@ -75,9 +74,8 @@ export async function submitAddAnotherExpertCost(
     const field = buildField();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const selectedChoice: unknown = req.body?.[field.name];
-    field.validate(selectedChoice);
-
-    const form = yesNoQuestionForm(field);
+    const form = new YesNoQuestionForm(field);
+    form.validate(selectedChoice);
 
     const claimId = UUID.parse(req.params.claimId);
 

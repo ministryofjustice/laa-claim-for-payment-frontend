@@ -1,12 +1,12 @@
-import { expect, config as chaiConfig } from "chai";
+import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
 import {
-  radioQuestionForm,
   RadioQuestionOptions,
   RadioQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
 import { RadioField } from "#src/helpers/fields.js";
+import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 chaiConfig.truncateThreshold = 0;
 
@@ -54,7 +54,7 @@ describe("views/main/radioQuestionsView.njk", () => {
   );
 
   describe("without errors", () => {
-    const form = radioQuestionForm(testField);
+    const form = new RadioQuestionForm(testField);
 
     const vm = new RadioQuestionViewModel({
       title: "Page Title",
@@ -135,8 +135,8 @@ describe("views/main/radioQuestionsView.njk", () => {
   });
 
   describe("with errors", () => {
-    testField.validate("");
-    const form = radioQuestionForm(testField);
+    const form = new RadioQuestionForm(testField);
+    form.validate("");
 
     const vm = new RadioQuestionViewModel({
       title: "Page Title",

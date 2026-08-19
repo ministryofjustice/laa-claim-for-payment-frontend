@@ -3,15 +3,12 @@ import {
   ProfitCostDetailsViewModel,
   ProfitCostDetailsViewModelParams,
 } from "#src/viewmodels/poa/profitCostDetailsViewModel.js";
-import {
-  buildProfitCostDetailsForm,
-  validateProfitCostDetails,
-} from "#src/helpers/profitCostDetailsValidation.js";
 import { ClientPartyStatus, CourtType } from "#src/types/Claim.js";
+import { ProfitCostDetailsForm } from "#src/helpers/profitCostDetailsValidation.js";
 
 describe("ProfitCostDetailsViewModel", () => {
   it("constructs view model when empty form", () => {
-    const form = buildProfitCostDetailsForm(undefined);
+    const form = new ProfitCostDetailsForm();
 
     const params: ProfitCostDetailsViewModelParams = { form };
 
@@ -34,7 +31,9 @@ describe("ProfitCostDetailsViewModel", () => {
   });
 
   it("constructs view model when populated form", () => {
-    const form = buildProfitCostDetailsForm({
+    const form = new ProfitCostDetailsForm();
+
+    form.fill({
       courtType: CourtType.COUNTY_COURT,
       clientStatus: ClientPartyStatus.CHILD,
       firstSolicitor: true,
@@ -62,7 +61,9 @@ describe("ProfitCostDetailsViewModel", () => {
   });
 
   it("constructs view model when form has errors", () => {
-    const form = validateProfitCostDetails({
+    const form = new ProfitCostDetailsForm();
+
+    form.validate({
       courtTypeChoice: "",
       clientStatusChoice: "",
       firstSolicitorChoice: "",

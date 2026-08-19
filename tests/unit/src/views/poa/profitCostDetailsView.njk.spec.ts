@@ -2,10 +2,7 @@ import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
 import { ProfitCostDetailsViewModel } from "#src/viewmodels/poa/profitCostDetailsViewModel.js";
-import {
-  buildProfitCostDetailsForm,
-  validateProfitCostDetails,
-} from "#src/helpers/profitCostDetailsValidation.js";
+import { ProfitCostDetailsForm } from "#src/helpers/profitCostDetailsValidation.js";
 
 chaiConfig.truncateThreshold = 0;
 
@@ -13,7 +10,7 @@ describe("views/main/poa/profitCostDetailsView.njk", () => {
   let $: CheerioAPI;
 
   describe("without errors", () => {
-    const form = buildProfitCostDetailsForm(undefined);
+    const form = new ProfitCostDetailsForm();
 
     beforeEach(async () => {
       $ = await renderView("main/poa/profitCostDetailsView.njk", {
@@ -129,7 +126,9 @@ describe("views/main/poa/profitCostDetailsView.njk", () => {
   });
 
   describe("with errors", () => {
-    const form = validateProfitCostDetails({
+    const form = new ProfitCostDetailsForm();
+
+    form.validate({
       courtTypeChoice: "",
       clientStatusChoice: "",
       firstSolicitorChoice: "",

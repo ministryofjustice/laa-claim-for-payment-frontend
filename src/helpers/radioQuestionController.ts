@@ -1,13 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
-import {
-  radioQuestionForm,
-  RadioQuestionViewModel,
-} from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import type { Claim } from "#src/types/Claim.js";
 import type { RadioField } from "#src/helpers/fields.js";
+import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 interface RadioQuestionControllerParams<ChoiceType extends string> {
   title: string;
@@ -48,9 +46,11 @@ export function createRadioQuestionController<ChoiceType extends string>({
         );
 
         if (claim.status === "success") {
-          const field = buildField();
-          field.setValue(getValue(claim.body));
-          const form = radioQuestionForm(field);
+          const form = new RadioQuestionForm(buildField());
+          const value = getValue(claim.body);
+          if (value != null) {
+            form.fill(value);
+          }
           res.render("main/radioQuestionPage.njk", {
             csrfToken: res.locals.csrfToken,
             vm: new RadioQuestionViewModel({
@@ -77,8 +77,8 @@ export function createRadioQuestionController<ChoiceType extends string>({
         const field = buildField();
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
         const selectedChoice: unknown = req.body?.[field.name];
-        field.validate(selectedChoice);
-        const form = radioQuestionForm(field);
+        const form = new RadioQuestionForm(buildField());
+        form.validate(selectedChoice);
 
         if (form.isNotValid()) {
           res.status(400).render("main/radioQuestionPage.njk", {

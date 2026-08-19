@@ -1,10 +1,10 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
-import { validateProfitCostBillLine } from "#src/helpers/profitCostBillLineValidation.js";
 import {
   expectFailure,
   expectSuccess,
 } from "#tests/unit/src/helpers/validationTest.spec.js";
+import { ProfitCostBillLineForm } from "#src/helpers/profitCostBillLineValidation.js";
 
 describe("profitCostBillLineValidation", () => {
   const validBody = {
@@ -18,7 +18,11 @@ describe("profitCostBillLineValidation", () => {
   };
 
   it("returns valid when all fields are valid", () => {
-    const result = validateProfitCostBillLine(validBody).validation;
+    const form = new ProfitCostBillLineForm();
+
+    form.validate(validBody);
+
+    const result = form.validation;
 
     const success = expectSuccess(result);
     expect(success.value.activityDate.day).to.equal(27);
@@ -31,12 +35,16 @@ describe("profitCostBillLineValidation", () => {
   });
 
   it("returns error when activity date is empty", () => {
-    const result = validateProfitCostBillLine({
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
       ...validBody,
       activityDateDay: "",
       activityDateMonth: "",
       activityDateYear: "",
-    }).validation;
+    });
+
+    const result = form.validation;
 
     const failure = expectFailure(result);
     expect(failure.errors[0].text.key).to.equal(
@@ -45,12 +53,16 @@ describe("profitCostBillLineValidation", () => {
   });
 
   it("returns error when activity date is incomplete", () => {
-    const result = validateProfitCostBillLine({
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
       ...validBody,
       activityDateDay: "27",
       activityDateMonth: "",
       activityDateYear: "2007",
-    }).validation;
+    });
+
+    const result = form.validation;
 
     const failure = expectFailure(result);
     expect(failure.errors[0].text.key).to.equal(
@@ -59,12 +71,16 @@ describe("profitCostBillLineValidation", () => {
   });
 
   it("returns error when activity date is not a real date", () => {
-    const result = validateProfitCostBillLine({
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
       ...validBody,
       activityDateDay: "30",
       activityDateMonth: "2",
       activityDateYear: "2025",
-    }).validation;
+    });
+
+    const result = form.validation;
 
     const failure = expectFailure(result);
     expect(failure.errors[0].text.key).to.equal(
@@ -73,12 +89,16 @@ describe("profitCostBillLineValidation", () => {
   });
 
   it("allows 29 February in a leap year", () => {
-    const result = validateProfitCostBillLine({
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
       ...validBody,
       activityDateDay: "29",
       activityDateMonth: "2",
       activityDateYear: "2024",
-    }).validation;
+    });
+
+    const result = form.validation;
 
     const success = expectSuccess(result);
     expect(success.value.activityDate.day).to.equal(29);
@@ -87,12 +107,16 @@ describe("profitCostBillLineValidation", () => {
   });
 
   it("rejects 29 February in a non-leap year", () => {
-    const result = validateProfitCostBillLine({
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
       ...validBody,
       activityDateDay: "29",
       activityDateMonth: "2",
       activityDateYear: "2025",
-    }).validation;
+    });
+
+    const result = form.validation;
 
     const failure = expectFailure(result);
     expect(failure.errors[0].text.key).to.equal(
@@ -103,12 +127,16 @@ describe("profitCostBillLineValidation", () => {
   it("returns error when activity date is in the future", () => {
     const nextYear = String(new Date().getFullYear() + 1);
 
-    const result = validateProfitCostBillLine({
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
       ...validBody,
       activityDateDay: "1",
       activityDateMonth: "1",
       activityDateYear: nextYear,
-    }).validation;
+    });
+
+    const result = form.validation;
 
     const failure = expectFailure(result);
     expect(failure.errors[0].text.key).to.equal(
@@ -117,10 +145,14 @@ describe("profitCostBillLineValidation", () => {
   });
 
   it("returns error when profit cost is empty", () => {
-    const result = validateProfitCostBillLine({
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
       ...validBody,
       actualNetProfitCostExcludingAdvocacy: "",
-    }).validation;
+    });
+
+    const result = form.validation;
 
     const failure = expectFailure(result);
 
@@ -130,10 +162,14 @@ describe("profitCostBillLineValidation", () => {
   });
 
   it("returns error when profit cost is not a number", () => {
-    const result = validateProfitCostBillLine({
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
       ...validBody,
       actualNetProfitCostExcludingAdvocacy: "abc",
-    }).validation;
+    });
+
+    const result = form.validation;
 
     const failure = expectFailure(result);
 
@@ -143,10 +179,14 @@ describe("profitCostBillLineValidation", () => {
   });
 
   it("returns error when advocacy cost is empty", () => {
-    const result = validateProfitCostBillLine({
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
       ...validBody,
       actualNetAdvocacyCosts: "",
-    }).validation;
+    });
+
+    const result = form.validation;
 
     const failure = expectFailure(result);
 
@@ -156,10 +196,14 @@ describe("profitCostBillLineValidation", () => {
   });
 
   it("returns error when advocacy cost is not a number", () => {
-    const result = validateProfitCostBillLine({
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
       ...validBody,
       actualNetAdvocacyCosts: "abc",
-    }).validation;
+    });
+
+    const result = form.validation;
 
     const failure = expectFailure(result);
 
@@ -169,10 +213,14 @@ describe("profitCostBillLineValidation", () => {
   });
 
   it("returns error when VAT is not selected", () => {
-    const result = validateProfitCostBillLine({
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
       ...validBody,
       vatApplies: undefined,
-    }).validation;
+    });
+
+    const result = form.validation;
 
     const failure = expectFailure(result);
 
@@ -182,10 +230,14 @@ describe("profitCostBillLineValidation", () => {
   });
 
   it("returns error when fee earner name is empty", () => {
-    const result = validateProfitCostBillLine({
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
       ...validBody,
       feeEarnerName: "",
-    }).validation;
+    });
+
+    const result = form.validation;
 
     const failure = expectFailure(result);
 
@@ -195,10 +247,14 @@ describe("profitCostBillLineValidation", () => {
   });
 
   it("returns error when fee earner name contains invalid characters", () => {
-    const result = validateProfitCostBillLine({
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
       ...validBody,
       feeEarnerName: "John Smith 123",
-    }).validation;
+    });
+
+    const result = form.validation;
 
     const failure = expectFailure(result);
 

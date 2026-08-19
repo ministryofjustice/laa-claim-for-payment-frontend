@@ -17,6 +17,45 @@ export interface ProfitCostDetailsFields {
   transferOfSolicitor: BooleanField;
 }
 
+interface ProfitCostDetailsGet {
+  courtType: CourtType | null | undefined;
+  clientStatus: ClientPartyStatus | null | undefined;
+  firstSolicitor: boolean | null | undefined;
+  transferOfSolicitor: boolean | null | undefined;
+}
+
+export class ProfitCostDetailsForm extends Form<
+  ProfitCostDetailsFields,
+  ProfitCostDetailsGet,
+  ProfitCostDetailsRequestBody,
+  ProfitCostDetails
+> {
+  constructor() {
+    super(buildProfitCostDetailsFields());
+  }
+
+  fill(value: ProfitCostDetailsGet): void {
+    this.fields.courtType.setValue(value.courtType);
+    this.fields.clientStatus.setValue(value.clientStatus);
+    this.fields.firstSolicitor.setValue(value.firstSolicitor);
+    this.fields.transferOfSolicitor.setValue(value.transferOfSolicitor);
+  }
+
+  validate(value: ProfitCostDetailsRequestBody): void {
+    this.fields.courtType.validate(value.courtTypeChoice);
+    this.fields.clientStatus.validate(value.clientStatusChoice);
+    this.fields.firstSolicitor.validate(value.firstSolicitorChoice);
+    this.fields.transferOfSolicitor.validate(value.transferOfSolicitorChoice);
+
+    this.validation = combine({
+      courtType: this.fields.courtType.getResult(),
+      clientStatus: this.fields.clientStatus.getResult(),
+      firstSolicitor: this.fields.firstSolicitor.getResult(),
+      transferOfSolicitor: this.fields.transferOfSolicitor.getResult(),
+    });
+  }
+}
+
 function buildProfitCostDetailsFields(): ProfitCostDetailsFields {
   const prefix = "pages.profitCostDetails";
 
@@ -93,54 +132,4 @@ function buildProfitCostDetailsFields(): ProfitCostDetailsFields {
       "transferOfSolicitorChoice",
     ),
   };
-}
-
-/**
- *
- * @param value
- * @param value.courtType
- * @param value.clientStatus
- * @param value.firstSolicitor
- * @param value.transferOfSolicitor
- */
-export function buildProfitCostDetailsForm(
-  value?: {
-    courtType: CourtType | null | undefined,
-    clientStatus: ClientPartyStatus | null | undefined,
-    firstSolicitor: boolean | null | undefined,
-    transferOfSolicitor: boolean | null | undefined,
-  },
-): ProfitCostDetailsForm {
-  const fields = buildProfitCostDetailsFields();
-
-  fields.courtType.setValue(value?.courtType);
-  fields.clientStatus.setValue(value?.clientStatus);
-  fields.firstSolicitor.setValue(value?.firstSolicitor);
-  fields.transferOfSolicitor.setValue(value?.transferOfSolicitor);
-
-  return new Form(fields);
-}
-
-export type ProfitCostDetailsForm = Form<
-  ProfitCostDetailsFields,
-  ProfitCostDetails
->;
-
-/**
- * Validates the profit cost details form.
- *
- * @param {ProfitCostDetailsRequestBody} requestBody The expert cost details form.
- * @returns {ValidationResult} Validation result.
- */
-export function validateProfitCostDetails(
-  requestBody: ProfitCostDetailsRequestBody,
-): ProfitCostDetailsForm {
-  const fields = buildProfitCostDetailsFields();
-
-  fields.courtType.validate(requestBody.courtTypeChoice);
-  fields.clientStatus.validate(requestBody.clientStatusChoice);
-  fields.firstSolicitor.validate(requestBody.firstSolicitorChoice);
-  fields.transferOfSolicitor.validate(requestBody.transferOfSolicitorChoice);
-
-  return new Form(fields, combine(fields));
 }

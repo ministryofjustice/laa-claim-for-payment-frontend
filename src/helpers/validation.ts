@@ -1,33 +1,23 @@
 import type { Message } from "#src/viewmodels/components/message.js";
-import type {
-  ErrorSummary,
-  ErrorSummaryError,
-} from "#src/viewmodels/components/errorSummary.js";
-import type { Field } from "#src/helpers/fields.js";
+import type { ErrorSummary, ErrorSummaryError } from "#src/viewmodels/components/errorSummary.js";
 
 /**
  *
  */
-export class Form<TFields, TValue> {
-  /**
-   *
-   * @param fields
-   * @param validation
-   */
-  constructor(
-    public readonly fields: TFields,
-    public readonly validation?: ValidationResult<TValue>,
-  ) {}
+export abstract class Form<TFields, TGet, TPost, TValid> {
+  public validation?: ValidationResult<TValid>;
+
+  constructor(public readonly fields: TFields) {}
+
+  abstract fill(value: TGet): void;
+
+  abstract validate(value: TPost): void;
 
   /**
    *
    */
   getErrors(): FieldValidationError[] {
-    if (this.isNotValid()) {
-      return this.validation.errors;
-    }
-
-    return [];
+    return this.isNotValid() ? this.validation.errors : [];
   }
 
   /**
@@ -55,7 +45,7 @@ export class Form<TFields, TValue> {
    *
    */
   isValid(): this is this & {
-    validation: ValidationSuccess<TValue>;
+    validation: ValidationSuccess<TValid>;
   } {
     return this.validation?.isValid === true;
   }
@@ -72,7 +62,7 @@ export class Form<TFields, TValue> {
   /**
    *
    */
-  getValue(): TValue {
+  getValue(): TValid {
     if (!this.isValid()) {
       throw new Error("Cannot get value from an invalid form");
     }
@@ -123,33 +113,26 @@ export function getRequestBody(body: any): object {
   return body;
 }
 
-type Fields<T> = {
-  [K in keyof T]: Field<unknown, unknown>;
-};
-
-type FieldValues<TFields> = {
-  [K in keyof TFields]: TFields[K] extends Field<unknown, infer TValue>
-    ? TValue
-    : never;
-};
-
 /**
  * Combines multiple field-level validation results into a single result object.
  *
- * @param {object} fields - An object mapping each key of T to its ValidationResult.
+ * @param {object} results - An object mapping each key of T to its ValidationResult.
  * @returns {ValidationResult} A combined ValidationResult representing the full object.
  */
-export function combine<TFields>(
-  fields: TFields & Fields<TFields>,
-): ValidationResult<FieldValues<TFields>> {
-  const value: Partial<FieldValues<TFields>> = {};
+export function combine<T>(results: {
+  [K in keyof T]: ValidationResult<T[K]>;
+}): ValidationResult<T> {
+  const value: Partial<T> = {};
   const errors: FieldValidationError[] = [];
 
-  for (const key of Object.keys(fields) as Array<keyof TFields>) {
-    const result = fields[key].getResult();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
+  for (const key of Object.keys(results) as Array<keyof T>) {
+    // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
+    const result = results[key];
 
     if (result.isValid) {
-      value[key] = result.value as FieldValues<TFields>[typeof key];
+      // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
+      value[key] = result.value;
     } else {
       errors.push(...result.errors);
     }
@@ -162,8 +145,6 @@ export function combine<TFields>(
     };
   }
 
-  return {
-    isValid: true,
-    value: value as FieldValues<TFields>,
-  };
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
+  return { isValid: true, value: value as T };
 }

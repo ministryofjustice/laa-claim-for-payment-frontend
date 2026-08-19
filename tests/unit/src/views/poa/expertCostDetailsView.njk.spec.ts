@@ -5,11 +5,7 @@ import {
   ExpertCostDetailsViewModel,
   ExpertCostDetailsViewModelParams,
 } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
-import { V7Generator } from "uuidv7";
-import {
-  buildExpertCostDetailsForm,
-  validateExpertCostDetails,
-} from "#src/helpers/expertCostDetailsValidation.js";
+import { ExpertCostDetailsForm } from "#src/helpers/expertCostDetailsValidation.js";
 
 chaiConfig.truncateThreshold = 0;
 
@@ -17,7 +13,7 @@ describe("views/main/poa/expertCostDetailsView.njk", () => {
   let $: CheerioAPI;
 
   describe("view with no errors", () => {
-    const form = buildExpertCostDetailsForm(undefined);
+    const form = new ExpertCostDetailsForm();
 
     const params: ExpertCostDetailsViewModelParams = { form };
 
@@ -79,7 +75,9 @@ describe("views/main/poa/expertCostDetailsView.njk", () => {
   });
 
   describe("view with errors", () => {
-    const form = validateExpertCostDetails({
+    const form = new ExpertCostDetailsForm();
+
+    form.validate({
       activityDateDay: "",
       activityDateMonth: "",
       activityDateYear: "",
