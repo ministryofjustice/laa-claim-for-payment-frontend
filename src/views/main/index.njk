@@ -20,12 +20,14 @@
         name: "action",
         value: "import"
       }) }}
-      {{ govukButton({
-        text: t('pages.home.actions.create'),
-        name: "action",
-        value: "create",
-        classes: "govuk-button--secondary"
-      }) }}
+      {% if config.featureFlags.lineItemUploadEnabled %}
+        {{ govukButton({
+          text: t('pages.home.actions.create'),
+          name: "action",
+          value: "create",
+          classes: "govuk-button--secondary"
+        }) }}
+      {% endif %}
       {{ govukButton({
         text: t('pages.home.actions.poa'),
         name: "action",

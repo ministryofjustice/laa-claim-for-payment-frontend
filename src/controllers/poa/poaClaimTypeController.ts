@@ -10,16 +10,21 @@ import { UUID } from "uuidv7";
 import { CostType } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
 import { draftService } from "#src/services/draftService.js";
+import config from "#config.js";
 
 const poaClaimTypeFieldName = "poaClaimType" as const;
 
-const poaClaimTypeChoices: ReadonlyArray<RadioQuestionOptions<CostType>> = [
-  {
-    value: CostType.PROFIT_COST,
-    text: {
-      key: "pages.poaClaimType.profitCost.text",
-    },
-  },
+const poaClaimTypeChoices = (): ReadonlyArray<RadioQuestionOptions<CostType>> => [
+  ...(config.featureFlags.poaProfitCostEnabled
+    ? [
+        {
+          value: CostType.PROFIT_COST,
+          text: {
+            key: "pages.poaClaimType.profitCost.text",
+          },
+        },
+      ]
+    : []),
   {
     value: CostType.EXPERT_COST,
     text: {
@@ -47,6 +52,7 @@ export async function poaClaimTypePage(
   next: NextFunction,
 ): Promise<void> {
   try {
+
     const claimId = UUID.parse(req.params.claimId);
 
     const claim = await claimService.getDraftClaim(
@@ -63,7 +69,7 @@ export async function poaClaimTypePage(
           },
           fieldName: poaClaimTypeFieldName,
           fieldId: poaClaimTypeFieldName,
-          choices: poaClaimTypeChoices,
+          choices: poaClaimTypeChoices(),
           selectedValue: claim.body.costType,
         }),
       });
@@ -97,7 +103,7 @@ export async function submitPoaClaimType(
     const selectedChoice: unknown = req.body?.[poaClaimTypeFieldName];
 
     const validationResult = validateRadioInput(
-      poaClaimTypeChoices,
+      poaClaimTypeChoices(),
       selectedChoice,
       poaClaimTypeFieldName,
       poaClaimTypeFieldName,
@@ -113,7 +119,7 @@ export async function submitPoaClaimType(
           },
           fieldName: poaClaimTypeFieldName,
           fieldId: poaClaimTypeFieldName,
-          choices: poaClaimTypeChoices,
+          choices: poaClaimTypeChoices(),
           selectedValue:
             typeof selectedChoice === "string" ? selectedChoice : undefined,
           errors: validationResult.errors,

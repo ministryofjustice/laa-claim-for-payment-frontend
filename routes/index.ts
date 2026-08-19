@@ -4,7 +4,7 @@ import type { NextFunction, Request, Response, Router } from "express";
 import express from "express";
 import { viewUploadEvidenceIndividuallyPage } from "#src/controllers/claims/uploadEvidenceIndividuallyController.js";
 import { chooseFileUpload, submitChooseFileUpload } from "#src/controllers/claims/chooseUploadController.js";
-import { multerErrorHandler, ROUTES } from "./helper.js";
+import { multerErrorHandler, registerIf, ROUTES } from "./helper.js";
 import {
   fileUploadForLineItemPage,
   linkEvidenceToLineItem
@@ -44,6 +44,7 @@ import {
   addAnotherExpertCost,
   submitAddAnotherExpertCost,
 } from "#src/controllers/poa/addAnotherExpertCostController.js";
+import config from "#config.js";
 
 /**
  * Builds the main application router.
@@ -89,66 +90,80 @@ export const buildRouter = (): Router => {
   );
 
   /* GET view upload evidence individually page.*/
-  router.get(
-    ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, //TODO: Needs to be renamed to line items or something similar
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await viewUploadEvidenceIndividuallyPage(req, res, next);
-    },
+  registerIf(config.featureFlags.lineItemUploadEnabled, () =>
+    router.get(
+      ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, //TODO: Needs to be renamed to line items or something similar
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await viewUploadEvidenceIndividuallyPage(req, res, next);
+      },
+    )
   );
 
   /* GET choose how to upload file page. */
-  router.get(
-    ROUTES.CHOOSE_UPLOAD,
-    function (req: Request, res: Response, next: NextFunction): void {
-      chooseFileUpload(req, res, next);
-    },
+  registerIf(config.featureFlags.lineItemUploadEnabled, () =>
+    router.get(
+      ROUTES.CHOOSE_UPLOAD,
+      function (req: Request, res: Response, next: NextFunction): void {
+        chooseFileUpload(req, res, next);
+      },
+    )
   );
 
   /* POST choose how to upload file page. */
-  router.post(
-    ROUTES.CHOOSE_UPLOAD,
-    function (req: Request, res: Response, next: NextFunction): void {
-      submitChooseFileUpload(req, res, next);
-    },
+  registerIf(config.featureFlags.lineItemUploadEnabled, () =>
+    router.post(
+      ROUTES.CHOOSE_UPLOAD,
+      function (req: Request, res: Response, next: NextFunction): void {
+        submitChooseFileUpload(req, res, next);
+      },
+    )
   );
 
-  router.post(
-    ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM,
-    evidenceUpload.single("documents"),
-    multerErrorHandler,
-    uploadEvidenceFileForLineItem,
+  registerIf(config.featureFlags.lineItemUploadEnabled, () =>
+    router.post(
+      ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM,
+      evidenceUpload.single("documents"),
+      multerErrorHandler,
+      uploadEvidenceFileForLineItem,
+    )
   );
 
-  router.post(
-    ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM,
-    unlinkEvidenceFileFromLineItem,
+  registerIf(config.featureFlags.lineItemUploadEnabled, () =>
+    router.post(
+      ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM,
+      unlinkEvidenceFileFromLineItem,
+    )
   );
 
-  router.get(
-    ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await fileUploadForLineItemPage(req, res, next);
-    },
+  registerIf(config.featureFlags.lineItemUploadEnabled, () =>
+    router.get(
+      ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await fileUploadForLineItemPage(req, res, next);
+      },
+    )
   );
 
   /* POST linked evidence. */
-  router.post(
-    ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await linkEvidenceToLineItem(req, res, next);
-    },
+  registerIf(config.featureFlags.lineItemUploadEnabled, () =>
+    router.post(
+      ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await linkEvidenceToLineItem(req, res, next);
+      },
+    )
   );
 
   router.get(
@@ -173,26 +188,30 @@ export const buildRouter = (): Router => {
 
   router.post(ROUTES.AJAX_DELETE_POA_EVIDENCE, deleteEvidenceFileFromClaim);
 
-  router.get(
-    ROUTES.HOW_MANY_CLIENTS_RETAINED,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await howManyClientsRetained(req, res, next);
-    },
+  registerIf(config.featureFlags.poaProfitCostEnabled, () =>
+    router.get(
+      ROUTES.HOW_MANY_CLIENTS_RETAINED,
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await howManyClientsRetained(req, res, next);
+      },
+    )
   );
 
-  router.post(
-    ROUTES.HOW_MANY_CLIENTS_RETAINED,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await submitHowManyClientsRetained(req, res, next);
-    },
+  registerIf(config.featureFlags.poaProfitCostEnabled, () =>
+    router.post(
+      ROUTES.HOW_MANY_CLIENTS_RETAINED,
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await submitHowManyClientsRetained(req, res, next);
+      },
+    )
   );
 
   router.get(
@@ -209,26 +228,30 @@ export const buildRouter = (): Router => {
     },
   );
 
-  router.get(
-    ROUTES.PROFIT_COST_DETAILS,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await profitCostDetails(req, res, next);
-    },
+  registerIf(config.featureFlags.poaProfitCostEnabled, () =>
+    router.get(
+      ROUTES.PROFIT_COST_DETAILS,
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await profitCostDetails(req, res, next);
+      },
+    )
   );
 
-  router.post(
-    ROUTES.PROFIT_COST_DETAILS,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await submitProfitCostDetails(req, res, next);
-    },
+  registerIf(config.featureFlags.poaProfitCostEnabled, () =>
+    router.post(
+      ROUTES.PROFIT_COST_DETAILS,
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await submitProfitCostDetails(req, res, next);
+      },
+    )
   );
 
   router.get(
@@ -297,92 +320,108 @@ export const buildRouter = (): Router => {
     },
   );
 
-  router.get(
-    ROUTES.MULTIPLE_CLIENT_HEARINGS,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await multipleClientHearings(req, res, next);
-    },
+  registerIf(config.featureFlags.poaProfitCostEnabled, () =>
+    router.get(
+      ROUTES.MULTIPLE_CLIENT_HEARINGS,
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await multipleClientHearings(req, res, next);
+      },
+    )
   );
 
-  router.post(
-    ROUTES.MULTIPLE_CLIENT_HEARINGS,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await submitMultipleClientHearings(req, res, next);
-    },
+  registerIf(config.featureFlags.poaProfitCostEnabled, () =>
+    router.post(
+      ROUTES.MULTIPLE_CLIENT_HEARINGS,
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await submitMultipleClientHearings(req, res, next);
+      },
+    )
   );
 
-  router.get(
-    ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await profitCostBillLine(req, res, next);
-    },
+  registerIf(config.featureFlags.poaProfitCostEnabled, () =>
+    router.get(
+      ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await profitCostBillLine(req, res, next);
+      },
+    )
   );
 
-  router.post(
-    ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await submitProfitCostBillLine(req, res, next);
-    },
+  registerIf(config.featureFlags.poaProfitCostEnabled, () =>
+    router.post(
+      ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await submitProfitCostBillLine(req, res, next);
+      },
+    )
   );
 
-  router.get(
-    ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await numberOfClientsStartOfCase(req, res, next);
-    },
+  registerIf(config.featureFlags.poaProfitCostEnabled, () =>
+    router.get(
+      ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await numberOfClientsStartOfCase(req, res, next);
+      },
+    )
   );
 
-  router.post(
-    ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await submitNumberOfClientsStartOfCase(req, res, next);
-    },
+  registerIf(config.featureFlags.poaProfitCostEnabled, () =>
+    router.post(
+      ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await submitNumberOfClientsStartOfCase(req, res, next);
+      },
+    )
   );
 
-  router.get(
-    ROUTES.ESCAPING_FIXED_FEE,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await escapingFixedFee(req, res, next);
-    },
+  registerIf(config.featureFlags.poaProfitCostEnabled, () =>
+    router.get(
+      ROUTES.ESCAPING_FIXED_FEE,
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await escapingFixedFee(req, res, next);
+      },
+    )
   );
 
-  router.post(
-    ROUTES.ESCAPING_FIXED_FEE,
-    async function (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> {
-      await submitEscapingFixedFee(req, res, next);
-    },
+  registerIf(config.featureFlags.poaProfitCostEnabled, () =>
+    router.post(
+      ROUTES.ESCAPING_FIXED_FEE,
+      async function (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+      ): Promise<void> {
+        await submitEscapingFixedFee(req, res, next);
+      },
+    )
   );
 
   router.get(
@@ -445,3 +484,4 @@ export const buildRouter = (): Router => {
 
   return router;
 };
+

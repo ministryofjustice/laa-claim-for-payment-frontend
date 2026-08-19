@@ -77,6 +77,10 @@ const config: Config = {
       process.env.NUMBER_OF_CLAIMS_PER_PAGE ?? DEFAULT_NUMBER_OF_RESULTS_PER_PAGE
     ),
   },
+  featureFlags: {
+    poaProfitCostEnabled: process.env.POA_PROFIT_COST_ENABLED === "true",
+    lineItemUploadEnabled: process.env.LINE_ITEM_UPLOAD_ENABLED === "true",
+  }
 };
 
 export default config;

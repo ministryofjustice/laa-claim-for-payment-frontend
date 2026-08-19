@@ -26,6 +26,11 @@ describe("views/main/index.njk", () => {
   const context = {
     table: viewModel.table,
     csrfToken: "test-csrf-token",
+    config: {
+      featureFlags: {
+        lineItemUploadEnabled: true,
+      },
+    },
   };
 
   beforeEach(async () => {
@@ -56,6 +61,21 @@ describe("views/main/index.njk", () => {
     expect(poaButton.text().trim()).to.equal("pages.home.actions.poa");
     expect(poaButton.attr("name")).to.equal("action");
     expect(poaButton.attr("value")).to.equal("poa");
+  });
+
+  it("does not render the create button when line item upload is disabled", async () => {
+    $ = await renderView("main/index.njk", {
+      ...context,
+      config: {
+        featureFlags: {
+          lineItemUploadEnabled: false,
+        },
+      },
+    });
+
+    expect($(".govuk-button--secondary").text()).not.to.include(
+      "pages.home.actions.create",
+    );
   });
 
   it("renders the sub navigation", () => {

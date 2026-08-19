@@ -64,7 +64,7 @@ export function submitChooseFileUpload(
     }
 
     const redirectByFileUploadChoice: Record<FileUploadChoice, string> = {
-      [FileUploadChoice.AllAtOnce]: "/all-at-once-file-upload",
+      [FileUploadChoice.AllAtOnce]: "/all-at-once-file-upload", // todo no route.
       [FileUploadChoice.AssociatedToLineItems]: buildRoute(ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, {claimId}),
     };
 

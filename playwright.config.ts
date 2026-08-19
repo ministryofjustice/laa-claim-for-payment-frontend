@@ -45,6 +45,8 @@ export default defineConfig({
       REDIS_DISABLED: 'false',
       REDIS_URL:'redis://localhost:6379',
       SESSION_COOKIE_SECURE: 'false',
+      POA_PROFIT_COST_ENABLED: "true",
+      LINE_ITEM_UPLOAD_ENABLED: "true",
     },
   },
 });
