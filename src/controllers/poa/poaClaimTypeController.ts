@@ -36,11 +36,7 @@ export async function poaClaimTypePage(
       }
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: `${PREFIX}.title`,
-          form,
-          isLegendPageHeading: true,
-        }),
+        vm: buildViewModel(form),
       });
     } else {
       next(
@@ -77,11 +73,7 @@ export async function submitPoaClaimType(
     if (form.isNotValid()) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: `${PREFIX}.title`,
-          form,
-          isLegendPageHeading: true,
-        }),
+        vm: buildViewModel(form),
       });
       return;
     }
@@ -159,4 +151,14 @@ function buildField(): RadioField<CostType, CostType> {
     ],
     (value: CostType) => value,
   );
+}
+
+function buildViewModel(
+  form: RadioQuestionForm<CostType, CostType>,
+): RadioQuestionViewModel<CostType, CostType> {
+  return new RadioQuestionViewModel({
+    title: `${PREFIX}.title`,
+    form,
+    isLegendPageHeading: true,
+  });
 }

@@ -34,11 +34,7 @@ export async function howManyClientsRetained(
       }
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: `${PREFIX}.title`,
-          form,
-          isLegendPageHeading: true,
-        }),
+        vm: buildViewModel(form),
       });
     } else {
       next(processApiError(claim, "retrieving claim for rendering how many clients retained page"));
@@ -70,11 +66,7 @@ export async function submitHowManyClientsRetained(
     if (form.isNotValid()) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: `${PREFIX}.title`,
-          form,
-          isLegendPageHeading: true,
-        }),
+        vm: buildViewModel(form),
       });
       return;
     }
@@ -141,4 +133,14 @@ function buildField(): RadioField<Count, Count> {
     ],
     (value: Count) => value,
   );
+}
+
+function buildViewModel(
+  form: RadioQuestionForm<Count, Count>,
+): RadioQuestionViewModel<Count, Count> {
+  return new RadioQuestionViewModel({
+    title: `${PREFIX}.title`,
+    form,
+    isLegendPageHeading: true,
+  });
 }

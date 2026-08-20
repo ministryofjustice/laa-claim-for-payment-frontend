@@ -3,7 +3,7 @@ import { processApiError, processError } from "#src/helpers/index.js";
 import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import type { Claim } from "#src/types/Claim.js";
+import { Claim } from "#src/types/Claim.js";
 import type { RadioField } from "#src/helpers/fields.js";
 import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
@@ -53,11 +53,7 @@ export function createRadioQuestionController<ChoiceType extends string>({
           }
           res.render("main/radioQuestionPage.njk", {
             csrfToken: res.locals.csrfToken,
-            vm: new RadioQuestionViewModel({
-              title,
-              form,
-              isLegendPageHeading: true,
-            }),
+            vm: buildViewModel(title, form),
           });
         } else {
           next(
@@ -83,11 +79,7 @@ export function createRadioQuestionController<ChoiceType extends string>({
         if (form.isNotValid()) {
           res.status(400).render("main/radioQuestionPage.njk", {
             csrfToken: res.locals.csrfToken,
-            vm: new RadioQuestionViewModel({
-              title,
-              form,
-              isLegendPageHeading: true,
-            }),
+            vm: buildViewModel(title, form),
           });
           return;
         }
@@ -119,4 +111,15 @@ export function createRadioQuestionController<ChoiceType extends string>({
       }
     },
   };
+}
+
+function buildViewModel<ChoiceType>(
+  title: string,
+  form: RadioQuestionForm<ChoiceType, ChoiceType>,
+): RadioQuestionViewModel<ChoiceType, ChoiceType> {
+  return new RadioQuestionViewModel({
+    title,
+    form,
+    isLegendPageHeading: true,
+  });
 }

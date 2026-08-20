@@ -1,4 +1,7 @@
-import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
+import {
+  RadioQuestionViewModel,
+  YesNoQuestionViewModel,
+} from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
@@ -119,8 +122,8 @@ function buildField(): BooleanField {
 }
 
 function buildViewModel(
-  form: RadioQuestionForm<BooleanChoice, boolean>,
-): RadioQuestionViewModel<BooleanChoice, boolean> {
+  form: YesNoQuestionForm,
+): YesNoQuestionViewModel {
   return new RadioQuestionViewModel({
     title: `${PREFIX}.question`,
     form,

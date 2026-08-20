@@ -1,4 +1,4 @@
-import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel, YesNoQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
@@ -33,11 +33,7 @@ export async function multipleClientHearings(
       }
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: `${PREFIX}.title`,
-          form,
-          isLegendPageHeading: true,
-        }),
+        vm: buildViewModel(form),
       });
     } else {
       next(
@@ -77,11 +73,7 @@ export async function submitMultipleClientHearings(
     if (form.isNotValid()) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: `${PREFIX}.title`,
-          form,
-          isLegendPageHeading: true,
-        }),
+        vm: buildViewModel(form),
       });
       return;
     }
@@ -125,4 +117,14 @@ function buildField(): BooleanField {
     "multipleClientHearings",
     "multipleClientHearings",
   );
+}
+
+function buildViewModel(
+  form: YesNoQuestionForm,
+): YesNoQuestionViewModel {
+  return new RadioQuestionViewModel({
+    title: `${PREFIX}.title`,
+    form,
+    isLegendPageHeading: true,
+  });
 }
