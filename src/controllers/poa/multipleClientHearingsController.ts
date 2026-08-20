@@ -1,4 +1,4 @@
-import { RadioQuestionViewModel, YesNoQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel, type YesNoQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";

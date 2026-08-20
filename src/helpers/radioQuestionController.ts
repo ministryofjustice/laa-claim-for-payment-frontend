@@ -3,7 +3,7 @@ import { processApiError, processError } from "#src/helpers/index.js";
 import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { Claim } from "#src/types/Claim.js";
+import type { Claim } from "#src/types/Claim.js";
 import type { RadioField } from "#src/helpers/fields.js";
 import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 

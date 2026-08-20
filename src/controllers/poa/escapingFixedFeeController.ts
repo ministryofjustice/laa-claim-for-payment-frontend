@@ -1,7 +1,4 @@
-import {
-  RadioQuestionViewModel,
-  YesNoQuestionViewModel,
-} from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel, type YesNoQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
@@ -9,8 +6,7 @@ import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { draftService } from "#src/services/draftService.js";
 import { BooleanField } from "#src/helpers/fields.js";
-import type { BooleanChoice } from "#src/models/booleanChoice.js";
-import { type RadioQuestionForm, YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 /**
  * get how many clients retained view
