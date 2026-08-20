@@ -6,10 +6,10 @@ import {
   type DateInput,
 } from "#src/viewmodels/components/dateInput.js";
 import {
-  buildInput,
+  buildTextInput,
   buildMonetaryInput,
-  type Input,
-} from "#src/viewmodels/components/input.js";
+  type TextInput,
+} from "#src/viewmodels/components/textInput.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
 
 export interface ExpertCostDetailsViewModelParams {
@@ -22,10 +22,10 @@ export interface ExpertCostDetailsViewModelParams {
 export class ExpertCostDetailsViewModel {
   readonly title: string;
   readonly activityDateInput: DateInput;
-  readonly actualNetValueInput: Input;
+  readonly actualNetValueInput: TextInput;
   readonly vatApplicableRadios: Radios<BooleanChoice>;
-  readonly feeEarnerNameInput: Input;
-  readonly descriptionInput: Input;
+  readonly feeEarnerNameInput: TextInput;
+  readonly descriptionInput: TextInput;
   readonly errorSummary?: ErrorSummary;
 
   /**
@@ -50,9 +50,9 @@ export class ExpertCostDetailsViewModel {
       false,
     );
 
-    this.feeEarnerNameInput = buildInput(form.fields.feeEarnerName);
+    this.feeEarnerNameInput = buildTextInput(form.fields.feeEarnerName);
 
-    this.descriptionInput = buildInput(form.fields.description);
+    this.descriptionInput = buildTextInput(form.fields.description);
 
     this.errorSummary = form.getErrorSummary();
   }

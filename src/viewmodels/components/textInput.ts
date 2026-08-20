@@ -1,7 +1,7 @@
 import type { Message } from "#src/viewmodels/components/message.js";
 import type { MoneyField, StringField } from "#src/helpers/fields.js";
 
-export interface Input {
+export interface TextInput {
   id: string;
   name: string;
   value: unknown;
@@ -22,9 +22,9 @@ export interface Input {
 /**
  * Builds a monetary text input.
  * @param {MoneyField} field the underlying form field
- * @returns {Input} a monetary text input
+ * @returns {TextInput} a monetary text input
  */
-export function buildMonetaryInput(field: MoneyField): Input {
+export function buildMonetaryInput(field: MoneyField): TextInput {
   return {
     id: field.id,
     name: field.name,
@@ -47,9 +47,9 @@ export function buildMonetaryInput(field: MoneyField): Input {
 /**
  * Builds a regular text input.
  * @param {StringField} field the underlying form field
- * @returns {Input} a regular text input
+ * @returns {TextInput} a regular text input
  */
-export function buildInput(field: StringField): Input {
+export function buildTextInput(field: StringField): TextInput {
   return {
     id: field.id,
     name: field.name,

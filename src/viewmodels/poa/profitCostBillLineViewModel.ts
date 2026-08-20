@@ -6,10 +6,10 @@ import {
   type DateInput,
 } from "#src/viewmodels/components/dateInput.js";
 import {
-  buildInput,
+  buildTextInput,
   buildMonetaryInput,
-  type Input,
-} from "#src/viewmodels/components/input.js";
+  type TextInput,
+} from "#src/viewmodels/components/textInput.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
 
 export interface ProfitCostBillLineViewModelParams {
@@ -22,10 +22,10 @@ export interface ProfitCostBillLineViewModelParams {
 export class ProfitCostBillLineViewModel {
   readonly title: string;
   readonly activityDateInput: DateInput;
-  readonly actualNetProfitCostExcludingAdvocacyInput: Input;
-  readonly actualNetAdvocacyCostsInput: Input;
+  readonly actualNetProfitCostExcludingAdvocacyInput: TextInput;
+  readonly actualNetAdvocacyCostsInput: TextInput;
   readonly vatApplicableRadios: Radios<BooleanChoice>;
-  readonly feeEarnerNameInput: Input;
+  readonly feeEarnerNameInput: TextInput;
   readonly errorSummary?: ErrorSummary;
 
   /**
@@ -54,7 +54,7 @@ export class ProfitCostBillLineViewModel {
       false,
     );
 
-    this.feeEarnerNameInput = buildInput(form.fields.feeEarnerName);
+    this.feeEarnerNameInput = buildTextInput(form.fields.feeEarnerName);
 
     this.errorSummary = form.getErrorSummary();
   }
