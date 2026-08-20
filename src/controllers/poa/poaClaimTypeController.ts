@@ -103,8 +103,10 @@ export async function submitPoaClaimType(
           },
         ),
         [CostType.NON_EXPERT_DISBURSEMENT]: buildRoute(
-          ROUTES.NON_EXPERT_COST_DETAILS,
-          { claimId },
+          ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS,
+          {
+            claimId,
+          },
         ),
       };
 

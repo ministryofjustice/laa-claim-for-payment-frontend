@@ -6,10 +6,11 @@ import { expect } from "chai";
 import { LocalDate } from "#src/types/date.js";
 import { ExpertCostDetailsForm } from "#src/helpers/expertCostDetailsValidation.js";
 import { ExpertCostDetails } from "#src/types/poa.js";
+import { CostType } from "#src/types/Claim.js";
 
 describe("expertCostDetailsViewModel constructor", () => {
   it("constructs view model when empty form", () => {
-    const form = new ExpertCostDetailsForm();
+    const form = new ExpertCostDetailsForm(CostType.EXPERT_COST);
 
     const params: ExpertCostDetailsViewModelParams = {
       form,
@@ -38,7 +39,7 @@ describe("expertCostDetailsViewModel constructor", () => {
       description: "Title",
     };
 
-    const form = new ExpertCostDetailsForm();
+    const form = new ExpertCostDetailsForm(CostType.EXPERT_COST);
     form.fill(lineItem);
 
     const params: ExpertCostDetailsViewModelParams = { form };
@@ -58,7 +59,7 @@ describe("expertCostDetailsViewModel constructor", () => {
   });
 
   it("constructs view model when form has errors", () => {
-    const form = new ExpertCostDetailsForm();
+    const form = new ExpertCostDetailsForm(CostType.EXPERT_COST);
 
     form.validate({
       activityDateDay: "",

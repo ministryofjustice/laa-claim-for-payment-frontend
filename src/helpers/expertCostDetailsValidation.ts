@@ -76,14 +76,14 @@ export class ExpertCostDetailsForm extends Form<
 function buildExpertCostDetailsFields(
   costType: DisbursementCostType,
 ): ExpertCostDetailsFields {
-  const prefix = () => {
+  const prefix: string = (() => {
     switch (costType) {
       case CostType.EXPERT_COST:
         return "pages.poa.expertCostDetails";
       case CostType.NON_EXPERT_DISBURSEMENT:
-        return "pages.poa.nonExpertDisbursement";
+        return "pages.poa.nonExpertDisbursementDetails";
     }
-  };
+  })();
 
   return {
     activityDate: new DateField(

@@ -117,7 +117,7 @@ export async function submitRemoveExpertLineItem(
   }
 }
 
-const PREFIX = "pages.poa.removeExpertLineItem" as const;
+const PREFIX = "pages.poa.expertCostDetails.remove" as const;
 
 function buildField(): BooleanField {
   return new BooleanField(

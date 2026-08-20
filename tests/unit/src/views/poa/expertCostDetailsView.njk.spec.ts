@@ -6,6 +6,7 @@ import {
   ExpertCostDetailsViewModelParams,
 } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
 import { ExpertCostDetailsForm } from "#src/helpers/expertCostDetailsValidation.js";
+import { CostType } from "#src/types/Claim.js";
 
 chaiConfig.truncateThreshold = 0;
 
@@ -13,7 +14,7 @@ describe("views/main/poa/expertCostDetailsView.njk", () => {
   let $: CheerioAPI;
 
   describe("view with no errors", () => {
-    const form = new ExpertCostDetailsForm();
+    const form = new ExpertCostDetailsForm(CostType.EXPERT_COST);
 
     const params: ExpertCostDetailsViewModelParams = { form };
 
@@ -75,7 +76,7 @@ describe("views/main/poa/expertCostDetailsView.njk", () => {
   });
 
   describe("view with errors", () => {
-    const form = new ExpertCostDetailsForm();
+    const form = new ExpertCostDetailsForm(CostType.EXPERT_COST);
 
     form.validate({
       activityDateDay: "",

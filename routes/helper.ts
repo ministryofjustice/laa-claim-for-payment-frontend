@@ -22,7 +22,6 @@ export const ROUTES = {
   EXPERT_COST_DETAILS: "/claims/:claimId/poa/expert-cost-details",
   REMOVE_EXPERT_COST_DETAILS: "/claims/:claimId/poa/expert-cost-details/:lineItemId/remove",
   ADD_ANOTHER_EXPERT_COST_DETAILS: "/claims/:claimId/poa/expert-cost-details/add",
-  NON_EXPERT_COST_DETAILS: "/claims/:claimId/poa/non-expert-disbursement",
   MULTIPLE_CLIENT_HEARINGS: "/claims/:claimId/poa/multiple-client-hearings",
   ESCAPING_FIXED_FEE: "/claims/:claimId/poa/escaping-standard-fixed-fee",
   NUMBER_OF_CLIENTS_START_OF_CASE:

@@ -36,6 +36,8 @@ export class ExpertCostDetailsViewModel {
   constructor(params: ExpertCostDetailsViewModelParams) {
     const { form } = params;
 
+    form.
+
     this.title = "pages.poa.expertCostDetails.title";
 
     this.activityDateInput = buildDateInput(form.fields.activityDate);
