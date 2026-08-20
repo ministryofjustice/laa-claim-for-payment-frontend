@@ -63,7 +63,7 @@ describe("views/main/poa/addAnotherLineItemView.njk", () => {
     expect(h1s).to.have.length(1);
     const h1 = h1s.first();
     expect(h1.text().trim()).to.equal(
-      "pages.poa.expertCostDetails.addAnother.title.singular",
+      "prefix.title.singular",
     );
   });
 

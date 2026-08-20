@@ -4,7 +4,12 @@ import { buildRoute, ROUTES } from "#routes/helper.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { AddAnotherExpertCostViewModel } from "#src/viewmodels/poa/addAnotherLineItemViewModel.js";
-import type { Claim, ExpertCostLineItem } from "#src/types/Claim.js";
+import {
+  type Claim,
+  CostType,
+  type DisbursementCostType,
+  type ExpertCostLineItem, isDisbursementCostType,
+} from "#src/types/Claim.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
@@ -22,30 +27,35 @@ export async function addAnotherExpertCost(
   try {
     const claimId = UUID.parse(req.params.claimId);
 
-    const claim = await claimService.getDraftClaim(
+    const claimResponse = await claimService.getDraftClaim(
       req.axiosMiddleware,
       claimId,
     );
 
-    if (claim.status === "success") {
-      const lineItems: ExpertCostLineItem[] = getLineItems(claim.body);
-      if (lineItems.length === 0) {
-        res.redirect(buildRoute(ROUTES.EXPERT_COST_DETAILS, { claimId }));
+    if (claimResponse.status === "success") {
+      const { body: claim } = claimResponse;
+      if (isDisbursementCostType(claim.costType)) {
+        const lineItems: ExpertCostLineItem[] = getLineItems(claim);
+        if (lineItems.length === 0) {
+          res.redirect(buildRoute(ROUTES.EXPERT_COST_DETAILS, { claimId }));
+        } else {
+          const form = new YesNoQuestionForm(buildField(claim.costType));
+          res.render("main/poa/addAnotherLineItemView.njk", {
+            csrfToken: res.locals.csrfToken,
+            vm: new AddAnotherExpertCostViewModel({
+              claimId: claimId.toString(),
+              lineItems,
+              form,
+            }),
+          });
+        }
       } else {
-        const form = new YesNoQuestionForm(buildField());
-        res.render("main/poa/addAnotherLineItemView.njk", {
-          csrfToken: res.locals.csrfToken,
-          vm: new AddAnotherExpertCostViewModel({
-            claimId: claimId.toString(),
-            lineItems,
-            form,
-          }),
-        });
+        res.redirect(buildRoute(ROUTES.POA_CLAIM_TYPE, { claimId }));
       }
     } else {
       next(
         processApiError(
-          claim,
+          claimResponse,
           "retrieving claim for rendering add another expert cost page",
         ),
       );
@@ -71,42 +81,46 @@ export async function submitAddAnotherExpertCost(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const field = buildField();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[field.name];
-    const form = new YesNoQuestionForm(field);
-    form.validate(selectedChoice);
-
     const claimId = UUID.parse(req.params.claimId);
 
-    const claim = await claimService.getDraftClaim(
+    const claimResponse = await claimService.getDraftClaim(
       req.axiosMiddleware,
       claimId,
     );
 
-    if (claim.status === "success") {
-      if (form.isNotValid()) {
-        const lineItems = getLineItems(claim.body);
-        res.status(400).render("main/poa/addAnotherLineItemView.njk", {
-          csrfToken: res.locals.csrfToken,
-          vm: new AddAnotherExpertCostViewModel({
-            claimId: claimId.toString(),
-            lineItems,
-            form,
-          }),
-        });
-        return;
-      }
+    if (claimResponse.status === "success") {
+      const { body: claim } = claimResponse;
+      if (isDisbursementCostType(claim.costType)) {
+        const field = buildField(claim.costType);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
+        const selectedChoice: unknown = req.body?.[field.name];
+        const form = new YesNoQuestionForm(field);
+        form.validate(selectedChoice);
+        if (form.isNotValid()) {
+          const lineItems = getLineItems(claim);
+          res.status(400).render("main/poa/addAnotherLineItemView.njk", {
+            csrfToken: res.locals.csrfToken,
+            vm: new AddAnotherExpertCostViewModel({
+              claimId: claimId.toString(),
+              lineItems,
+              form,
+            }),
+          });
+          return;
+        }
 
-      if (form.getValue()) {
-        res.redirect(buildRoute(ROUTES.EXPERT_COST_DETAILS, { claimId }));
+        if (form.getValue()) {
+          res.redirect(buildRoute(ROUTES.EXPERT_COST_DETAILS, { claimId }));
+        } else {
+          res.redirect(buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, { claimId }));
+        }
       } else {
-        res.redirect(buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, { claimId }));
+        res.redirect(buildRoute(ROUTES.POA_CLAIM_TYPE, { claimId }));
       }
     } else {
       next(
         processApiError(
-          claim,
+          claimResponse,
           "retrieving claim for submitting add another expert cost page",
         ),
       );
@@ -127,9 +141,17 @@ function getLineItems(claim: Claim): ExpertCostLineItem[] {
   );
 }
 
-function buildField(): BooleanField {
+function buildField(costType: DisbursementCostType): BooleanField {
+  const messagePrefix: string = (() => {
+    switch (costType) {
+      case CostType.EXPERT_COST:
+        return "pages.poa.expertCostDetails";
+      case CostType.NON_EXPERT_DISBURSEMENT:
+        return "pages.poa.nonExpertDisbursementDetails";
+    }
+  })();
   return new BooleanField(
-    "pages.poa.expertCostDetails.addAnother",
+    `${messagePrefix}.addAnother`,
     "addAnother",
     "add-another",
   );

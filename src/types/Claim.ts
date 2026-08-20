@@ -23,6 +23,20 @@ export enum CostType {
   NON_EXPERT_DISBURSEMENT = 'NON_EXPERT_DISBURSEMENT',
 }
 
+/**
+ * Gets whether the cost type is a disbursement type.
+ * @param {CostType | null | undefined} costType cost type
+ * @returns {boolean} whether the cost type is a disbursement type
+ */
+export function isDisbursementCostType(
+  costType: CostType | null | undefined,
+): costType is DisbursementCostType {
+  return (
+    costType === CostType.EXPERT_COST ||
+    costType === CostType.NON_EXPERT_DISBURSEMENT
+  );
+}
+
 export type DisbursementCostType =
   | CostType.EXPERT_COST
   | CostType.NON_EXPERT_DISBURSEMENT;

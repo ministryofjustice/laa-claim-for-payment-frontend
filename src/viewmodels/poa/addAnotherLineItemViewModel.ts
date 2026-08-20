@@ -17,7 +17,6 @@ interface AddAnotherLineItemViewModelParams<T extends LineItem> {
   claimId: string;
   lineItems: T[];
   form: YesNoQuestionForm;
-  prefix: string;
   getValue: (lineItem: T) => string;
   summaryListId: string;
 }
@@ -42,14 +41,14 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
    * @param {AddAnotherLineItemViewModelParams} params View model params.
    */
   constructor(params: AddAnotherLineItemViewModelParams<T>) {
-    const { claimId, lineItems, form, prefix, getValue, summaryListId } =
+    const { claimId, lineItems, form, getValue, summaryListId } =
       params;
 
     if (lineItems.length === 1) {
-      this.title = { key: `${prefix}.title.singular` };
+      this.title = { key: `${form.messagePrefix}.title.singular` };
     } else {
       this.title = {
-        key: `${prefix}.title.multiple`,
+        key: `${form.messagePrefix}.title.multiple`,
         args: { count: lineItems.length },
       };
     }
@@ -75,7 +74,7 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
     this.lineItemsSummaryList = buildSummaryList(summaryListId, rows);
 
     this.radioQuestionViewModel = new RadioQuestionViewModel({
-      title: `${prefix}.question`,
+      title: `${form.messagePrefix}.question`,
       form,
       isLegendPageHeading: false,
     });
@@ -94,7 +93,6 @@ export class AddAnotherExpertCostViewModel extends AddAnotherLineItemViewModel<E
   constructor(params: AddAnotherExpertCostViewModelParams) {
     super({
       ...params,
-      prefix: "pages.poa.expertCostDetails.addAnother",
       getValue: (lineItem) => formatClaimed(lineItem.actualNetValue),
       summaryListId: "expert-cost",
     });

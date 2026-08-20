@@ -43,11 +43,11 @@ describe("AddAnotherLineItemViewModel", () => {
       const result = new AddAnotherExpertCostViewModel(params);
 
       expect(result.title).to.deep.equal({
-        key: "pages.poa.expertCostDetails.addAnother.title.singular",
+        key: "test.title.singular",
       });
 
       expect(result.radioQuestionViewModel.title).to.deep.equal({
-        key: "pages.poa.expertCostDetails.addAnother.question",
+        key: "test.question",
       });
 
       expect(result.lineItemsSummaryList.card).to.be.undefined;
@@ -130,12 +130,12 @@ describe("AddAnotherLineItemViewModel", () => {
       const result = new AddAnotherExpertCostViewModel(params);
 
       expect(result.title).to.deep.equal({
-        key: "pages.poa.expertCostDetails.addAnother.title.multiple",
+        key: "test.title.multiple",
         args: { count: 2 },
       });
 
       expect(result.radioQuestionViewModel.title).to.deep.equal({
-        key: "pages.poa.expertCostDetails.addAnother.question",
+        key: "test.question",
       });
 
       expect(result.lineItemsSummaryList.card).to.be.undefined;

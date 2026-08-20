@@ -6,7 +6,7 @@ import {
   MoneyField,
   StringField,
 } from "#src/helpers/fields.js";
-import { CostType, DisbursementCostType } from "#src/types/Claim.js";
+import { CostType, type DisbursementCostType } from "#src/types/Claim.js";
 
 export interface ExpertCostDetailsRequestBody {
   activityDateDay?: unknown;
@@ -36,6 +36,7 @@ export class ExpertCostDetailsForm extends Form<
 > {
   /**
    * Creates a form.
+   * @param {DisbursementCostType} costType cost type
    */
   constructor(costType: DisbursementCostType) {
     const messagePrefix: string = (() => {

@@ -4,7 +4,7 @@ import sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
 import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { Category, Claim } from "#src/types/Claim.js";
+import { Category, Claim, CostType } from "#src/types/Claim.js";
 import {
   addAnotherExpertCost,
   submitAddAnotherExpertCost,
@@ -49,6 +49,7 @@ describe("addAnotherExpertCostController", () => {
       status: "success",
       body: new Claim({
         id: claimId.toString(),
+        costType: CostType.EXPERT_COST,
         lineItems: [
           {
             id: lineItemId.toString(),
@@ -77,6 +78,93 @@ describe("addAnotherExpertCostController", () => {
     expect(renderArgs.vm.radioQuestionViewModel.radios.name).to.equal("addAnother");
   });
 
+  it("renders the add another non-expert disbursement page", async () => {
+    const req = {
+      params: {
+        claimId: claimId.toString(),
+      },
+    } as unknown as Request;
+
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+        costType: CostType.NON_EXPERT_DISBURSEMENT,
+        lineItems: [
+          {
+            id: lineItemId.toString(),
+            title: "Line item 1",
+            category: Category.DISBURSEMENT,
+            date: new LocalDate(18, 3, 2025),
+            evidenceItems: [],
+          },
+        ],
+      }),
+    });
+
+    await addAnotherExpertCost(req, res, next);
+
+    expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
+    expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
+      "main/poa/addAnotherLineItemView.njk",
+    );
+
+    const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
+
+    expect(renderArgs.csrfToken).to.equal("test-csrf-token");
+    expect(renderArgs.vm.title.key).to.equal(
+      "pages.poa.nonExpertDisbursementDetails.addAnother.title.singular",
+    );
+    expect(renderArgs.vm.radioQuestionViewModel.radios.name).to.equal("addAnother");
+  });
+
+  it("redirects when profit cost type", async () => {
+    const req = {
+      params: {
+        claimId: claimId.toString(),
+      },
+    } as unknown as Request;
+
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+        costType: CostType.PROFIT_COST,
+      }),
+    });
+
+    await addAnotherExpertCost(req, res, next);
+
+    expect(
+      (res.redirect as sinon.SinonStub).calledWith(
+        `/claims/${claimId.toString()}/poa/claim-type`,
+      ),
+    ).to.equal(true);
+  });
+
+  it("redirects when no cost type", async () => {
+    const req = {
+      params: {
+        claimId: claimId.toString(),
+      },
+    } as unknown as Request;
+
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
+
+    await addAnotherExpertCost(req, res, next);
+
+    expect(
+      (res.redirect as sinon.SinonStub).calledWith(
+        `/claims/${claimId.toString()}/poa/claim-type`,
+      ),
+    ).to.equal(true);
+  });
+
   it("redirects to expert cost page when no line items", async () => {
     const req = {
       params: {
@@ -88,6 +176,7 @@ describe("addAnotherExpertCostController", () => {
       status: "success",
       body: new Claim({
         id: claimId.toString(),
+        costType: CostType.EXPERT_COST,
         lineItems: [],
       }),
     });
@@ -115,6 +204,7 @@ describe("addAnotherExpertCostController", () => {
       status: "success",
       body: new Claim({
         id: claimId.toString(),
+        costType: CostType.EXPERT_COST,
       }),
     });
 
@@ -141,6 +231,7 @@ describe("addAnotherExpertCostController", () => {
       status: "success",
       body: new Claim({
         id: claimId.toString(),
+        costType: CostType.EXPERT_COST,
       }),
     });
 
@@ -165,6 +256,7 @@ describe("addAnotherExpertCostController", () => {
       status: "success",
       body: new Claim({
         id: claimId.toString(),
+        costType: CostType.EXPERT_COST,
       }),
     });
 
@@ -191,6 +283,7 @@ describe("addAnotherExpertCostController", () => {
       status: "success",
       body: new Claim({
         id: claimId.toString(),
+        costType: CostType.EXPERT_COST,
       }),
     });
 

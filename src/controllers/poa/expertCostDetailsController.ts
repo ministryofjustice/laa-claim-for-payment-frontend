@@ -10,10 +10,10 @@ import { getRequestBody } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import {
-  Claim,
+  type Claim,
   CostType,
-  DisbursementCostType,
   type ExpertCostLineItem,
+  isDisbursementCostType,
 } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
 import createHttpError from "http-errors";
@@ -181,14 +181,5 @@ function getLineItem(
   return claim.lineItems.find(
     (lineItem): lineItem is ExpertCostLineItem =>
       lineItem.id === lineItemId.toString(),
-  );
-}
-
-function isDisbursementCostType(
-  costType: CostType | null | undefined,
-): costType is DisbursementCostType {
-  return (
-    costType === CostType.EXPERT_COST ||
-    costType === CostType.NON_EXPERT_DISBURSEMENT
   );
 }
