@@ -6,7 +6,7 @@ import createHttpError from "http-errors";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { uploadService } from "#src/services/uploadService.js";
 import { UUID } from "uuidv7";
-import { ClaimStatus, type LineItem } from "#src/types/Claim.js";
+import type { LineItem } from "#src/types/Claim.js";
 
 /**
  * File upload page for Bill narrative.
@@ -42,35 +42,9 @@ export async function fileUploadForLineItemPage(
         return;
       }
 
-      const saveAndContinueHref = buildRoute(
-        ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY,
-        {
-          claimId: claim.id,
-        },
-      );
-      const uploadUrl = buildRoute(
-        ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM,
-        {
-          claimId: claim.id,
-          lineItemId: lineItem.id,
-        },
-        { claimStatus: ClaimStatus.SUBMITTED },
-      );
-      const deleteUrl = buildRoute(
-        ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM,
-        {
-          claimId: claim.id,
-          lineItemId: lineItem.id,
-        },
-        { claimStatus: ClaimStatus.SUBMITTED },
-      );
-
       const vm = new FileUploadForLineItemViewModel(
         claim,
         lineItem,
-        uploadUrl,
-        deleteUrl,
-        saveAndContinueHref,
       );
 
       res.render("main/claims/fileUploadForLineItemView.njk", {

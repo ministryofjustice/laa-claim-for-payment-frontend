@@ -1,8 +1,9 @@
-import { Category, type Claim, type EvidenceItem, type LineItem } from "#src/types/Claim.js";
+import { Category, type Claim, ClaimStatus, type EvidenceItem, type LineItem } from "#src/types/Claim.js";
 import type { Message } from "#src/viewmodels/components/message.js";
 import type { ReusableDocument } from "#src/viewmodels/components/taskList.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import { formatDateReadable } from "#src/helpers/index.js";
+import { buildRoute, ROUTES } from "#routes/helper.js";
 
 /**
  *
@@ -19,22 +20,37 @@ export class FileUploadForLineItemViewModel {
    * Creates a view model containing the summary rows derived from the claim data
    * @param {Claim} claim Array of claims
    * @param {LineItem} lineItem Line item
-   * @param {string} uploadUrl url for upload
-   * @param {string} deleteUrl url for delete
-   * @param {string} saveAndContinueHref url for form submit
    */
-  // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   constructor(
     claim: Claim,
     lineItem: LineItem,
-    uploadUrl: string,
-    deleteUrl: string,
-    saveAndContinueHref: string,
   ) {
-    this.uploadUrl = uploadUrl;
-    this.deleteUrl = deleteUrl;
+    this.uploadUrl = buildRoute(
+      ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM,
+      {
+        claimId: claim.id,
+        lineItemId: lineItem.id,
+      },
+      { claimStatus: ClaimStatus.SUBMITTED },
+    );
+
+    this.deleteUrl = buildRoute(
+      ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM,
+      {
+        claimId: claim.id,
+        lineItemId: lineItem.id,
+      },
+      { claimStatus: ClaimStatus.SUBMITTED },
+    );
+
     this.title = FileUploadForLineItemViewModel.buildTitle(lineItem);
-    this.saveAndContinueHref = saveAndContinueHref;
+
+    this.saveAndContinueHref = buildRoute(
+      ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY,
+      {
+        claimId: claim.id,
+      },
+    );
 
     const existingIds = new Set(lineItem.evidenceItems);
 

@@ -95,7 +95,7 @@
         "text" : "multi",
         "hint" : "hint multi"
       },
-      "error" : {
+      "errors" : {
         "empty" : "select one"
       }
     },
