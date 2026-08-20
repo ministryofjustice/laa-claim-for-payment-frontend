@@ -4,8 +4,13 @@ import { buildRoute, ROUTES } from "#routes/helper.js";
 import type { UUID } from "uuidv7";
 import { ClaimStatus } from "#src/types/Claim.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
-import { UploadForm } from "#src/helpers/fileUploadValidation.js";
+import type { UploadForm } from "#src/helpers/fileUploadValidation.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
+
+export interface PoaEvidenceUploadViewModelParams {
+  claimId: UUID;
+  form: UploadForm;
+}
 
 /**
  * View model for the POA evidence upload page.
@@ -22,19 +27,9 @@ export class PoaEvidenceUploadViewModel {
   /**
    * Creates a profit cost details evidence upload view model.
    *
-   * @param {object} options View model options.
-   * @param {string} options.uploadUrl URL used by the AJAX upload request.
-   * @param {string} options.deleteUrl URL used by the AJAX delete request.
-   * @param {string} options.saveAndContinueHref URL for the save and continue action.
-   * @param {string} options.saveAndComeBackLaterHref URL for the save and come back later action.
-   * @param options.claimId
-   * @param options.form
-   * @param {ReusableDocument[]} [options.uploadedFiles] Files already uploaded to the claim.
-   * @param {FieldValidationError[]} [options.errors] Validation errors.
+   * @param {PoaEvidenceUploadViewModelParams} params View model params.
    */
-  constructor(options: { claimId: UUID; form: UploadForm }) {
-    const { claimId, form } = options;
-
+  constructor({ claimId, form }: PoaEvidenceUploadViewModelParams) {
     this.title = "pages.poaEvidenceUpload.title";
 
     this.uploadUrl = buildRoute(

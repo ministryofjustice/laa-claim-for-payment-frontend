@@ -20,8 +20,9 @@ export interface Input {
 }
 
 /**
- *
- * @param field
+ * Builds a monetary text input.
+ * @param {MoneyField} field the underlying form field
+ * @returns {Input} a monetary text input
  */
 export function buildMonetaryInput(field: MoneyField): Input {
   return {
@@ -44,8 +45,9 @@ export function buildMonetaryInput(field: MoneyField): Input {
 }
 
 /**
- *
- * @param field
+ * Builds a regular text input.
+ * @param {StringField} field the underlying form field
+ * @returns {Input} a regular text input
  */
 export function buildInput(field: StringField): Input {
   return {

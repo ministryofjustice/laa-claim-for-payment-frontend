@@ -6,16 +6,16 @@ import type { Message } from "#src/viewmodels/components/message.js";
 import type { EvidenceItem } from "#src/types/Claim.js";
 
 /**
- *
+ * Form field.
  */
 export abstract class Field<RawType, ValidatedType> {
   public validation?: ValidationResult<ValidatedType>;
 
   /**
-   *
-   * @param messagePrefix
-   * @param name
-   * @param id
+   * Creates a form field.
+   * @param {string} messagePrefix message prefix for the field
+   * @param {string} name field name
+   * @param {string} id field ID
    */
   constructor(
     public readonly messagePrefix: string,
@@ -26,8 +26,8 @@ export abstract class Field<RawType, ValidatedType> {
   abstract validate(value: RawType): void;
 
   /**
-   *
-   * @param value
+   * Marks the field as valid for the given validated value.
+   * @param {object} value the validated value.
    */
   valid(value: ValidatedType): void {
     this.validation = {
@@ -37,8 +37,8 @@ export abstract class Field<RawType, ValidatedType> {
   }
 
   /**
-   *
-   * @param error
+   * Marks the field as invalid for the given validated value.
+   * @param {FieldValidationError} error the validation error for the field
    */
   error(error: FieldValidationError): void {
     this.validation = {
@@ -48,7 +48,9 @@ export abstract class Field<RawType, ValidatedType> {
   }
 
   /**
-   *
+   * Get the validation result for the field.
+   * @returns {ValidationResult} the validation result
+   * @throws if the field has not been validated
    */
   getResult(): ValidationResult<ValidatedType> {
     if (this.validation === undefined) {
@@ -59,7 +61,8 @@ export abstract class Field<RawType, ValidatedType> {
   }
 
   /**
-   *
+   * Gets the field value.
+   * @returns {object | undefined} the field value
    */
   getValue(): ValidatedType | undefined {
     if (this.validation?.isValid !== true) {
@@ -70,20 +73,18 @@ export abstract class Field<RawType, ValidatedType> {
   }
 
   /**
-   *
-   * @param value
+   * Sets the field value.
+   * @param {object | null | undefined} value the field value
    */
   setValue(value: ValidatedType | null | undefined): void {
     if (value != null) {
-      this.validation = {
-        isValid: true,
-        value,
-      };
+      this.valid(value);
     }
   }
 
   /**
-   *
+   * Gets the error associated with this field if there is one.
+   * @returns {FieldValidationError | undefined} the error if there is one
    */
   getError(): FieldValidationError | undefined {
     return this.validation?.isValid === false
@@ -92,9 +93,10 @@ export abstract class Field<RawType, ValidatedType> {
   }
 
   /**
-   *
+   * Gets the error message associated with this field if there is one.
+   * @returns {_: Message | undefined} the error message if there is one
    */
-  getErrorMessage(): undefined | { text: Message } {
+  getErrorMessage(): { text: Message } | undefined {
     const error = this.getError();
     return error == null
       ? undefined
@@ -105,22 +107,12 @@ export abstract class Field<RawType, ValidatedType> {
 }
 
 /**
- *
+ * Upload form field.
  */
 export class UploadField extends Field<EvidenceItem[], EvidenceItem[]> {
   /**
-   *
-   * @param messagePrefix
-   * @param name
-   * @param id
-   */
-  constructor(messagePrefix: string, name: string, id: string) {
-    super(messagePrefix, name, id);
-  }
-
-  /**
-   *
-   * @param value
+   * Validate the field against the given value.
+   * @param {EvidenceItem[]} value the uploads
    */
   validate(value: EvidenceItem[]): void {
     if (value.length > 0) {
@@ -137,15 +129,15 @@ export class UploadField extends Field<EvidenceItem[], EvidenceItem[]> {
 }
 
 /**
- *
+ * String form field.
  */
 export class StringField extends Field<unknown, string> {
   /**
-   *
-   * @param messagePrefix
-   * @param name
-   * @param id
-   * @param regex
+   * Creates a string form field.
+   * @param {string} messagePrefix message prefix for the field
+   * @param {string} name field name
+   * @param {string} id field ID
+   * @param {RegExp} regex regex to validate against
    */
   constructor(
     messagePrefix: string,
@@ -157,8 +149,8 @@ export class StringField extends Field<unknown, string> {
   }
 
   /**
-   *
-   * @param value
+   * Validate the field against the given value.
+   * @param {unknown} value the entered value
    */
   validate(value: unknown): void {
     const stringValue = getStringValue(value);
@@ -188,17 +180,18 @@ export class StringField extends Field<unknown, string> {
 }
 
 /**
- *
+ * Radio form field.
  */
 export class RadioField<TChoice, TValue> extends Field<unknown, TValue> {
   /**
-   *
-   * @param messagePrefix
-   * @param name
-   * @param id
-   * @param choices
-   * @param toValue
+   * Creates a radio form field.
+   * @param {string} messagePrefix message prefix for the field
+   * @param {string} name field name
+   * @param {string} id field ID
+   * @param {ReadonlyArray<RadioQuestionOptions>} choices field radio options
+   * @param {Function} toValue maps a TChoice to a TValue
    */
+  // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   constructor(
     messagePrefix: string,
     name: string,
@@ -210,8 +203,8 @@ export class RadioField<TChoice, TValue> extends Field<unknown, TValue> {
   }
 
   /**
-   *
-   * @param value
+   * Validate the field against the given value.
+   * @param {unknown} value the selected value
    */
   validate(value: unknown): void {
     const selection = this.choices.find((choice) => choice.value === value);
@@ -231,7 +224,8 @@ export class RadioField<TChoice, TValue> extends Field<unknown, TValue> {
   }
 
   /**
-   *
+   * Get the radio options for the radio form field with the appropriate checked status.
+   * @returns {ReadonlyArray<RadioQuestionOptions>} the radio options
    */
   getOptions(): ReadonlyArray<RadioQuestionOptions<TChoice>> {
     const value = this.getValue();
@@ -244,14 +238,14 @@ export class RadioField<TChoice, TValue> extends Field<unknown, TValue> {
 }
 
 /**
- *
+ * Yes/No form field.
  */
 export class BooleanField extends RadioField<BooleanChoice, boolean> {
   /**
-   *
-   * @param messagePrefix
-   * @param name
-   * @param id
+   * Creates a yes/no form field.
+   * @param {string} messagePrefix message prefix for the field
+   * @param {string} name field name
+   * @param {string} id field ID
    */
   constructor(messagePrefix: string, name: string, id: string) {
     super(
@@ -265,22 +259,12 @@ export class BooleanField extends RadioField<BooleanChoice, boolean> {
 }
 
 /**
- *
+ * Monetary form field.
  */
 export class MoneyField extends Field<unknown, number> {
   /**
-   *
-   * @param messagePrefix
-   * @param name
-   * @param id
-   */
-  constructor(messagePrefix: string, name: string, id: string) {
-    super(messagePrefix, name, id);
-  }
-
-  /**
-   *
-   * @param value
+   * Validate the field against the given value.
+   * @param {unknown} value the entered value
    */
   validate(value: unknown): void {
     const stringValue = getStringValue(value);
@@ -331,22 +315,12 @@ interface RawDate {
 }
 
 /**
- *
+ * Date form field.
  */
 export class DateField extends Field<RawDate, LocalDate> {
   /**
-   *
-   * @param messagePrefix
-   * @param name
-   * @param id
-   */
-  constructor(messagePrefix: string, name: string, id: string) {
-    super(messagePrefix, name, id);
-  }
-
-  /**
-   *
-   * @param value
+   * Validate the field against the given values.
+   * @param {RawDate} value the entered values
    */
   validate(value: RawDate): void {
     const day = getStringValue(value.day);
@@ -435,8 +409,9 @@ export class DateField extends Field<RawDate, LocalDate> {
   }
 
   /**
-   *
-   * @param fieldName
+   * Gets whether a certain field (day/month/year) has an error associated to it.
+   * @param {string} fieldName the name of the field
+   * @returns {boolean} whether the field has an error
    */
   hasError(fieldName: string): boolean {
     return this.getError()?.fields?.includes(fieldName) ?? false;

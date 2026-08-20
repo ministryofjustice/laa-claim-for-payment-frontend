@@ -7,6 +7,7 @@ import { V7Generator } from "uuidv7";
 import { Category, ProfitCostBillLineItem } from "#src/types/Claim.js";
 import { LocalDate } from "#src/types/date.js";
 import { ProfitCostBillLineForm } from "#src/helpers/profitCostBillLineValidation.js";
+import type { ProfitCostBillLine } from "#src/types/poa.js";
 
 describe("profitCostBillLineViewModel constructor", () => {
   const lineItemId = new V7Generator().generate();
@@ -32,17 +33,12 @@ describe("profitCostBillLineViewModel constructor", () => {
   });
 
   it("constructs view model when form populated", () => {
-    const lineItem: ProfitCostBillLineItem = {
-      id: lineItemId.toString(),
-      title: "Title",
-      category: Category.DISBURSEMENT,
-      date: LocalDate.of(1, 1, 2026),
-      evidenceItems: [],
+    const lineItem: ProfitCostBillLine = {
+      activityDate: LocalDate.of(1, 1, 2026),
+      vatApplies: true,
+      actualNetProfitCostExcludingAdvocacy: 123,
+      actualNetAdvocacyCosts: 456,
       feeEarnerName: "Joe Bloggs",
-      vatApplicable: true,
-      actualNetValue: null,
-      netProfitCostAmount: 123,
-      netAdvocacyCostAmount: 456,
     };
 
     const form = new ProfitCostBillLineForm();

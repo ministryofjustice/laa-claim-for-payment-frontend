@@ -37,7 +37,14 @@ export async function expertCostDetails(
         );
 
       if (lineItemResponse.status === "success") {
-        form.fill(lineItemResponse.body);
+        const { body: lineItem } = lineItemResponse;
+        form.fill({
+          activityDate: lineItem.date,
+          actualNetValue: lineItem.actualNetValue,
+          vatApplies: lineItem.vatApplicable,
+          feeEarnerName: lineItem.feeEarnerName,
+          description: lineItem.title,
+        });
       } else {
         next(
           processApiError(

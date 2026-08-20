@@ -27,8 +27,9 @@ interface DateInputItem {
 }
 
 /**
- *
- * @param field
+ * Builds a date input.
+ * @param {DateField} field the underlying form field
+ * @returns {DateInput} a date input
  */
 export function buildDateInput(field: DateField): DateInput {
   return {

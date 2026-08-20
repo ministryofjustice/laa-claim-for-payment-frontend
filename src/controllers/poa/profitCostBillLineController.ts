@@ -1,6 +1,9 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processApiError, processError } from "#src/helpers/index.js";
-import { ProfitCostBillLineForm, type ProfitCostBillLineRequestBody } from "#src/helpers/profitCostBillLineValidation.js";
+import {
+  ProfitCostBillLineForm,
+  type ProfitCostBillLineRequestBody,
+} from "#src/helpers/profitCostBillLineValidation.js";
 import { ProfitCostBillLineViewModel } from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { UUID } from "uuidv7";
@@ -38,7 +41,13 @@ export async function profitCostBillLine(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
         const lineItem = claim.body.lineItems[0] as ProfitCostBillLineItem;
         ({ id: lineItemId } = lineItem);
-        form.fill(lineItem);
+        form.fill({
+          activityDate: lineItem.date,
+          actualNetProfitCostExcludingAdvocacy: lineItem.netProfitCostAmount,
+          actualNetAdvocacyCosts: lineItem.netAdvocacyCostAmount,
+          vatApplies: lineItem.vatApplicable,
+          feeEarnerName: lineItem.feeEarnerName,
+        });
       }
 
       res.render("main/poa/profitCostBillLineView.njk", {

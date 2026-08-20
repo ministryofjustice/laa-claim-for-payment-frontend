@@ -10,37 +10,43 @@ export interface ProfitCostDetailsRequestBody {
   transferOfSolicitorChoice?: unknown;
 }
 
-export interface ProfitCostDetailsFields {
+interface ProfitCostDetailsFields {
   courtType: RadioField<CourtType, CourtType>;
   clientStatus: RadioField<ClientPartyStatus, ClientPartyStatus>;
   firstSolicitor: BooleanField;
   transferOfSolicitor: BooleanField;
 }
 
-interface ProfitCostDetailsGet {
-  courtType: CourtType | null | undefined;
-  clientStatus: ClientPartyStatus | null | undefined;
-  firstSolicitor: boolean | null | undefined;
-  transferOfSolicitor: boolean | null | undefined;
-}
-
+/**
+ * Profit cost details form.
+ */
 export class ProfitCostDetailsForm extends Form<
   ProfitCostDetailsFields,
-  ProfitCostDetailsGet,
   ProfitCostDetailsRequestBody,
   ProfitCostDetails
 > {
+  /**
+   * Creates a form.
+   */
   constructor() {
     super(buildProfitCostDetailsFields());
   }
 
-  fill(value: ProfitCostDetailsGet): void {
+  /**
+   * Fills the form.
+   * @param {Partial<ProfitCostDetails>} value form value
+   */
+  fill(value: Partial<ProfitCostDetails>): void {
     this.fields.courtType.setValue(value.courtType);
     this.fields.clientStatus.setValue(value.clientStatus);
     this.fields.firstSolicitor.setValue(value.firstSolicitor);
     this.fields.transferOfSolicitor.setValue(value.transferOfSolicitor);
   }
 
+  /**
+   * Validates the form.
+   * @param {ProfitCostDetailsRequestBody} value value to validate
+   */
   validate(value: ProfitCostDetailsRequestBody): void {
     this.fields.courtType.validate(value.courtTypeChoice);
     this.fields.clientStatus.validate(value.clientStatusChoice);

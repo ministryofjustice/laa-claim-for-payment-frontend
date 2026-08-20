@@ -19,10 +19,11 @@ export interface Radios<T> {
 }
 
 /**
- *
- * @param field
- * @param legend
- * @param isLegendPageHeading
+ * Builds a radios input.
+ * @param {RadioField} field the underlying form field
+ * @param {Message} legend legend text
+ * @param {boolean} isLegendPageHeading whether the legend should be the page heading
+ * @returns {Radios} a radios input
  */
 export function buildRadios<ChoiceType, ValueType>(
   field: RadioField<ChoiceType, ValueType>,

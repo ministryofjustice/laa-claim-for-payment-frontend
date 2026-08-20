@@ -7,7 +7,7 @@ import { claimService } from "#src/services/claimService.js";
 import { draftService } from "#src/services/draftService.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import type { BooleanChoice } from "#src/models/booleanChoice.js";
-import { RadioQuestionForm, YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import { type RadioQuestionForm, YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 /**
  * get how many clients retained view

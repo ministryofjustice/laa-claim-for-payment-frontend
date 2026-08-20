@@ -1,9 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
-import {
-  ProfitCostDetailsViewModel,
-  type ProfitCostDetailsViewModelParams
-} from "#src/viewmodels/poa/profitCostDetailsViewModel.js";
+import { ProfitCostDetailsViewModel } from "#src/viewmodels/poa/profitCostDetailsViewModel.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { getRequestBody } from "#src/helpers/validation.js";
 import { ProfitCostDetailsForm, type ProfitCostDetailsRequestBody } from "#src/helpers/profitCostDetailsValidation.js";
@@ -29,18 +26,36 @@ export async function profitCostDetails(
       claimId,
     );
 
-    const form = new ProfitCostDetailsForm();
-    form.fill({
-      courtType: claim.body?.courtType,
-      clientStatus: claim.body?.clientPartyStatus,
-      firstSolicitor: claim.body?.firstActingSolicitorFlag,
-      transferOfSolicitor: claim.body?.transferOfSolicitorFlag,
-    });
+    if (claim.status === "success") {
+      const form = new ProfitCostDetailsForm();
+      if (claim.body.courtType != null) {
+        form.fill({ courtType: claim.body.courtType });
+      }
 
-    res.render("main/poa/profitCostDetailsView.njk", {
-      csrfToken: res.locals.csrfToken,
-      vm: new ProfitCostDetailsViewModel({ form }),
-    });
+      if (claim.body.clientPartyStatus != null) {
+        form.fill({ clientStatus: claim.body.clientPartyStatus });
+      }
+
+      if (claim.body.firstActingSolicitorFlag != null) {
+        form.fill({ firstSolicitor: claim.body.firstActingSolicitorFlag });
+      }
+
+      if (claim.body.transferOfSolicitorFlag != null) {
+        form.fill({ transferOfSolicitor: claim.body.transferOfSolicitorFlag });
+      }
+
+      res.render("main/poa/profitCostDetailsView.njk", {
+        csrfToken: res.locals.csrfToken,
+        vm: new ProfitCostDetailsViewModel({ form }),
+      });
+    } else {
+      next(
+        processApiError(
+          claim,
+          "retrieving claim for rendering profit cost details page",
+        ),
+      );
+    }
   } catch (error) {
     const processedError = processError(
       error,
@@ -69,13 +84,9 @@ export async function submitProfitCostDetails(
     const form = new ProfitCostDetailsForm();
     form.validate(requestBody);
     if (form.isNotValid()) {
-      const params: ProfitCostDetailsViewModelParams = {
-        form,
-      };
-
       res.status(400).render("main/poa/profitCostDetailsView.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new ProfitCostDetailsViewModel(params),
+        vm: new ProfitCostDetailsViewModel({ form }),
       });
       return;
     }

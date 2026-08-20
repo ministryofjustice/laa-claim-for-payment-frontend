@@ -2,7 +2,7 @@ import type { Message } from "#src/viewmodels/components/message.js";
 import type { BooleanChoice } from "#src/models/booleanChoice.js";
 import { buildRadios, type Radios } from "#src/viewmodels/components/radios.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
-import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import type { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 export interface RadioQuestionOptions<ChoiceType> {
   value: ChoiceType;

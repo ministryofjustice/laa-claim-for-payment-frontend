@@ -2,26 +2,32 @@ import type { Message } from "#src/viewmodels/components/message.js";
 import type { ErrorSummary, ErrorSummaryError } from "#src/viewmodels/components/errorSummary.js";
 
 /**
- *
+ * Abstracted form.
  */
-export abstract class Form<TFields, TGet, TPost, TValid> {
+export abstract class Form<TFields, TRequest, TValid> {
   public validation?: ValidationResult<TValid>;
 
+  /**
+   * Creates a form.
+   * @param {object} fields form fields.
+   */
   constructor(public readonly fields: TFields) {}
 
-  abstract fill(value: TGet): void;
+  abstract fill(value: TValid): void;
 
-  abstract validate(value: TPost): void;
+  abstract validate(value: TRequest): void;
 
   /**
-   *
+   * Get errors for all fields.
+   * @returns {FieldValidationError[]} the errors
    */
   getErrors(): FieldValidationError[] {
     return this.isNotValid() ? this.validation.errors : [];
   }
 
   /**
-   *
+   * Get error summary for the form.
+   * @returns {ErrorSummary} the error summary
    */
   getErrorSummary(): ErrorSummary | undefined {
     const errors = this.getErrors();
@@ -42,7 +48,8 @@ export abstract class Form<TFields, TGet, TPost, TValid> {
   }
 
   /**
-   *
+   * Is form valid.
+   * @returns {boolean} whether the form is valid
    */
   isValid(): this is this & {
     validation: ValidationSuccess<TValid>;
@@ -51,7 +58,8 @@ export abstract class Form<TFields, TGet, TPost, TValid> {
   }
 
   /**
-   *
+   * Is form not valid.
+   * @returns {boolean} whether the form is not valid
    */
   isNotValid(): this is this & {
     validation: ValidationFailure;
@@ -60,7 +68,8 @@ export abstract class Form<TFields, TGet, TPost, TValid> {
   }
 
   /**
-   *
+   * Retrieves validated form value.
+   * @returns {object} the validated form value
    */
   getValue(): TValid {
     if (!this.isValid()) {

@@ -11,7 +11,7 @@ import {
   type YesNoQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
 import { formatClaimed, formatDateReadable } from "#src/helpers/index.js";
-import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import type { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 interface AddAnotherLineItemViewModelParams<T extends LineItem> {
   claimId: string;

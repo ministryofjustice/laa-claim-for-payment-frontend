@@ -6,7 +6,6 @@ import {
   MoneyField,
   StringField,
 } from "#src/helpers/fields.js";
-import type { ProfitCostBillLineItem } from "#src/types/Claim.js";
 
 export interface ProfitCostBillLineRequestBody {
   activityDateDay?: unknown;
@@ -18,7 +17,7 @@ export interface ProfitCostBillLineRequestBody {
   feeEarnerName?: unknown;
 }
 
-export interface ProfitCostBillLineFields {
+interface ProfitCostBillLineFields {
   activityDate: DateField;
   actualNetProfitCostExcludingAdvocacy: MoneyField;
   actualNetAdvocacyCosts: MoneyField;
@@ -26,26 +25,39 @@ export interface ProfitCostBillLineFields {
   feeEarnerName: StringField;
 }
 
+/**
+ * Profit cost bill line form.
+ */
 export class ProfitCostBillLineForm extends Form<
   ProfitCostBillLineFields,
-  ProfitCostBillLineItem,
   ProfitCostBillLineRequestBody,
   ProfitCostBillLine
 > {
+  /**
+   * Creates a form.
+   */
   constructor() {
     super(buildProfitCostBillLineFields());
   }
 
-  fill(value: ProfitCostBillLineItem): void {
-    this.fields.activityDate.setValue(value.date);
+  /**
+   * Fills the form.
+   * @param {ProfitCostBillLine} value form value
+   */
+  fill(value: ProfitCostBillLine): void {
+    this.fields.activityDate.setValue(value.activityDate);
     this.fields.actualNetProfitCostExcludingAdvocacy.setValue(
-      value.netProfitCostAmount,
+      value.actualNetProfitCostExcludingAdvocacy,
     );
-    this.fields.actualNetAdvocacyCosts.setValue(value.netAdvocacyCostAmount);
-    this.fields.vatApplies.setValue(value.vatApplicable);
+    this.fields.actualNetAdvocacyCosts.setValue(value.actualNetAdvocacyCosts);
+    this.fields.vatApplies.setValue(value.vatApplies);
     this.fields.feeEarnerName.setValue(value.feeEarnerName);
   }
 
+  /**
+   * Validates the form.
+   * @param {ProfitCostBillLineRequestBody} value value to validate
+   */
   validate(value: ProfitCostBillLineRequestBody): void {
     this.fields.activityDate.validate({
       day: value.activityDateDay,

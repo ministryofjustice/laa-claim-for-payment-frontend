@@ -1,6 +1,5 @@
 import { combine, Form } from "#src/helpers/validation.js";
 import type { ExpertCostDetails } from "#src/types/poa.js";
-import type { ExpertCostLineItem } from "#src/types/Claim.js";
 import {
   BooleanField,
   DateField,
@@ -18,7 +17,7 @@ export interface ExpertCostDetailsRequestBody {
   description?: unknown;
 }
 
-export interface ExpertCostDetailsFields {
+interface ExpertCostDetailsFields {
   activityDate: DateField;
   actualNetValue: MoneyField;
   vatApplies: BooleanField;
@@ -26,24 +25,37 @@ export interface ExpertCostDetailsFields {
   description: StringField;
 }
 
+/**
+ * Expert cost details form.
+ */
 export class ExpertCostDetailsForm extends Form<
   ExpertCostDetailsFields,
-  ExpertCostLineItem,
   ExpertCostDetailsRequestBody,
   ExpertCostDetails
 > {
+  /**
+   * Creates a form.
+   */
   constructor() {
     super(buildExpertCostDetailsFields());
   }
 
-  fill(value: ExpertCostLineItem): void {
-    this.fields.activityDate.setValue(value.date);
+  /**
+   * Fills the form.
+   * @param {ExpertCostDetails} value form value
+   */
+  fill(value: ExpertCostDetails): void {
+    this.fields.activityDate.setValue(value.activityDate);
     this.fields.actualNetValue.setValue(value.actualNetValue);
-    this.fields.vatApplies.setValue(value.vatApplicable);
+    this.fields.vatApplies.setValue(value.vatApplies);
     this.fields.feeEarnerName.setValue(value.feeEarnerName);
-    this.fields.description.setValue(value.title);
+    this.fields.description.setValue(value.description);
   }
 
+  /**
+   * Validates the form.
+   * @param {ExpertCostDetailsRequestBody} value value to validate
+   */
   validate(value: ExpertCostDetailsRequestBody): void {
     this.fields.activityDate.validate({
       day: value.activityDateDay,

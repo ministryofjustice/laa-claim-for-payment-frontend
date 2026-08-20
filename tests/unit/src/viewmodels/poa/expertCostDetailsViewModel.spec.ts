@@ -3,14 +3,11 @@ import {
   ExpertCostDetailsViewModelParams,
 } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
 import { expect } from "chai";
-import { V7Generator } from "uuidv7";
-import { Category, ExpertCostLineItem } from "#src/types/Claim.js";
 import { LocalDate } from "#src/types/date.js";
 import { ExpertCostDetailsForm } from "#src/helpers/expertCostDetailsValidation.js";
+import { ExpertCostDetails } from "#src/types/poa.js";
 
 describe("expertCostDetailsViewModel constructor", () => {
-  const lineItemId = new V7Generator().generate();
-
   it("constructs view model when empty form", () => {
     const form = new ExpertCostDetailsForm();
 
@@ -33,17 +30,12 @@ describe("expertCostDetailsViewModel constructor", () => {
   });
 
   it("constructs view model when populated form", () => {
-    const lineItem: ExpertCostLineItem = {
-      id: lineItemId.toString(),
-      title: "Title",
-      category: Category.DISBURSEMENT,
-      date: LocalDate.of(1, 1, 2026),
-      evidenceItems: [],
-      feeEarnerName: "Joe Bloggs",
-      vatApplicable: true,
+    const lineItem: ExpertCostDetails = {
+      activityDate: LocalDate.of(1, 1, 2026),
       actualNetValue: 123,
-      netProfitCostAmount: null,
-      netAdvocacyCostAmount: null,
+      vatApplies: true,
+      feeEarnerName: "Joe Bloggs",
+      description: "Title",
     };
 
     const form = new ExpertCostDetailsForm();

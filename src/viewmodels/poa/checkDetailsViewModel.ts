@@ -188,7 +188,7 @@ export class CheckDetailsViewModel {
             ? undefined
             : {
                 text: {
-                  key: `pages.howManyClientsRetained.${claim.clientsStartCount}.text`,
+                  key: `pages.numberOfClientsStartOfCase.${claim.clientsStartCount}.text`,
                 },
               },
         ),
