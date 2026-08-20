@@ -461,6 +461,9 @@
       },
       "filesAdded": {
         "title": "Files added"
+      },
+      "errors": {
+        "empty": "You must upload evidence before you can continue"
       }
     }
   },

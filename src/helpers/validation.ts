@@ -14,8 +14,12 @@ export abstract class Form<TFields, TRequest, TValid> {
   /**
    * Creates a form.
    * @param {object} fields form fields.
+   * @param {string} messagePrefix message prefix for the field
    */
-  constructor(public readonly fields: TFields) {}
+  constructor(
+    public readonly fields: TFields,
+    public readonly messagePrefix: string,
+  ) {}
 
   abstract fill(value: TValid): void;
 
@@ -151,7 +155,7 @@ export function combine<TFields>(
   for (const key of Object.keys(fields)) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Object.keys loses the keyof TFields relationship.
     const { [key as keyof TFields]: field } = fields;
-     
+
     const result = field.getResult();
 
     if (result.isValid) {

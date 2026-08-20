@@ -30,7 +30,7 @@ export class PoaEvidenceUploadViewModel {
    * @param {PoaEvidenceUploadViewModelParams} params View model params.
    */
   constructor({ claimId, form }: PoaEvidenceUploadViewModelParams) {
-    this.title = "pages.poaEvidenceUpload.title";
+    this.title = `${form.messagePrefix}.title`;
 
     this.uploadUrl = buildRoute(
       ROUTES.AJAX_UPLOAD_POA_EVIDENCE,

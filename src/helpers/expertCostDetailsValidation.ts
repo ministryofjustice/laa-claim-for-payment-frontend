@@ -37,7 +37,8 @@ export class ExpertCostDetailsForm extends Form<
    * Creates a form.
    */
   constructor() {
-    super(buildExpertCostDetailsFields());
+    const messagePrefix = "pages.poa.expertCostDetails";
+    super(buildExpertCostDetailsFields(messagePrefix), messagePrefix);
   }
 
   /**
@@ -72,37 +73,35 @@ export class ExpertCostDetailsForm extends Form<
   }
 }
 
-function buildExpertCostDetailsFields(): ExpertCostDetailsFields {
-  const prefix = "pages.poa.expertCostDetails";
-
+function buildExpertCostDetailsFields(messagePrefix: string): ExpertCostDetailsFields {
   return {
     activityDate: new DateField(
-      `${prefix}.activityDate`,
+      `${messagePrefix}.activityDate`,
       "activityDate",
       "activity-date",
     ),
 
     actualNetValue: new MoneyField(
-      `${prefix}.actualNetValue`,
+      `${messagePrefix}.actualNetValue`,
       "actualNetValue",
       "actual-net-value",
     ),
 
     vatApplies: new BooleanField(
-      `${prefix}.vatApplies`,
+      `${messagePrefix}.vatApplies`,
       "vatApplies",
       "vat-applies",
     ),
 
     feeEarnerName: new StringField(
-      `${prefix}.feeEarnerName`,
+      `${messagePrefix}.feeEarnerName`,
       "feeEarnerName",
       "fee-earner-name",
       /^[A-Za-z' -]+$/,
     ),
 
     description: new StringField(
-      `${prefix}.description`,
+      `${messagePrefix}.description`,
       "description",
       "description",
       /^[\p{L}\p{N}\p{P}\p{Zs}\n\r]*$/u,

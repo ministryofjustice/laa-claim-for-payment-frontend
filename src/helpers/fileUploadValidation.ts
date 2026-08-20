@@ -19,7 +19,7 @@ export class UploadForm extends Form<
    * @param {UploadField} field form field
    */
   constructor(field: UploadField) {
-    super({ field });
+    super({ field }, field.messagePrefix);
   }
 
   /**

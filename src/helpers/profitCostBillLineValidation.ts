@@ -37,7 +37,8 @@ export class ProfitCostBillLineForm extends Form<
    * Creates a form.
    */
   constructor() {
-    super(buildProfitCostBillLineFields());
+    const messagePrefix = "pages.profitCostBillLine";
+    super(buildProfitCostBillLineFields(messagePrefix), messagePrefix);
   }
 
   /**
@@ -76,36 +77,36 @@ export class ProfitCostBillLineForm extends Form<
   }
 }
 
-function buildProfitCostBillLineFields(): ProfitCostBillLineFields {
-  const prefix = "pages.profitCostBillLine";
-
+function buildProfitCostBillLineFields(
+  messagePrefix: string,
+): ProfitCostBillLineFields {
   return {
     activityDate: new DateField(
-      `${prefix}.activityDate`,
+      `${messagePrefix}.activityDate`,
       "activityDate",
       "activityDate",
     ),
 
     actualNetProfitCostExcludingAdvocacy: new MoneyField(
-      `${prefix}.actualNetProfitCostExcludingAdvocacy`,
+      `${messagePrefix}.actualNetProfitCostExcludingAdvocacy`,
       "actualNetProfitCostExcludingAdvocacy",
       "actualNetProfitCostExcludingAdvocacy",
     ),
 
     actualNetAdvocacyCosts: new MoneyField(
-      `${prefix}.actualNetAdvocacyCosts`,
+      `${messagePrefix}.actualNetAdvocacyCosts`,
       "actualNetAdvocacyCosts",
       "actualNetAdvocacyCosts",
     ),
 
     vatApplies: new BooleanField(
-      `${prefix}.vatApplies`,
+      `${messagePrefix}.vatApplies`,
       "vatApplies",
       "vatApplies",
     ),
 
     feeEarnerName: new StringField(
-      `${prefix}.feeEarnerName`,
+      `${messagePrefix}.feeEarnerName`,
       "feeEarnerName",
       "feeEarnerName",
       /^[A-Za-z' -]+$/,

@@ -29,7 +29,8 @@ export class ProfitCostDetailsForm extends Form<
    * Creates a form.
    */
   constructor() {
-    super(buildProfitCostDetailsFields());
+    const messagePrefix = "pages.profitCostDetails";
+    super(buildProfitCostDetailsFields(messagePrefix), messagePrefix);
   }
 
   /**
@@ -57,37 +58,37 @@ export class ProfitCostDetailsForm extends Form<
   }
 }
 
-function buildProfitCostDetailsFields(): ProfitCostDetailsFields {
-  const prefix = "pages.profitCostDetails";
-
+function buildProfitCostDetailsFields(
+  messagePrefix: string,
+): ProfitCostDetailsFields {
   return {
     courtType: new RadioField(
-      `${prefix}.courtType`,
+      `${messagePrefix}.courtType`,
       "courtTypeChoice",
       "courtTypeChoice",
       [
         {
           value: CourtType.COUNTY_COURT,
           text: {
-            key: `${prefix}.courtType.COUNTY_COURT.text`,
+            key: `${messagePrefix}.courtType.COUNTY_COURT.text`,
           },
         },
         {
           value: CourtType.HIGH_COURT,
           text: {
-            key: `${prefix}.courtType.HIGH_COURT.text`,
+            key: `${messagePrefix}.courtType.HIGH_COURT.text`,
           },
         },
         {
           value: CourtType.MAGISTRATES_COURT,
           text: {
-            key: `${prefix}.courtType.MAGISTRATES_COURT.text`,
+            key: `${messagePrefix}.courtType.MAGISTRATES_COURT.text`,
           },
         },
         {
           value: CourtType.OTHER_JUDGE,
           text: {
-            key: `${prefix}.courtType.OTHER_JUDGE.text`,
+            key: `${messagePrefix}.courtType.OTHER_JUDGE.text`,
           },
         },
       ],
@@ -95,26 +96,26 @@ function buildProfitCostDetailsFields(): ProfitCostDetailsFields {
     ),
 
     clientStatus: new RadioField(
-      `${prefix}.clientStatus`,
+      `${messagePrefix}.clientStatus`,
       "clientStatusChoice",
       "clientStatusChoice",
       [
         {
           value: ClientPartyStatus.CHILD,
           text: {
-            key: `${prefix}.clientStatus.CHILD.text`,
+            key: `${messagePrefix}.clientStatus.CHILD.text`,
           },
         },
         {
           value: ClientPartyStatus.JOINED_PARTY,
           text: {
-            key: `${prefix}.clientStatus.JOINED_PARTY.text`,
+            key: `${messagePrefix}.clientStatus.JOINED_PARTY.text`,
           },
         },
         {
           value: ClientPartyStatus.PARENT,
           text: {
-            key: `${prefix}.clientStatus.PARENT.text`,
+            key: `${messagePrefix}.clientStatus.PARENT.text`,
           },
         },
       ],
@@ -122,13 +123,13 @@ function buildProfitCostDetailsFields(): ProfitCostDetailsFields {
     ),
 
     firstSolicitor: new BooleanField(
-      `${prefix}.firstSolicitor`,
+      `${messagePrefix}.firstSolicitor`,
       "firstSolicitorChoice",
       "firstSolicitorChoice",
     ),
 
     transferOfSolicitor: new BooleanField(
-      `${prefix}.transferOfSolicitor`,
+      `${messagePrefix}.transferOfSolicitor`,
       "transferOfSolicitorChoice",
       "transferOfSolicitorChoice",
     ),
