@@ -68,13 +68,7 @@ export class ExpertCostDetailsForm extends Form<
     this.fields.feeEarnerName.validate(value.feeEarnerName);
     this.fields.description.validate(value.description);
 
-    this.validation = combine({
-      activityDate: this.fields.activityDate.getResult(),
-      actualNetValue: this.fields.actualNetValue.getResult(),
-      vatApplies: this.fields.vatApplies.getResult(),
-      feeEarnerName: this.fields.feeEarnerName.getResult(),
-      description: this.fields.description.getResult(),
-    });
+    this.validation = combine(this.fields);
   }
 }
 

@@ -1,5 +1,9 @@
 import type { Message } from "#src/viewmodels/components/message.js";
-import type { ErrorSummary, ErrorSummaryError } from "#src/viewmodels/components/errorSummary.js";
+import type {
+  ErrorSummary,
+  ErrorSummaryError,
+} from "#src/viewmodels/components/errorSummary.js";
+import type { Field } from "#src/helpers/fields.js";
 
 /**
  * Abstracted form.
@@ -122,26 +126,37 @@ export function getRequestBody(body: any): object {
   return body;
 }
 
+type FieldValues<TFields> = {
+  [K in keyof TFields]: TFields[K] extends Field<unknown, infer TValidated>
+    ? TValidated
+    : never;
+};
+
 /**
- * Combines multiple field-level validation results into a single result object.
+ * Combines the validation results of all fields into a single form validation result.
  *
- * @param {object} results - An object mapping each key of T to its ValidationResult.
- * @returns {ValidationResult} A combined ValidationResult representing the full object.
+ * @param {object} fields - An object containing the fields to combine.
+ * @returns {ValidationResult} A combined validation result containing either all field values or errors.
  */
-export function combine<T>(results: {
-  [K in keyof T]: ValidationResult<T[K]>;
-}): ValidationResult<T> {
-  const value: Partial<T> = {};
+export function combine<TFields>(
+  fields: TFields & {
+    [K in keyof TFields]: TFields[K] extends Field<infer _Raw, infer TValidated>
+      ? Field<_Raw, TValidated>
+      : never;
+  },
+): ValidationResult<FieldValues<TFields>> {
+  const values: Record<PropertyKey, unknown> = {};
   const errors: FieldValidationError[] = [];
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
-  for (const key of Object.keys(results) as Array<keyof T>) {
-    // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
-    const result = results[key];
+  for (const key of Object.keys(fields)) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Object.keys loses the keyof TFields relationship.
+    const { [key as keyof TFields]: field } = fields;
+     
+    const result = field.getResult();
 
     if (result.isValid) {
       // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
-      value[key] = result.value;
+      values[key] = result.value;
     } else {
       errors.push(...result.errors);
     }
@@ -154,6 +169,9 @@ export function combine<T>(results: {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
-  return { isValid: true, value: value as T };
+  return {
+    isValid: true,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- All fields have been validated successfully, so the collected values match FieldValues<TFields>.
+    value: values as FieldValues<TFields>,
+  };
 }

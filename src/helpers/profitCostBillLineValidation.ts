@@ -72,14 +72,7 @@ export class ProfitCostBillLineForm extends Form<
     this.fields.vatApplies.validate(value.vatApplies);
     this.fields.feeEarnerName.validate(value.feeEarnerName);
 
-    this.validation = combine({
-      activityDate: this.fields.activityDate.getResult(),
-      actualNetProfitCostExcludingAdvocacy:
-        this.fields.actualNetProfitCostExcludingAdvocacy.getResult(),
-      actualNetAdvocacyCosts: this.fields.actualNetAdvocacyCosts.getResult(),
-      vatApplies: this.fields.vatApplies.getResult(),
-      feeEarnerName: this.fields.feeEarnerName.getResult(),
-    });
+    this.validation = combine(this.fields);
   }
 }
 
