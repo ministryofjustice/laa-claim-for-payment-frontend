@@ -6,6 +6,7 @@ import {
   MoneyField,
   StringField,
 } from "#src/helpers/fields.js";
+import { CostType, DisbursementCostType } from "#src/types/Claim.js";
 
 export interface ExpertCostDetailsRequestBody {
   activityDateDay?: unknown;
@@ -36,8 +37,8 @@ export class ExpertCostDetailsForm extends Form<
   /**
    * Creates a form.
    */
-  constructor() {
-    super(buildExpertCostDetailsFields());
+  constructor(costType: DisbursementCostType) {
+    super(buildExpertCostDetailsFields(costType));
   }
 
   /**
@@ -72,8 +73,17 @@ export class ExpertCostDetailsForm extends Form<
   }
 }
 
-function buildExpertCostDetailsFields(): ExpertCostDetailsFields {
-  const prefix = "pages.poa.expertCostDetails";
+function buildExpertCostDetailsFields(
+  costType: DisbursementCostType,
+): ExpertCostDetailsFields {
+  const prefix = () => {
+    switch (costType) {
+      case CostType.EXPERT_COST:
+        return "pages.poa.expertCostDetails";
+      case CostType.NON_EXPERT_DISBURSEMENT:
+        return "pages.poa.nonExpertDisbursement";
+    }
+  };
 
   return {
     activityDate: new DateField(
