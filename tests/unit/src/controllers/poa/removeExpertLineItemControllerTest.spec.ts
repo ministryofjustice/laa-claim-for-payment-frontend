@@ -4,23 +4,29 @@ import sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
 import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { Category } from "#src/types/Claim.js";
+import {
+  Category,
+  Claim,
+  CostType,
+  ExpertCostLineItem,
+} from "#src/types/Claim.js";
 import { confirmRemoveExpertLineItem, submitRemoveExpertLineItem } from "#src/controllers/poa/removeExpertLineItemController.js";
+import { LocalDate } from "#src/types/date.js";
 
 describe("removeExpertLineItemController", () => {
   let res: Response;
   let next: NextFunction;
-  let getLineItemStub: sinon.SinonStub;
+  let getClaimStub: sinon.SinonStub;
   let deleteLineItemStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
   const lineItemId = new V7Generator().generate();
 
-  const lineItem =  {
-    id: lineItemId,
+  const lineItem: ExpertCostLineItem =  {
+    id: lineItemId.toString(),
     title: "",
     category: Category.BILL_NARRATIVE,
-    date: new Date(),
+    date: LocalDate.of(1, 1, 2026),
     evidenceItems: [],
     feeEarnerName: "",
     vatApplicable: false,
@@ -45,7 +51,7 @@ describe("removeExpertLineItemController", () => {
 
     next = sinon.stub() as unknown as NextFunction;
 
-    getLineItemStub = sinon.stub(claimService, "getLineItem");
+    getClaimStub = sinon.stub(claimService, "getDraftClaim");
     deleteLineItemStub = sinon.stub(claimService, "deleteLineItem");
   });
 
@@ -61,9 +67,15 @@ describe("removeExpertLineItemController", () => {
       },
     } as unknown as Request;
 
-    getLineItemStub.resolves({
+    getClaimStub.resolves({
       status: "success",
-      body: lineItem,
+      body: new Claim({
+        id: claimId.toString(),
+        costType: CostType.EXPERT_COST,
+        lineItems: [
+          lineItem,
+        ]
+      }),
     });
 
     await confirmRemoveExpertLineItem(req, res, next);
@@ -91,6 +103,17 @@ describe("removeExpertLineItemController", () => {
         confirmRemoveExpertLineItem: "yes",
       },
     } as unknown as Request;
+
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+        costType: CostType.EXPERT_COST,
+        lineItems: [
+          lineItem,
+        ]
+      }),
+    });
 
     deleteLineItemStub.resolves({
       status: "success",
@@ -122,6 +145,16 @@ describe("removeExpertLineItemController", () => {
       },
     } as unknown as Request;
 
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+        costType: CostType.EXPERT_COST,
+        lineItems: [
+          lineItem,
+        ]
+      }),
+    });
 
     await submitRemoveExpertLineItem(req, res, next);
 
@@ -142,6 +175,17 @@ describe("removeExpertLineItemController", () => {
       },
       body: {},
     } as unknown as Request;
+
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+        costType: CostType.EXPERT_COST,
+        lineItems: [
+          lineItem,
+        ]
+      }),
+    });
 
     await submitRemoveExpertLineItem(req, res, next);
 

@@ -4,10 +4,16 @@ import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { type ExpertCostLineItem, ExpertCostLineItemSchema } from "#src/types/Claim.js";
-import type { ApiResponse } from "#src/types/api-types.js";
+import {
+  type Claim,
+  CostType,
+  type DisbursementCostType,
+  type ExpertCostLineItem,
+  isDisbursementCostType
+} from "#src/types/Claim.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import createHttpError from "http-errors";
 
 /**
  * get confirm remove expert line item page
@@ -24,26 +30,33 @@ export async function confirmRemoveExpertLineItem(
     const claimId = UUID.parse(req.params.claimId);
     const lineItemId = UUID.parse(req.params.lineItemId);
 
-    const lineItem: ApiResponse<ExpertCostLineItem> = await claimService.getLineItem<ExpertCostLineItem>(
+    const claimResponse = await claimService.getDraftClaim(
       req.axiosMiddleware,
       claimId,
-      lineItemId,
-      ExpertCostLineItemSchema
     );
 
-    if (lineItem.status === "success") {
-      const form = new YesNoQuestionForm(buildField());
-      res.render("main/radioQuestionPage.njk", {
-        csrfToken: res.locals.csrfToken,
-        vm: buildViewModel(form),
-      });
-    } else {
-      next(
-        processApiError(
-          lineItem,
-          "retrieving line item for rendering confirm remove expert line item page",
-        ),
-      );
+    if (claimResponse.status === "success") {
+      const { body: claim } = claimResponse;
+      if (isDisbursementCostType(claim.costType)) {
+        const lineItem = getLineItem(claim, lineItemId);
+
+        if (lineItem === undefined) {
+          next(
+            new createHttpError.NotFound(
+              `Line item ${lineItemId.toString()} not found`,
+            ),
+          );
+          return;
+        }
+
+        const form = new YesNoQuestionForm(buildField(claim.costType));
+        res.render("main/radioQuestionPage.njk", {
+          csrfToken: res.locals.csrfToken,
+          vm: buildViewModel(form),
+        });
+      } else {
+        res.redirect(buildRoute(ROUTES.POA_CLAIM_TYPE, { claimId }));
+      }
     }
   } catch (error) {
     const processedError = processError(
@@ -66,71 +79,93 @@ export async function submitRemoveExpertLineItem(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const field = buildField();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[field.name];
-    const form = new YesNoQuestionForm(field);
-    form.validate(selectedChoice);
-
     const claimId = UUID.parse(req.params.claimId);
     const lineItemId = UUID.parse(req.params.lineItemId);
 
-    if (form.isNotValid()) {
-      res.status(400).render("main/radioQuestionPage.njk", {
-        csrfToken: res.locals.csrfToken,
-        vm: buildViewModel(form),
-      });
-      return;
-    }
+    const claimResponse = await claimService.getDraftClaim(
+      req.axiosMiddleware,
+      claimId,
+    );
 
-    const nextPage = buildRoute(ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS, { claimId });
+    if (claimResponse.status === "success") {
+      const { body: claim } = claimResponse;
+      if (isDisbursementCostType(claim.costType)) {
+        const field = buildField(claim.costType);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
+        const selectedChoice: unknown = req.body?.[field.name];
+        const form = new YesNoQuestionForm(field);
+        form.validate(selectedChoice);
 
-    if (form.getValue()) {
+        if (form.isNotValid()) {
+          res.status(400).render("main/radioQuestionPage.njk", {
+            csrfToken: res.locals.csrfToken,
+            vm: buildViewModel(form),
+          });
+          return;
+        }
 
-      const deleted = await claimService.deleteLineItem(
-        req.axiosMiddleware,
-        claimId,
-        lineItemId,
-      );
-      
-      if (deleted.status === "success") {
-        res.redirect(nextPage)
-        return;
+        const nextPage = buildRoute(ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS, { claimId });
+
+        if (form.getValue()) {
+          const deleted = await claimService.deleteLineItem(
+            req.axiosMiddleware,
+            claimId,
+            lineItemId,
+          );
+
+          if (deleted.status === "success") {
+            res.redirect(nextPage);
+          } else {
+            next(
+              processApiError(deleted, "deleting line item for expert cost page"),
+            );
+          }
+        } else {
+          res.redirect(nextPage)
+        }
       } else {
-        next(
-          processApiError(
-            deleted,
-            "deleting line item for expert cost page",
-          ),
-        );
+        res.redirect(buildRoute(ROUTES.POA_CLAIM_TYPE, { claimId }));
       }
     }
-
-    res.redirect(nextPage)
-
-    } catch (error) {
-      const processedError = processError(
-        error,
-        "deleting line item for expert cost page",
-      );
-      next(processedError);
+  } catch (error) {
+    const processedError = processError(
+      error,
+      "deleting line item for expert cost page",
+    );
+    next(processedError);
   }
 }
 
-function buildField(): BooleanField {
+function buildField(costType: DisbursementCostType): BooleanField {
+  const messagePrefix: string = (() => {
+    switch (costType) {
+      case CostType.EXPERT_COST:
+        return "pages.poa.expertCostDetails";
+      case CostType.NON_EXPERT_DISBURSEMENT:
+        return "pages.poa.nonExpertDisbursementDetails";
+    }
+  })();
   return new BooleanField(
-    "pages.poa.expertCostDetails.remove",
+    `${messagePrefix}.remove`,
     "confirmRemoveExpertLineItem",
     "confirmRemoveExpertLineItem",
   );
 }
 
-function buildViewModel(
-  form: YesNoQuestionForm,
-): YesNoQuestionViewModel {
+function buildViewModel(form: YesNoQuestionForm): YesNoQuestionViewModel {
   return new RadioQuestionViewModel({
     title: `${form.messagePrefix}.title`,
     form,
     isLegendPageHeading: true,
   });
+}
+
+function getLineItem(
+  claim: Claim,
+  lineItemId: UUID,
+): ExpertCostLineItem | undefined {
+  return claim.lineItems.find(
+    (lineItem): lineItem is ExpertCostLineItem =>
+      lineItem.id === lineItemId.toString(),
+  );
 }
