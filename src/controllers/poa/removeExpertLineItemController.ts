@@ -121,7 +121,7 @@ const PREFIX = "pages.poa.removeExpertLineItem" as const;
 
 function buildField(): BooleanField {
   return new BooleanField(
-    "pages.escapingFixedFee",
+    PREFIX,
     "confirmRemoveExpertLineItem",
     "confirmRemoveExpertLineItem",
   );
