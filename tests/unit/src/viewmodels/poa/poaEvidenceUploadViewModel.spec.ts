@@ -18,7 +18,7 @@ describe("PoaEvidenceUploadViewModel constructor()", () => {
       form,
     });
 
-    expect(vm.title).to.equal("pages.poaEvidenceUpload.title");
+    expect(vm.title).to.equal("prefix.title");
     expect(vm.uploadUrl).to.equal(
       `/claims/${claimId.toString()}/poa/evidence-upload/ajax-upload?claimStatus=DRAFT`,
     );

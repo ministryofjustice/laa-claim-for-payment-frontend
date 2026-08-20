@@ -121,7 +121,7 @@ export class UploadField extends Field<EvidenceItem[], EvidenceItem[]> {
       this.error({
         href: `#${this.id}`,
         text: {
-          key: `${this.messagePrefix}.errors.noFileSelected`,
+          key: `${this.messagePrefix}.errors.empty`,
         },
       });
     }

@@ -34,7 +34,7 @@ export class ProfitCostBillLineViewModel {
    * @param {ProfitCostBillLineViewModelParams} params View model params.
    */
   constructor({ form }: ProfitCostBillLineViewModelParams) {
-    this.title = "pages.profitCostBillLine.title";
+    this.title = `${form.messagePrefix}.title`;
 
     this.activityDateInput = buildDateInput(form.fields.activityDate);
 

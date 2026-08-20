@@ -40,7 +40,7 @@ describe("views/main/poa/poaEvidenceUploadView.njk", () => {
     const h1 = $("h1.govuk-heading-xl");
 
     expect(h1).to.have.length(1);
-    expect(h1.text().trim()).to.equal("pages.poaEvidenceUpload.title");
+    expect(h1.text().trim()).to.equal("prefix.title");
   });
 
   it("renders the evidence examples paragraph", () => {

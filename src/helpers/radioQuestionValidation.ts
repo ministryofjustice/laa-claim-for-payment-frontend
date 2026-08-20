@@ -19,7 +19,7 @@ export class RadioQuestionForm<ChoiceType, ValueType> extends Form<
    * @param {RadioField} field form field
    */
   constructor(field: RadioField<ChoiceType, ValueType>) {
-    super({ field });
+    super({ field }, field.messagePrefix);
   }
 
   /**
