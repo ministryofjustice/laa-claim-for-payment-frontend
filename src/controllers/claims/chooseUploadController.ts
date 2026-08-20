@@ -9,39 +9,39 @@ import {
 } from "#src/viewmodels/radioQuestionViewModel.js";
 import { UUID } from "uuidv7";
 
-const PREFIX = "pages.chooseUpload" as const;
-
 enum FileUploadChoice {
   AllAtOnce = "all-at-once",
   AssociatedToLineItems = "associated-to-line-items",
 }
 
-const FILE_UPLOAD_CHOICES: ReadonlyArray<
-  RadioQuestionOptions<FileUploadChoice>
-> = [
-  {
-    value: FileUploadChoice.AllAtOnce,
-    text: {
-      key: `${PREFIX}.allAtOnce.text`,
-    },
-    hint: {
+function buildChoices(
+  messagePrefix: string,
+): ReadonlyArray<RadioQuestionOptions<FileUploadChoice>> {
+  return [
+    {
+      value: FileUploadChoice.AllAtOnce,
       text: {
-        key: `${PREFIX}.allAtOnce.hint`,
+        key: `${messagePrefix}.allAtOnce.text`,
+      },
+      hint: {
+        text: {
+          key: `${messagePrefix}.allAtOnce.hint`,
+        },
       },
     },
-  },
-  {
-    value: FileUploadChoice.AssociatedToLineItems,
-    text: {
-      key: `${PREFIX}.associatedToLineItems.text`,
-    },
-    hint: {
+    {
+      value: FileUploadChoice.AssociatedToLineItems,
       text: {
-        key: `${PREFIX}.associatedToLineItems.hint`,
+        key: `${messagePrefix}.associatedToLineItems.text`,
+      },
+      hint: {
+        text: {
+          key: `${messagePrefix}.associatedToLineItems.hint`,
+        },
       },
     },
-  },
-] as const;
+  ];
+}
 
 /**
  * Display choose file upload page.
@@ -111,11 +111,12 @@ export function submitChooseFileUpload(
 }
 
 function buildField(): RadioField<FileUploadChoice, FileUploadChoice> {
+  const messagePrefix = "pages.chooseUpload";
   return new RadioField(
-    PREFIX,
+    messagePrefix,
     "fileUploadChoice",
     "fileUploadChoice",
-    FILE_UPLOAD_CHOICES,
+    buildChoices(messagePrefix),
     (value: FileUploadChoice) => value,
   );
 }
@@ -124,7 +125,7 @@ function buildViewModel(
   form: RadioQuestionForm<FileUploadChoice, FileUploadChoice>,
 ): RadioQuestionViewModel<FileUploadChoice, FileUploadChoice> {
   return new RadioQuestionViewModel({
-    title: `${PREFIX}.title`,
+    title: `${form.messagePrefix}.title`,
     form,
     isLegendPageHeading: true,
   });

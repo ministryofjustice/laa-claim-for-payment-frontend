@@ -124,30 +124,29 @@ export async function submitPoaClaimType(
   }
 }
 
-const PREFIX = "pages.poaClaimType" as const;
-
 function buildField(): RadioField<CostType, CostType> {
+  const messagePrefix = "pages.poaClaimType";
   return new RadioField(
-    PREFIX,
+    messagePrefix,
     "poaClaimType",
     "poaClaimType",
     [
       {
         value: CostType.PROFIT_COST,
         text: {
-          key: `${PREFIX}.profitCost.text`,
+          key: `${messagePrefix}.profitCost.text`,
         },
       },
       {
         value: CostType.EXPERT_COST,
         text: {
-          key: `${PREFIX}.expertCost.text`,
+          key: `${messagePrefix}.expertCost.text`,
         },
       },
       {
         value: CostType.NON_EXPERT_DISBURSEMENT,
         text: {
-          key: `${PREFIX}.nonExpertDisbursement.text`,
+          key: `${messagePrefix}.nonExpertDisbursement.text`,
         },
       },
     ],
@@ -159,7 +158,7 @@ function buildViewModel(
   form: RadioQuestionForm<CostType, CostType>,
 ): RadioQuestionViewModel<CostType, CostType> {
   return new RadioQuestionViewModel({
-    title: `${PREFIX}.title`,
+    title: `${form.messagePrefix}.title`,
     form,
     isLegendPageHeading: true,
   });
