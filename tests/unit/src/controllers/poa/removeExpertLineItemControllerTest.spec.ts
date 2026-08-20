@@ -12,6 +12,7 @@ import {
 } from "#src/types/Claim.js";
 import { confirmRemoveExpertLineItem, submitRemoveExpertLineItem } from "#src/controllers/poa/removeExpertLineItemController.js";
 import { LocalDate } from "#src/types/date.js";
+import { buildRoute, ROUTES } from "#routes/helper.js";
 
 describe("removeExpertLineItemController", () => {
   let res: Response;
@@ -90,6 +91,98 @@ describe("removeExpertLineItemController", () => {
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
     expect(renderArgs.vm.title.key).to.equal("pages.poa.expertCostDetails.remove.title");
     expect(renderArgs.vm.radios.name).to.equal("confirmRemoveExpertLineItem");
+  });
+
+  it("renders the confirm remove non-expert disbursement line item radio question page", async () => {
+    const req = {
+      params: {
+        claimId: claimId.toString(),
+        lineItemId: lineItemId.toString()
+      },
+    } as unknown as Request;
+
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+        costType: CostType.NON_EXPERT_DISBURSEMENT,
+        lineItems: [
+          lineItem,
+        ]
+      }),
+    });
+
+    await confirmRemoveExpertLineItem(req, res, next);
+
+    expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
+    expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
+      "main/radioQuestionPage.njk",
+    );
+
+    const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
+
+    expect(renderArgs.csrfToken).to.equal("test-csrf-token");
+    expect(renderArgs.vm.title.key).to.equal("pages.poa.nonExpertDisbursementDetails.remove.title");
+    expect(renderArgs.vm.radios.name).to.equal("confirmRemoveExpertLineItem");
+  });
+
+  it("redirects when cost type is profit cost", async () => {
+    const req = {
+      params: {
+        claimId: claimId.toString(),
+        lineItemId: lineItemId.toString()
+      },
+    } as unknown as Request;
+
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+        costType: CostType.PROFIT_COST,
+        lineItems: [
+          lineItem,
+        ]
+      }),
+    });
+
+    await confirmRemoveExpertLineItem(req, res, next);
+
+    expect(
+      (res.redirect as sinon.SinonStub).calledWith(
+        buildRoute(ROUTES.POA_CLAIM_TYPE, {
+          claimId: claimId,
+        }),
+      ),
+    ).to.be.true;
+  });
+
+  it("redirects when no cost type", async () => {
+    const req = {
+      params: {
+        claimId: claimId.toString(),
+        lineItemId: lineItemId.toString()
+      },
+    } as unknown as Request;
+
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+        lineItems: [
+          lineItem,
+        ]
+      }),
+    });
+
+    await confirmRemoveExpertLineItem(req, res, next);
+
+    expect(
+      (res.redirect as sinon.SinonStub).calledWith(
+        buildRoute(ROUTES.POA_CLAIM_TYPE, {
+          claimId: claimId,
+        }),
+      ),
+    ).to.be.true;
   });
 
   it("redirects back to add a line when deleting", async () => {
