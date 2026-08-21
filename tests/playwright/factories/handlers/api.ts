@@ -12,7 +12,15 @@ export const profitCostDraftClaim1Id = UUID.parse(
 );
 
 export const expertCostDraftClaim1Id = UUID.parse(
+  "01a02468-ea40-72be-bdfc-24edd9a871af",
+);
+
+export const expertCostDraftClaim2Id = UUID.parse(
   "019fd69d-1ccd-75ff-bd25-28b7041e1f7a",
+);
+
+export const nonExpertDisbursementDraftClaim1Id = UUID.parse(
+  "01a0245c-d2d2-76c8-9ec2-fb14c538f392",
 );
 
 /**
@@ -62,6 +70,13 @@ const profitCostDraftClaim1: object = {
 const expertCostDraftClaim1: object = {
   id: expertCostDraftClaim1Id.toString(),
   costType: "EXPERT_COST",
+  lineItems: [],
+  evidence: [],
+};
+
+const expertCostDraftClaim2: object = {
+  id: expertCostDraftClaim2Id.toString(),
+  costType: "EXPERT_COST",
   lineItems: [
     {
       id: lineItemId.toString(),
@@ -74,6 +89,13 @@ const expertCostDraftClaim1: object = {
       actualNetValue: 123,
     }
   ],
+  evidence: [],
+};
+
+const nonExpertDisbursementDraftClaim1: object = {
+  id: nonExpertDisbursementDraftClaim1Id.toString(),
+  costType: "NON_EXPERT_DISBURSEMENT",
+  lineItems: [],
   evidence: [],
 };
 
@@ -119,6 +141,10 @@ export function createApiHandlers(uploadGate?: Gate): HttpHandler[] {
           return HttpResponse.json(profitCostDraftClaim1);
         case expertCostDraftClaim1Id.toString():
           return HttpResponse.json(expertCostDraftClaim1);
+        case expertCostDraftClaim2Id.toString():
+          return HttpResponse.json(expertCostDraftClaim2);
+        case nonExpertDisbursementDraftClaim1Id.toString():
+          return HttpResponse.json(nonExpertDisbursementDraftClaim1);
         default:
           return HttpResponse.json(makeFakeClaim(UUID.parse(claimId)));
       }

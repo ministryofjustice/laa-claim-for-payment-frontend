@@ -1,12 +1,12 @@
 import { expect, test } from "../../fixtures/index.js";
-import { expertCostDraftClaim1Id } from "#tests/playwright/factories/handlers/api.js";
+import { expertCostDraftClaim2Id } from "#tests/playwright/factories/handlers/api.js";
 import { AddAnotherDisbursementPage } from "#tests/playwright/pages/poa/AddAnotherDisbursementPage.js";
 
 test.describe("Add another disbursement page", () => {
   test("displays the page", async ({ page, checkAccessibility }) => {
     const addAnotherExpertCostPage = new AddAnotherDisbursementPage(
       page,
-      expertCostDraftClaim1Id,
+      expertCostDraftClaim2Id,
     );
 
     await addAnotherExpertCostPage.navigate();
@@ -26,7 +26,7 @@ test.describe("Add another disbursement page", () => {
   test("redirects to expert cost when Yes is selected", async ({ page }) => {
     const addAnotherExpertCostPage = new AddAnotherDisbursementPage(
       page,
-      expertCostDraftClaim1Id,
+      expertCostDraftClaim2Id,
     );
 
     await addAnotherExpertCostPage.navigate();
@@ -37,7 +37,7 @@ test.describe("Add another disbursement page", () => {
 
     await expect(page).toHaveURL(
       new RegExp(
-        `/claims/${expertCostDraftClaim1Id}/poa/disbursement-details$`,
+        `/claims/${expertCostDraftClaim2Id}/poa/disbursement-details$`,
       ),
     );
   });
@@ -45,7 +45,7 @@ test.describe("Add another disbursement page", () => {
   test("redirects to evidence upload when No is selected", async ({ page }) => {
     const addAnotherExpertCostPage = new AddAnotherDisbursementPage(
       page,
-      expertCostDraftClaim1Id,
+      expertCostDraftClaim2Id,
     );
 
     await addAnotherExpertCostPage.navigate();
@@ -55,14 +55,14 @@ test.describe("Add another disbursement page", () => {
     await addAnotherExpertCostPage.saveAndContinueButton.click();
 
     await expect(page).toHaveURL(
-      new RegExp(`/claims/${expertCostDraftClaim1Id}/poa/evidence-upload$`),
+      new RegExp(`/claims/${expertCostDraftClaim2Id}/poa/evidence-upload$`),
     );
   });
 
   test("show an error summary when nothing is selected", async ({ page }) => {
     const addAnotherExpertCostPage = new AddAnotherDisbursementPage(
       page,
-      expertCostDraftClaim1Id,
+      expertCostDraftClaim2Id,
     );
 
     await addAnotherExpertCostPage.navigate();
