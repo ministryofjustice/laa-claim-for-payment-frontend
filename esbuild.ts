@@ -116,11 +116,11 @@ const buildScss = async (
         transform: (source: string): string =>
           source
             .replace(
-              /url\(["']?\/assets\/fonts\/([^"')]+)["']?\)/g,
+              /url\(["']?\/assets\/fonts\/([^"')]+)["']?\)/gu,
               'url("/assets/fonts/$1")',
             )
             .replace(
-              /url\(["']?\/assets\/images\/([^"')]+)["']?\)/g,
+              /url\(["']?\/assets\/images\/([^"')]+)["']?\)/gu,
               'url("/assets/images/$1")',
             ),
       } satisfies SassPluginOptions),
@@ -280,7 +280,7 @@ const watchBuild = async (): Promise<void> => {
         "node_modules/@ministryofjustice/frontend/moj/assets/images/**/*",
       ],
       {
-        ignored: /node_modules\/(?!govuk-frontend|@ministryofjustice)/,
+        ignored: /node_modules\/(?!govuk-frontend|@ministryofjustice)/u,
         persistent: true,
       },
     );

@@ -7,6 +7,7 @@ import { buildRoute, ROUTES } from "#routes/helper.js";
 import { uploadService } from "#src/services/uploadService.js";
 import { UUID } from "uuidv7";
 import type { LineItem } from "#src/types/Claim.js";
+import { getId } from "#src/helpers/queryParsers.js";
 
 /**
  * File upload page for Bill narrative.
@@ -22,8 +23,8 @@ export async function fileUploadForLineItemPage(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
-    const lineItemId = UUID.parse(req.params.lineItemId);
+    const claimId = getId(req.params.claimId);
+    const lineItemId = getId(req.params.lineItemId);
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {
@@ -76,8 +77,8 @@ export async function linkEvidenceToLineItem(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
-    const lineItemId = UUID.parse(req.params.lineItemId);
+    const claimId = getId(req.params.claimId);
+    const lineItemId = getId(req.params.lineItemId);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
     const documents: unknown = req.body?.documents;

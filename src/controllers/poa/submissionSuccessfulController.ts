@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { processError } from "#src/helpers/index.js";
+import { getId } from "#src/helpers/queryParsers.js";
 
 /**
  * POA successful submission view
@@ -13,9 +14,10 @@ export function poaSubmissionSuccessfulPage(
   next: NextFunction
 ): void {
   try {
+    const claimId = getId(req.params.claimId);
     // TODO - include some retrieval here to ensure the page corresponds to an actual submission
     res.render("main/poa/submissionSuccessfulView.njk", {
-      claimId: req.params.claimId
+      claimId: claimId.toString()
     });
   } catch (error) {
     const processedError = processError(

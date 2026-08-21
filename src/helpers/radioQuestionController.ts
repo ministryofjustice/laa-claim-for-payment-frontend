@@ -1,11 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
-import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import type { Claim } from "#src/types/Claim.js";
 import type { RadioField } from "#src/helpers/fields.js";
 import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import { getId } from "#src/helpers/queryParsers.js";
 
 interface RadioQuestionControllerParams<ChoiceType extends string> {
   title: string;
@@ -38,7 +38,7 @@ export function createRadioQuestionController<ChoiceType extends string>({
   return {
     async get(req: Request, res: Response, next: NextFunction): Promise<void> {
       try {
-        const claimId = UUID.parse(req.params.claimId);
+        const claimId = getId(req.params.claimId);
 
         const claim = await claimService.getDraftClaim(
           req.axiosMiddleware,
@@ -84,7 +84,7 @@ export function createRadioQuestionController<ChoiceType extends string>({
           return;
         }
 
-        const claimId = UUID.parse(req.params.claimId);
+        const claimId = getId(req.params.claimId);
 
         const claim = await claimService.getDraftClaim(
           req.axiosMiddleware,

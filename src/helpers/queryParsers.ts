@@ -1,3 +1,5 @@
+import { UUID } from "uuidv7";
+
 /**
  * Query parameter parser helpers
  *
@@ -44,4 +46,18 @@ export function isEnumValue<T extends Record<string, string>>(
 ): value is T[keyof T] {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
   return Object.values(enumObject).includes(value as T[keyof T]);
+}
+
+/**
+ * Gets an ID
+ * @param {unknown} value param value
+ * @returns {UUID} the ID
+ * @throws if the value is not a string
+ */
+export function getId(value: unknown): UUID {
+  if (typeof value === "string") {
+    return UUID.parse(value);
+  }
+
+  throw new Error("Expected a single string value");
 }

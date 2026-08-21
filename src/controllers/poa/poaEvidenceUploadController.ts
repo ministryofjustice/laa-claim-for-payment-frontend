@@ -1,13 +1,11 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { claimService } from "#src/services/claimService.js";
-import {
-  PoaEvidenceUploadViewModel
-} from "#src/viewmodels/poa/profitCostDetailsEvidenceUploadViewModel.js";
+import { PoaEvidenceUploadViewModel } from "#src/viewmodels/poa/profitCostDetailsEvidenceUploadViewModel.js";
 import type { NextFunction, Request, Response } from "express";
-import { UUID } from "uuidv7";
 import { UploadField } from "#src/helpers/fields.js";
 import { UploadForm } from "#src/helpers/fileUploadValidation.js";
+import { getId } from "#src/helpers/queryParsers.js";
 
 /**
  * Display POA evidence upload page.
@@ -22,7 +20,7 @@ export async function poaEvidenceUploadPage(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
     const response = await claimService.getDraftClaim(
       req.axiosMiddleware,
       claimId,
@@ -65,7 +63,7 @@ export async function submitPoaEvidenceUpload(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
     const response = await claimService.getDraftClaim(
       req.axiosMiddleware,
       claimId,

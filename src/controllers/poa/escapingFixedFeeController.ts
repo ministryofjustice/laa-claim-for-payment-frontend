@@ -2,11 +2,11 @@ import { RadioQuestionViewModel, type YesNoQuestionViewModel } from "#src/viewmo
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { draftService } from "#src/services/draftService.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import { getId } from "#src/helpers/queryParsers.js";
 
 /**
  * get how many clients retained view
@@ -20,7 +20,7 @@ export async function escapingFixedFee(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
 
     const claim = await claimService.getDraftClaim(
       req.axiosMiddleware,
@@ -79,7 +79,7 @@ export async function submitEscapingFixedFee(
       return;
     }
 
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
 
     const claim = await claimService.getDraftClaim(
       req.axiosMiddleware,

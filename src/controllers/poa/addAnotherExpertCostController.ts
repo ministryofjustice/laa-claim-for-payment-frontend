@@ -1,12 +1,12 @@
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { AddAnotherExpertCostViewModel } from "#src/viewmodels/poa/addAnotherLineItemViewModel.js";
 import type { Claim, ExpertCostLineItem } from "#src/types/Claim.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import { getId } from "#src/helpers/queryParsers.js";
 
 /**
  * get add another expert cost view
@@ -20,7 +20,7 @@ export async function addAnotherExpertCost(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
 
     const claim = await claimService.getDraftClaim(
       req.axiosMiddleware,
@@ -77,7 +77,7 @@ export async function submitAddAnotherExpertCost(
     const form = new YesNoQuestionForm(field);
     form.validate(selectedChoice);
 
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
 
     const claim = await claimService.getDraftClaim(
       req.axiosMiddleware,

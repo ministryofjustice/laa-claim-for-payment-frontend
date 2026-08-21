@@ -2,7 +2,7 @@ import { claimService } from "#src/services/claimService.js";
 import type { NextFunction, Request, Response } from "express";
 import { ClaimViewModel } from "#src/viewmodels/claimViewModel.js";
 import { processApiError, processError } from "#src/helpers/index.js";
-import { UUID } from "uuidv7";
+import { getId } from "#src/helpers/queryParsers.js";
 
 /**
  * Handle claim view with API data
@@ -17,7 +17,7 @@ export async function viewClaimPage(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
     const response = await claimService.getClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {

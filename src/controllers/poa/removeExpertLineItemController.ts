@@ -2,12 +2,12 @@ import { RadioQuestionViewModel, type YesNoQuestionViewModel } from "#src/viewmo
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { type ExpertCostLineItem, ExpertCostLineItemSchema } from "#src/types/Claim.js";
 import type { ApiResponse } from "#src/types/api-types.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import { getId } from "#src/helpers/queryParsers.js";
 
 /**
  * get confirm remove expert line item page
@@ -21,8 +21,8 @@ export async function confirmRemoveExpertLineItem(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
-    const lineItemId = UUID.parse(req.params.lineItemId);
+    const claimId = getId(req.params.claimId);
+    const lineItemId = getId(req.params.lineItemId);
 
     const lineItem: ApiResponse<ExpertCostLineItem> = await claimService.getLineItem<ExpertCostLineItem>(
       req.axiosMiddleware,
@@ -72,8 +72,8 @@ export async function submitRemoveExpertLineItem(
     const form = new YesNoQuestionForm(field);
     form.validate(selectedChoice);
 
-    const claimId = UUID.parse(req.params.claimId);
-    const lineItemId = UUID.parse(req.params.lineItemId);
+    const claimId = getId(req.params.claimId);
+    const lineItemId = getId(req.params.lineItemId);
 
     if (form.isNotValid()) {
       res.status(400).render("main/radioQuestionPage.njk", {

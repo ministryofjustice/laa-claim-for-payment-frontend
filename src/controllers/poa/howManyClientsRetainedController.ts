@@ -2,11 +2,11 @@ import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.j
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { UUID } from "uuidv7";
 import { Count } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
 import { RadioField } from "#src/helpers/fields.js";
 import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import { getId } from "#src/helpers/queryParsers.js";
 
 /**
  * get how many clients retained view
@@ -20,7 +20,7 @@ export async function howManyClientsRetained(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
 
     const claim = await claimService.getDraftClaim(
       req.axiosMiddleware,
@@ -71,7 +71,7 @@ export async function submitHowManyClientsRetained(
       return;
     }
 
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
 
     const claim = await claimService.getDraftClaim(
       req.axiosMiddleware,

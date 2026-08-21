@@ -4,8 +4,8 @@ import { ProfitCostDetailsViewModel } from "#src/viewmodels/poa/profitCostDetail
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { getRequestBody } from "#src/helpers/validation.js";
 import { ProfitCostDetailsForm, type ProfitCostDetailsRequestBody } from "#src/helpers/profitCostDetailsValidation.js";
-import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
+import { getId } from "#src/helpers/queryParsers.js";
 
 /**
  * Profit cost details journey view
@@ -19,7 +19,7 @@ export async function profitCostDetails(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
 
     const claim = await claimService.getDraftClaim(
       req.axiosMiddleware,
@@ -91,7 +91,7 @@ export async function submitProfitCostDetails(
       return;
     }
 
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
 
     const claim = await claimService.getDraftClaim(
       req.axiosMiddleware,

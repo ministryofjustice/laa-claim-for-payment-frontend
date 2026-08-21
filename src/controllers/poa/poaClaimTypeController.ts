@@ -2,12 +2,12 @@ import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
-import { UUID } from "uuidv7";
 import { CostType } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
 import { draftService } from "#src/services/draftService.js";
 import { RadioField } from "#src/helpers/fields.js";
 import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import { getId } from "#src/helpers/queryParsers.js";
 
 /**
  * Display POA claim type page.
@@ -22,7 +22,7 @@ export async function poaClaimTypePage(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
 
     const claim = await claimService.getDraftClaim(
       req.axiosMiddleware,
@@ -78,7 +78,7 @@ export async function submitPoaClaimType(
       return;
     }
 
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
 
     const claim = await claimService.getDraftClaim(
       req.axiosMiddleware,

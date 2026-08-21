@@ -3,8 +3,8 @@ import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { UUID } from "uuidv7";
 import { AnswerMissingError } from "#src/types/errors.js";
+import { getId } from "#src/helpers/queryParsers.js";
 
 /**
  * Handle claim view with API data
@@ -19,7 +19,7 @@ export async function checkYourDetailsPage(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
     const response = await claimService.getDraftClaim(req.axiosMiddleware, claimId);
 
     if (response.status === "success") {
@@ -50,8 +50,7 @@ export function submitYourDetails(
   next: NextFunction
 ): void {
   try {
-    const { params } = req;
-    const { claimId } = params;
+    const claimId = getId(req.params.claimId);
     // TODO submit the data
     res.redirect(buildRoute(ROUTES.POA_SUBMISSION_SUCCESSFUL, { claimId }));
   } catch (error) {

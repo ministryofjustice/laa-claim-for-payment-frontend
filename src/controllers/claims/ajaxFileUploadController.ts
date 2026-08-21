@@ -6,7 +6,11 @@ import { UUID } from "uuidv7";
 import type { AjaxUploadResponse } from "#src/types/api-types.js";
 import { FileUploadStatus } from "#src/models/uploadStatus.js";
 import { ClaimStatus } from "#src/types/Claim.js";
-import { hasQueryParams, isEnumValue } from "#src/helpers/queryParsers.js";
+import {
+  getId,
+  hasQueryParams,
+  isEnumValue,
+} from "#src/helpers/queryParsers.js";
 
 const BAD_REQUEST = 400;
 
@@ -56,7 +60,7 @@ export async function uploadEvidenceFile(
 ): Promise<void> {
   try {
     const {
-      params: { claimId },
+      params,
       query: { claimStatus },
       t,
       axiosMiddleware,
@@ -81,7 +85,7 @@ export async function uploadEvidenceFile(
 
     const response = await uploadService.uploadEvidence(
       axiosMiddleware,
-      UUID.parse(claimId),
+      getId(params.claimId),
       file,
       t,
       claimStatus,
@@ -108,7 +112,7 @@ export async function uploadEvidenceFileForLineItem(
 ): Promise<void> {
   try {
     const {
-      params: { claimId, lineItemId },
+      params,
       t,
       axiosMiddleware,
     } = req;
@@ -121,8 +125,8 @@ export async function uploadEvidenceFileForLineItem(
 
     const response = await uploadService.uploadLineItemEvidence(
       axiosMiddleware,
-      UUID.parse(claimId),
-      UUID.parse(lineItemId),
+      getId(params.claimId),
+      getId(params.lineItemId),
       file,
       t,
     );

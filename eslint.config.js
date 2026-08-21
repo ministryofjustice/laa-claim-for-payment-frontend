@@ -1,6 +1,5 @@
 import globals from "globals";
 import jsdocPlugin from "eslint-plugin-jsdoc";
-import tseslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import love from "eslint-config-love";
 
@@ -44,6 +43,14 @@ export default [
       jsdoc: jsdocPlugin,
     },
     rules: {
+      'eqeqeq': ["error", "always", { null: "ignore" }],
+      "prefer-named-capture-group": "off",
+      "require-unicode-regexp": [
+        "error",
+        {
+          requireFlag: "u"
+        }
+      ],
       'no-param-reassign': ['error', { props: false }],
       'complexity': ['error', { max: 15 }], // Set McCabe complexity threshold
       'indent': 'off', // Prettier is handling this

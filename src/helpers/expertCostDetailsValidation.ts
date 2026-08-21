@@ -97,7 +97,7 @@ function buildExpertCostDetailsFields(messagePrefix: string): ExpertCostDetailsF
       `${messagePrefix}.feeEarnerName`,
       "feeEarnerName",
       "fee-earner-name",
-      /^[A-Za-z' -]+$/,
+      /^[A-Za-z' -]+$/u,
     ),
 
     description: new StringField(

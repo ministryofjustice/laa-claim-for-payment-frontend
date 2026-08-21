@@ -7,7 +7,7 @@ import {
   type RadioQuestionOptions,
   RadioQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
-import { UUID } from "uuidv7";
+import { getId } from "#src/helpers/queryParsers.js";
 
 const PREFIX = "pages.chooseUpload" as const;
 
@@ -94,7 +94,7 @@ export function submitChooseFileUpload(
       return;
     }
 
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
 
     const redirectByChoice: Record<FileUploadChoice, string> = {
       [FileUploadChoice.AllAtOnce]: "/all-at-once-file-upload",

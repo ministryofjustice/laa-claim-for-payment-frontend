@@ -41,20 +41,25 @@ export const set = async (
     const segment = path[i];
     if (typeof segment === "number") {
       const index = segment;
+      // eslint-disable-next-line no-await-in-loop -- Redis path must be built sequentially
       let length = await getArrayLength(redisClient, key, redisPath);
       if (length == null) {
+        // eslint-disable-next-line no-await-in-loop -- Redis path must be built sequentially
         await redisClient.json.set(key, redisPath, []);
         length = 0;
       }
       if (index > length) {
         break;
       }
-      const updatedRedisPath = redisPath + `[${index}]`;
+      const updatedRedisPath = `${redisPath  }[${index}]`;
+      // eslint-disable-next-line no-await-in-loop -- Redis path must be built sequentially
       if (await exists(redisClient, key, updatedRedisPath)) {
         if (lastIteration) {
+          // eslint-disable-next-line no-await-in-loop -- Redis path must be built sequentially
           await redisClient.json.set(key, updatedRedisPath, value);
         }
       } else {
+        // eslint-disable-next-line no-await-in-loop -- Redis path must be built sequentially
         await redisClient.json.arrAppend(
           key,
           redisPath,
@@ -65,8 +70,10 @@ export const set = async (
     } else {
       redisPath += `.${segment}`;
       if (lastIteration) {
+        // eslint-disable-next-line no-await-in-loop -- Redis path must be built sequentially
         await redisClient.json.set(key, redisPath, value);
       } else {
+        // eslint-disable-next-line no-await-in-loop -- Redis path must be built sequentially
         await redisClient.json.set(key, redisPath, {}, { NX: true });
       }
     }

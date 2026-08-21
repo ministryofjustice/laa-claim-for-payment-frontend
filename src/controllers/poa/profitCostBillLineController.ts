@@ -2,7 +2,7 @@ import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processApiError, processError } from "#src/helpers/index.js";
 import {
   ProfitCostBillLineForm,
-  type ProfitCostBillLineRequestBody,
+  type ProfitCostBillLineRequestBody
 } from "#src/helpers/profitCostBillLineValidation.js";
 import { ProfitCostBillLineViewModel } from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
 import type { NextFunction, Request, Response } from "express";
@@ -11,6 +11,7 @@ import { claimService } from "#src/services/claimService.js";
 import { getRequestBody } from "#src/helpers/validation.js";
 import { CostType, type ProfitCostBillLineItem } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
+import { getId } from "#src/helpers/queryParsers.js";
 
 /**
  * Display POA CPGFS profit cost bill line page.
@@ -25,7 +26,7 @@ export async function profitCostBillLine(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
 
     const claim = await claimService.getDraftClaim(
       req.axiosMiddleware,
@@ -83,7 +84,7 @@ export async function submitProfitCostBillLine(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claimId = getId(req.params.claimId);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
     const body = req.body as { lineItemId?: unknown };
     const lineItemId =

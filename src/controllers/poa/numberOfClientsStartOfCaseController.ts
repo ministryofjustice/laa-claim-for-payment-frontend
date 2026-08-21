@@ -1,8 +1,8 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { createRadioQuestionController } from "#src/helpers/radioQuestionController.js";
-import { UUID } from "uuidv7";
 import { Count } from "#src/types/Claim.js";
 import { RadioField } from "#src/helpers/fields.js";
+import { getId } from "#src/helpers/queryParsers.js";
 
 const PREFIX = "pages.numberOfClientsStartOfCase" as const;
 
@@ -42,7 +42,7 @@ const controller = createRadioQuestionController({
   submitErrorContext: "submitting number of clients start of case page",
   getRedirectUrl: (req) =>
     buildRoute(ROUTES.MULTIPLE_CLIENT_HEARINGS, {
-      claimId: UUID.parse(req.params.claimId),
+      claimId: getId(req.params.claimId),
     }),
   getValue: (claim) => claim.clientsStartCount,
   setValue: (claim, selectedChoice) =>

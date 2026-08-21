@@ -4,10 +4,11 @@ import type { NextFunction, Request, Response } from "express";
 import { ExpertCostDetailsViewModel } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
 import { ExpertCostDetailsForm, type ExpertCostDetailsRequestBody } from "#src/helpers/expertCostDetailsValidation.js";
 import { getRequestBody } from "#src/helpers/validation.js";
-import { UUID } from "uuidv7";
+import type { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { CostType, type ExpertCostLineItem, ExpertCostLineItemSchema } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
+import { getId } from "#src/helpers/queryParsers.js";
 
 /**
  * Display POA expert cost details page.
@@ -22,7 +23,7 @@ export async function expertCostDetails(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = getClaimId(req);
+    const claimId = getId(req.params.claimId);
     const lineItemId = getLineItemId(req);
 
     const form = new ExpertCostDetailsForm();
@@ -77,7 +78,7 @@ export async function submitExpertCostDetails(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = getClaimId(req);
+    const claimId = getId(req.params.claimId);
     const lineItemId = getLineItemId(req);
 
     const requestBody = getRequestBody(
@@ -124,12 +125,10 @@ export async function submitExpertCostDetails(
   }
 }
 
-function getClaimId(req: Request): UUID {
-  return UUID.parse(req.params.claimId);
-}
-
 function getLineItemId(req: Request): UUID | undefined {
-  return typeof req.query.lineItemId === "string"
-    ? UUID.parse(req.query.lineItemId)
-    : undefined;
+  try {
+    return getId(req.query.lineItemId);
+  } catch {
+    return undefined;
+  }
 }
