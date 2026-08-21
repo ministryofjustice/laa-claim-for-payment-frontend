@@ -77,6 +77,7 @@ const externalModules: string[] = [
   "redis",
   "connect-redis",
   "express-prom-bundle",
+  "debug",
 ];
 
 /**
@@ -159,7 +160,7 @@ const buildAppJs = async (
     entryPoints: ["src/app.ts"],
     bundle: true,
     platform: "node",
-    target: "es2020",
+    target: "es2024",
     format: "esm",
     sourcemap: process.env.NODE_ENV !== "production",
     minify: process.env.NODE_ENV === "production",
@@ -198,7 +199,7 @@ const buildCustomJs = async (
     entryPoints: ["src/scripts/custom.ts"],
     bundle: true,
     platform: "browser",
-    target: "es2020",
+    target: "es2024",
     format: "esm",
     sourcemap: process.env.NODE_ENV !== "production",
     minify: process.env.NODE_ENV === "production",
@@ -231,7 +232,7 @@ const buildFrontendPackages = async (
     entryPoints: ["src/scripts/frontend-packages-entry.ts"],
     bundle: true,
     platform: "browser",
-    target: "es2020",
+    target: "es2024",
     format: "esm",
     sourcemap: process.env.NODE_ENV !== "production",
     minify: process.env.NODE_ENV === "production",

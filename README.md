@@ -509,7 +509,7 @@ This project uses TypeScript to provide static type checking, improving code qua
 
 The TypeScript configuration is defined in `tsconfig.json` with the following key settings:
 
-- Target: ES2022
+- Target: ES2024
 - Module System: NodeNext
 - Strict Type Checking: Enabled
 - Source Maps: Generated for debugging
