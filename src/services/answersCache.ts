@@ -89,10 +89,10 @@ export interface AnswersCache {
 }
 
 const toRedisPath = (path: Path): string => (
-    "$" +
+    `$${ 
     path
       .map((segment) =>
         typeof segment === "number" ? `[${segment}]` : `.${segment}`,
       )
-      .join("")
+      .join("")}`
   );

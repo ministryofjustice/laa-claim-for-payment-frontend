@@ -62,9 +62,7 @@ describe("views/main/poa/addAnotherLineItemView.njk", () => {
     const h1s = $("#main-content h1");
     expect(h1s).to.have.length(1);
     const h1 = h1s.first();
-    expect(h1.text().trim()).to.equal(
-      "prefix.title.singular",
-    );
+    expect(h1.text().trim()).to.equal("prefix.title.singular");
   });
 
   it("renders a GOV.UK summary list", () => {

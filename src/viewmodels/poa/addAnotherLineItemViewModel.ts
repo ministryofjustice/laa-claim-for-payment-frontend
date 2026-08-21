@@ -41,8 +41,7 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
    * @param {AddAnotherLineItemViewModelParams} params View model params.
    */
   constructor(params: AddAnotherLineItemViewModelParams<T>) {
-    const { claimId, lineItems, form, getValue, summaryListId } =
-      params;
+    const { claimId, lineItems, form, getValue, summaryListId } = params;
 
     if (lineItems.length === 1) {
       this.title = { key: `${form.messagePrefix}.title.singular` };

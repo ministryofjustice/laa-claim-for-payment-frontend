@@ -67,7 +67,7 @@ const config: Config = {
     views: "src/views", // Path for Nunjucks views
   },
   api: {
-    baseUrl: (process.env.API_URL ?? "").replace(/\/+$/, ""),
+    baseUrl: (process.env.API_URL ?? "").replace(/\/+$/u, ""),
   },
   ...(process.env.REDIS_DISABLED === "true"
     ? {}
