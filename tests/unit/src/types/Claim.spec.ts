@@ -8,7 +8,7 @@ import {
   Count,
   CourtType,
   EvidenceItemSchema,
-  ExpertCostLineItem,
+  DisbursementLineItem,
   LineItemSchema,
   ProfitCostBillLineItem,
   StubLineItem,
@@ -666,7 +666,7 @@ describe("ClaimResponseSchema", () => {
         vatApplicable: true,
         feeEarnerName: "Joe Bloggs",
         evidenceItems: [],
-      }) as ExpertCostLineItem;
+      }) as DisbursementLineItem;
 
       expect(result.id).to.equal("019fad29-2579-7544-9961-3b3b6061f64e");
       expect(result.title).to.equal("Title");

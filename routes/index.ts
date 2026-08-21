@@ -28,7 +28,7 @@ import { poaSubmissionSuccessfulPage } from "#src/controllers/poa/submissionSucc
 import { escapingFixedFee, submitEscapingFixedFee } from "#src/controllers/poa/escapingFixedFeeController.js";
 import { profitCostBillLine, submitProfitCostBillLine } from "#src/controllers/poa/profitCostBillLineController.js";
 import { checkYourDetailsPage, submitYourDetails } from "#src/controllers/poa/checkDetailsController.js";
-import { expertCostDetails, submitExpertCostDetails } from "#src/controllers/poa/expertCostDetailsController.js";
+import { disbursementDetails, submitDisbursementDetails } from "#src/controllers/poa/disbursementDetailsController.js";
 import { poaEvidenceUploadPage, submitPoaEvidenceUpload } from "#src/controllers/poa/poaEvidenceUploadController.js";
 import {
   deleteEvidenceFileFromClaim,
@@ -39,11 +39,11 @@ import {
 } from "#src/controllers/claims/ajaxFileUploadController.js";
 import type { ViewClaimsActionRequest } from "#src/types/requests.js";
 
-import { confirmRemoveExpertLineItem, submitRemoveExpertLineItem } from "#src/controllers/poa/removeExpertLineItemController.js";
+import { confirmRemoveExpertLineItem, submitRemoveExpertLineItem } from "#src/controllers/poa/removeDisbursementController.js";
 import {
-  addAnotherExpertCost,
-  submitAddAnotherExpertCost,
-} from "#src/controllers/poa/addAnotherExpertCostController.js";
+  addAnotherDisbursement,
+  submitAddAnotherDisbursement,
+} from "#src/controllers/poa/addAnotherDisbursementController.js";
 
 /**
  * Builds the main application router.
@@ -232,51 +232,51 @@ export const buildRouter = (): Router => {
   );
 
   router.get(
-    ROUTES.EXPERT_COST_DETAILS,
+    ROUTES.DISBURSEMENT_DETAILS,
     async (
       req: Request,
       res: Response,
       next: NextFunction,
     ): Promise<void> => {
-      await expertCostDetails(req, res, next);
+      await disbursementDetails(req, res, next);
     },
   );
 
   router.post(
-    ROUTES.EXPERT_COST_DETAILS,
+    ROUTES.DISBURSEMENT_DETAILS,
     async (
       req: Request,
       res: Response,
       next: NextFunction,
     ): Promise<void> => {
-      await submitExpertCostDetails(req, res, next);
+      await submitDisbursementDetails(req, res, next);
     },
   );
 
   router.get(
-    ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS,
+    ROUTES.ADD_ANOTHER_DISBURSEMENT,
     async (
       req: Request,
       res: Response,
       next: NextFunction,
     ): Promise<void> => {
-      await addAnotherExpertCost(req, res, next);
+      await addAnotherDisbursement(req, res, next);
     },
   );
 
   router.post(
-    ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS,
+    ROUTES.ADD_ANOTHER_DISBURSEMENT,
     async (
       req: Request,
       res: Response,
       next: NextFunction,
     ): Promise<void> => {
-      await submitAddAnotherExpertCost(req, res, next);
+      await submitAddAnotherDisbursement(req, res, next);
     },
   );
 
   router.get(
-    ROUTES.REMOVE_EXPERT_COST_DETAILS,
+    ROUTES.REMOVE_DISBURSEMENT,
     async (
       req: Request,
       res: Response,
@@ -287,7 +287,7 @@ export const buildRouter = (): Router => {
   );
 
   router.post(
-    ROUTES.REMOVE_EXPERT_COST_DETAILS,
+    ROUTES.REMOVE_DISBURSEMENT,
     async (
       req: Request,
       res: Response,

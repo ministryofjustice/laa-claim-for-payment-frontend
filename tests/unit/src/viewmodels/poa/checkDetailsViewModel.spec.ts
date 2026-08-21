@@ -319,13 +319,13 @@ describe("CheckDetailsViewModel constructor()", () => {
       key: "common.delete",
     });
     expect(firstSummaryList.card?.actions?.items[0].href).to.equal(
-      `/claims/${claimId.toString()}/poa/expert-cost-details/019fae76-e8a7-73bc-af8d-990543ec4a65/remove`,
+      `/claims/${claimId.toString()}/poa/disbursement-details/019fae76-e8a7-73bc-af8d-990543ec4a65/remove`,
     );
     expect(firstSummaryList.card?.actions?.items[1].text).to.deep.equal({
       key: "common.change",
     });
     expect(firstSummaryList.card?.actions?.items[1].href).to.equal(
-      `/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=019fae76-e8a7-73bc-af8d-990543ec4a65`,
+      `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=019fae76-e8a7-73bc-af8d-990543ec4a65`,
     );
 
     expect(firstSummaryList.attributes.id).to.equal(
@@ -373,13 +373,13 @@ describe("CheckDetailsViewModel constructor()", () => {
       key: "common.delete",
     });
     expect(secondSummaryList.card?.actions?.items[0].href).to.equal(
-      `/claims/${claimId.toString()}/poa/expert-cost-details/019fae77-87c3-734c-a38d-54624d48d7e5/remove`,
+      `/claims/${claimId.toString()}/poa/disbursement-details/019fae77-87c3-734c-a38d-54624d48d7e5/remove`,
     );
     expect(secondSummaryList.card?.actions?.items[1].text).to.deep.equal({
       key: "common.change",
     });
     expect(secondSummaryList.card?.actions?.items[1].href).to.equal(
-      `/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=019fae77-87c3-734c-a38d-54624d48d7e5`,
+      `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=019fae77-87c3-734c-a38d-54624d48d7e5`,
     );
 
     expect(secondSummaryList.attributes.id).to.equal(

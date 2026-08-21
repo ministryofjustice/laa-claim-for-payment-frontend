@@ -1,8 +1,8 @@
 import { V7Generator } from "uuidv7";
-import { Category, ExpertCostLineItem } from "#src/types/Claim.js";
+import { Category, DisbursementLineItem } from "#src/types/Claim.js";
 import {
-  AddAnotherExpertCostViewModel,
-  AddAnotherExpertCostViewModelParams,
+  AddAnotherDisbursementViewModel,
+  AddAnotherDisbursementViewModelParams,
 } from "#src/viewmodels/poa/addAnotherLineItemViewModel.js";
 import { expect } from "chai";
 import { LocalDate } from "#src/types/date.js";
@@ -15,9 +15,9 @@ describe("AddAnotherLineItemViewModel", () => {
   const lineItem1Id = new V7Generator().generate();
   const lineItem2Id = new V7Generator().generate();
 
-  describe("AddAnotherExpertCostViewModel", () => {
+  describe("AddAnotherDisbursementViewModel", () => {
     it("when one line item", () => {
-      const lineItems: ExpertCostLineItem[] = [
+      const lineItems: DisbursementLineItem[] = [
         {
           id: lineItem1Id.toString(),
           title: "Line item 1",
@@ -34,13 +34,13 @@ describe("AddAnotherLineItemViewModel", () => {
 
       const field = new BooleanField("test", "test", "test");
 
-      const params: AddAnotherExpertCostViewModelParams = {
+      const params: AddAnotherDisbursementViewModelParams = {
         claimId: claimId.toString(),
         lineItems,
         form: new YesNoQuestionForm(field),
       };
 
-      const result = new AddAnotherExpertCostViewModel(params);
+      const result = new AddAnotherDisbursementViewModel(params);
 
       expect(result.title).to.deep.equal({
         key: "test.title.singular",
@@ -51,6 +51,7 @@ describe("AddAnotherLineItemViewModel", () => {
       });
 
       expect(result.lineItemsSummaryList.card).to.be.undefined;
+      expect(result.lineItemsSummaryList.attributes.id).to.equal("disbursement-rows");
       expect(result.lineItemsSummaryList.rows.length).to.equal(1);
 
       expectLocalizedText(
@@ -69,7 +70,7 @@ describe("AddAnotherLineItemViewModel", () => {
       expect(
         result.lineItemsSummaryList.rows[0].actions?.items[0].href,
       ).to.equal(
-        `/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=${lineItem1Id.toString()}`,
+        `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=${lineItem1Id.toString()}`,
       );
       expectLocalizedText(
         result.lineItemsSummaryList.rows[0].actions?.items[0]
@@ -82,7 +83,7 @@ describe("AddAnotherLineItemViewModel", () => {
       expect(
         result.lineItemsSummaryList.rows[0].actions?.items[1].href,
       ).to.equal(
-        `/claims/${claimId.toString()}/poa/expert-cost-details/${lineItem1Id.toString()}/remove`,
+        `/claims/${claimId.toString()}/poa/disbursement-details/${lineItem1Id.toString()}/remove`,
       );
       expectLocalizedText(
         result.lineItemsSummaryList.rows[0].actions?.items[1]
@@ -92,7 +93,7 @@ describe("AddAnotherLineItemViewModel", () => {
     });
 
     it("when more than one line item", () => {
-      const lineItems: ExpertCostLineItem[] = [
+      const lineItems: DisbursementLineItem[] = [
         {
           id: lineItem1Id.toString(),
           title: "Line item 1",
@@ -121,13 +122,13 @@ describe("AddAnotherLineItemViewModel", () => {
 
       const field = new BooleanField("test", "test", "test");
 
-      const params: AddAnotherExpertCostViewModelParams = {
+      const params: AddAnotherDisbursementViewModelParams = {
         claimId: claimId.toString(),
         lineItems,
         form: new YesNoQuestionForm(field),
       };
 
-      const result = new AddAnotherExpertCostViewModel(params);
+      const result = new AddAnotherDisbursementViewModel(params);
 
       expect(result.title).to.deep.equal({
         key: "test.title.multiple",
@@ -139,6 +140,7 @@ describe("AddAnotherLineItemViewModel", () => {
       });
 
       expect(result.lineItemsSummaryList.card).to.be.undefined;
+      expect(result.lineItemsSummaryList.attributes.id).to.equal("disbursement-rows");
       expect(result.lineItemsSummaryList.rows.length).to.equal(2);
 
       expectLocalizedText(
@@ -157,7 +159,7 @@ describe("AddAnotherLineItemViewModel", () => {
       expect(
         result.lineItemsSummaryList.rows[0].actions?.items[0].href,
       ).to.equal(
-        `/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=${lineItem1Id.toString()}`,
+        `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=${lineItem1Id.toString()}`,
       );
       expectLocalizedText(
         result.lineItemsSummaryList.rows[0].actions?.items[0]
@@ -170,7 +172,7 @@ describe("AddAnotherLineItemViewModel", () => {
       expect(
         result.lineItemsSummaryList.rows[0].actions?.items[1].href,
       ).to.equal(
-        `/claims/${claimId.toString()}/poa/expert-cost-details/${lineItem1Id.toString()}/remove`,
+        `/claims/${claimId.toString()}/poa/disbursement-details/${lineItem1Id.toString()}/remove`,
       );
       expectLocalizedText(
         result.lineItemsSummaryList.rows[0].actions?.items[1]
@@ -194,7 +196,7 @@ describe("AddAnotherLineItemViewModel", () => {
       expect(
         result.lineItemsSummaryList.rows[1].actions?.items[0].href,
       ).to.equal(
-        `/claims/${claimId.toString()}/poa/expert-cost-details?lineItemId=${lineItem2Id.toString()}`,
+        `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=${lineItem2Id.toString()}`,
       );
       expectLocalizedText(
         result.lineItemsSummaryList.rows[1].actions?.items[0]
@@ -207,7 +209,7 @@ describe("AddAnotherLineItemViewModel", () => {
       expect(
         result.lineItemsSummaryList.rows[1].actions?.items[1].href,
       ).to.equal(
-        `/claims/${claimId.toString()}/poa/expert-cost-details/${lineItem2Id.toString()}/remove`,
+        `/claims/${claimId.toString()}/poa/disbursement-details/${lineItem2Id.toString()}/remove`,
       );
       expectLocalizedText(
         result.lineItemsSummaryList.rows[1].actions?.items[1]

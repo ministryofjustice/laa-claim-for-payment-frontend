@@ -7,10 +7,10 @@ import {
   Category,
   Claim,
   CostType,
-  ExpertCostLineItemSchema,
+  DisbursementLineItemSchema,
   ProfitCostBillLineItemSchema,
 } from "#src/types/Claim.js";
-import { ExpertCostDetails, LineItemForm } from "#src/types/poa.js";
+import { DisbursementDetails, LineItemForm } from "#src/types/poa.js";
 import { LocalDate } from "#src/types/date.js";
 
 describe("Claim Service", () => {
@@ -854,7 +854,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        ExpertCostLineItemSchema,
+        DisbursementLineItemSchema,
         deps as any,
       );
 
@@ -957,7 +957,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        ExpertCostLineItemSchema,
+        DisbursementLineItemSchema,
         deps as any,
       )) as ApiError;
 
@@ -1015,7 +1015,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        ExpertCostLineItemSchema,
+        DisbursementLineItemSchema,
         deps as any,
       )) as ApiError;
 
@@ -1034,7 +1034,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        ExpertCostLineItemSchema,
+        DisbursementLineItemSchema,
         deps as any,
       );
 
@@ -1055,7 +1055,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        ExpertCostLineItemSchema,
+        DisbursementLineItemSchema,
         deps as any,
       );
 
@@ -1066,7 +1066,7 @@ describe("Claim Service", () => {
   });
 
   describe("updateLineItem", () => {
-    const lineItem: ExpertCostDetails = {
+    const lineItem: DisbursementDetails = {
       activityDate: new LocalDate(28, 7, 2026),
       actualNetValue: 123.45,
       vatApplies: true,

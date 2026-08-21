@@ -1,4 +1,4 @@
-import type { ExpertCostLineItem, LineItem } from "#src/types/Claim.js";
+import type { DisbursementLineItem, LineItem } from "#src/types/Claim.js";
 import {
   buildSummaryList,
   buildSummaryListRowWithChangeAndRemoveLinks,
@@ -21,9 +21,9 @@ interface AddAnotherLineItemViewModelParams<T extends LineItem> {
   summaryListId: string;
 }
 
-export interface AddAnotherExpertCostViewModelParams {
+export interface AddAnotherDisbursementViewModelParams {
   claimId: string;
-  lineItems: ExpertCostLineItem[];
+  lineItems: DisbursementLineItem[];
   form: YesNoQuestionForm;
 }
 
@@ -56,11 +56,11 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
       buildSummaryListRowWithChangeAndRemoveLinks(
         formatDateReadable(lineItem.date.toDate()),
         buildRoute(
-          ROUTES.EXPERT_COST_DETAILS,
+          ROUTES.DISBURSEMENT_DETAILS,
           { claimId },
           { lineItemId: lineItem.id },
         ),
-        buildRoute(ROUTES.REMOVE_EXPERT_COST_DETAILS, {
+        buildRoute(ROUTES.REMOVE_DISBURSEMENT, {
           claimId,
           lineItemId: lineItem.id,
         }),
@@ -83,17 +83,17 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
 /**
  *
  */
-export class AddAnotherExpertCostViewModel extends AddAnotherLineItemViewModel<ExpertCostLineItem> {
+export class AddAnotherDisbursementViewModel extends AddAnotherLineItemViewModel<DisbursementLineItem> {
   /**
-   * Creates an add another expert cost view model.
+   * Creates an add another disbursement view model.
    *
-   * @param {AddAnotherExpertCostViewModelParams} params View model params.
+   * @param {AddAnotherDisbursementViewModelParams} params View model params.
    */
-  constructor(params: AddAnotherExpertCostViewModelParams) {
+  constructor(params: AddAnotherDisbursementViewModelParams) {
     super({
       ...params,
       getValue: (lineItem) => formatClaimed(lineItem.actualNetValue),
-      summaryListId: "expert-cost",
+      summaryListId: "disbursement",
     });
   }
 }

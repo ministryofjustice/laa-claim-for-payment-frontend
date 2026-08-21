@@ -3,8 +3,8 @@ import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
 import { V7Generator } from "uuidv7";
 import {
-  AddAnotherExpertCostViewModel,
-  AddAnotherExpertCostViewModelParams,
+  AddAnotherDisbursementViewModel,
+  AddAnotherDisbursementViewModelParams,
 } from "#src/viewmodels/poa/addAnotherLineItemViewModel.js";
 import { Category } from "#src/types/Claim.js";
 import { LocalDate } from "#src/types/date.js";
@@ -13,7 +13,7 @@ import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 chaiConfig.truncateThreshold = 0;
 
-describe("views/main/poa/addAnotherLineItemView.njk", () => {
+describe("views/main/poa/addAnotherDisbursementView.njk", () => {
   let $: CheerioAPI;
 
   const claimId = new V7Generator().generate();
@@ -23,7 +23,7 @@ describe("views/main/poa/addAnotherLineItemView.njk", () => {
 
   const form = new YesNoQuestionForm(field);
 
-  const params: AddAnotherExpertCostViewModelParams = {
+  const params: AddAnotherDisbursementViewModelParams = {
     claimId: claimId.toString(),
     lineItems: [
       {
@@ -42,10 +42,10 @@ describe("views/main/poa/addAnotherLineItemView.njk", () => {
     form,
   };
 
-  const viewModel = new AddAnotherExpertCostViewModel(params);
+  const viewModel = new AddAnotherDisbursementViewModel(params);
 
   beforeEach(async () => {
-    $ = await renderView("main/poa/addAnotherLineItemView.njk", {
+    $ = await renderView("main/poa/addAnotherDisbursementView.njk", {
       vm: viewModel,
     });
   });

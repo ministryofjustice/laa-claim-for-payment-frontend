@@ -1,21 +1,22 @@
 import {
-  ExpertCostDetailsViewModel,
-  ExpertCostDetailsViewModelParams,
-} from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
+  DisbursementDetailsViewModel,
+  DisbursementDetailsViewModelParams,
+} from "#src/viewmodels/poa/disbursementDetailsViewModel.js";
 import { expect } from "chai";
 import { LocalDate } from "#src/types/date.js";
-import { ExpertCostDetailsForm } from "#src/helpers/expertCostDetailsValidation.js";
-import { ExpertCostDetails } from "#src/types/poa.js";
+import { DisbursementDetailsForm } from "#src/helpers/disbursementDetailsValidation.js";
+import { DisbursementDetails } from "#src/types/poa.js";
+import { CostType } from "#src/types/Claim.js";
 
 describe("expertCostDetailsViewModel constructor", () => {
   it("constructs view model when empty form", () => {
-    const form = new ExpertCostDetailsForm();
+    const form = new DisbursementDetailsForm(CostType.EXPERT_COST);
 
-    const params: ExpertCostDetailsViewModelParams = {
+    const params: DisbursementDetailsViewModelParams = {
       form,
     };
 
-    const result = new ExpertCostDetailsViewModel(params);
+    const result = new DisbursementDetailsViewModel(params);
 
     expect(result.title).to.equal("pages.poa.expertCostDetails.title");
 
@@ -30,7 +31,7 @@ describe("expertCostDetailsViewModel constructor", () => {
   });
 
   it("constructs view model when populated form", () => {
-    const lineItem: ExpertCostDetails = {
+    const lineItem: DisbursementDetails = {
       activityDate: LocalDate.of(1, 1, 2026),
       actualNetValue: 123,
       vatApplies: true,
@@ -38,12 +39,12 @@ describe("expertCostDetailsViewModel constructor", () => {
       description: "Title",
     };
 
-    const form = new ExpertCostDetailsForm();
+    const form = new DisbursementDetailsForm(CostType.EXPERT_COST);
     form.fill(lineItem);
 
-    const params: ExpertCostDetailsViewModelParams = { form };
+    const params: DisbursementDetailsViewModelParams = { form };
 
-    const result = new ExpertCostDetailsViewModel(params);
+    const result = new DisbursementDetailsViewModel(params);
 
     expect(result.title).to.equal("pages.poa.expertCostDetails.title");
 
@@ -58,7 +59,7 @@ describe("expertCostDetailsViewModel constructor", () => {
   });
 
   it("constructs view model when form has errors", () => {
-    const form = new ExpertCostDetailsForm();
+    const form = new DisbursementDetailsForm(CostType.EXPERT_COST);
 
     form.validate({
       activityDateDay: "",
@@ -70,9 +71,9 @@ describe("expertCostDetailsViewModel constructor", () => {
       description: "",
     });
 
-    const params: ExpertCostDetailsViewModelParams = { form };
+    const params: DisbursementDetailsViewModelParams = { form };
 
-    const result = new ExpertCostDetailsViewModel(params);
+    const result = new DisbursementDetailsViewModel(params);
 
     expect(result.errorSummary?.errorList).to.have.length(5);
   });

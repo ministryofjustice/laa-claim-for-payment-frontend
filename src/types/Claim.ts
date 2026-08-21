@@ -23,6 +23,29 @@ export enum CostType {
   NON_EXPERT_DISBURSEMENT = 'NON_EXPERT_DISBURSEMENT',
 }
 
+/**
+ * Gets whether the cost type is a disbursement type.
+ * @param {CostType | null | undefined} costType cost type
+ * @returns {boolean} whether the cost type is a disbursement type
+ */
+export function isDisbursementCostType(
+  costType: CostType | null | undefined,
+): costType is DisbursementCostType {
+  return (
+    costType === CostType.EXPERT_COST ||
+    costType === CostType.NON_EXPERT_DISBURSEMENT
+  );
+}
+
+export type DisbursementCostType =
+  | CostType.EXPERT_COST
+  | CostType.NON_EXPERT_DISBURSEMENT;
+
+export const DisbursementCostTypeMessagePrefix: Record<DisbursementCostType, string> = {
+  [CostType.EXPERT_COST]: "pages.poa.expertCostDetails",
+  [CostType.NON_EXPERT_DISBURSEMENT]: "pages.poa.nonExpertDisbursementDetails",
+};
+
 export enum CourtType {
   COUNTY_COURT = 'COUNTY_COURT',
   HIGH_COURT = 'HIGH_COURT',
@@ -67,7 +90,7 @@ const PoaLineItemSchema = BaseLineItemSchema.extend({
   vatApplicable: z.boolean(),
 });
 
-export const ExpertCostLineItemSchema = PoaLineItemSchema.extend({
+export const DisbursementLineItemSchema = PoaLineItemSchema.extend({
   actualNetValue: z.number(),
   netProfitCostAmount: NullOrUndefinedSchema,
   netAdvocacyCostAmount: NullOrUndefinedSchema,
@@ -80,12 +103,12 @@ export const ProfitCostBillLineItemSchema = PoaLineItemSchema.extend({
 }).strict();
 
 export const LineItemSchema = z.union([
-  ExpertCostLineItemSchema,
+  DisbursementLineItemSchema,
   ProfitCostBillLineItemSchema,
   StubLineItemSchema, // must go last
 ]);
 
-export type ExpertCostLineItem = z.infer<typeof ExpertCostLineItemSchema>;
+export type DisbursementLineItem = z.infer<typeof DisbursementLineItemSchema>;
 export type ProfitCostBillLineItem = z.infer<typeof ProfitCostBillLineItemSchema>;
 export type StubLineItem = z.infer<typeof StubLineItemSchema>;
 export type LineItem = z.infer<typeof LineItemSchema>;
