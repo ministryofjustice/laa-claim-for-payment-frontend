@@ -6,9 +6,10 @@ import { claimService } from "#src/services/claimService.js";
 import { AddAnotherDisbursementViewModel } from "#src/viewmodels/poa/addAnotherLineItemViewModel.js";
 import {
   type Claim,
-  CostType,
   type DisbursementCostType,
-  type DisbursementLineItem, isDisbursementCostType,
+  DisbursementCostTypeMessagePrefix,
+  type DisbursementLineItem,
+  isDisbursementCostType
 } from "#src/types/Claim.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
@@ -142,14 +143,7 @@ function getLineItems(claim: Claim): DisbursementLineItem[] {
 }
 
 function buildField(costType: DisbursementCostType): BooleanField {
-  const messagePrefix: string = (() => {
-    switch (costType) {
-      case CostType.EXPERT_COST:
-        return "pages.poa.expertCostDetails";
-      case CostType.NON_EXPERT_DISBURSEMENT:
-        return "pages.poa.nonExpertDisbursementDetails";
-    }
-  })();
+  const messagePrefix: string = DisbursementCostTypeMessagePrefix[costType];
   return new BooleanField(
     `${messagePrefix}.addAnother`,
     "addAnother",

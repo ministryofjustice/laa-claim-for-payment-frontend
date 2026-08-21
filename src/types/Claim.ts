@@ -41,6 +41,11 @@ export type DisbursementCostType =
   | CostType.EXPERT_COST
   | CostType.NON_EXPERT_DISBURSEMENT;
 
+export const DisbursementCostTypeMessagePrefix: Record<DisbursementCostType, string> = {
+  [CostType.EXPERT_COST]: "pages.poa.expertCostDetails",
+  [CostType.NON_EXPERT_DISBURSEMENT]: "pages.poa.nonExpertDisbursementDetails",
+};
+
 export enum CourtType {
   COUNTY_COURT = 'COUNTY_COURT',
   HIGH_COURT = 'HIGH_COURT',

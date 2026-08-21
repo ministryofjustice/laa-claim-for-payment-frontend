@@ -6,7 +6,10 @@ import {
   MoneyField,
   StringField,
 } from "#src/helpers/fields.js";
-import { CostType, type DisbursementCostType } from "#src/types/Claim.js";
+import {
+  type DisbursementCostType,
+  DisbursementCostTypeMessagePrefix,
+} from "#src/types/Claim.js";
 
 export interface DisbursementDetailsRequestBody {
   activityDateDay?: unknown;
@@ -39,14 +42,7 @@ export class DisbursementDetailsForm extends Form<
    * @param {DisbursementCostType} costType cost type
    */
   constructor(costType: DisbursementCostType) {
-    const messagePrefix: string = (() => {
-      switch (costType) {
-        case CostType.EXPERT_COST:
-          return "pages.poa.expertCostDetails";
-        case CostType.NON_EXPERT_DISBURSEMENT:
-          return "pages.poa.nonExpertDisbursementDetails";
-      }
-    })();
+    const messagePrefix: string = DisbursementCostTypeMessagePrefix[costType];
     super(buildDisbursementDetailsFields(messagePrefix), messagePrefix);
   }
 
@@ -82,7 +78,9 @@ export class DisbursementDetailsForm extends Form<
   }
 }
 
-function buildDisbursementDetailsFields(messagePrefix: string): DisbursementDetailsFields {
+function buildDisbursementDetailsFields(
+  messagePrefix: string,
+): DisbursementDetailsFields {
   return {
     activityDate: new DateField(
       `${messagePrefix}.activityDate`,

@@ -6,8 +6,8 @@ import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import {
   type Claim,
-  CostType,
   type DisbursementCostType,
+  DisbursementCostTypeMessagePrefix,
   type DisbursementLineItem,
   isDisbursementCostType
 } from "#src/types/Claim.js";
@@ -137,14 +137,7 @@ export async function submitRemoveExpertLineItem(
 }
 
 function buildField(costType: DisbursementCostType): BooleanField {
-  const messagePrefix: string = (() => {
-    switch (costType) {
-      case CostType.EXPERT_COST:
-        return "pages.poa.expertCostDetails";
-      case CostType.NON_EXPERT_DISBURSEMENT:
-        return "pages.poa.nonExpertDisbursementDetails";
-    }
-  })();
+  const messagePrefix: string = DisbursementCostTypeMessagePrefix[costType];
   return new BooleanField(
     `${messagePrefix}.remove`,
     "confirmRemoveExpertLineItem",
