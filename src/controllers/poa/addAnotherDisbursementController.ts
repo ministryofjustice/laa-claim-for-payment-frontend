@@ -8,7 +8,7 @@ import {
   type Claim,
   CostType,
   type DisbursementCostType,
-  type ExpertCostLineItem, isDisbursementCostType,
+  type DisbursementLineItem, isDisbursementCostType,
 } from "#src/types/Claim.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
@@ -35,7 +35,7 @@ export async function addAnotherDisbursement(
     if (claimResponse.status === "success") {
       const { body: claim } = claimResponse;
       if (isDisbursementCostType(claim.costType)) {
-        const lineItems: ExpertCostLineItem[] = getLineItems(claim);
+        const lineItems: DisbursementLineItem[] = getLineItems(claim);
         if (lineItems.length === 0) {
           res.redirect(buildRoute(ROUTES.DISBURSEMENT_DETAILS, { claimId }));
         } else {
@@ -134,10 +134,10 @@ export async function submitAddAnotherDisbursement(
   }
 }
 
-function getLineItems(claim: Claim): ExpertCostLineItem[] {
+function getLineItems(claim: Claim): DisbursementLineItem[] {
   return claim.lineItems.map(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
-    (lineItem) => lineItem as ExpertCostLineItem,
+    (lineItem) => lineItem as DisbursementLineItem,
   );
 }
 

@@ -8,7 +8,7 @@ import {
   Category,
   Claim,
   CostType,
-  ExpertCostLineItem,
+  DisbursementLineItem,
 } from "#src/types/Claim.js";
 import { confirmRemoveExpertLineItem, submitRemoveExpertLineItem } from "#src/controllers/poa/removeDisbursementController.js";
 import { LocalDate } from "#src/types/date.js";
@@ -23,7 +23,7 @@ describe("removeDisbursementController", () => {
   const claimId = new V7Generator().generate();
   const lineItemId = new V7Generator().generate();
 
-  const lineItem: ExpertCostLineItem =  {
+  const lineItem: DisbursementLineItem =  {
     id: lineItemId.toString(),
     title: "",
     category: Category.BILL_NARRATIVE,

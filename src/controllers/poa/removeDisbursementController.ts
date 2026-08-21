@@ -8,7 +8,7 @@ import {
   type Claim,
   CostType,
   type DisbursementCostType,
-  type ExpertCostLineItem,
+  type DisbursementLineItem,
   isDisbursementCostType
 } from "#src/types/Claim.js";
 import { BooleanField } from "#src/helpers/fields.js";
@@ -163,9 +163,9 @@ function buildViewModel(form: YesNoQuestionForm): YesNoQuestionViewModel {
 function getLineItem(
   claim: Claim,
   lineItemId: UUID,
-): ExpertCostLineItem | undefined {
+): DisbursementLineItem | undefined {
   return claim.lineItems.find(
-    (lineItem): lineItem is ExpertCostLineItem =>
+    (lineItem): lineItem is DisbursementLineItem =>
       lineItem.id === lineItemId.toString(),
   );
 }

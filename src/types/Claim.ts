@@ -85,7 +85,7 @@ const PoaLineItemSchema = BaseLineItemSchema.extend({
   vatApplicable: z.boolean(),
 });
 
-export const ExpertCostLineItemSchema = PoaLineItemSchema.extend({
+export const DisbursementLineItemSchema = PoaLineItemSchema.extend({
   actualNetValue: z.number(),
   netProfitCostAmount: NullOrUndefinedSchema,
   netAdvocacyCostAmount: NullOrUndefinedSchema,
@@ -98,12 +98,12 @@ export const ProfitCostBillLineItemSchema = PoaLineItemSchema.extend({
 }).strict();
 
 export const LineItemSchema = z.union([
-  ExpertCostLineItemSchema,
+  DisbursementLineItemSchema,
   ProfitCostBillLineItemSchema,
   StubLineItemSchema, // must go last
 ]);
 
-export type ExpertCostLineItem = z.infer<typeof ExpertCostLineItemSchema>;
+export type DisbursementLineItem = z.infer<typeof DisbursementLineItemSchema>;
 export type ProfitCostBillLineItem = z.infer<typeof ProfitCostBillLineItemSchema>;
 export type StubLineItem = z.infer<typeof StubLineItemSchema>;
 export type LineItem = z.infer<typeof LineItemSchema>;

@@ -1,4 +1,4 @@
-import type { ExpertCostLineItem, LineItem } from "#src/types/Claim.js";
+import type { DisbursementLineItem, LineItem } from "#src/types/Claim.js";
 import {
   buildSummaryList,
   buildSummaryListRowWithChangeAndRemoveLinks,
@@ -23,7 +23,7 @@ interface AddAnotherLineItemViewModelParams<T extends LineItem> {
 
 export interface AddAnotherDisbursementViewModelParams {
   claimId: string;
-  lineItems: ExpertCostLineItem[];
+  lineItems: DisbursementLineItem[];
   form: YesNoQuestionForm;
 }
 
@@ -83,7 +83,7 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
 /**
  *
  */
-export class AddAnotherDisbursementViewModel extends AddAnotherLineItemViewModel<ExpertCostLineItem> {
+export class AddAnotherDisbursementViewModel extends AddAnotherLineItemViewModel<DisbursementLineItem> {
   /**
    * Creates an add another disbursement view model.
    *

@@ -7,7 +7,7 @@ import {
   Category,
   Claim,
   CostType,
-  ExpertCostLineItemSchema,
+  DisbursementLineItemSchema,
   ProfitCostBillLineItemSchema,
 } from "#src/types/Claim.js";
 import { DisbursementDetails, LineItemForm } from "#src/types/poa.js";
@@ -854,7 +854,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        ExpertCostLineItemSchema,
+        DisbursementLineItemSchema,
         deps as any,
       );
 
@@ -957,7 +957,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        ExpertCostLineItemSchema,
+        DisbursementLineItemSchema,
         deps as any,
       )) as ApiError;
 
@@ -1015,7 +1015,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        ExpertCostLineItemSchema,
+        DisbursementLineItemSchema,
         deps as any,
       )) as ApiError;
 
@@ -1034,7 +1034,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        ExpertCostLineItemSchema,
+        DisbursementLineItemSchema,
         deps as any,
       );
 
@@ -1055,7 +1055,7 @@ describe("Claim Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         lineItemId,
-        ExpertCostLineItemSchema,
+        DisbursementLineItemSchema,
         deps as any,
       );
 

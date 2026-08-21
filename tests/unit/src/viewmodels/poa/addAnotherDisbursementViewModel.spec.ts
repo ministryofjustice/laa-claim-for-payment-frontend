@@ -1,5 +1,5 @@
 import { V7Generator } from "uuidv7";
-import { Category, ExpertCostLineItem } from "#src/types/Claim.js";
+import { Category, DisbursementLineItem } from "#src/types/Claim.js";
 import {
   AddAnotherDisbursementViewModel,
   AddAnotherDisbursementViewModelParams,
@@ -17,7 +17,7 @@ describe("AddAnotherLineItemViewModel", () => {
 
   describe("AddAnotherDisbursementViewModel", () => {
     it("when one line item", () => {
-      const lineItems: ExpertCostLineItem[] = [
+      const lineItems: DisbursementLineItem[] = [
         {
           id: lineItem1Id.toString(),
           title: "Line item 1",
@@ -93,7 +93,7 @@ describe("AddAnotherLineItemViewModel", () => {
     });
 
     it("when more than one line item", () => {
-      const lineItems: ExpertCostLineItem[] = [
+      const lineItems: DisbursementLineItem[] = [
         {
           id: lineItem1Id.toString(),
           title: "Line item 1",

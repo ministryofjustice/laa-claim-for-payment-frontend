@@ -4,9 +4,9 @@ import { YesNoInput } from "#tests/playwright/pages/base/Components.js";
 import { QuestionPage } from "#tests/playwright/pages/base/QuestionPage.js";
 
 /**
- * Page object for adding another expert cost.
+ * Page object for adding another disbursement.
  */
-export class AddAnotherExpertCostPage extends QuestionPage {
+export class AddAnotherDisbursementPage extends QuestionPage {
   /**
    * Creates a page object.
    *

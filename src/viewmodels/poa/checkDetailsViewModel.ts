@@ -2,7 +2,7 @@ import {
   type Claim,
   CostType,
   type EvidenceItem,
-  type ExpertCostLineItem,
+  type DisbursementLineItem,
   type ProfitCostBillLineItem
 } from "#src/types/Claim.js";
 import type { Table } from "#src/viewmodels/components/table.js";
@@ -287,8 +287,8 @@ export class CheckDetailsViewModel {
     const { id: claimId } = claim;
     claim.lineItems
       // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
-      .map((lineItem) => lineItem as ExpertCostLineItem)
-      .forEach((lineItem: ExpertCostLineItem, index: number) => {
+      .map((lineItem) => lineItem as DisbursementLineItem)
+      .forEach((lineItem: DisbursementLineItem, index: number) => {
         result.push(
           buildSummaryListWithCard(
             {

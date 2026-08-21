@@ -12,7 +12,7 @@ import { claimService } from "#src/services/claimService.js";
 import {
   type Claim,
   CostType,
-  type ExpertCostLineItem,
+  type DisbursementLineItem,
   isDisbursementCostType,
 } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
@@ -177,9 +177,9 @@ function getLineItemId(req: Request): UUID | undefined {
 function getLineItem(
   claim: Claim,
   lineItemId: UUID,
-): ExpertCostLineItem | undefined {
+): DisbursementLineItem | undefined {
   return claim.lineItems.find(
-    (lineItem): lineItem is ExpertCostLineItem =>
+    (lineItem): lineItem is DisbursementLineItem =>
       lineItem.id === lineItemId.toString(),
   );
 }
