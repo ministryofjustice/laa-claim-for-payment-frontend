@@ -206,7 +206,7 @@ class ClaimService {
 
       return {
         status: "success",
-        body: getId(response, /\/claims\/([^?]+)/, 1),
+        body: getId(response, /\/claims\/([^?]+)/u, 1),
       };
     } catch (error) {
       return createApiError(error);
@@ -280,7 +280,7 @@ class ClaimService {
 
       return {
         status: "success",
-        body: getId(response, /\/claims\/([^/]+)\/line-items\/([^/?]+)/, 2),
+        body: getId(response, /\/claims\/([^/]+)\/line-items\/([^/?]+)/u, 2),
       };
     } catch (error) {
       return createApiError(error);

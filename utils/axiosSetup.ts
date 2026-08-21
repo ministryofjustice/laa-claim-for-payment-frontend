@@ -83,7 +83,7 @@ export const axiosMiddleware = (req: Request, _res: Response, next: NextFunction
   async function getTokens(rt: string): Promise<TokenEndpointResponse> {
     const cfg = await getConfig();
     const refreshed = await refreshTokenGrant(cfg, rt);
-    return refreshed as TokenEndpointResponse;
+    return refreshed;
   }
 
   axiosInstanceMain.interceptors.response.use(
@@ -92,7 +92,7 @@ export const axiosMiddleware = (req: Request, _res: Response, next: NextFunction
     async (error: AxiosError) => {
       const { response, config } = error;
 
-      if ((getRequiredEnv('AUTH_ENABLED') !== 'true') || response == null || response.status !== Http.HTTP_STATUS_UNAUTHORIZED || config == null) {
+      if ((getRequiredEnv('AUTH_ENABLED') !== 'true') || response?.status !== Http.HTTP_STATUS_UNAUTHORIZED || config == null) {
         return await Promise.reject(error);
       }
 

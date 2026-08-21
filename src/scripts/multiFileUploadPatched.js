@@ -3,7 +3,6 @@
 @typescript-eslint/no-unsafe-assignment,
 @typescript-eslint/no-unsafe-return,
 @typescript-eslint/no-unsafe-argument,
-@typescript-eslint/no-misused-promises,
 @typescript-eslint/no-magic-numbers,
 @typescript-eslint/explicit-function-return-type,
 @typescript-eslint/strict-boolean-expressions,
@@ -34,7 +33,7 @@ export function patchMultiFileUpload() {
   MultiFileUpload.prototype.uploadFile = async function (file) {
     this.config.hooks.entryHook(this, file);
 
-    let row = await createRow(FileUploadStatus.Pending, {
+    const row = await createRow(FileUploadStatus.Pending, {
       fileName: file.name,
     });
 
@@ -62,20 +61,53 @@ export function patchMultiFileUpload() {
       progress.textContent = `${percentComplete}%`;
     });
 
-    xhr.addEventListener("load", async () => {
-      const { response } = xhr;
+    xhr.addEventListener("load", () => {
+      void (async () => {
+        const { response } = xhr;
 
-      if (
-        xhr.status < 200 ||
-        xhr.status >= 300 ||
-        response?.status !== "success" ||
-        !response.file
-      ) {
-        const message = response?.error?.message;
+        if (
+          xhr.status < 200 ||
+          xhr.status >= 300 ||
+          response?.status !== "success" ||
+          !response.file
+        ) {
+          const message = response?.error?.message;
 
-        row = await replaceRow(row, FileUploadStatus.Failed, {
+          await replaceRow(row, FileUploadStatus.Failed, {
+            fileName: file.name,
+            message,
+          });
+
+          this.config.hooks.errorHook(
+            this,
+            file,
+            xhr,
+            xhr.statusText,
+            new Error(message ?? "Upload failed"),
+          );
+
+          return;
+        }
+
+        await replaceRow(row, FileUploadStatus.Success, {
+          fileId: response.file.id,
+          fileName: response.file.originalname,
+          fileSize: response.file.size,
+        });
+
+        this.config.hooks.exitHook(
+          this,
+          file,
+          xhr,
+          xhr.statusText,
+        );
+      })();
+    });
+
+    xhr.addEventListener("error", () => {
+      void (async () => {
+        await replaceRow(row, FileUploadStatus.Failed, {
           fileName: file.name,
-          message,
         });
 
         this.config.hooks.errorHook(
@@ -83,38 +115,9 @@ export function patchMultiFileUpload() {
           file,
           xhr,
           xhr.statusText,
-          new Error(message ?? "Upload failed"),
+          new Error("Upload failed"),
         );
-
-        return;
-      }
-
-      row = await replaceRow(row, FileUploadStatus.Success, {
-        fileId: response.file.id,
-        fileName: response.file.originalname,
-        fileSize: response.file.size,
-      });
-
-      this.config.hooks.exitHook(
-        this,
-        file,
-        xhr,
-        xhr.statusText,
-      );
-    });
-
-    xhr.addEventListener("error", async () => {
-      row = await replaceRow(row, FileUploadStatus.Failed, {
-        fileName: file.name,
-      });
-
-      this.config.hooks.errorHook(
-        this,
-        file,
-        xhr,
-        xhr.statusText,
-        new Error("Upload failed"),
-      );
+      })();
     });
 
     xhr.open("POST", this.config.uploadUrl);
@@ -144,8 +147,6 @@ export function patchMultiFileUpload() {
     const newRow = await createRow(status, params);
 
     row.replaceWith(newRow);
-
-    return newRow;
   }
 
   async function fetchFileRowHtml(status, params = {}) {
@@ -269,13 +270,14 @@ export function patchMultiFileUpload() {
 
       const fileId = deleteButton.value;
 
-      const newRow = await replaceRow(row, FileUploadStatus.Success, {
+      // eslint-disable-next-line no-await-in-loop -- rows are converted sequentially to preserve DOM update order
+      await replaceRow(row, FileUploadStatus.Success, {
         fileId,
         fileName,
         fileSize,
       });
 
-      newRow.dataset.converted = "true";
+      row.dataset.converted = "true";
     }
   }
 }
