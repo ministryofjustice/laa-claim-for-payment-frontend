@@ -109,11 +109,10 @@ export async function submitMultipleClientHearings(
   }
 }
 
-const PREFIX = "pages.multipleClientHearings" as const;
-
 function buildField(): BooleanField {
+  const messagePrefix = "pages.multipleClientHearings";
   return new BooleanField(
-    PREFIX,
+    messagePrefix,
     "multipleClientHearings",
     "multipleClientHearings",
   );
@@ -123,7 +122,7 @@ function buildViewModel(
   form: YesNoQuestionForm,
 ): YesNoQuestionViewModel {
   return new RadioQuestionViewModel({
-    title: `${PREFIX}.title`,
+    title: `${form.messagePrefix}.title`,
     form,
     isLegendPageHeading: true,
   });

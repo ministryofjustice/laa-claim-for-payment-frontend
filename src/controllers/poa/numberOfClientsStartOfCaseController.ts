@@ -4,30 +4,29 @@ import { UUID } from "uuidv7";
 import { Count } from "#src/types/Claim.js";
 import { RadioField } from "#src/helpers/fields.js";
 
-const PREFIX = "pages.numberOfClientsStartOfCase" as const;
-
 function buildField(): RadioField<Count, Count> {
+  const messagePrefix = "pages.numberOfClientsStartOfCase";
   return new RadioField(
-    PREFIX,
+    messagePrefix,
     "numberOfClientsStartOfCase",
     "numberOfClientsStartOfCase",
     [
       {
         value: Count.ZERO,
         text: {
-          key: `${PREFIX}.ZERO.text`,
+          key: `${messagePrefix}.ZERO.text`,
         },
       },
       {
         value: Count.ONE,
         text: {
-          key: `${PREFIX}.ONE.text`,
+          key: `${messagePrefix}.ONE.text`,
         },
       },
       {
         value: Count.TWO_OR_MORE,
         text: {
-          key: `${PREFIX}.TWO_OR_MORE.text`,
+          key: `${messagePrefix}.TWO_OR_MORE.text`,
         },
       },
     ],
@@ -36,7 +35,6 @@ function buildField(): RadioField<Count, Count> {
 }
 
 const controller = createRadioQuestionController({
-  title: `${PREFIX}.title`,
   buildField: () => buildField(),
   renderErrorContext: "rendering number of clients start of case page",
   submitErrorContext: "submitting number of clients start of case page",

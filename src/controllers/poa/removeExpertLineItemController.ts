@@ -117,11 +117,9 @@ export async function submitRemoveExpertLineItem(
   }
 }
 
-const PREFIX = "pages.poa.removeExpertLineItem" as const;
-
 function buildField(): BooleanField {
   return new BooleanField(
-    PREFIX,
+    "pages.poa.removeExpertLineItem",
     "confirmRemoveExpertLineItem",
     "confirmRemoveExpertLineItem",
   );
@@ -131,7 +129,7 @@ function buildViewModel(
   form: YesNoQuestionForm,
 ): YesNoQuestionViewModel {
   return new RadioQuestionViewModel({
-    title: `${PREFIX}.title`,
+    title: `${form.messagePrefix}.title`,
     form,
     isLegendPageHeading: true,
   });
