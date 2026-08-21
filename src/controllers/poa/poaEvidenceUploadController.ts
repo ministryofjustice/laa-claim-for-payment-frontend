@@ -3,7 +3,7 @@ import { processApiError, processError } from "#src/helpers/index.js";
 import { claimService } from "#src/services/claimService.js";
 import {
   PoaEvidenceUploadViewModel
-} from "#src/viewmodels/poa/profitCostDetailsEvidenceUploadViewModel.js";
+} from "#src/viewmodels/poa/evidenceUploadViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { UUID } from "uuidv7";
 import { UploadField } from "#src/helpers/fields.js";

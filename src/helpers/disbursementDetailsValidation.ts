@@ -1,5 +1,5 @@
 import { combine, Form } from "#src/helpers/validation.js";
-import type { ExpertCostDetails } from "#src/types/poa.js";
+import type { DisbursementDetails } from "#src/types/poa.js";
 import {
   BooleanField,
   DateField,
@@ -8,7 +8,7 @@ import {
 } from "#src/helpers/fields.js";
 import { CostType, type DisbursementCostType } from "#src/types/Claim.js";
 
-export interface ExpertCostDetailsRequestBody {
+export interface DisbursementDetailsRequestBody {
   activityDateDay?: unknown;
   activityDateMonth?: unknown;
   activityDateYear?: unknown;
@@ -18,7 +18,7 @@ export interface ExpertCostDetailsRequestBody {
   description?: unknown;
 }
 
-interface ExpertCostDetailsFields {
+interface DisbursementDetailsFields {
   activityDate: DateField;
   actualNetValue: MoneyField;
   vatApplies: BooleanField;
@@ -29,10 +29,10 @@ interface ExpertCostDetailsFields {
 /**
  * Expert cost details form.
  */
-export class ExpertCostDetailsForm extends Form<
-  ExpertCostDetailsFields,
-  ExpertCostDetailsRequestBody,
-  ExpertCostDetails
+export class DisbursementDetailsForm extends Form<
+  DisbursementDetailsFields,
+  DisbursementDetailsRequestBody,
+  DisbursementDetails
 > {
   /**
    * Creates a form.
@@ -47,14 +47,14 @@ export class ExpertCostDetailsForm extends Form<
           return "pages.poa.nonExpertDisbursementDetails";
       }
     })();
-    super(buildExpertCostDetailsFields(messagePrefix), messagePrefix);
+    super(buildDisbursementDetailsFields(messagePrefix), messagePrefix);
   }
 
   /**
    * Fills the form.
-   * @param {ExpertCostDetails} value form value
+   * @param {DisbursementDetails} value form value
    */
-  fill(value: ExpertCostDetails): void {
+  fill(value: DisbursementDetails): void {
     this.fields.activityDate.setValue(value.activityDate);
     this.fields.actualNetValue.setValue(value.actualNetValue);
     this.fields.vatApplies.setValue(value.vatApplies);
@@ -64,9 +64,9 @@ export class ExpertCostDetailsForm extends Form<
 
   /**
    * Validates the form.
-   * @param {ExpertCostDetailsRequestBody} value value to validate
+   * @param {DisbursementDetailsRequestBody} value value to validate
    */
-  validate(value: ExpertCostDetailsRequestBody): void {
+  validate(value: DisbursementDetailsRequestBody): void {
     this.fields.activityDate.validate({
       day: value.activityDateDay,
       month: value.activityDateMonth,
@@ -82,7 +82,7 @@ export class ExpertCostDetailsForm extends Form<
   }
 }
 
-function buildExpertCostDetailsFields(messagePrefix: string): ExpertCostDetailsFields {
+function buildDisbursementDetailsFields(messagePrefix: string): DisbursementDetailsFields {
   return {
     activityDate: new DateField(
       `${messagePrefix}.activityDate`,

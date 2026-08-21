@@ -6,12 +6,12 @@ import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { Category, Claim, CostType } from "#src/types/Claim.js";
 import {
-  addAnotherExpertCost,
-  submitAddAnotherExpertCost,
-} from "#src/controllers/poa/addAnotherExpertCostController.js";
+  addAnotherDisbursement,
+  submitAddAnotherDisbursement,
+} from "#src/controllers/poa/addAnotherDisbursementController.js";
 import { LocalDate } from "#src/types/date.js";
 
-describe("addAnotherExpertCostController", () => {
+describe("addAnotherDisbursementController", () => {
   let res: Response;
   let next: NextFunction;
   let getClaimStub: sinon.SinonStub;
@@ -62,11 +62,11 @@ describe("addAnotherExpertCostController", () => {
       }),
     });
 
-    await addAnotherExpertCost(req, res, next);
+    await addAnotherDisbursement(req, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
-      "main/poa/addAnotherLineItemView.njk",
+      "main/poa/addAnotherDisbursementView.njk",
     );
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
@@ -102,11 +102,11 @@ describe("addAnotherExpertCostController", () => {
       }),
     });
 
-    await addAnotherExpertCost(req, res, next);
+    await addAnotherDisbursement(req, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
-      "main/poa/addAnotherLineItemView.njk",
+      "main/poa/addAnotherDisbursementView.njk",
     );
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
@@ -133,7 +133,7 @@ describe("addAnotherExpertCostController", () => {
       }),
     });
 
-    await addAnotherExpertCost(req, res, next);
+    await addAnotherDisbursement(req, res, next);
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
@@ -156,7 +156,7 @@ describe("addAnotherExpertCostController", () => {
       }),
     });
 
-    await addAnotherExpertCost(req, res, next);
+    await addAnotherDisbursement(req, res, next);
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
@@ -181,11 +181,11 @@ describe("addAnotherExpertCostController", () => {
       }),
     });
 
-    await addAnotherExpertCost(req, res, next);
+    await addAnotherDisbursement(req, res, next);
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        `/claims/${claimId.toString()}/poa/expert-cost-details`,
+        `/claims/${claimId.toString()}/poa/disbursement-details`,
       ),
     ).to.equal(true);
   });
@@ -208,11 +208,11 @@ describe("addAnotherExpertCostController", () => {
       }),
     });
 
-    await submitAddAnotherExpertCost(req, res, next);
+    await submitAddAnotherDisbursement(req, res, next);
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        `/claims/${claimId.toString()}/poa/expert-cost-details`,
+        `/claims/${claimId.toString()}/poa/disbursement-details`,
       ),
     ).to.equal(true);
   });
@@ -235,7 +235,7 @@ describe("addAnotherExpertCostController", () => {
       }),
     });
 
-    await submitAddAnotherExpertCost(req, res, next);
+    await submitAddAnotherDisbursement(req, res, next);
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
@@ -260,12 +260,12 @@ describe("addAnotherExpertCostController", () => {
       }),
     });
 
-    await submitAddAnotherExpertCost(req, res, next);
+    await submitAddAnotherDisbursement(req, res, next);
 
     expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
-      "main/poa/addAnotherLineItemView.njk",
+      "main/poa/addAnotherDisbursementView.njk",
     );
   });
 
@@ -287,7 +287,7 @@ describe("addAnotherExpertCostController", () => {
       }),
     });
 
-    await submitAddAnotherExpertCost(req, res, next);
+    await submitAddAnotherDisbursement(req, res, next);
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 

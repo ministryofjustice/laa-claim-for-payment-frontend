@@ -10,11 +10,11 @@ import {
   CostType,
   ExpertCostLineItem,
 } from "#src/types/Claim.js";
-import { confirmRemoveExpertLineItem, submitRemoveExpertLineItem } from "#src/controllers/poa/removeExpertLineItemController.js";
+import { confirmRemoveExpertLineItem, submitRemoveExpertLineItem } from "#src/controllers/poa/removeDisbursementController.js";
 import { LocalDate } from "#src/types/date.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 
-describe("removeExpertLineItemController", () => {
+describe("removeDisbursementController", () => {
   let res: Response;
   let next: NextFunction;
   let getClaimStub: sinon.SinonStub;
@@ -223,7 +223,7 @@ describe("removeExpertLineItemController", () => {
     ).to.equal(true);
 
     expect((res.redirect as sinon.SinonStub).calledWith(
-      `/claims/${claimId.toString()}/poa/expert-cost-details/add`,
+      `/claims/${claimId.toString()}/poa/disbursement-details/add`,
     )).to.equal(true);
   });
 
@@ -256,7 +256,7 @@ describe("removeExpertLineItemController", () => {
     ).to.be.false;
 
     expect((res.redirect as sinon.SinonStub).calledWith(
-      `/claims/${claimId.toString()}/poa/expert-cost-details/add`,
+      `/claims/${claimId.toString()}/poa/disbursement-details/add`,
     )).to.equal(true);
   });
 

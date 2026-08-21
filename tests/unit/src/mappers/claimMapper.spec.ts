@@ -14,7 +14,7 @@ import {
 import { expect } from "chai";
 import { describe } from "mocha";
 import {
-  ExpertCostDetails,
+  DisbursementDetails,
   LineItemForm,
   ProfitCostBillLine,
 } from "#src/types/poa.js";
@@ -76,7 +76,7 @@ describe("ClaimMapper", () => {
 
   describe("toLineItemRequestBody", () => {
     it("when expert cost details", () => {
-      const lineItem: ExpertCostDetails = {
+      const lineItem: DisbursementDetails = {
         activityDate: new LocalDate(12, 3, 2026),
         actualNetValue: 123,
         vatApplies: true,

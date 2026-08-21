@@ -329,7 +329,7 @@ export class CheckDetailsViewModel {
             ],
             [
               {
-                href: buildRoute(ROUTES.REMOVE_EXPERT_COST_DETAILS, {
+                href: buildRoute(ROUTES.REMOVE_DISBURSEMENT, {
                   claimId,
                   lineItemId: lineItem.id,
                 }),
@@ -342,7 +342,7 @@ export class CheckDetailsViewModel {
               },
               {
                 href: buildRoute(
-                  ROUTES.EXPERT_COST_DETAILS,
+                  ROUTES.DISBURSEMENT_DETAILS,
                   { claimId },
                   { lineItemId: lineItem.id },
                 ),

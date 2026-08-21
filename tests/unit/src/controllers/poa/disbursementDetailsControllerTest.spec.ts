@@ -4,16 +4,16 @@ import sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import {
-  expertCostDetails,
-  submitExpertCostDetails,
-} from "#src/controllers/poa/expertCostDetailsController.js";
+  disbursementDetails,
+  submitDisbursementDetails,
+} from "#src/controllers/poa/disbursementDetailsController.js";
 import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { Category, Claim, CostType } from "#src/types/Claim.js";
 import { LocalDate } from "#src/types/date.js";
 import { HttpError } from "http-errors";
 
-describe("expertCostDetailsController", () => {
+describe("disbursementDetailsController", () => {
   let res: Response;
   let next: NextFunction;
   let getClaimStub: sinon.SinonStub;
@@ -63,11 +63,11 @@ describe("expertCostDetailsController", () => {
         }),
       });
 
-      await expertCostDetails(req, res, next);
+      await disbursementDetails(req, res, next);
 
       expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
       expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
-        "main/poa/expertCostDetailsView.njk",
+        "main/poa/disbursementDetailsView.njk",
       );
 
       const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
@@ -120,11 +120,11 @@ describe("expertCostDetailsController", () => {
         }),
       });
 
-      await expertCostDetails(req, res, next);
+      await disbursementDetails(req, res, next);
 
       expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
       expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
-        "main/poa/expertCostDetailsView.njk",
+        "main/poa/disbursementDetailsView.njk",
       );
 
       const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
@@ -177,7 +177,7 @@ describe("expertCostDetailsController", () => {
         }),
       });
 
-      await expertCostDetails(req, res, next);
+      await disbursementDetails(req, res, next);
 
       expect((next as sinon.SinonStub).calledOnce).to.be.true;
       expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(HttpError);
@@ -201,7 +201,7 @@ describe("expertCostDetailsController", () => {
       }),
     });
 
-    await expertCostDetails(req, res, next);
+    await disbursementDetails(req, res, next);
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
@@ -227,7 +227,7 @@ describe("expertCostDetailsController", () => {
       }),
     });
 
-    await expertCostDetails(req, res, next);
+    await disbursementDetails(req, res, next);
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
@@ -269,7 +269,7 @@ describe("expertCostDetailsController", () => {
         body: null,
       });
 
-      await submitExpertCostDetails(req, res, next);
+      await submitDisbursementDetails(req, res, next);
 
       expect(createLineItemStub.firstCall.args[1]).to.deep.equal(claimId);
 
@@ -286,7 +286,7 @@ describe("expertCostDetailsController", () => {
 
       expect(
         (res.redirect as sinon.SinonStub).calledWith(
-          buildRoute(ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS, {
+          buildRoute(ROUTES.ADD_ANOTHER_DISBURSEMENT, {
             claimId: claimId,
           }),
         ),
@@ -339,7 +339,7 @@ describe("expertCostDetailsController", () => {
         body: null,
       });
 
-      await submitExpertCostDetails(req, res, next);
+      await submitDisbursementDetails(req, res, next);
 
       expect(updateLineItemStub.firstCall.args[1]).to.deep.equal(claimId);
 
@@ -358,7 +358,7 @@ describe("expertCostDetailsController", () => {
 
       expect(
         (res.redirect as sinon.SinonStub).calledWith(
-          buildRoute(ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS, {
+          buildRoute(ROUTES.ADD_ANOTHER_DISBURSEMENT, {
             claimId: claimId,
           }),
         ),
@@ -384,12 +384,12 @@ describe("expertCostDetailsController", () => {
         }),
       });
 
-      await submitExpertCostDetails(req, res, next);
+      await submitDisbursementDetails(req, res, next);
 
       expect((res.status as sinon.SinonStub).calledWith(400)).to.be.true;
       expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
       expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
-        "main/poa/expertCostDetailsView.njk",
+        "main/poa/disbursementDetailsView.njk",
       );
     });
   });

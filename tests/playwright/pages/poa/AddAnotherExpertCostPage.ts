@@ -14,7 +14,7 @@ export class AddAnotherExpertCostPage extends QuestionPage {
    * @param {UUID} claimId The claim ID.
    */
   constructor(page: Page, claimId: UUID) {
-    super(page, `claims/${claimId.toString()}/poa/expert-cost-details/add`);
+    super(page, `claims/${claimId.toString()}/poa/disbursement-details/add`);
   }
 
   readonly radio = new YesNoInput(this.page, "add-another");

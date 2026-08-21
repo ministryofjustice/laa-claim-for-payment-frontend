@@ -1,7 +1,7 @@
 import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
-import { PoaEvidenceUploadViewModel } from "#src/viewmodels/poa/profitCostDetailsEvidenceUploadViewModel.js";
+import { PoaEvidenceUploadViewModel } from "#src/viewmodels/poa/evidenceUploadViewModel.js";
 import { V7Generator } from "uuidv7";
 import { UploadForm } from "#src/helpers/fileUploadValidation.js";
 import { UploadField } from "#src/helpers/fields.js";

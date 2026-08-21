@@ -1,4 +1,4 @@
-import type { ExpertCostDetailsForm } from "#src/helpers/expertCostDetailsValidation.js";
+import type { DisbursementDetailsForm } from "#src/helpers/disbursementDetailsValidation.js";
 import { buildRadios, type Radios } from "#src/viewmodels/components/radios.js";
 import type { BooleanChoice } from "#src/models/booleanChoice.js";
 import {
@@ -12,14 +12,14 @@ import {
 } from "#src/viewmodels/components/textInput.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
 
-export interface ExpertCostDetailsViewModelParams {
-  form: ExpertCostDetailsForm;
+export interface DisbursementDetailsViewModelParams {
+  form: DisbursementDetailsForm;
 }
 
 /**
  * View model for the POA expert cost details page.
  */
-export class ExpertCostDetailsViewModel {
+export class DisbursementDetailsViewModel {
   readonly title: string;
   readonly activityDateInput: DateInput;
   readonly actualNetValueInput: TextInput;
@@ -31,9 +31,9 @@ export class ExpertCostDetailsViewModel {
   /**
    * Creates a profit cost bill line page view model.
    *
-   * @param {ExpertCostDetailsViewModelParams} params View model params.
+   * @param {DisbursementDetailsViewModelParams} params View model params.
    */
-  constructor({ form }: ExpertCostDetailsViewModelParams) {
+  constructor({ form }: DisbursementDetailsViewModelParams) {
     this.title = `${form.messagePrefix}.title`;
 
     this.activityDateInput = buildDateInput(form.fields.activityDate);

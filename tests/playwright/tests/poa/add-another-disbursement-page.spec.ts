@@ -35,7 +35,7 @@ test.describe("Add another expert cost page", () => {
     await addAnotherExpertCostPage.saveAndContinueButton.click();
 
     await expect(page).toHaveURL(
-      new RegExp(`/claims/${expertCostDraftClaim1Id}/poa/expert-cost-details$`)
+      new RegExp(`/claims/${expertCostDraftClaim1Id}/poa/disbursement-details$`)
     );
   });
 

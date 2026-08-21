@@ -1,11 +1,11 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processApiError, processError } from "#src/helpers/index.js";
 import type { NextFunction, Request, Response } from "express";
-import { ExpertCostDetailsViewModel } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
+import { DisbursementDetailsViewModel } from "#src/viewmodels/poa/disbursementDetailsViewModel.js";
 import {
-  ExpertCostDetailsForm,
-  type ExpertCostDetailsRequestBody,
-} from "#src/helpers/expertCostDetailsValidation.js";
+  DisbursementDetailsForm,
+  type DisbursementDetailsRequestBody,
+} from "#src/helpers/disbursementDetailsValidation.js";
 import { getRequestBody } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
@@ -25,7 +25,7 @@ import createHttpError from "http-errors";
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
  */
-export async function expertCostDetails(
+export async function disbursementDetails(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -42,7 +42,7 @@ export async function expertCostDetails(
     if (claimResponse.status === "success") {
       const { body: claim } = claimResponse;
       if (isDisbursementCostType(claim.costType)) {
-        const form = new ExpertCostDetailsForm(claim.costType);
+        const form = new DisbursementDetailsForm(claim.costType);
 
         if (lineItemId != null) {
           const lineItem = getLineItem(claim, lineItemId);
@@ -65,9 +65,9 @@ export async function expertCostDetails(
           });
         }
 
-        res.render("main/poa/expertCostDetailsView.njk", {
+        res.render("main/poa/disbursementDetailsView.njk", {
           csrfToken: res.locals.csrfToken,
-          vm: new ExpertCostDetailsViewModel({ form }),
+          vm: new DisbursementDetailsViewModel({ form }),
         });
       } else {
         res.redirect(buildRoute(ROUTES.POA_CLAIM_TYPE, { claimId }));
@@ -92,7 +92,7 @@ export async function expertCostDetails(
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
  */
-export async function submitExpertCostDetails(
+export async function submitDisbursementDetails(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -103,7 +103,7 @@ export async function submitExpertCostDetails(
 
     const requestBody = getRequestBody(
       req.body,
-    ) as ExpertCostDetailsRequestBody;
+    ) as DisbursementDetailsRequestBody;
 
     const claimResponse = await claimService.getDraftClaim(
       req.axiosMiddleware,
@@ -113,12 +113,12 @@ export async function submitExpertCostDetails(
     if (claimResponse.status === "success") {
       const { body: claim } = claimResponse;
       if (isDisbursementCostType(claim.costType)) {
-        const form = new ExpertCostDetailsForm(claim.costType);
+        const form = new DisbursementDetailsForm(claim.costType);
         form.validate(requestBody);
         if (form.isNotValid()) {
-          res.status(400).render("main/poa/expertCostDetailsView.njk", {
+          res.status(400).render("main/poa/disbursementDetailsView.njk", {
             csrfToken: res.locals.csrfToken,
-            vm: new ExpertCostDetailsViewModel({ form }),
+            vm: new DisbursementDetailsViewModel({ form }),
           });
           return;
         }
@@ -144,7 +144,7 @@ export async function submitExpertCostDetails(
         }
 
         res.redirect(
-          buildRoute(ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS, {
+          buildRoute(ROUTES.ADD_ANOTHER_DISBURSEMENT, {
             claimId,
           }),
         );

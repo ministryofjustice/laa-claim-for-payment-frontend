@@ -2,26 +2,26 @@ import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
 import {
-  ExpertCostDetailsViewModel,
-  ExpertCostDetailsViewModelParams,
-} from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
-import { ExpertCostDetailsForm } from "#src/helpers/expertCostDetailsValidation.js";
+  DisbursementDetailsViewModel,
+  DisbursementDetailsViewModelParams,
+} from "#src/viewmodels/poa/disbursementDetailsViewModel.js";
+import { DisbursementDetailsForm } from "#src/helpers/disbursementDetailsValidation.js";
 import { CostType } from "#src/types/Claim.js";
 
 chaiConfig.truncateThreshold = 0;
 
-describe("views/main/poa/expertCostDetailsView.njk", () => {
+describe("views/main/poa/disbursementDetailsView.njk", () => {
   let $: CheerioAPI;
 
   describe("view with no errors", () => {
-    const form = new ExpertCostDetailsForm(CostType.EXPERT_COST);
+    const form = new DisbursementDetailsForm(CostType.EXPERT_COST);
 
-    const params: ExpertCostDetailsViewModelParams = { form };
+    const params: DisbursementDetailsViewModelParams = { form };
 
-    const viewModel = new ExpertCostDetailsViewModel(params);
+    const viewModel = new DisbursementDetailsViewModel(params);
 
     beforeEach(async () => {
-      $ = await renderView("main/poa/expertCostDetailsView.njk", {
+      $ = await renderView("main/poa/disbursementDetailsView.njk", {
         vm: viewModel,
       });
     });
@@ -76,7 +76,7 @@ describe("views/main/poa/expertCostDetailsView.njk", () => {
   });
 
   describe("view with errors", () => {
-    const form = new ExpertCostDetailsForm(CostType.EXPERT_COST);
+    const form = new DisbursementDetailsForm(CostType.EXPERT_COST);
 
     form.validate({
       activityDateDay: "",
@@ -88,12 +88,12 @@ describe("views/main/poa/expertCostDetailsView.njk", () => {
       description: "",
     });
 
-    const params: ExpertCostDetailsViewModelParams = { form };
+    const params: DisbursementDetailsViewModelParams = { form };
 
-    const viewModel = new ExpertCostDetailsViewModel(params);
+    const viewModel = new DisbursementDetailsViewModel(params);
 
     beforeEach(async () => {
-      $ = await renderView("main/poa/expertCostDetailsView.njk", {
+      $ = await renderView("main/poa/disbursementDetailsView.njk", {
         vm: viewModel,
       });
     });

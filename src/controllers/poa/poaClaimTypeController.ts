@@ -97,13 +97,13 @@ export async function submitPoaClaimType(
           claimId,
         }),
         [CostType.EXPERT_COST]: buildRoute(
-          ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS,
+          ROUTES.ADD_ANOTHER_DISBURSEMENT,
           {
             claimId,
           },
         ),
         [CostType.NON_EXPERT_DISBURSEMENT]: buildRoute(
-          ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS,
+          ROUTES.ADD_ANOTHER_DISBURSEMENT,
           {
             claimId,
           },

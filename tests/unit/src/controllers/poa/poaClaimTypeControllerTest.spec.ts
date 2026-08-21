@@ -131,7 +131,7 @@ describe("poaClaimTypeController", () => {
 
     expect((res.redirect as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.redirect as sinon.SinonStub).firstCall.args).to.deep.equal([
-      `/claims/${claimId}/poa/expert-cost-details/add`,
+      `/claims/${claimId}/poa/disbursement-details/add`,
     ]);
   });
 
@@ -161,7 +161,7 @@ describe("poaClaimTypeController", () => {
 
     expect((res.redirect as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.redirect as sinon.SinonStub).firstCall.args).to.deep.equal([
-      `/claims/${claimId}/poa/expert-cost-details/add`,
+      `/claims/${claimId}/poa/disbursement-details/add`,
     ]);
   });
 
