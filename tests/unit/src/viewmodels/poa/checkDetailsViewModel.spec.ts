@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Claim } from "#src/types/Claim.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
-import { claim11, claim9 } from "#tests/assets/claim.js";
+import { claim11, claim12, claim9 } from "#tests/assets/claim.js";
 import { AnswerMissingError } from "#src/types/errors.js";
 import { expectLocalizedText } from "#tests/unit/src/viewmodels/base/base.spec.js";
 import { Message } from "#src/viewmodels/components/message.js";
@@ -311,7 +311,7 @@ describe("CheckDetailsViewModel constructor()", () => {
     const secondSummaryList = vm.lineItemSummaryLists[1];
 
     expect(firstSummaryList.card?.title.text).to.deep.equal({
-      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title",
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.title.expertCost",
     });
 
     expect(firstSummaryList.card?.actions?.items).to.have.length(2);
@@ -329,13 +329,13 @@ describe("CheckDetailsViewModel constructor()", () => {
     );
 
     expect(firstSummaryList.attributes.id).to.equal(
-      "expert-cost-bill-line-1-rows",
+      "disbursement-bill-line-1-rows",
     );
 
     expect(firstSummaryList.rows).to.have.length(5);
 
     expect(firstSummaryList.rows[0].key.text).to.deep.equal({
-      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.date",
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.date",
     });
     expectLocalizedText(
       firstSummaryList.rows[0].value.text!,
@@ -343,29 +343,29 @@ describe("CheckDetailsViewModel constructor()", () => {
     );
 
     expect(firstSummaryList.rows[1].key.text).to.deep.equal({
-      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.actualNetValue",
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.actualNetValue",
     });
     expect(firstSummaryList.rows[1].value.text).to.equal("£150.00");
 
     expect(firstSummaryList.rows[2].key.text).to.deep.equal({
-      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.doesVatApply",
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.doesVatApply",
     });
     expect(firstSummaryList.rows[2].value.text).to.deep.equal({
       key: "common.yes",
     });
 
     expect(firstSummaryList.rows[3].key.text).to.deep.equal({
-      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.feeEarnerName",
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.feeEarnerName",
     });
     expect(firstSummaryList.rows[3].value.text).to.equal("Carol Spencer");
 
     expect(firstSummaryList.rows[4].key.text).to.deep.equal({
-      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.description",
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.description",
     });
     expect(firstSummaryList.rows[4].value.text).to.equal("Cost of petrol");
 
     expect(secondSummaryList.card?.title.text).to.deep.equal({
-      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title",
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.title.expertCost",
     });
 
     expect(secondSummaryList.card?.actions?.items).to.have.length(2);
@@ -383,35 +383,153 @@ describe("CheckDetailsViewModel constructor()", () => {
     );
 
     expect(secondSummaryList.attributes.id).to.equal(
-      "expert-cost-bill-line-2-rows",
+      "disbursement-bill-line-2-rows",
     );
 
     expect(secondSummaryList.rows).to.have.length(5);
 
     expect(secondSummaryList.rows[0].key.text).to.deep.equal({
-      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.date",
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.date",
     });
     expectLocalizedText(secondSummaryList.rows[0].value.text!, "30 July 2026");
 
     expect(secondSummaryList.rows[1].key.text).to.deep.equal({
-      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.actualNetValue",
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.actualNetValue",
     });
     expect(secondSummaryList.rows[1].value.text).to.equal("£456.00");
 
     expect(secondSummaryList.rows[2].key.text).to.deep.equal({
-      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.doesVatApply",
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.doesVatApply",
     });
     expect(secondSummaryList.rows[2].value.text).to.deep.equal({
       key: "common.yes",
     });
 
     expect(secondSummaryList.rows[3].key.text).to.deep.equal({
-      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.feeEarnerName",
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.feeEarnerName",
     });
     expect(secondSummaryList.rows[3].value.text).to.equal("Joe Bloggs");
 
     expect(secondSummaryList.rows[4].key.text).to.deep.equal({
-      key: "pages.poa.checkYourDetails.cya.expertCostBillLine.description",
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.description",
+    });
+    expect(secondSummaryList.rows[4].value.text).to.equal("Line item 2");
+  });
+
+  it("builds the non-expert disbursement bill line summary lists", () => {
+    const claim: Claim = new Claim({
+      ...claim12,
+    });
+    const claimId = claim.id;
+    const vm = new CheckDetailsViewModel(claim);
+
+    expect(vm.lineItemSummaryLists).to.have.length(2);
+
+    const firstSummaryList = vm.lineItemSummaryLists[0];
+    const secondSummaryList = vm.lineItemSummaryLists[1];
+
+    expect(firstSummaryList.card?.title.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.title.nonExpertDisbursement",
+    });
+
+    expect(firstSummaryList.card?.actions?.items).to.have.length(2);
+    expect(firstSummaryList.card?.actions?.items[0].text).to.deep.equal({
+      key: "common.delete",
+    });
+    expect(firstSummaryList.card?.actions?.items[0].href).to.equal(
+      `/claims/${claimId.toString()}/poa/disbursement-details/019fae76-e8a7-73bc-af8d-990543ec4a65/remove`,
+    );
+    expect(firstSummaryList.card?.actions?.items[1].text).to.deep.equal({
+      key: "common.change",
+    });
+    expect(firstSummaryList.card?.actions?.items[1].href).to.equal(
+      `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=019fae76-e8a7-73bc-af8d-990543ec4a65`,
+    );
+
+    expect(firstSummaryList.attributes.id).to.equal(
+      "disbursement-bill-line-1-rows",
+    );
+
+    expect(firstSummaryList.rows).to.have.length(5);
+
+    expect(firstSummaryList.rows[0].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.date",
+    });
+    expectLocalizedText(
+      firstSummaryList.rows[0].value.text!,
+      "20 December 2023",
+    );
+
+    expect(firstSummaryList.rows[1].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.actualNetValue",
+    });
+    expect(firstSummaryList.rows[1].value.text).to.equal("£150.00");
+
+    expect(firstSummaryList.rows[2].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.doesVatApply",
+    });
+    expect(firstSummaryList.rows[2].value.text).to.deep.equal({
+      key: "common.yes",
+    });
+
+    expect(firstSummaryList.rows[3].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.feeEarnerName",
+    });
+    expect(firstSummaryList.rows[3].value.text).to.equal("Carol Spencer");
+
+    expect(firstSummaryList.rows[4].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.description",
+    });
+    expect(firstSummaryList.rows[4].value.text).to.equal("Cost of petrol");
+
+    expect(secondSummaryList.card?.title.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.title.nonExpertDisbursement",
+    });
+
+    expect(secondSummaryList.card?.actions?.items).to.have.length(2);
+    expect(secondSummaryList.card?.actions?.items[0].text).to.deep.equal({
+      key: "common.delete",
+    });
+    expect(secondSummaryList.card?.actions?.items[0].href).to.equal(
+      `/claims/${claimId.toString()}/poa/disbursement-details/019fae77-87c3-734c-a38d-54624d48d7e5/remove`,
+    );
+    expect(secondSummaryList.card?.actions?.items[1].text).to.deep.equal({
+      key: "common.change",
+    });
+    expect(secondSummaryList.card?.actions?.items[1].href).to.equal(
+      `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=019fae77-87c3-734c-a38d-54624d48d7e5`,
+    );
+
+    expect(secondSummaryList.attributes.id).to.equal(
+      "disbursement-bill-line-2-rows",
+    );
+
+    expect(secondSummaryList.rows).to.have.length(5);
+
+    expect(secondSummaryList.rows[0].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.date",
+    });
+    expectLocalizedText(secondSummaryList.rows[0].value.text!, "30 July 2026");
+
+    expect(secondSummaryList.rows[1].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.actualNetValue",
+    });
+    expect(secondSummaryList.rows[1].value.text).to.equal("£456.00");
+
+    expect(secondSummaryList.rows[2].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.doesVatApply",
+    });
+    expect(secondSummaryList.rows[2].value.text).to.deep.equal({
+      key: "common.yes",
+    });
+
+    expect(secondSummaryList.rows[3].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.feeEarnerName",
+    });
+    expect(secondSummaryList.rows[3].value.text).to.equal("Joe Bloggs");
+
+    expect(secondSummaryList.rows[4].key.text).to.deep.equal({
+      key: "pages.poa.checkYourDetails.cya.disbursementBillLine.description",
     });
     expect(secondSummaryList.rows[4].value.text).to.equal("Line item 2");
   });
