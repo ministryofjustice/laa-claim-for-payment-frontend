@@ -300,8 +300,11 @@
             "title": "Evidence",
             "value": "{fileSize}<br>{submittedOn}"
           },
-          "expertCostBillLine": {
-            "title": "Expert cost bill line",
+          "disbursementBillLine": {
+            "title": {
+              "expertCost": "Expert cost bill line",
+              "nonExpertDisbursement": "Non-expert disbursement bill line"
+            },
             "date": "Date",
             "actualNetValue": "Actual net value",
             "doesVatApply": "Does VAT apply?",
