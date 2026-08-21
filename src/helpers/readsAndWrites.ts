@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop -- Redis path must be built sequentially */
 import type { Path } from "#src/services/answersCache.js";
 import type { RedisClientType, RedisJSON } from "redis";
 
@@ -49,7 +50,7 @@ export const set = async (
       if (index > length) {
         break;
       }
-      const updatedRedisPath = redisPath + `[${index}]`;
+      const updatedRedisPath = `${redisPath}[${index}]`;
       if (await exists(redisClient, key, updatedRedisPath)) {
         if (lastIteration) {
           await redisClient.json.set(key, updatedRedisPath, value);

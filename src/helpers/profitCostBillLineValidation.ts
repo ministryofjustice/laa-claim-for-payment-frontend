@@ -109,7 +109,7 @@ function buildProfitCostBillLineFields(
       `${messagePrefix}.feeEarnerName`,
       "feeEarnerName",
       "feeEarnerName",
-      /^[A-Za-z' -]+$/,
+      /^[A-Za-z' -]+$/u,
     ),
   };
 }
