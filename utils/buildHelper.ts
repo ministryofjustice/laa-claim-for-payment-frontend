@@ -23,7 +23,7 @@ export const getLatestBuildFile = (
   const files = fs.readdirSync(directory);
 
   const matchingFiles = files
-    .filter(file => new RegExp(`^${prefix}\\.\\d+\\.${extension}$`).test(file))
+    .filter(file => new RegExp(`^${prefix}\\.\\d+\\.${extension}$`, "u").test(file))
     .map(file => ({
       file,
       mtime: fs.statSync(`${directory}/${file}`).mtime.getTime(),

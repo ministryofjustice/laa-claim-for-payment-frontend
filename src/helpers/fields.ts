@@ -280,7 +280,7 @@ export class MoneyField extends Field<unknown, number> {
       return;
     }
 
-    if (!/^[\d.]+$/.test(stringValue)) {
+    if (!/^[\d.]+$/u.test(stringValue)) {
       this.error({
         href: `#${this.id}`,
         text: {
@@ -291,7 +291,7 @@ export class MoneyField extends Field<unknown, number> {
       return;
     }
 
-    const MONEY_REGEX = /^\d+(\.\d{1,2})?$/;
+    const MONEY_REGEX = /^\d+(\.\d{1,2})?$/u;
 
     if (!MONEY_REGEX.test(stringValue)) {
       this.error({
@@ -363,7 +363,7 @@ export class DateField extends Field<RawDate, LocalDate> {
       return;
     }
 
-    const NUMBERS_ONLY_REGEX = /^\d+$/;
+    const NUMBERS_ONLY_REGEX = /^\d+$/u;
 
     if (
       !NUMBERS_ONLY_REGEX.test(day) ||

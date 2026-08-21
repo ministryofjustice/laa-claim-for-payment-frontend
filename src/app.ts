@@ -123,11 +123,11 @@ const createApp = async (): Promise<express.Application> => {
   }
 
   // liveness and readiness probes for Helm deployments. Has to happen before the main router
-  app.get("/status", function (req: Request, res: Response): void {
+  app.get("/status", (req: Request, res: Response): void => {
     res.status(SUCCESSFUL_REQUEST).send("OK");
   });
 
-  app.get("/health", function (req: Request, res: Response): void {
+  app.get("/health", (req: Request, res: Response): void => {
     res.status(SUCCESSFUL_REQUEST).send("Healthy");
   });
 
