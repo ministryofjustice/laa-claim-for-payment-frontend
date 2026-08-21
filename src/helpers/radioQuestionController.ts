@@ -8,7 +8,6 @@ import type { RadioField } from "#src/helpers/fields.js";
 import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 interface RadioQuestionControllerParams<ChoiceType extends string> {
-  title: string;
   buildField: () => RadioField<ChoiceType, ChoiceType>;
   renderErrorContext: string;
   submitErrorContext: string;
@@ -24,7 +23,6 @@ interface RadioQuestionControllerParams<ChoiceType extends string> {
  * @returns {object} GET and POST Express handlers.
  */
 export function createRadioQuestionController<ChoiceType extends string>({
-  title,
   buildField,
   renderErrorContext,
   submitErrorContext,
@@ -53,7 +51,7 @@ export function createRadioQuestionController<ChoiceType extends string>({
           }
           res.render("main/radioQuestionPage.njk", {
             csrfToken: res.locals.csrfToken,
-            vm: buildViewModel(title, form),
+            vm: buildViewModel(form),
           });
         } else {
           next(
@@ -79,7 +77,7 @@ export function createRadioQuestionController<ChoiceType extends string>({
         if (form.isNotValid()) {
           res.status(400).render("main/radioQuestionPage.njk", {
             csrfToken: res.locals.csrfToken,
-            vm: buildViewModel(title, form),
+            vm: buildViewModel(form),
           });
           return;
         }
@@ -114,11 +112,10 @@ export function createRadioQuestionController<ChoiceType extends string>({
 }
 
 function buildViewModel<ChoiceType>(
-  title: string,
   form: RadioQuestionForm<ChoiceType, ChoiceType>,
 ): RadioQuestionViewModel<ChoiceType, ChoiceType> {
   return new RadioQuestionViewModel({
-    title,
+    title: `${form.messagePrefix}.title`,
     form,
     isLegendPageHeading: true,
   });

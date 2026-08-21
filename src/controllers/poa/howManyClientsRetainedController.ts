@@ -104,30 +104,29 @@ export async function submitHowManyClientsRetained(
   }
 }
 
-const PREFIX = "pages.howManyClientsRetained" as const;
-
 function buildField(): RadioField<Count, Count> {
+  const messagePrefix = "pages.howManyClientsRetained";
   return new RadioField(
-    PREFIX,
+    messagePrefix,
     "howManyClientsRetained",
     "howManyClientsRetained",
     [
       {
         value: Count.ZERO,
         text: {
-          key: `${PREFIX}.ZERO.text`,
+          key: `${messagePrefix}.ZERO.text`,
         },
       },
       {
         value: Count.ONE,
         text: {
-          key: `${PREFIX}.ONE.text`,
+          key: `${messagePrefix}.ONE.text`,
         },
       },
       {
         value: Count.TWO_OR_MORE,
         text: {
-          key: `${PREFIX}.TWO_OR_MORE.text`,
+          key: `${messagePrefix}.TWO_OR_MORE.text`,
         },
       },
     ],
@@ -139,7 +138,7 @@ function buildViewModel(
   form: RadioQuestionForm<Count, Count>,
 ): RadioQuestionViewModel<Count, Count> {
   return new RadioQuestionViewModel({
-    title: `${PREFIX}.title`,
+    title: `${form.messagePrefix}.title`,
     form,
     isLegendPageHeading: true,
   });

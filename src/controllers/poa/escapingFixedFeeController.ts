@@ -111,17 +111,16 @@ export async function submitEscapingFixedFee(
   }
 }
 
-const PREFIX = "pages.escapingFixedFee" as const;
-
 function buildField(): BooleanField {
-  return new BooleanField(PREFIX, "escapingFixedFee", "escapingFixedFee");
+  const messagePrefix = "pages.escapingFixedFee";
+  return new BooleanField(messagePrefix, "escapingFixedFee", "escapingFixedFee");
 }
 
 function buildViewModel(
   form: YesNoQuestionForm,
 ): YesNoQuestionViewModel {
   return new RadioQuestionViewModel({
-    title: `${PREFIX}.question`,
+    title: `${form.messagePrefix}.question`,
     form,
     isLegendPageHeading: false,
   });
