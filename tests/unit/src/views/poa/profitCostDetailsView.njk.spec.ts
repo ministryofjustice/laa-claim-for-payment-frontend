@@ -1,10 +1,8 @@
-import { expect, config as chaiConfig } from "chai";
+import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
-import {
-  ProfitCostDetailsViewModel,
-  ProfitCostDetailsViewModelParams,
-} from "#src/viewmodels/poa/profitCostDetailsViewModel.js";
+import { ProfitCostDetailsViewModel } from "#src/viewmodels/poa/profitCostDetailsViewModel.js";
+import { ProfitCostDetailsForm } from "#src/helpers/profitCostDetailsValidation.js";
 
 chaiConfig.truncateThreshold = 0;
 
@@ -12,10 +10,12 @@ describe("views/main/poa/profitCostDetailsView.njk", () => {
   let $: CheerioAPI;
 
   describe("without errors", () => {
+    const form = new ProfitCostDetailsForm();
+
     beforeEach(async () => {
       $ = await renderView("main/poa/profitCostDetailsView.njk", {
         csrfToken: "csrf-token",
-        vm: new ProfitCostDetailsViewModel(),
+        vm: new ProfitCostDetailsViewModel({ form }),
       });
     });
 
@@ -56,7 +56,7 @@ describe("views/main/poa/profitCostDetailsView.njk", () => {
 
     it("renders the court type legend", () => {
       const legend = $("legend").filter((_, el) =>
-        $(el).text().includes("pages.profitCostDetails.courtType.title")
+        $(el).text().includes("pages.profitCostDetails.courtType.title"),
       );
 
       expect(legend).to.have.length(1);
@@ -70,7 +70,7 @@ describe("views/main/poa/profitCostDetailsView.njk", () => {
 
     it("renders the client status legend", () => {
       const legend = $("legend").filter((_, el) =>
-        $(el).text().includes("pages.profitCostDetails.clientStatus.title")
+        $(el).text().includes("pages.profitCostDetails.clientStatus.title"),
       );
 
       expect(legend).to.have.length(1);
@@ -84,7 +84,7 @@ describe("views/main/poa/profitCostDetailsView.njk", () => {
 
     it("renders the first solicitor legend", () => {
       const legend = $("legend").filter((_, el) =>
-        $(el).text().includes("pages.profitCostDetails.firstSolicitor.title")
+        $(el).text().includes("pages.profitCostDetails.firstSolicitor.title"),
       );
 
       expect(legend).to.have.length(1);
@@ -98,7 +98,9 @@ describe("views/main/poa/profitCostDetailsView.njk", () => {
 
     it("renders the transfer of solicitor legend", () => {
       const legend = $("legend").filter((_, el) =>
-        $(el).text().includes("pages.profitCostDetails.transferOfSolicitor.title")
+        $(el)
+          .text()
+          .includes("pages.profitCostDetails.transferOfSolicitor.title"),
       );
 
       expect(legend).to.have.length(1);
@@ -124,28 +126,19 @@ describe("views/main/poa/profitCostDetailsView.njk", () => {
   });
 
   describe("with errors", () => {
+    const form = new ProfitCostDetailsForm();
+
+    form.validate({
+      courtTypeChoice: "",
+      clientStatusChoice: "",
+      firstSolicitorChoice: "",
+      transferOfSolicitorChoice: "",
+    });
+
     beforeEach(async () => {
-      const params: ProfitCostDetailsViewModelParams = {
-        errors: [
-          {
-            fieldName: "courtTypeChoice",
-            href: "#courtTypeChoice",
-            text: {
-              key: "pages.profitCostDetails.courtType.error.empty"
-            }
-          },
-          {
-            fieldName: "clientStatusChoice",
-            href: "#clientStatusChoice",
-            text: {
-              key: "pages.profitCostDetails.clientStatus.error.empty"
-            }
-          }
-        ]
-      };
       $ = await renderView("main/poa/profitCostDetailsView.njk", {
         csrfToken: "csrf-token",
-        vm: new ProfitCostDetailsViewModel(params),
+        vm: new ProfitCostDetailsViewModel({ form }),
       });
     });
 
@@ -154,30 +147,50 @@ describe("views/main/poa/profitCostDetailsView.njk", () => {
 
       expect(errorSummary).to.have.length(1);
       expect(errorSummary.text()).to.contain("common.errorSummaryTitle");
-      expect(errorSummary.text()).to.contain("pages.profitCostDetails.courtType.error.empty");
-      expect(errorSummary.text()).to.contain("pages.profitCostDetails.clientStatus.error.empty");
+      expect(errorSummary.text()).to.contain(
+        "pages.profitCostDetails.courtType.errors.empty",
+      );
+      expect(errorSummary.text()).to.contain(
+        "pages.profitCostDetails.clientStatus.errors.empty",
+      );
+      expect(errorSummary.text()).to.contain(
+        "pages.profitCostDetails.firstSolicitor.errors.empty",
+      );
+      expect(errorSummary.text()).to.contain(
+        "pages.profitCostDetails.transferOfSolicitor.errors.empty",
+      );
     });
 
     it("links errors to the correct fields", () => {
       const links = $(".govuk-error-summary a");
 
-      expect(links).to.have.length(2);
+      expect(links).to.have.length(4);
 
       expect(links.eq(0).attr("href")).to.equal("#courtTypeChoice");
       expect(links.eq(1).attr("href")).to.equal("#clientStatusChoice");
+      expect(links.eq(2).attr("href")).to.equal("#firstSolicitorChoice");
+      expect(links.eq(3).attr("href")).to.equal("#transferOfSolicitorChoice");
     });
 
     it("renders inline error messages for affected fields", () => {
       const errorMessages = $(".govuk-error-message");
 
-      expect(errorMessages).to.have.length(2);
+      expect(errorMessages).to.have.length(4);
 
       expect(errorMessages.eq(0).text()).to.contain(
-        "pages.profitCostDetails.courtType.error.empty"
+        "pages.profitCostDetails.courtType.errors.empty",
       );
 
       expect(errorMessages.eq(1).text()).to.contain(
-        "pages.profitCostDetails.clientStatus.error.empty"
+        "pages.profitCostDetails.clientStatus.errors.empty",
+      );
+
+      expect(errorMessages.eq(2).text()).to.contain(
+        "pages.profitCostDetails.firstSolicitor.errors.empty",
+      );
+
+      expect(errorMessages.eq(3).text()).to.contain(
+        "pages.profitCostDetails.transferOfSolicitor.errors.empty",
       );
     });
   });

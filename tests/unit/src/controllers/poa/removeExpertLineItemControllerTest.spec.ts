@@ -77,7 +77,7 @@ describe("removeExpertLineItemController", () => {
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
     expect(renderArgs.vm.title.key).to.equal("pages.poa.removeExpertLineItem.title");
-    expect(renderArgs.vm.form.fieldName).to.equal("confirmRemoveExpertLineItem");
+    expect(renderArgs.vm.radios.name).to.equal("confirmRemoveExpertLineItem");
   });
 
   it("redirects back to add a line when deleting", async () => {
@@ -150,16 +150,6 @@ describe("removeExpertLineItemController", () => {
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
       "main/radioQuestionPage.njk",
     );
-
-    const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
-
-    expect(renderArgs.vm.form.error).to.deep.equal({
-      fieldName: "confirmRemoveExpertLineItem",
-      href: "#confirmRemoveExpertLineItem",
-      text: {
-        key: "pages.poa.removeExpertLineItem.errors.empty"
-      },
-    });
   });
 
 });

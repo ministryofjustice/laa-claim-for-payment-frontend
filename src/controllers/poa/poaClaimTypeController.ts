@@ -1,38 +1,13 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processApiError, processError } from "#src/helpers/index.js";
-import {
-  type RadioQuestionOptions,
-  RadioQuestionViewModel,
-} from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
-import { validateRadioInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { CostType } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
 import { draftService } from "#src/services/draftService.js";
-
-const poaClaimTypeFieldName = "poaClaimType" as const;
-
-const poaClaimTypeChoices: ReadonlyArray<RadioQuestionOptions<CostType>> = [
-  {
-    value: CostType.PROFIT_COST,
-    text: {
-      key: "pages.poaClaimType.profitCost.text",
-    },
-  },
-  {
-    value: CostType.EXPERT_COST,
-    text: {
-      key: "pages.poaClaimType.expertCost.text",
-    },
-  },
-  {
-    value: CostType.NON_EXPERT_DISBURSEMENT,
-    text: {
-      key: "pages.poaClaimType.nonExpertDisbursement.text",
-    },
-  },
-];
+import { RadioField } from "#src/helpers/fields.js";
+import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 /**
  * Display POA claim type page.
@@ -55,17 +30,13 @@ export async function poaClaimTypePage(
     );
 
     if (claim.status === "success") {
+      const form = new RadioQuestionForm(buildField());
+      if (claim.body.costType != null) {
+        form.fill(claim.body.costType);
+      }
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.poaClaimType.title",
-          },
-          fieldName: poaClaimTypeFieldName,
-          fieldId: poaClaimTypeFieldName,
-          choices: poaClaimTypeChoices,
-          selectedValue: claim.body.costType,
-        }),
+        vm: buildViewModel(form),
       });
     } else {
       next(
@@ -93,31 +64,16 @@ export async function submitPoaClaimType(
   next: NextFunction,
 ): Promise<void> {
   try {
+    const field = buildField();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[poaClaimTypeFieldName];
+    const selectedChoice: unknown = req.body?.[field.name];
+    const form = new RadioQuestionForm(field);
+    form.validate(selectedChoice);
 
-    const validationResult = validateRadioInput(
-      poaClaimTypeChoices,
-      selectedChoice,
-      poaClaimTypeFieldName,
-      poaClaimTypeFieldName,
-      "pages.poaClaimType",
-    );
-
-    if (!validationResult.isValid) {
+    if (form.isNotValid()) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.poaClaimType.title",
-          },
-          fieldName: poaClaimTypeFieldName,
-          fieldId: poaClaimTypeFieldName,
-          choices: poaClaimTypeChoices,
-          selectedValue:
-            typeof selectedChoice === "string" ? selectedChoice : undefined,
-          errors: validationResult.errors,
-        }),
+        vm: buildViewModel(form),
       });
       return;
     }
@@ -133,23 +89,26 @@ export async function submitPoaClaimType(
       await draftService.setCostType(
         req.axiosMiddleware,
         claim.body,
-        validationResult.value,
+        form.getValue(),
       );
 
       const redirectByChoice: Record<CostType, string> = {
         [CostType.PROFIT_COST]: buildRoute(ROUTES.PROFIT_COST_DETAILS, {
           claimId,
         }),
-        [CostType.EXPERT_COST]: buildRoute(ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS, {
-          claimId,
-        }),
+        [CostType.EXPERT_COST]: buildRoute(
+          ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS,
+          {
+            claimId,
+          },
+        ),
         [CostType.NON_EXPERT_DISBURSEMENT]: buildRoute(
           ROUTES.NON_EXPERT_COST_DETAILS,
           { claimId },
         ),
       };
 
-      res.redirect(redirectByChoice[validationResult.value]);
+      res.redirect(redirectByChoice[form.getValue()]);
     } else {
       next(
         processApiError(
@@ -161,4 +120,45 @@ export async function submitPoaClaimType(
   } catch (error) {
     next(processError(error, "submitting POA claim type page"));
   }
+}
+
+const PREFIX = "pages.poaClaimType" as const;
+
+function buildField(): RadioField<CostType, CostType> {
+  return new RadioField(
+    PREFIX,
+    "poaClaimType",
+    "poaClaimType",
+    [
+      {
+        value: CostType.PROFIT_COST,
+        text: {
+          key: `${PREFIX}.profitCost.text`,
+        },
+      },
+      {
+        value: CostType.EXPERT_COST,
+        text: {
+          key: `${PREFIX}.expertCost.text`,
+        },
+      },
+      {
+        value: CostType.NON_EXPERT_DISBURSEMENT,
+        text: {
+          key: `${PREFIX}.nonExpertDisbursement.text`,
+        },
+      },
+    ],
+    (value: CostType) => value,
+  );
+}
+
+function buildViewModel(
+  form: RadioQuestionForm<CostType, CostType>,
+): RadioQuestionViewModel<CostType, CostType> {
+  return new RadioQuestionViewModel({
+    title: `${PREFIX}.title`,
+    form,
+    isLegendPageHeading: true,
+  });
 }

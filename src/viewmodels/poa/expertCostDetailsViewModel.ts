@@ -1,72 +1,57 @@
 import type { ExpertCostDetailsForm } from "#src/helpers/expertCostDetailsValidation.js";
+import { buildRadios, type Radios } from "#src/viewmodels/components/radios.js";
+import type { BooleanChoice } from "#src/models/booleanChoice.js";
 import {
-  type FieldValidationError,
-  getError,
-  getErrorSummary,
-  getStringValue,
-} from "#src/helpers/validation.js";
+  buildDateInput,
+  type DateInput,
+} from "#src/viewmodels/components/dateInput.js";
+import {
+  buildTextInput,
+  buildMonetaryInput,
+  type TextInput,
+} from "#src/viewmodels/components/textInput.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
-import { radioQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
-import { type BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
-import type { UUID } from "uuidv7";
 
 export interface ExpertCostDetailsViewModelParams {
-  claimId: UUID;
-  lineItemId?: UUID;
-  form?: ExpertCostDetailsForm;
-  errors?: FieldValidationError[];
+  form: ExpertCostDetailsForm;
 }
 
 /**
  * View model for the POA expert cost details page.
  */
 export class ExpertCostDetailsViewModel {
-  readonly claimId: string;
   readonly title: string;
-  readonly form;
-  readonly errorSummary: ErrorSummary;
+  readonly activityDateInput: DateInput;
+  readonly actualNetValueInput: TextInput;
+  readonly vatApplicableRadios: Radios<BooleanChoice>;
+  readonly feeEarnerNameInput: TextInput;
+  readonly descriptionInput: TextInput;
+  readonly errorSummary?: ErrorSummary;
 
   /**
    * Creates a profit cost bill line page view model.
    *
    * @param {ExpertCostDetailsViewModelParams} params View model params.
    */
-  constructor(params: ExpertCostDetailsViewModelParams) {
-    const { claimId, form = {}, errors = [] } = params;
+  constructor({ form }: ExpertCostDetailsViewModelParams) {
+    this.title = `${form.messagePrefix}.title`;
 
-    this.claimId = claimId.toString();
-    this.title = "pages.poa.expertCostDetails.title";
+    this.activityDateInput = buildDateInput(form.fields.activityDate);
 
-    this.form = {
-      activityDate: {
-        value: {
-          day: getStringValue(form.activityDateDay),
-          month: getStringValue(form.activityDateMonth),
-          year: getStringValue(form.activityDateYear),
-        },
-        error: getError(errors, "activityDate"),
-      },
-      actualNetValue: {
-        value: getStringValue(form.actualNetValue),
-        error: getError(errors, "actualNetValue"),
-      },
-      vatApplies: radioQuestionForm<BooleanChoice>(
-        "vatApplies",
-        "vatApplies",
-        booleanChoices,
-        errors,
-        form.vatApplies,
-      ),
-      feeEarnerName: {
-        value: getStringValue(form.feeEarnerName),
-        error: getError(errors, "feeEarnerName"),
-      },
-      description: {
-        value: getStringValue(form.description),
-        error: getError(errors, "description"),
-      },
-    };
+    this.actualNetValueInput = buildMonetaryInput(form.fields.actualNetValue);
 
-    this.errorSummary = getErrorSummary(errors);
+    this.vatApplicableRadios = buildRadios(
+      form.fields.vatApplies,
+      {
+        key: `${form.fields.vatApplies.messagePrefix}.title`,
+      },
+      false,
+    );
+
+    this.feeEarnerNameInput = buildTextInput(form.fields.feeEarnerName);
+
+    this.descriptionInput = buildTextInput(form.fields.description);
+
+    this.errorSummary = form.getErrorSummary();
   }
 }

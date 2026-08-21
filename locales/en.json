@@ -96,7 +96,7 @@
         "text" : "Associated to specific line items",
         "hint" : "Upload evidence individually, and associate specific evidence with individual work items or disbursements. This makes it less likely that your claim will be ejected due to a lack of documentation"
       },
-      "error" : {
+      "errors" : {
         "empty" : "Select how you want to upload your evidence"
       }
     },
@@ -462,6 +462,9 @@
       },
       "filesAdded": {
         "title": "Files added"
+      },
+      "errors": {
+        "empty": "You must upload evidence before you can continue"
       }
     }
   },

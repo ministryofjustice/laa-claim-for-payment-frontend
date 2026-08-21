@@ -5,21 +5,17 @@ import {
   ExpertCostDetailsViewModel,
   ExpertCostDetailsViewModelParams,
 } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
-import { V7Generator } from "uuidv7";
+import { ExpertCostDetailsForm } from "#src/helpers/expertCostDetailsValidation.js";
 
 chaiConfig.truncateThreshold = 0;
 
 describe("views/main/poa/expertCostDetailsView.njk", () => {
   let $: CheerioAPI;
 
-  const claimId = new V7Generator().generate();
-  const lineItemId = new V7Generator().generate();
-
   describe("view with no errors", () => {
-    const params: ExpertCostDetailsViewModelParams = {
-      claimId: claimId,
-      lineItemId: lineItemId,
-    };
+    const form = new ExpertCostDetailsForm();
+
+    const params: ExpertCostDetailsViewModelParams = { form };
 
     const viewModel = new ExpertCostDetailsViewModel(params);
 
@@ -79,57 +75,19 @@ describe("views/main/poa/expertCostDetailsView.njk", () => {
   });
 
   describe("view with errors", () => {
-    const params: ExpertCostDetailsViewModelParams = {
-      claimId: claimId,
-      lineItemId: lineItemId,
-      form: {
-        activityDateDay: "",
-        activityDateMonth: "",
-        activityDateYear: "",
-        actualNetValue: "",
-        vatApplies: "",
-        feeEarnerName: "",
-        description: "",
-      },
-      errors: [
-        {
-          fieldName: "activityDate",
-          href: "#activity-date-day",
-          text: {
-            key: "pages.poa.expertCostDetails.activityDate.errors.empty"
-          },
-          fields: ["day", "month", "year"],
-        },
-        {
-          fieldName: "actualNetValue",
-          href: "#actual-net-value",
-          text: {
-            key: "pages.poa.expertCostDetails.actualNetValue.errors.empty"
-          },
-        },
-        {
-          fieldName: "vatApplies",
-          href: "#vat-applies",
-          text: {
-            key: "pages.poa.expertCostDetails.vatApplies.errors.empty"
-          },
-        },
-        {
-          fieldName: "feeEarnerName",
-          href: "#fee-earner-name",
-          text: {
-            key: "pages.poa.expertCostDetails.feeEarnerName.errors.empty"
-          },
-        },
-        {
-          fieldName: "description",
-          href: "#description",
-          text: {
-            key: "pages.poa.expertCostDetails.description.errors.empty"
-          },
-        }
-      ]
-    };
+    const form = new ExpertCostDetailsForm();
+
+    form.validate({
+      activityDateDay: "",
+      activityDateMonth: "",
+      activityDateYear: "",
+      actualNetValue: "",
+      vatApplies: "",
+      feeEarnerName: "",
+      description: "",
+    });
+
+    const params: ExpertCostDetailsViewModelParams = { form };
 
     const viewModel = new ExpertCostDetailsViewModel(params);
 
@@ -150,9 +108,13 @@ describe("views/main/poa/expertCostDetailsView.njk", () => {
     it("renders an error for the activity date", () => {
       const dayInput = $("#main-content .govuk-input--error#activity-date-day");
       expect(dayInput).to.have.length(1);
-      const monthInput = $("#main-content .govuk-input--error#activity-date-month");
+      const monthInput = $(
+        "#main-content .govuk-input--error#activity-date-month",
+      );
       expect(monthInput).to.have.length(1);
-      const yearInput = $("#main-content .govuk-input--error#activity-date-year");
+      const yearInput = $(
+        "#main-content .govuk-input--error#activity-date-year",
+      );
       expect(yearInput).to.have.length(1);
 
       const error = $("#main-content .govuk-error-message#activity-date-error");
@@ -163,7 +125,9 @@ describe("views/main/poa/expertCostDetailsView.njk", () => {
       const input = $("#main-content .govuk-input--error#actual-net-value");
       expect(input).to.have.length(1);
 
-      const error = $("#main-content .govuk-error-message#actual-net-value-error");
+      const error = $(
+        "#main-content .govuk-error-message#actual-net-value-error",
+      );
       expect(error).to.have.length(1);
     });
 
@@ -176,7 +140,9 @@ describe("views/main/poa/expertCostDetailsView.njk", () => {
       const input = $("#main-content .govuk-input--error#fee-earner-name");
       expect(input).to.have.length(1);
 
-      const error = $("#main-content .govuk-error-message#fee-earner-name-error");
+      const error = $(
+        "#main-content .govuk-error-message#fee-earner-name-error",
+      );
       expect(error).to.have.length(1);
     });
 

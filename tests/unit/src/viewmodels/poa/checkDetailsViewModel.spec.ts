@@ -163,7 +163,7 @@ describe("CheckDetailsViewModel constructor()", () => {
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientsStart",
     });
     expect(vm.profitCostDetailsSummaryList?.rows[5].value.text).to.deep.equal({
-      key: "pages.howManyClientsRetained.TWO_OR_MORE.text",
+      key: "pages.numberOfClientsStartOfCase.TWO_OR_MORE.text",
     });
     expect(
       vm.profitCostDetailsSummaryList?.rows[5].actions?.items.length,

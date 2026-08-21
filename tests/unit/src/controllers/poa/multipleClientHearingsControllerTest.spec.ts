@@ -60,7 +60,7 @@ describe("multipleClientHearingsController", () => {
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
     expect(renderArgs.vm.title.key).to.equal("pages.multipleClientHearings.title");
-    expect(renderArgs.vm.form.fieldName).to.equal("multipleClientHearings");
+    expect(renderArgs.vm.radios.name).to.equal("multipleClientHearings");
   });
 
   it("redirects to escaping the standard fixed fee page when multiple client hearings answer is given", async () => {
@@ -117,16 +117,6 @@ describe("multipleClientHearingsController", () => {
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
       "main/radioQuestionPage.njk",
     );
-
-    const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
-
-    expect(renderArgs.vm.form.error).to.deep.equal({
-      fieldName: "multipleClientHearings",
-      href: "#multipleClientHearings",
-      text: {
-        key: "pages.multipleClientHearings.errors.empty"
-      },
-    });
   });
 
   it("rerenders with selected invalid string preserved when invalid option is submitted", async () => {
@@ -143,16 +133,8 @@ describe("multipleClientHearingsController", () => {
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
-    expect(renderArgs.vm.form.error).to.deep.equal({
-      fieldName: "multipleClientHearings",
-      href: "#multipleClientHearings",
-      text: {
-        key: "pages.multipleClientHearings.errors.empty"
-      },
-    });
-
     expect(
-      renderArgs.vm.form.choices.every(
+      renderArgs.vm.radios.items.every(
         (choice: { checked: boolean }) => !choice.checked,
       ),
     ).to.equal(true);

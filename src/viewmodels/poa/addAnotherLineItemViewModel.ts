@@ -6,31 +6,26 @@ import {
 } from "#src/viewmodels/components/summaryList.js";
 import type { Message } from "#src/viewmodels/components/message.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import {
-  type BooleanChoice,
-  booleanChoices,
-} from "#src/models/booleanChoice.js";
-import type { FieldValidationError } from "#src/helpers/validation.js";
-import {
-  addAnotherExpertCostFieldId,
-  addAnotherExpertCostFieldName,
-} from "#src/controllers/poa/addAnotherExpertCostController.js";
+  RadioQuestionViewModel,
+  type YesNoQuestionViewModel,
+} from "#src/viewmodels/radioQuestionViewModel.js";
 import { formatClaimed, formatDateReadable } from "#src/helpers/index.js";
+import type { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 interface AddAnotherLineItemViewModelParams<T extends LineItem> {
   claimId: string;
   lineItems: T[];
+  form: YesNoQuestionForm;
   prefix: string;
   getValue: (lineItem: T) => string;
   summaryListId: string;
-  errors?: FieldValidationError[];
 }
 
 export interface AddAnotherExpertCostViewModelParams {
   claimId: string;
   lineItems: ExpertCostLineItem[];
-  errors?: FieldValidationError[];
+  form: YesNoQuestionForm;
 }
 
 /**
@@ -39,7 +34,7 @@ export interface AddAnotherExpertCostViewModelParams {
 abstract class AddAnotherLineItemViewModel<T extends LineItem> {
   readonly title: Message;
   readonly lineItemsSummaryList: SummaryList;
-  readonly radioQuestionViewModel: RadioQuestionViewModel<BooleanChoice>;
+  readonly radioQuestionViewModel: YesNoQuestionViewModel;
 
   /**
    * Creates a profit cost bill line page view model.
@@ -47,7 +42,7 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
    * @param {AddAnotherLineItemViewModelParams} params View model params.
    */
   constructor(params: AddAnotherLineItemViewModelParams<T>) {
-    const { claimId, lineItems, prefix, getValue, summaryListId, errors } =
+    const { claimId, lineItems, form, prefix, getValue, summaryListId } =
       params;
 
     if (lineItems.length === 1) {
@@ -80,13 +75,9 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
     this.lineItemsSummaryList = buildSummaryList(summaryListId, rows);
 
     this.radioQuestionViewModel = new RadioQuestionViewModel({
-      title: {
-        key: `${prefix}.question`,
-      },
-      fieldName: addAnotherExpertCostFieldName,
-      fieldId: addAnotherExpertCostFieldId,
-      choices: booleanChoices,
-      errors,
+      title: `${prefix}.question`,
+      form,
+      isLegendPageHeading: false,
     });
   }
 }

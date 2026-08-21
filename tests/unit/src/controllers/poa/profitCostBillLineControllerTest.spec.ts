@@ -110,18 +110,14 @@ describe("profitCostBillLineController", () => {
     expect(renderArgs.vm.title).to.equal("pages.profitCostBillLine.title");
     expect(renderArgs.lineItemId).to.equal(lineItemId.toString());
 
-    expect(renderArgs.vm.form.activityDate.value.day).to.equal("4");
-    expect(renderArgs.vm.form.activityDate.value.month).to.equal("1");
-    expect(renderArgs.vm.form.activityDate.value.year).to.equal("2024");
-    expect(
-      renderArgs.vm.form.actualNetProfitCostExcludingAdvocacy.value,
-    ).to.equal("123");
-    expect(renderArgs.vm.form.actualNetAdvocacyCosts.value).to.equal("456");
-    expect(renderArgs.vm.form.vatApplies.choices[0].value).to.equal("yes");
-    expect(renderArgs.vm.form.vatApplies.choices[0].checked).to.equal(false);
-    expect(renderArgs.vm.form.vatApplies.choices[1].value).to.equal("no");
-    expect(renderArgs.vm.form.vatApplies.choices[1].checked).to.equal(true);
-    expect(renderArgs.vm.form.feeEarnerName.value).to.equal("Joe Bloggs");
+    expect(renderArgs.vm.activityDateInput.items[0].value).to.equal(4);
+    expect(renderArgs.vm.activityDateInput.items[1].value).to.equal(1);
+    expect(renderArgs.vm.activityDateInput.items[2].value).to.equal(2024);
+    expect(renderArgs.vm.actualNetProfitCostExcludingAdvocacyInput.value).to.equal(123);
+    expect(renderArgs.vm.actualNetAdvocacyCostsInput.value).to.equal(456);
+    expect(renderArgs.vm.vatApplicableRadios.items[0].checked).to.equal(false);
+    expect(renderArgs.vm.vatApplicableRadios.items[1].checked).to.equal(true);
+    expect(renderArgs.vm.feeEarnerNameInput.value).to.equal("Joe Bloggs");
   });
 
   it("creates line item when it doesn't already exist", async () => {

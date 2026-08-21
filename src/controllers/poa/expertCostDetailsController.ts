@@ -1,15 +1,11 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processApiError, processError } from "#src/helpers/index.js";
 import type { NextFunction, Request, Response } from "express";
-import {
-  ExpertCostDetailsViewModel,
-  type ExpertCostDetailsViewModelParams
-} from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
-import { type ExpertCostDetailsForm, validateExpertCostDetails } from "#src/helpers/expertCostDetailsValidation.js";
-import { getForm } from "#src/helpers/validation.js";
+import { ExpertCostDetailsViewModel } from "#src/viewmodels/poa/expertCostDetailsViewModel.js";
+import { ExpertCostDetailsForm, type ExpertCostDetailsRequestBody } from "#src/helpers/expertCostDetailsValidation.js";
+import { getRequestBody } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { formatBooleanChoice } from "#src/helpers/dataFormatters.js";
 import { CostType, type ExpertCostLineItem, ExpertCostLineItemSchema } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
 
@@ -29,45 +25,39 @@ export async function expertCostDetails(
     const claimId = getClaimId(req);
     const lineItemId = getLineItemId(req);
 
-    let form: ExpertCostDetailsForm = {};
+    const form = new ExpertCostDetailsForm();
 
     if (lineItemId != null) {
-      const lineItem = await claimService.getLineItem<ExpertCostLineItem>(
-        req.axiosMiddleware,
-        claimId,
-        lineItemId,
-        ExpertCostLineItemSchema,
-      );
+      const lineItemResponse =
+        await claimService.getLineItem<ExpertCostLineItem>(
+          req.axiosMiddleware,
+          claimId,
+          lineItemId,
+          ExpertCostLineItemSchema,
+        );
 
-      if (lineItem.status === "success") {
-        form = {
-          activityDateDay: lineItem.body.date.day.toString(),
-          activityDateMonth: lineItem.body.date.month.toString(),
-          activityDateYear: lineItem.body.date.year.toString(),
-          actualNetValue: lineItem.body.actualNetValue.toString(),
-          vatApplies: formatBooleanChoice(lineItem.body.vatApplicable),
-          feeEarnerName: lineItem.body.feeEarnerName,
-          description: lineItem.body.title,
-        };
+      if (lineItemResponse.status === "success") {
+        const { body: lineItem } = lineItemResponse;
+        form.fill({
+          activityDate: lineItem.date,
+          actualNetValue: lineItem.actualNetValue,
+          vatApplies: lineItem.vatApplicable,
+          feeEarnerName: lineItem.feeEarnerName,
+          description: lineItem.title,
+        });
       } else {
         next(
           processApiError(
-            lineItem,
+            lineItemResponse,
             "retrieving line item for rendering expert cost details page",
           ),
         );
       }
     }
 
-    const params: ExpertCostDetailsViewModelParams = {
-      claimId,
-      lineItemId,
-      form,
-    };
-
     res.render("main/poa/expertCostDetailsView.njk", {
       csrfToken: res.locals.csrfToken,
-      vm: new ExpertCostDetailsViewModel(params),
+      vm: new ExpertCostDetailsViewModel({ form }),
     });
   } catch (error) {
     next(processError(error, "rendering expert cost details page"));
@@ -90,27 +80,23 @@ export async function submitExpertCostDetails(
     const claimId = getClaimId(req);
     const lineItemId = getLineItemId(req);
 
-    const form = getForm(req.body) as ExpertCostDetailsForm;
-    const validationResult = validateExpertCostDetails(form);
+    const requestBody = getRequestBody(
+      req.body,
+    ) as ExpertCostDetailsRequestBody;
 
-    if (!validationResult.isValid) {
-      const params: ExpertCostDetailsViewModelParams = {
-        claimId,
-        lineItemId,
-        form,
-        errors: validationResult.errors,
-      };
-
+    const form = new ExpertCostDetailsForm();
+    form.validate(requestBody);
+    if (form.isNotValid()) {
       res.status(400).render("main/poa/expertCostDetailsView.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new ExpertCostDetailsViewModel(params),
+        vm: new ExpertCostDetailsViewModel({ form }),
       });
       return;
     }
 
     const lineItemForm: LineItemForm = {
       type: CostType.EXPERT_COST,
-      value: validationResult.value,
+      value: form.getValue(),
     };
 
     if (lineItemId == null) {

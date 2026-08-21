@@ -95,7 +95,7 @@
         "text" : "multi",
         "hint" : "hint multi"
       },
-      "error" : {
+      "errors" : {
         "empty" : "select one"
       }
     },
@@ -461,6 +461,9 @@
       },
       "filesAdded": {
         "title": "Files added"
+      },
+      "errors": {
+        "empty": "You must upload evidence before you can continue"
       }
     }
   },

@@ -1,8 +1,11 @@
 import { config as chaiConfig, expect } from "chai";
-import { CheerioAPI, load } from "cheerio";
+import { CheerioAPI } from "cheerio";
 import { FileUploadForLineItemViewModel } from "#src/viewmodels/fileUploadForLineItemViewModel.js";
 import { claim1, claim2, claim3 } from "#tests/assets/claim.js";
-import { billNarrativeLineItem, workItemLineItem1 } from "#tests/assets/lineItems.js";
+import {
+  billNarrativeLineItem,
+  workItemLineItem1,
+} from "#tests/assets/lineItems.js";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
 import { Claim } from "#src/types/Claim.js";
 
@@ -17,13 +20,16 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
       ...claim1,
     });
 
+    const claimId = "019f5fa1-dd58-7456-bf6f-73dd0b58eeb5";
+    const lineItemId = "019f5fa4-0e78-712a-a6fd-51dd39005339";
+
     const viewModel = new FileUploadForLineItemViewModel(
       claim,
-      billNarrativeLineItem, "/upload", "/delete", "/continue"
+      billNarrativeLineItem,
     );
 
     beforeEach(async () => {
-      $ = await renderView('main/claims/fileUploadForLineItemView.njk', {
+      $ = await renderView("main/claims/fileUploadForLineItemView.njk", {
         vm: viewModel,
         csrfToken: "test-csrf-token",
         uploadedFile: [],
@@ -49,9 +55,7 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
       const p = ps.first();
 
       expect(p).to.have.length(1);
-      expect(p.text().trim()).to.equal(
-        "pages.fileUploadForLineItem.p1",
-      );
+      expect(p.text().trim()).to.equal("pages.fileUploadForLineItem.p1");
     });
 
     it("renders list items within upload evidence explanation", () => {
@@ -119,20 +123,20 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
       expect(config).to.have.length(1);
 
       expect(config.attr("data-upload-url")).to.equal(
-        "/upload",
+        `/claims/${claimId}/upload-evidence-individually/${lineItemId}/file-upload/ajax-upload?claimStatus=SUBMITTED`,
       );
 
       expect(config.attr("data-delete-url")).to.equal(
-        "/delete",
+        `/claims/${claimId}/upload-evidence-individually/${lineItemId}/file-upload/ajax-delete?claimStatus=SUBMITTED`,
       );
     });
 
     it("renders the multi-file upload component", () => {
       expect($(".moj-multi-file-upload")).to.have.length(1);
 
-      expect(
-        $(".moj-multi-file-upload__input").attr("name"),
-      ).to.equal("documents");
+      expect($(".moj-multi-file-upload__input").attr("name")).to.equal(
+        "documents",
+      );
     });
 
     it("does not render uploaded files heading initially", () => {
@@ -143,12 +147,10 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
       const buttons = $(".govuk-button-group .govuk-button");
       const button = buttons.first();
 
-      expect(button.text().trim()).to.equal(
-        "common.saveAndContinue",
-      );
+      expect(button.text().trim()).to.equal("common.saveAndContinue");
 
       expect(button.attr("href")).to.equal(
-        "/continue",
+        `/claims/${claimId}/upload-evidence-individually`,
       );
     });
 
@@ -156,16 +158,12 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
       const buttons = $(".govuk-button-group .govuk-button");
       const button = buttons.eq(1);
 
-      expect(
-        button.hasClass("govuk-button--secondary"),
-      ).to.equal(true);
+      expect(button.hasClass("govuk-button--secondary")).to.equal(true);
 
-      expect(button.text().trim()).to.equal(
-        "common.saveAndComeBackLater",
-      );
+      expect(button.text().trim()).to.equal("common.saveAndComeBackLater");
 
       expect(button.attr("href")).to.equal(
-        "/continue",
+        `/claims/${claimId}/upload-evidence-individually`,
       );
     });
 
@@ -184,10 +182,13 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
       ...claim1,
     });
 
-    const viewModel = new FileUploadForLineItemViewModel(claim, workItemLineItem1, "/upload", "/delete", "/continue");
+    const viewModel = new FileUploadForLineItemViewModel(
+      claim,
+      workItemLineItem1,
+    );
 
     beforeEach(async () => {
-      $ = await renderView('main/claims/fileUploadForLineItemView.njk', {
+      $ = await renderView("main/claims/fileUploadForLineItemView.njk", {
         vm: viewModel,
         uploadedFile: [],
         csrfToken: "test-csrf-token",
@@ -225,11 +226,11 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
 
     const viewModel = new FileUploadForLineItemViewModel(
       claim,
-      workItemLineItem1, "/upload", "/delete", "/continue"
+      workItemLineItem1,
     );
 
     beforeEach(async () => {
-      $ = await renderView('main/claims/fileUploadForLineItemView.njk', {
+      $ = await renderView("main/claims/fileUploadForLineItemView.njk", {
         vm: viewModel,
         uploadedFile: [],
         csrfToken: "test-csrf-token",
@@ -259,11 +260,11 @@ describe("views/main/claims/fileUploadForLineItemView.njk", () => {
 
     const viewModel = new FileUploadForLineItemViewModel(
       claim,
-      billNarrativeLineItem, "/upload", "/delete", "/continue"
+      billNarrativeLineItem,
     );
 
     beforeEach(async () => {
-      $ = await renderView('main/claims/fileUploadForLineItemView.njk', {
+      $ = await renderView("main/claims/fileUploadForLineItemView.njk", {
         vm: viewModel,
         uploadedFile: [],
         csrfToken: "test-csrf-token",

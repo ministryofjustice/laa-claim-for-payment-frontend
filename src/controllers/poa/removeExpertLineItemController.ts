@@ -1,15 +1,13 @@
-import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel, type YesNoQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { booleanChoices } from "#src/models/booleanChoice.js";
-import { validateBooleanInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { type ExpertCostLineItem, ExpertCostLineItemSchema } from "#src/types/Claim.js";
 import type { ApiResponse } from "#src/types/api-types.js";
-
-const confirmRemoveExpertLineItemFieldName = "confirmRemoveExpertLineItem" as const;
+import { BooleanField } from "#src/helpers/fields.js";
+import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 /**
  * get confirm remove expert line item page
@@ -34,22 +32,16 @@ export async function confirmRemoveExpertLineItem(
     );
 
     if (lineItem.status === "success") {
+      const form = new YesNoQuestionForm(buildField());
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.poa.removeExpertLineItem.title",
-          },
-          fieldName: confirmRemoveExpertLineItemFieldName,
-          fieldId: confirmRemoveExpertLineItemFieldName,
-          choices: booleanChoices,
-        }),
+        vm: buildViewModel(form),
       });
     } else {
       next(
         processApiError(
           lineItem,
-          "retrieving lineitem for rendering confirm remove expert line item page",
+          "retrieving line item for rendering confirm remove expert line item page",
         ),
       );
     }
@@ -74,39 +66,26 @@ export async function submitRemoveExpertLineItem(
   next: NextFunction,
 ): Promise<void> {
   try {
+    const field = buildField();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[confirmRemoveExpertLineItemFieldName];
+    const selectedChoice: unknown = req.body?.[field.name];
+    const form = new YesNoQuestionForm(field);
+    form.validate(selectedChoice);
+
     const claimId = UUID.parse(req.params.claimId);
     const lineItemId = UUID.parse(req.params.lineItemId);
 
-    const validationResult = validateBooleanInput(
-      selectedChoice,
-      confirmRemoveExpertLineItemFieldName,
-      confirmRemoveExpertLineItemFieldName,
-      "pages.poa.removeExpertLineItem",
-    );
-
-    if (!validationResult.isValid) {
+    if (form.isNotValid()) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.poa.removeExpertLineItem.title",
-          },
-          fieldName: confirmRemoveExpertLineItemFieldName,
-          fieldId: confirmRemoveExpertLineItemFieldName,
-          choices: booleanChoices,
-          selectedValue:
-            typeof selectedChoice === "string" ? selectedChoice : undefined,
-          errors: validationResult.errors,
-        }),
+        vm: buildViewModel(form),
       });
       return;
     }
 
     const nextPage = buildRoute(ROUTES.ADD_ANOTHER_EXPERT_COST_DETAILS, { claimId });
 
-    if(validationResult.value) {
+    if (form.getValue()) {
 
       const deleted = await claimService.deleteLineItem(
         req.axiosMiddleware,
@@ -121,7 +100,7 @@ export async function submitRemoveExpertLineItem(
         next(
           processApiError(
             deleted,
-            "deleteing line item for expert cost page",
+            "deleting line item for expert cost page",
           ),
         );
       }
@@ -132,9 +111,28 @@ export async function submitRemoveExpertLineItem(
     } catch (error) {
       const processedError = processError(
         error,
-        "deleteing line item for expert cost page",
+        "deleting line item for expert cost page",
       );
       next(processedError);
   }
 }
 
+const PREFIX = "pages.poa.removeExpertLineItem" as const;
+
+function buildField(): BooleanField {
+  return new BooleanField(
+    PREFIX,
+    "confirmRemoveExpertLineItem",
+    "confirmRemoveExpertLineItem",
+  );
+}
+
+function buildViewModel(
+  form: YesNoQuestionForm,
+): YesNoQuestionViewModel {
+  return new RadioQuestionViewModel({
+    title: `${PREFIX}.title`,
+    form,
+    isLegendPageHeading: true,
+  });
+}

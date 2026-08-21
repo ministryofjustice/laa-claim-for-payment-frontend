@@ -1,14 +1,12 @@
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { validateBooleanInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { AddAnotherExpertCostViewModel } from "#src/viewmodels/poa/addAnotherLineItemViewModel.js";
 import type { Claim, ExpertCostLineItem } from "#src/types/Claim.js";
-
-export const addAnotherExpertCostFieldName = "addAnother" as const;
-export const addAnotherExpertCostFieldId = "add-another" as const;
+import { BooleanField } from "#src/helpers/fields.js";
+import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 /**
  * get add another expert cost view
@@ -34,11 +32,13 @@ export async function addAnotherExpertCost(
       if (lineItems.length === 0) {
         res.redirect(buildRoute(ROUTES.EXPERT_COST_DETAILS, { claimId }));
       } else {
+        const form = new YesNoQuestionForm(buildField());
         res.render("main/poa/addAnotherLineItemView.njk", {
           csrfToken: res.locals.csrfToken,
           vm: new AddAnotherExpertCostViewModel({
             claimId: claimId.toString(),
             lineItems,
+            form,
           }),
         });
       }
@@ -71,15 +71,11 @@ export async function submitAddAnotherExpertCost(
   next: NextFunction,
 ): Promise<void> {
   try {
+    const field = buildField();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[addAnotherExpertCostFieldName];
-
-    const validationResult = validateBooleanInput(
-      selectedChoice,
-      addAnotherExpertCostFieldName,
-      addAnotherExpertCostFieldId,
-      "pages.poa.expertCostDetails.addAnother",
-    );
+    const selectedChoice: unknown = req.body?.[field.name];
+    const form = new YesNoQuestionForm(field);
+    form.validate(selectedChoice);
 
     const claimId = UUID.parse(req.params.claimId);
 
@@ -89,20 +85,20 @@ export async function submitAddAnotherExpertCost(
     );
 
     if (claim.status === "success") {
-      if (!validationResult.isValid) {
+      if (form.isNotValid()) {
         const lineItems = getLineItems(claim.body);
         res.status(400).render("main/poa/addAnotherLineItemView.njk", {
           csrfToken: res.locals.csrfToken,
           vm: new AddAnotherExpertCostViewModel({
             claimId: claimId.toString(),
             lineItems,
-            errors: validationResult.errors,
+            form,
           }),
         });
         return;
       }
 
-      if (validationResult.value) {
+      if (form.getValue()) {
         res.redirect(buildRoute(ROUTES.EXPERT_COST_DETAILS, { claimId }));
       } else {
         res.redirect(buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, { claimId }));
@@ -128,5 +124,13 @@ function getLineItems(claim: Claim): ExpertCostLineItem[] {
   return claim.lineItems.map(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
     (lineItem) => lineItem as ExpertCostLineItem,
+  );
+}
+
+function buildField(): BooleanField {
+  return new BooleanField(
+    "pages.poa.expertCostDetails.addAnother",
+    "addAnother",
+    "add-another",
   );
 }

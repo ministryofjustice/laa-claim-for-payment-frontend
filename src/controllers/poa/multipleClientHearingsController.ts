@@ -1,14 +1,11 @@
-import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel, type YesNoQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { booleanChoices } from "#src/models/booleanChoice.js";
-import { validateBooleanInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { formatBooleanChoice } from "#src/helpers/dataFormatters.js";
-
-const multipleClientHearingsFieldName = "multipleClientHearings" as const;
+import { BooleanField } from "#src/helpers/fields.js";
+import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 /**
  * get how many clients retained view
@@ -30,17 +27,13 @@ export async function multipleClientHearings(
     );
 
     if (claim.status === "success") {
+      const form = new YesNoQuestionForm(buildField());
+      if (claim.body.multiClientHearingFlag != null) {
+        form.fill(claim.body.multiClientHearingFlag);
+      }
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.multipleClientHearings.title",
-          },
-          fieldName: multipleClientHearingsFieldName,
-          fieldId: multipleClientHearingsFieldName,
-          choices: booleanChoices,
-          selectedValue: formatBooleanChoice(claim.body.multiClientHearingFlag),
-        }),
+        vm: buildViewModel(form),
       });
     } else {
       next(
@@ -71,30 +64,16 @@ export async function submitMultipleClientHearings(
   next: NextFunction,
 ): Promise<void> {
   try {
+    const field = buildField();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[multipleClientHearingsFieldName];
+    const selectedChoice: unknown = req.body?.[field.name];
+    const form = new YesNoQuestionForm(field);
+    form.validate(selectedChoice);
 
-    const validationResult = validateBooleanInput(
-      selectedChoice,
-      multipleClientHearingsFieldName,
-      multipleClientHearingsFieldName,
-      "pages.multipleClientHearings",
-    );
-
-    if (!validationResult.isValid) {
+    if (form.isNotValid()) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.multipleClientHearings.title",
-          },
-          fieldName: multipleClientHearingsFieldName,
-          fieldId: multipleClientHearingsFieldName,
-          choices: booleanChoices,
-          selectedValue:
-            typeof selectedChoice === "string" ? selectedChoice : undefined,
-          errors: validationResult.errors,
-        }),
+        vm: buildViewModel(form),
       });
       return;
     }
@@ -109,7 +88,7 @@ export async function submitMultipleClientHearings(
     if (claim.status === "success") {
       await claimService.updateClaim(
         req.axiosMiddleware,
-        claim.body.setMultiClientHearingFlag(validationResult.value),
+        claim.body.setMultiClientHearingFlag(form.getValue()),
       );
 
       res.redirect(buildRoute(ROUTES.ESCAPING_FIXED_FEE, { claimId }));
@@ -128,4 +107,24 @@ export async function submitMultipleClientHearings(
     );
     next(processedError);
   }
+}
+
+const PREFIX = "pages.multipleClientHearings" as const;
+
+function buildField(): BooleanField {
+  return new BooleanField(
+    PREFIX,
+    "multipleClientHearings",
+    "multipleClientHearings",
+  );
+}
+
+function buildViewModel(
+  form: YesNoQuestionForm,
+): YesNoQuestionViewModel {
+  return new RadioQuestionViewModel({
+    title: `${PREFIX}.title`,
+    form,
+    isLegendPageHeading: true,
+  });
 }

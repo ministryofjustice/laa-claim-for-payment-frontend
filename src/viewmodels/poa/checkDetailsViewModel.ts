@@ -16,12 +16,6 @@ import {
 } from "#src/viewmodels/components/summaryList.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import {
-  clientStatusFieldName,
-  courtTypeFieldName,
-  firstSolicitorFieldName,
-  transferOfSolicitorFieldName
-} from "#src/controllers/poa/profitCostDetailsController.js";
 import { AnswerMissingError } from "#src/types/errors.js";
 import { formatBoolean, formatClaimed, formatDateReadable } from "#src/helpers/index.js";
 
@@ -132,7 +126,7 @@ export class CheckDetailsViewModel {
       [
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.courtType" },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${courtTypeFieldName}`,
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#courtTypeChoice`,
           claim.courtType == null
             ? undefined
             : {
@@ -145,7 +139,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientPartyStatus",
           },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${clientStatusFieldName}`,
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#clientStatusChoice`,
           claim.clientPartyStatus == null
             ? undefined
             : {
@@ -158,7 +152,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.firstSolicitor",
           },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${firstSolicitorFieldName}`,
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#firstSolicitorChoice`,
           claim.firstActingSolicitorFlag == null
             ? undefined
             : { text: { key: formatBoolean(claim.firstActingSolicitorFlag) } },
@@ -167,7 +161,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.transferOfSolicitor",
           },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${transferOfSolicitorFieldName}`,
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#transferOfSolicitorChoice`,
           claim.transferOfSolicitorFlag == null
             ? undefined
             : { text: { key: formatBoolean(claim.transferOfSolicitorFlag) } },
@@ -194,7 +188,7 @@ export class CheckDetailsViewModel {
             ? undefined
             : {
                 text: {
-                  key: `pages.howManyClientsRetained.${claim.clientsStartCount}.text`,
+                  key: `pages.numberOfClientsStartOfCase.${claim.clientsStartCount}.text`,
                 },
               },
         ),

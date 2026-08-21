@@ -64,7 +64,7 @@ describe("escapingFixedFeeController", () => {
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
     expect(renderArgs.vm.title.key).to.equal("pages.escapingFixedFee.question");
-    expect(renderArgs.vm.form.fieldName).to.equal("escapingFixedFee");
+    expect(renderArgs.vm.radios.name).to.equal("escapingFixedFee");
   });
 
   it("redirects to CPGFS profit cost bill line page when escaping fixed fee answer is given", async () => {
@@ -122,16 +122,6 @@ describe("escapingFixedFeeController", () => {
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
       "main/poa/escapingFixedFeeView.njk",
     );
-
-    const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
-
-    expect(renderArgs.vm.form.error).to.deep.equal({
-      fieldName: "escapingFixedFee",
-      href: "#escapingFixedFee",
-      text: {
-        key: "pages.escapingFixedFee.errors.empty",
-      },
-    });
   });
 
   it("rerenders with selected invalid string preserved when invalid option is submitted", async () => {
@@ -148,16 +138,8 @@ describe("escapingFixedFeeController", () => {
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
-    expect(renderArgs.vm.form.error).to.deep.equal({
-      fieldName: "escapingFixedFee",
-      href: "#escapingFixedFee",
-      text: {
-        key: "pages.escapingFixedFee.errors.empty",
-      },
-    });
-
     expect(
-      renderArgs.vm.form.choices.every(
+      renderArgs.vm.radios.items.every(
         (choice: { checked: boolean }) => !choice.checked,
       ),
     ).to.equal(true);

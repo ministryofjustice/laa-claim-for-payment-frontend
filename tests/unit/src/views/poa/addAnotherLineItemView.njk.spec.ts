@@ -8,6 +8,8 @@ import {
 } from "#src/viewmodels/poa/addAnotherLineItemViewModel.js";
 import { Category } from "#src/types/Claim.js";
 import { LocalDate } from "#src/types/date.js";
+import { BooleanField } from "#src/helpers/fields.js";
+import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 chaiConfig.truncateThreshold = 0;
 
@@ -16,6 +18,10 @@ describe("views/main/poa/addAnotherLineItemView.njk", () => {
 
   const claimId = new V7Generator().generate();
   const lineItemId = new V7Generator().generate();
+
+  const field = new BooleanField("prefix", "name", "id");
+
+  const form = new YesNoQuestionForm(field);
 
   const params: AddAnotherExpertCostViewModelParams = {
     claimId: claimId.toString(),
@@ -33,6 +39,7 @@ describe("views/main/poa/addAnotherLineItemView.njk", () => {
         netAdvocacyCostAmount: null,
       },
     ],
+    form,
   };
 
   const viewModel = new AddAnotherExpertCostViewModel(params);
@@ -66,9 +73,9 @@ describe("views/main/poa/addAnotherLineItemView.njk", () => {
   });
 
   it("renders a yes/no input", () => {
-    const yesInput = $("#main-content .govuk-radios__input#add-another");
+    const yesInput = $("#main-content .govuk-radios__input#id");
     expect(yesInput).to.have.length(1);
-    const noInput = $("#main-content .govuk-radios__input#add-another-2");
+    const noInput = $("#main-content .govuk-radios__input#id-2");
     expect(noInput).to.have.length(1);
   });
 

@@ -1,35 +1,12 @@
-import { type RadioQuestionOptions, RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { validateRadioInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { Count } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
-
-const howManyClientsRetainedFieldName = "howManyClientsRetained" as const;
-
-const howManyClientsRetainedChoices: ReadonlyArray<RadioQuestionOptions<Count>> =
-  [
-    {
-      value: Count.ZERO,
-      text: {
-        key: "pages.howManyClientsRetained.ZERO.text",
-      },
-    },
-    {
-      value: Count.ONE,
-      text: {
-        key: "pages.howManyClientsRetained.ONE.text",
-      },
-    },
-    {
-      value: Count.TWO_OR_MORE,
-      text: {
-        key: "pages.howManyClientsRetained.TWO_OR_MORE.text",
-      },
-    },
-  ];
+import { RadioField } from "#src/helpers/fields.js";
+import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 /**
  * get how many clients retained view
@@ -51,17 +28,13 @@ export async function howManyClientsRetained(
     );
 
     if (claim.status === "success") {
+      const form = new RadioQuestionForm(buildField());
+      if (claim.body.clientsStartCount != null) {
+        form.fill(claim.body.clientsStartCount);
+      }
       res.render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.howManyClientsRetained.title",
-          },
-          fieldName: howManyClientsRetainedFieldName,
-          fieldId: howManyClientsRetainedFieldName,
-          choices: howManyClientsRetainedChoices,
-          selectedValue: claim.body.clientsRetainedCount,
-        }),
+        vm: buildViewModel(form),
       });
     } else {
       next(processApiError(claim, "retrieving claim for rendering how many clients retained page"));
@@ -84,31 +57,16 @@ export async function submitHowManyClientsRetained(
   next: NextFunction,
 ): Promise<void> {
   try {
+    const field = buildField();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[howManyClientsRetainedFieldName];
+    const selectedChoice: unknown = req.body?.[field.name];
+    const form = new RadioQuestionForm(field);
+    form.validate(selectedChoice);
 
-    const validationResult = validateRadioInput(
-      howManyClientsRetainedChoices,
-      selectedChoice,
-      howManyClientsRetainedFieldName,
-      howManyClientsRetainedFieldName,
-      "pages.howManyClientsRetained",
-    );
-
-    if (!validationResult.isValid) {
+    if (form.isNotValid()) {
       res.status(400).render("main/radioQuestionPage.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.howManyClientsRetained.title"
-          },
-          fieldName: howManyClientsRetainedFieldName,
-          fieldId: howManyClientsRetainedFieldName,
-          choices: howManyClientsRetainedChoices,
-          selectedValue:
-            typeof selectedChoice === "string" ? selectedChoice : undefined,
-          errors: validationResult.errors,
-        }),
+        vm: buildViewModel(form),
       });
       return;
     }
@@ -123,7 +81,7 @@ export async function submitHowManyClientsRetained(
     if (claim.status === "success") {
       await claimService.updateClaim(
         req.axiosMiddleware,
-        claim.body.setClientsRetainedCount(validationResult.value),
+        claim.body.setClientsRetainedCount(form.getValue()),
       );
 
       const redirectByChoice: Record<Count, string> = {
@@ -136,7 +94,7 @@ export async function submitHowManyClientsRetained(
         }),
       };
 
-      res.redirect(redirectByChoice[validationResult.value]);
+      res.redirect(redirectByChoice[form.getValue()]);
     } else {
       next(processApiError(claim, "retrieving claim for submitting how many clients retained page"));
     }
@@ -144,4 +102,45 @@ export async function submitHowManyClientsRetained(
     const processedError = processError(error, "submitting how many clients retained page");
     next(processedError);
   }
+}
+
+const PREFIX = "pages.howManyClientsRetained" as const;
+
+function buildField(): RadioField<Count, Count> {
+  return new RadioField(
+    PREFIX,
+    "howManyClientsRetained",
+    "howManyClientsRetained",
+    [
+      {
+        value: Count.ZERO,
+        text: {
+          key: `${PREFIX}.ZERO.text`,
+        },
+      },
+      {
+        value: Count.ONE,
+        text: {
+          key: `${PREFIX}.ONE.text`,
+        },
+      },
+      {
+        value: Count.TWO_OR_MORE,
+        text: {
+          key: `${PREFIX}.TWO_OR_MORE.text`,
+        },
+      },
+    ],
+    (value: Count) => value,
+  );
+}
+
+function buildViewModel(
+  form: RadioQuestionForm<Count, Count>,
+): RadioQuestionViewModel<Count, Count> {
+  return new RadioQuestionViewModel({
+    title: `${PREFIX}.title`,
+    form,
+    isLegendPageHeading: true,
+  });
 }

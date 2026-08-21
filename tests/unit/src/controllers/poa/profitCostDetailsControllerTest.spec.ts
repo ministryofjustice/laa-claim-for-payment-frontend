@@ -3,12 +3,8 @@ import { expect } from "chai";
 import * as sinon from "sinon";
 import type { Request, Response } from "express";
 import {
-  clientStatusFieldName,
-  courtTypeFieldName,
-  firstSolicitorFieldName,
   profitCostDetails,
   submitProfitCostDetails,
-  transferOfSolicitorFieldName,
 } from "#src/controllers/poa/profitCostDetailsController.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { V7Generator } from "uuidv7";
@@ -74,10 +70,10 @@ describe("Profit cost details controller", () => {
 
   it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'", async () => {
     req.body = {
-      [courtTypeFieldName]: "COUNTY_COURT",
-      [clientStatusFieldName]: "CHILD",
-      [firstSolicitorFieldName]: "yes",
-      [transferOfSolicitorFieldName]: "yes",
+      ["courtTypeChoice"]: "COUNTY_COURT",
+      ["clientStatusChoice"]: "CHILD",
+      ["firstSolicitorChoice"]: "yes",
+      ["transferOfSolicitorChoice"]: "yes",
     };
 
     getClaimStub.resolves({
@@ -118,10 +114,10 @@ describe("Profit cost details controller", () => {
 
   it("redirects to NUMBER_OF_CLIENTS_START_OF_CASE when transfer of solicitor is 'no'", async () => {
     req.body = {
-      [courtTypeFieldName]: "COUNTY_COURT",
-      [clientStatusFieldName]: "CHILD",
-      [firstSolicitorFieldName]: "yes",
-      [transferOfSolicitorFieldName]: "no",
+      ["courtTypeChoice"]: "COUNTY_COURT",
+      ["clientStatusChoice"]: "CHILD",
+      ["firstSolicitorChoice"]: "yes",
+      ["transferOfSolicitorChoice"]: "no",
     };
 
     getClaimStub.resolves({
@@ -173,10 +169,10 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.courtType.fieldName).to.equal(
+      expect(renderArgs.vm.courtTypeRadios.name).to.equal(
         "courtTypeChoice",
       );
-      expect(renderArgs.vm.form.courtType.choices).to.have.length(4);
+      expect(renderArgs.vm.courtTypeRadios.items).to.have.length(4);
     });
 
     it("should return error when no court type is selected", async () => {
@@ -186,7 +182,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.courtType.error.text).to.deep.equal({
+      expect(renderArgs.vm.courtTypeRadios.errorMessage.text).to.deep.equal({
         key: "pages.profitCostDetails.courtType.errors.empty",
       });
     });
@@ -202,7 +198,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.courtType.error.text).to.deep.equal({
+      expect(renderArgs.vm.courtTypeRadios.errorMessage.text).to.deep.equal({
         key: "pages.profitCostDetails.courtType.errors.empty",
       });
     });
@@ -221,10 +217,10 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.clientStatus.fieldName).to.equal(
+      expect(renderArgs.vm.clientStatusRadios.name).to.equal(
         "clientStatusChoice",
       );
-      expect(renderArgs.vm.form.clientStatus.choices).to.have.length(3);
+      expect(renderArgs.vm.clientStatusRadios.items).to.have.length(3);
     });
 
     it("should return error when no client status is selected", async () => {
@@ -234,7 +230,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.clientStatus.error.text).to.deep.equal({
+      expect(renderArgs.vm.clientStatusRadios.errorMessage.text).to.deep.equal({
         key: "pages.profitCostDetails.clientStatus.errors.empty",
       });
     });
@@ -250,7 +246,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.clientStatus.error.text).to.deep.equal({
+      expect(renderArgs.vm.clientStatusRadios.errorMessage.text).to.deep.equal({
         key: "pages.profitCostDetails.clientStatus.errors.empty",
       });
     });
@@ -269,10 +265,10 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.firstSolicitor.fieldName).to.equal(
+      expect(renderArgs.vm.firstSolicitorRadios.name).to.equal(
         "firstSolicitorChoice",
       );
-      expect(renderArgs.vm.form.firstSolicitor.choices).to.have.length(2);
+      expect(renderArgs.vm.firstSolicitorRadios.items).to.have.length(2);
     });
 
     it("should return error when no first solicitor option is selected", async () => {
@@ -282,7 +278,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.firstSolicitor.error.text).to.deep.equal({
+      expect(renderArgs.vm.firstSolicitorRadios.errorMessage.text).to.deep.equal({
         key: "pages.profitCostDetails.firstSolicitor.errors.empty",
       });
     });
@@ -298,7 +294,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.firstSolicitor.error.text).to.deep.equal({
+      expect(renderArgs.vm.firstSolicitorRadios.errorMessage.text).to.deep.equal({
         key: "pages.profitCostDetails.firstSolicitor.errors.empty",
       });
     });
@@ -317,10 +313,10 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.transferOfSolicitor.fieldName).to.equal(
+      expect(renderArgs.vm.transferOfSolicitorRadios.name).to.equal(
         "transferOfSolicitorChoice",
       );
-      expect(renderArgs.vm.form.transferOfSolicitor.choices).to.have.length(2);
+      expect(renderArgs.vm.transferOfSolicitorRadios.items).to.have.length(2);
     });
 
     it("should return error when no transfer of solicitor option is selected", async () => {
@@ -330,7 +326,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.transferOfSolicitor.error.text).to.deep.equal({
+      expect(renderArgs.vm.transferOfSolicitorRadios.errorMessage.text).to.deep.equal({
         key: "pages.profitCostDetails.transferOfSolicitor.errors.empty",
       });
     });
@@ -346,7 +342,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.form.transferOfSolicitor.error.text).to.deep.equal({
+      expect(renderArgs.vm.transferOfSolicitorRadios.errorMessage.text).to.deep.equal({
         key: "pages.profitCostDetails.transferOfSolicitor.errors.empty",
       });
     });

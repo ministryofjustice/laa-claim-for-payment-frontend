@@ -65,8 +65,8 @@ describe("poaClaimTypeController", () => {
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
     expect(renderArgs.vm.title.key).to.equal("pages.poaClaimType.title");
-    expect(renderArgs.vm.form.fieldName).to.equal("poaClaimType");
-    expect(renderArgs.vm.form.choices).to.deep.include({
+    expect(renderArgs.vm.radios.name).to.equal("poaClaimType");
+    expect(renderArgs.vm.radios.items).to.deep.include({
       value: "PROFIT_COST",
       text: {
         key: "pages.poaClaimType.profitCost.text",
@@ -180,16 +180,6 @@ describe("poaClaimTypeController", () => {
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
       "main/radioQuestionPage.njk",
     );
-
-    const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
-
-    expect(renderArgs.vm.form.error).to.deep.equal({
-      fieldName: "poaClaimType",
-      href: "#poaClaimType",
-      text: {
-        key: "pages.poaClaimType.errors.empty",
-      },
-    });
   });
 
   it("rerenders with selected invalid string preserved when invalid option is submitted", async () => {
@@ -206,16 +196,8 @@ describe("poaClaimTypeController", () => {
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
-    expect(renderArgs.vm.form.error).to.deep.equal({
-      fieldName: "poaClaimType",
-      href: "#poaClaimType",
-      text: {
-        key: "pages.poaClaimType.errors.empty",
-      },
-    });
-
     expect(
-      renderArgs.vm.form.choices.every(
+      renderArgs.vm.radios.items.every(
         (choice: { checked: boolean }) => !choice.checked,
       ),
     ).to.equal(true);

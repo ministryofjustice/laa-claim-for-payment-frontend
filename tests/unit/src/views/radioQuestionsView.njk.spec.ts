@@ -1,7 +1,12 @@
-import { expect, config as chaiConfig } from "chai";
+import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
-import { RadioQuestionOptions, RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
+import {
+  RadioQuestionOptions,
+  RadioQuestionViewModel,
+} from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioField } from "#src/helpers/fields.js";
+import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 chaiConfig.truncateThreshold = 0;
 
@@ -13,46 +18,52 @@ describe("views/main/radioQuestionsView.njk", () => {
     Second: "second",
   } as const;
 
-  type TestChoice =
-    (typeof TestChoice)[keyof typeof TestChoice];
+  type TestChoice = (typeof TestChoice)[keyof typeof TestChoice];
 
   const testChoices: RadioQuestionOptions<TestChoice>[] = [
     {
       value: TestChoice.First,
       text: {
-        key: "first text"
+        key: "first text",
       },
       hint: {
         text: {
-          key: "first hint"
+          key: "first hint",
         },
       },
     },
-      {
+    {
       value: TestChoice.Second,
       text: {
-        key: "second text"
+        key: "second text",
       },
       hint: {
         text: {
-          key: "second hint"
+          key: "second hint",
         },
       },
     },
   ] as const;
 
-  const vm = new RadioQuestionViewModel({
-      title: {
-        key: "Page Title"
-      },
-      fieldName: "testField",
-      fieldId: "test-field",
-      choices: testChoices
-  })
+  const testField: RadioField<TestChoice, TestChoice> = new RadioField(
+    "prefix",
+    "testField",
+    "test-field",
+    testChoices,
+    (value) => value,
+  );
 
   describe("without errors", () => {
+    const form = new RadioQuestionForm(testField);
+
+    const vm = new RadioQuestionViewModel({
+      title: "Page Title",
+      form,
+      isLegendPageHeading: true,
+    });
+
     beforeEach(async () => {
-      $ = await renderView('main/radioQuestionPage.njk', {
+      $ = await renderView("main/radioQuestionPage.njk", {
         csrfToken: "csrf-token",
         vm,
       });
@@ -96,21 +107,19 @@ describe("views/main/radioQuestionsView.njk", () => {
     });
 
     it("renders the radio labels", () => {
-      const labels = $(".govuk-radios__label").map((_, el) => $(el).text().trim()).get();
+      const labels = $(".govuk-radios__label")
+        .map((_, el) => $(el).text().trim())
+        .get();
 
-      expect(labels).to.deep.equal([
-        "first text",
-        "second text",
-      ]);
+      expect(labels).to.deep.equal(["first text", "second text"]);
     });
 
     it("renders the radio hints", () => {
-      const hints = $(".govuk-hint").map((_, el) => $(el).text().trim()).get();
+      const hints = $(".govuk-hint")
+        .map((_, el) => $(el).text().trim())
+        .get();
 
-      expect(hints).to.include.members([
-        "first hint",
-        "second hint",
-      ]);
+      expect(hints).to.include.members(["first hint", "second hint"]);
     });
 
     it("renders the continue button", () => {
@@ -126,27 +135,17 @@ describe("views/main/radioQuestionsView.njk", () => {
   });
 
   describe("with errors", () => {
+    const form = new RadioQuestionForm(testField);
+    form.validate("");
+
+    const vm = new RadioQuestionViewModel({
+      title: "Page Title",
+      form,
+      isLegendPageHeading: true,
+    });
+
     beforeEach(async () => {
-
-      const vm = new RadioQuestionViewModel({
-        title: {
-          key: "Page Title"
-        },
-        fieldName: "testField",
-        fieldId: "test-field",
-        choices: testChoices,
-        errors: [
-          {
-            fieldName: "testField",
-            href: "#test-field",
-            text: {
-              key: "some error",
-            },
-          },
-        ],
-      });
-
-      $ = await renderView('main/radioQuestionPage.njk', {
+      $ = await renderView("main/radioQuestionPage.njk", {
         csrfToken: "csrf-token",
         vm,
       });
@@ -157,7 +156,7 @@ describe("views/main/radioQuestionsView.njk", () => {
 
       expect(errorSummary).to.have.length(1);
       expect(errorSummary.text()).to.contain("common.errorSummaryTitle");
-      expect(errorSummary.text()).to.contain("some error");
+      expect(errorSummary.text()).to.contain("prefix.errors.empty");
     });
 
     it("links the error summary to the radio group", () => {
@@ -171,7 +170,7 @@ describe("views/main/radioQuestionsView.njk", () => {
       const errorMessage = $(".govuk-error-message");
 
       expect(errorMessage).to.have.length(1);
-      expect(errorMessage.text()).to.contain("some error");
+      expect(errorMessage.text()).to.contain("prefix.errors.empty");
     });
   });
 });

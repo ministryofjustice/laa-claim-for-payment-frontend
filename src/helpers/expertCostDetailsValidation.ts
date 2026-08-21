@@ -1,15 +1,13 @@
-import {
-  combine,
-  validateBooleanInput,
-  validateDateInput,
-  validateMoneyInput,
-  validateStringInput,
-  type ValidationResult,
-} from "#src/helpers/validation.js";
+import { combine, Form } from "#src/helpers/validation.js";
 import type { ExpertCostDetails } from "#src/types/poa.js";
-import type { LocalDate } from "#src/types/date.js";
+import {
+  BooleanField,
+  DateField,
+  MoneyField,
+  StringField,
+} from "#src/helpers/fields.js";
 
-export interface ExpertCostDetailsForm {
+export interface ExpertCostDetailsRequestBody {
   activityDateDay?: unknown;
   activityDateMonth?: unknown;
   activityDateYear?: unknown;
@@ -19,76 +17,94 @@ export interface ExpertCostDetailsForm {
   description?: unknown;
 }
 
-const FEE_EARNER_NAME_REGEX = /^[A-Za-z' -]+$/;
-const DESCRIPTION_REGEX = /^[\p{L}\p{N}\p{P}\p{Zs}\n\r]*$/u;
+interface ExpertCostDetailsFields {
+  activityDate: DateField;
+  actualNetValue: MoneyField;
+  vatApplies: BooleanField;
+  feeEarnerName: StringField;
+  description: StringField;
+}
 
 /**
- * Validates the expert cost details form.
- *
- * @param {ExpertCostDetailsForm} form The expert cost details form.
- * @returns {ValidationResult} Validation result.
+ * Expert cost details form.
  */
-export function validateExpertCostDetails(
-  form: ExpertCostDetailsForm,
-): ValidationResult<ExpertCostDetails> {
-  return combine({
-    activityDate: validateActivityDate(form),
-    actualNetValue: validateActualNetValue(form.actualNetValue),
-    vatApplies: validateVatApplies(form.vatApplies),
-    feeEarnerName: validateFeeEarnerName(form.feeEarnerName),
-    description: validateDescription(form.description),
-  });
+export class ExpertCostDetailsForm extends Form<
+  ExpertCostDetailsFields,
+  ExpertCostDetailsRequestBody,
+  ExpertCostDetails
+> {
+  /**
+   * Creates a form.
+   */
+  constructor() {
+    const messagePrefix = "pages.poa.expertCostDetails";
+    super(buildExpertCostDetailsFields(messagePrefix), messagePrefix);
+  }
+
+  /**
+   * Fills the form.
+   * @param {ExpertCostDetails} value form value
+   */
+  fill(value: ExpertCostDetails): void {
+    this.fields.activityDate.setValue(value.activityDate);
+    this.fields.actualNetValue.setValue(value.actualNetValue);
+    this.fields.vatApplies.setValue(value.vatApplies);
+    this.fields.feeEarnerName.setValue(value.feeEarnerName);
+    this.fields.description.setValue(value.description);
+  }
+
+  /**
+   * Validates the form.
+   * @param {ExpertCostDetailsRequestBody} value value to validate
+   */
+  validate(value: ExpertCostDetailsRequestBody): void {
+    this.fields.activityDate.validate({
+      day: value.activityDateDay,
+      month: value.activityDateMonth,
+      year: value.activityDateYear,
+    });
+
+    this.fields.actualNetValue.validate(value.actualNetValue);
+    this.fields.vatApplies.validate(value.vatApplies);
+    this.fields.feeEarnerName.validate(value.feeEarnerName);
+    this.fields.description.validate(value.description);
+
+    this.validation = combine(this.fields);
+  }
 }
 
-function validateActivityDate(
-  form: ExpertCostDetailsForm,
-): ValidationResult<LocalDate> {
-  return validateDateInput(
-    {
-      day: form.activityDateDay,
-      month: form.activityDateMonth,
-      year: form.activityDateYear,
-    },
-    "activityDate",
-    "activity-date",
-    "pages.poa.expertCostDetails.activityDate",
-  );
-}
+function buildExpertCostDetailsFields(messagePrefix: string): ExpertCostDetailsFields {
+  return {
+    activityDate: new DateField(
+      `${messagePrefix}.activityDate`,
+      "activityDate",
+      "activity-date",
+    ),
 
-function validateActualNetValue(value: unknown): ValidationResult<number> {
-  return validateMoneyInput(
-    value,
-    "actualNetValue",
-    "actual-net-value",
-    "pages.poa.expertCostDetails.actualNetValue",
-  );
-}
+    actualNetValue: new MoneyField(
+      `${messagePrefix}.actualNetValue`,
+      "actualNetValue",
+      "actual-net-value",
+    ),
 
-function validateVatApplies(value: unknown): ValidationResult<boolean> {
-  return validateBooleanInput(
-    value,
-    "vatApplies",
-    "vat-applies",
-    "pages.poa.expertCostDetails.vatApplies",
-  );
-}
+    vatApplies: new BooleanField(
+      `${messagePrefix}.vatApplies`,
+      "vatApplies",
+      "vat-applies",
+    ),
 
-function validateFeeEarnerName(value: unknown): ValidationResult<string> {
-  return validateStringInput(
-    value,
-    "feeEarnerName",
-    "fee-earner-name",
-    "pages.poa.expertCostDetails.feeEarnerName",
-    FEE_EARNER_NAME_REGEX,
-  );
-}
+    feeEarnerName: new StringField(
+      `${messagePrefix}.feeEarnerName`,
+      "feeEarnerName",
+      "fee-earner-name",
+      /^[A-Za-z' -]+$/,
+    ),
 
-function validateDescription(value: unknown): ValidationResult<string> {
-  return validateStringInput(
-    value,
-    "description",
-    "description",
-    "pages.poa.expertCostDetails.description",
-    DESCRIPTION_REGEX,
-  );
+    description: new StringField(
+      `${messagePrefix}.description`,
+      "description",
+      "description",
+      /^[\p{L}\p{N}\p{P}\p{Zs}\n\r]*$/u,
+    ),
+  };
 }
