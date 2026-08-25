@@ -10,6 +10,7 @@ import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { Claim } from "#src/types/Claim.js";
 import { draftService } from "#src/services/draftService.js";
+import config from "#config.js";
 
 describe("poaClaimTypeController", () => {
   let req: Partial<Request>;
@@ -40,7 +41,9 @@ describe("poaClaimTypeController", () => {
     sinon.restore();
   });
 
-  it("renders the POA claim type radio question page", async () => {
+  it("renders the POA claim type choices when profit cost is enabled", async () => {
+    sinon.stub(config.featureFlags, "poaProfitCostEnabled").value(true);
+
     req = {
       params: {
         claimId: claimId.toString(),
@@ -56,26 +59,85 @@ describe("poaClaimTypeController", () => {
 
     await poaClaimTypePage(req as Request, res, next);
 
-    expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
-    expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
-      "main/radioQuestionPage.njk",
-    );
-
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
     expect(renderArgs.vm.title.key).to.equal("pages.poaClaimType.title");
     expect(renderArgs.vm.radios.name).to.equal("poaClaimType");
-    expect(renderArgs.vm.radios.items).to.deep.include({
+    expect(renderArgs.vm.radios.items).to.deep.include.members([
+      {
+        value: "PROFIT_COST",
+        text: {
+          key: "pages.poaClaimType.profitCost.text",
+        },
+        checked: false,
+      },
+      {
+        value: "EXPERT_COST",
+        text: {
+          key: "pages.poaClaimType.expertCost.text",
+        },
+        checked: false,
+      },
+      {
+        value: "NON_EXPERT_DISBURSEMENT",
+        text: {
+          key: "pages.poaClaimType.nonExpertDisbursement.text",
+        },
+        checked: false,
+      },
+    ]);
+  });
+
+  it("does not render the profit cost choice when profit cost is disabled", async () => {
+    sinon.stub(config.featureFlags, "poaProfitCostEnabled").value(false);
+
+    req = {
+      params: {
+        claimId: claimId.toString(),
+      },
+    };
+
+    getClaimStub.resolves({
+      status: "success",
+      body: new Claim({
+        id: claimId.toString(),
+      }),
+    });
+
+    await poaClaimTypePage(req as Request, res, next);
+
+    const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
+
+    expect(renderArgs.vm.radios.items).to.not.deep.include({
       value: "PROFIT_COST",
       text: {
         key: "pages.poaClaimType.profitCost.text",
       },
       checked: false,
     });
+
+    expect(renderArgs.vm.radios.items).to.deep.include.members([
+      {
+        value: "EXPERT_COST",
+        text: {
+          key: "pages.poaClaimType.expertCost.text",
+        },
+        checked: false,
+      },
+      {
+        value: "NON_EXPERT_DISBURSEMENT",
+        text: {
+          key: "pages.poaClaimType.nonExpertDisbursement.text",
+        },
+        checked: false,
+      },
+    ]);
   });
 
   it("redirects to profit cost details when Profit cost is selected", async () => {
+    sinon.stub(config.featureFlags, "poaProfitCostEnabled").value(true);
+
     req = {
       params: {
         claimId: claimId.toString(),

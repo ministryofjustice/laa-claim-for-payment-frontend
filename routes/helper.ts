@@ -7,29 +7,24 @@ import type { AjaxUploadError } from "#src/types/api-types.js";
 
 export const ROUTES = {
   CLAIMS: "/",
-  CHOOSE_UPLOAD: "/claims/:claimId/choose-upload",
-  UPLOAD_EVIDENCE_INDIVIDUALLY: "/claims/:claimId/upload-evidence-individually",
-  UPLOAD_FILE_FOR_LINE_ITEM:
-    "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload",
-  AJAX_UPLOAD_FILE_FOR_LINE_ITEM:
-    "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-upload",
-  AJAX_DELETE_FILE_FOR_LINE_ITEM:
-    "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-delete",
+  CHOOSE_UPLOAD: "/claims/:claimId/choose-upload", // lineItemUploadEnabled
+  UPLOAD_EVIDENCE_INDIVIDUALLY: "/claims/:claimId/upload-evidence-individually", // lineItemUploadEnabled
+  UPLOAD_FILE_FOR_LINE_ITEM: "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload", // lineItemUploadEnabled
+  AJAX_UPLOAD_FILE_FOR_LINE_ITEM: "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-upload", // lineItemUploadEnabled
+  AJAX_DELETE_FILE_FOR_LINE_ITEM: "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-delete", // lineItemUploadEnabled
   VIEW_CLAIM: "/claims/:claimId",
-  HOW_MANY_CLIENTS_RETAINED: "/claims/:claimId/poa/how-many-clients-retained",
+  HOW_MANY_CLIENTS_RETAINED: "/claims/:claimId/poa/how-many-clients-retained", // POA PC
   POA_CLAIM_TYPE: "/claims/:claimId/poa/claim-type",
-  PROFIT_COST_DETAILS: "/claims/:claimId/poa/profit-cost-details",
+  PROFIT_COST_DETAILS: "/claims/:claimId/poa/profit-cost-details", // POA PC
   DISBURSEMENT_DETAILS: "/claims/:claimId/poa/disbursement-details",
   REMOVE_DISBURSEMENT: "/claims/:claimId/poa/disbursement-details/:lineItemId/remove",
   ADD_ANOTHER_DISBURSEMENT: "/claims/:claimId/poa/disbursement-details/add",
-  MULTIPLE_CLIENT_HEARINGS: "/claims/:claimId/poa/multiple-client-hearings",
-  ESCAPING_FIXED_FEE: "/claims/:claimId/poa/escaping-standard-fixed-fee",
-  NUMBER_OF_CLIENTS_START_OF_CASE:
-    "/claims/:claimId/poa/number-of-clients-start-of-case",
+  MULTIPLE_CLIENT_HEARINGS: "/claims/:claimId/poa/multiple-client-hearings", // POA PC
+  ESCAPING_FIXED_FEE: "/claims/:claimId/poa/escaping-standard-fixed-fee", // POA PC
+  NUMBER_OF_CLIENTS_START_OF_CASE: "/claims/:claimId/poa/number-of-clients-start-of-case", // POA PC
   POA_CHECK_YOUR_DETAILS: "/claims/:claimId/poa/check-details",
   POA_SUBMISSION_SUCCESSFUL: "/claims/:claimId/poa-submitted",
-  CPGFS_PROFIT_COST_BILL_LINE:
-    "/claims/:claimId/poa/cpgfs-profit-cost-bill-line",
+  CPGFS_PROFIT_COST_BILL_LINE: "/claims/:claimId/poa/cpgfs-profit-cost-bill-line", // POA PC
   POA_EVIDENCE_UPLOAD: "/claims/:claimId/poa/evidence-upload",
   AJAX_UPLOAD_POA_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-upload",
   AJAX_DELETE_POA_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-delete",
@@ -109,4 +104,20 @@ export function multerErrorHandler(
   }
 
   next(error);
+}
+
+/**
+ * Registers the route if enabled
+ *
+ * @param {boolean} enabled the enebaled flag, provided from config
+ * @param {() => void} register the route to register
+ * @returns {void}
+ */
+export function registerIf(
+  enabled: boolean,
+  register: () => void,
+): void {
+  if (enabled) {
+    register();
+  }
 }

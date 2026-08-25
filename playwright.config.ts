@@ -33,7 +33,7 @@ export default defineConfig({
   webServer: {
     command: 'concurrently "yarn tsx scripts/stub-backend.ts" "yarn tsx scripts/test-server-with-msw.ts"',
     url: 'http://127.0.0.1:3000',
-    reuseExistingServer: process.env.CI !== 'true',
+    reuseExistingServer: false,
     stdout: 'pipe',
     stderr: 'pipe',
     timeout: 60000,
@@ -45,6 +45,8 @@ export default defineConfig({
       REDIS_DISABLED: 'false',
       REDIS_URL:'redis://localhost:6379',
       SESSION_COOKIE_SECURE: 'false',
+      POA_PROFIT_COST_ENABLED: "true",
+      LINE_ITEM_UPLOAD_ENABLED: "true",
     },
   },
 });

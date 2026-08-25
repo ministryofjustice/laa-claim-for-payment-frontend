@@ -8,6 +8,7 @@ import { claimService } from "#src/services/claimService.js";
 import { draftService } from "#src/services/draftService.js";
 import { RadioField } from "#src/helpers/fields.js";
 import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import config from "#config.js";
 
 /**
  * Display POA claim type page.
@@ -131,12 +132,16 @@ function buildField(): RadioField<CostType, CostType> {
     "poaClaimType",
     "poaClaimType",
     [
-      {
-        value: CostType.PROFIT_COST,
-        text: {
-          key: `${messagePrefix}.profitCost.text`,
-        },
-      },
+      ...(config.featureFlags.poaProfitCostEnabled
+        ? [
+            {
+              value: CostType.PROFIT_COST,
+              text: {
+                key: "pages.poaClaimType.profitCost.text",
+              },
+            },
+          ]
+        : []),
       {
         value: CostType.EXPERT_COST,
         text: {

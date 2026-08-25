@@ -97,7 +97,7 @@ export function submitChooseFileUpload(
     const claimId = UUID.parse(req.params.claimId);
 
     const redirectByChoice: Record<FileUploadChoice, string> = {
-      [FileUploadChoice.AllAtOnce]: "/all-at-once-file-upload",
+      [FileUploadChoice.AllAtOnce]: "/all-at-once-file-upload", // todo no route.
       [FileUploadChoice.AssociatedToLineItems]: buildRoute(
         ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY,
         { claimId },
