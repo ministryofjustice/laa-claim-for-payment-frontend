@@ -205,7 +205,7 @@ describe("disbursementDetailsController", () => {
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA_CLAIM_TYPE, {
+        buildRoute(ROUTES.POA.CLAIM_TYPE, {
           claimId: claimId,
         }),
       ),
@@ -231,7 +231,7 @@ describe("disbursementDetailsController", () => {
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA_CLAIM_TYPE, {
+        buildRoute(ROUTES.POA.CLAIM_TYPE, {
           claimId: claimId,
         }),
       ),
@@ -286,7 +286,7 @@ describe("disbursementDetailsController", () => {
 
       expect(
         (res.redirect as sinon.SinonStub).calledWith(
-          buildRoute(ROUTES.ADD_ANOTHER_DISBURSEMENT, {
+          buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, {
             claimId: claimId,
           }),
         ),
@@ -358,7 +358,7 @@ describe("disbursementDetailsController", () => {
 
       expect(
         (res.redirect as sinon.SinonStub).calledWith(
-          buildRoute(ROUTES.ADD_ANOTHER_DISBURSEMENT, {
+          buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, {
             claimId: claimId,
           }),
         ),

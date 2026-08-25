@@ -38,7 +38,7 @@ export async function addAnotherDisbursement(
       if (isDisbursementCostType(claim.costType)) {
         const lineItems: DisbursementLineItem[] = getLineItems(claim);
         if (lineItems.length === 0) {
-          res.redirect(buildRoute(ROUTES.DISBURSEMENT_DETAILS, { claimId }));
+          res.redirect(buildRoute(ROUTES.POA.DISBURSEMENTS.DETAILS, { claimId }));
         } else {
           const form = new YesNoQuestionForm(buildField(claim.costType));
           res.render("main/poa/addAnotherDisbursementView.njk", {
@@ -51,7 +51,7 @@ export async function addAnotherDisbursement(
           });
         }
       } else {
-        res.redirect(buildRoute(ROUTES.POA_CLAIM_TYPE, { claimId }));
+        res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
       }
     } else {
       next(
@@ -111,12 +111,12 @@ export async function submitAddAnotherDisbursement(
         }
 
         if (form.getValue()) {
-          res.redirect(buildRoute(ROUTES.DISBURSEMENT_DETAILS, { claimId }));
+          res.redirect(buildRoute(ROUTES.POA.DISBURSEMENTS.DETAILS, { claimId }));
         } else {
-          res.redirect(buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, { claimId }));
+          res.redirect(buildRoute(ROUTES.POA.EVIDENCE_UPLOAD, { claimId }));
         }
       } else {
-        res.redirect(buildRoute(ROUTES.POA_CLAIM_TYPE, { claimId }));
+        res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
       }
     } else {
       next(

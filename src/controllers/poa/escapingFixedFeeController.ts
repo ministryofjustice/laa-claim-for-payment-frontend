@@ -93,7 +93,7 @@ export async function submitEscapingFixedFee(
         form.getValue(),
       );
 
-      res.redirect(buildRoute(ROUTES.CPGFS_PROFIT_COST_BILL_LINE, { claimId }));
+      res.redirect(buildRoute(ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE, { claimId }));
     } else {
       next(
         processApiError(

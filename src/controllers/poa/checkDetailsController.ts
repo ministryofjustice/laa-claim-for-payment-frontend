@@ -53,7 +53,7 @@ export function submitYourDetails(
     const { params } = req;
     const { claimId } = params;
     // TODO submit the data
-    res.redirect(buildRoute(ROUTES.POA_SUBMISSION_SUCCESSFUL, { claimId }));
+    res.redirect(buildRoute(ROUTES.POA.SUBMISSION_SUCCESSFUL, { claimId }));
   } catch (error) {
     const processedError = processError(
       error,

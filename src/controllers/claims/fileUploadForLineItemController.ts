@@ -102,7 +102,7 @@ export async function linkEvidenceToLineItem(
         return;
       }
     }
-    const redirectUrl = buildRoute(ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, {
+    const redirectUrl = buildRoute(ROUTES.LINE_ITEM_UPLOAD.UPLOAD_EVIDENCE_INDIVIDUALLY, {
       claimId,
     });
     res.redirect(redirectUrl);

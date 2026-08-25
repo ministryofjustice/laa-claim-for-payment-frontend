@@ -56,11 +56,11 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
       buildSummaryListRowWithChangeAndRemoveLinks(
         formatDateReadable(lineItem.date.toDate()),
         buildRoute(
-          ROUTES.DISBURSEMENT_DETAILS,
+          ROUTES.POA.DISBURSEMENTS.DETAILS,
           { claimId },
           { lineItemId: lineItem.id },
         ),
-        buildRoute(ROUTES.REMOVE_DISBURSEMENT, {
+        buildRoute(ROUTES.POA.DISBURSEMENTS.REMOVE, {
           claimId,
           lineItemId: lineItem.id,
         }),

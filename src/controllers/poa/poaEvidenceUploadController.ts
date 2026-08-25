@@ -94,7 +94,7 @@ export async function submitPoaEvidenceUpload(
       return;
     }
 
-    res.redirect(buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, { claimId }));
+    res.redirect(buildRoute(ROUTES.POA.CHECK_DETAILS, { claimId }));
   } catch (error) {
     next(processError(error, "submitting POA evidence upload page"));
   }

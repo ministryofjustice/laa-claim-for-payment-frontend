@@ -125,7 +125,7 @@ describe("poaEvidenceUploadController", () => {
 
       expect(
         (res.redirect as sinon.SinonStub).calledWith(
-          buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, {
+          buildRoute(ROUTES.POA.CHECK_DETAILS, {
             claimId: claimId,
           }),
         ),

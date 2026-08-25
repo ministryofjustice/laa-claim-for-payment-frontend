@@ -33,18 +33,18 @@ export class PoaEvidenceUploadViewModel {
     this.title = `${form.messagePrefix}.title`;
 
     this.uploadUrl = buildRoute(
-      ROUTES.AJAX_UPLOAD_POA_EVIDENCE,
+      ROUTES.POA.AJAX_UPLOAD_EVIDENCE,
       { claimId },
       { claimStatus: ClaimStatus.DRAFT },
     );
 
     this.deleteUrl = buildRoute(
-      ROUTES.AJAX_DELETE_POA_EVIDENCE,
+      ROUTES.POA.AJAX_DELETE_EVIDENCE,
       { claimId },
       { claimStatus: ClaimStatus.DRAFT },
     );
 
-    this.saveAndContinueHref = buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, {
+    this.saveAndContinueHref = buildRoute(ROUTES.POA.CHECK_DETAILS, {
       claimId,
     });
 

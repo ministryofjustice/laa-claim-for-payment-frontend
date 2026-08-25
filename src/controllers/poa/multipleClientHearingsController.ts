@@ -91,7 +91,7 @@ export async function submitMultipleClientHearings(
         claim.body.setMultiClientHearingFlag(form.getValue()),
       );
 
-      res.redirect(buildRoute(ROUTES.ESCAPING_FIXED_FEE, { claimId }));
+      res.redirect(buildRoute(ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE, { claimId }));
     } else {
       next(
         processApiError(

@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Response } from "express";
 import { HttpError } from "http-errors";
 import multer from "multer";
 import type { MulterRequest } from "#src/types/requests.js";
@@ -6,29 +6,55 @@ import type { UUID } from "uuidv7";
 import type { AjaxUploadError } from "#src/types/api-types.js";
 
 export const ROUTES = {
-  CLAIMS: "/",
-  CHOOSE_UPLOAD: "/claims/:claimId/choose-upload", // lineItemUploadEnabled
-  UPLOAD_EVIDENCE_INDIVIDUALLY: "/claims/:claimId/upload-evidence-individually", // lineItemUploadEnabled
-  UPLOAD_FILE_FOR_LINE_ITEM: "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload", // lineItemUploadEnabled
-  AJAX_UPLOAD_FILE_FOR_LINE_ITEM: "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-upload", // lineItemUploadEnabled
-  AJAX_DELETE_FILE_FOR_LINE_ITEM: "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-delete", // lineItemUploadEnabled
+  INDEX: "/",
   VIEW_CLAIM: "/claims/:claimId",
-  HOW_MANY_CLIENTS_RETAINED: "/claims/:claimId/poa/how-many-clients-retained", // POA PC
-  POA_CLAIM_TYPE: "/claims/:claimId/poa/claim-type",
-  PROFIT_COST_DETAILS: "/claims/:claimId/poa/profit-cost-details", // POA PC
-  DISBURSEMENT_DETAILS: "/claims/:claimId/poa/disbursement-details",
-  REMOVE_DISBURSEMENT: "/claims/:claimId/poa/disbursement-details/:lineItemId/remove",
-  ADD_ANOTHER_DISBURSEMENT: "/claims/:claimId/poa/disbursement-details/add",
-  MULTIPLE_CLIENT_HEARINGS: "/claims/:claimId/poa/multiple-client-hearings", // POA PC
-  ESCAPING_FIXED_FEE: "/claims/:claimId/poa/escaping-standard-fixed-fee", // POA PC
-  NUMBER_OF_CLIENTS_START_OF_CASE: "/claims/:claimId/poa/number-of-clients-start-of-case", // POA PC
-  POA_CHECK_YOUR_DETAILS: "/claims/:claimId/poa/check-details",
-  POA_SUBMISSION_SUCCESSFUL: "/claims/:claimId/poa-submitted",
-  CPGFS_PROFIT_COST_BILL_LINE: "/claims/:claimId/poa/cpgfs-profit-cost-bill-line", // POA PC
-  POA_EVIDENCE_UPLOAD: "/claims/:claimId/poa/evidence-upload",
-  AJAX_UPLOAD_POA_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-upload",
-  AJAX_DELETE_POA_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-delete",
   AJAX_GET_FILE_ROW: "/evidence-upload/ajax-get-file-row",
+
+  LINE_ITEM_UPLOAD: {
+    CHOOSE_UPLOAD: "/claims/:claimId/choose-upload",
+    UPLOAD_EVIDENCE_INDIVIDUALLY:
+      "/claims/:claimId/upload-evidence-individually",
+    FILE_UPLOAD:
+      "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload",
+    AJAX_UPLOAD:
+      "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-upload",
+    AJAX_DELETE:
+      "/claims/:claimId/upload-evidence-individually/:lineItemId/file-upload/ajax-delete",
+  },
+
+  POA: {
+    CLAIM_TYPE: "/claims/:claimId/poa/claim-type",
+
+    PROFIT_COST: {
+      HOW_MANY_CLIENTS_RETAINED:
+        "/claims/:claimId/poa/how-many-clients-retained",
+      DETAILS: "/claims/:claimId/poa/profit-cost-details",
+      MULTIPLE_CLIENT_HEARINGS:
+        "/claims/:claimId/poa/multiple-client-hearings",
+      ESCAPING_FIXED_FEE:
+        "/claims/:claimId/poa/escaping-standard-fixed-fee",
+      NUMBER_OF_CLIENTS_START_OF_CASE:
+        "/claims/:claimId/poa/number-of-clients-start-of-case",
+      CPGFS_BILL_LINE:
+        "/claims/:claimId/poa/cpgfs-profit-cost-bill-line",
+    },
+
+    DISBURSEMENTS: {
+      DETAILS: "/claims/:claimId/poa/disbursement-details",
+      ADD: "/claims/:claimId/poa/disbursement-details/add",
+      REMOVE:
+        "/claims/:claimId/poa/disbursement-details/:lineItemId/remove",
+    },
+
+    EVIDENCE_UPLOAD: "/claims/:claimId/poa/evidence-upload",
+    AJAX_UPLOAD_EVIDENCE:
+      "/claims/:claimId/poa/evidence-upload/ajax-upload",
+    AJAX_DELETE_EVIDENCE:
+      "/claims/:claimId/poa/evidence-upload/ajax-delete",
+
+    CHECK_DETAILS: "/claims/:claimId/poa/check-details",
+    SUBMISSION_SUCCESSFUL: "/claims/:claimId/poa-submitted",
+  },
 } as const;
 
 /**

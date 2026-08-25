@@ -94,17 +94,17 @@ export async function submitPoaClaimType(
       );
 
       const redirectByChoice: Record<CostType, string> = {
-        [CostType.PROFIT_COST]: buildRoute(ROUTES.PROFIT_COST_DETAILS, {
+        [CostType.PROFIT_COST]: buildRoute(ROUTES.POA.PROFIT_COST.DETAILS, {
           claimId,
         }),
         [CostType.EXPERT_COST]: buildRoute(
-          ROUTES.ADD_ANOTHER_DISBURSEMENT,
+          ROUTES.POA.DISBURSEMENTS.ADD,
           {
             claimId,
           },
         ),
         [CostType.NON_EXPERT_DISBURSEMENT]: buildRoute(
-          ROUTES.ADD_ANOTHER_DISBURSEMENT,
+          ROUTES.POA.DISBURSEMENTS.ADD,
           {
             claimId,
           },

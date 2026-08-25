@@ -56,7 +56,7 @@ export const buildRouter = (): Router => {
 
   /* GET home page. */
   router.get(
-    ROUTES.CLAIMS,
+    ROUTES.INDEX,
     async (
       req: Request,
       res: Response,
@@ -67,7 +67,7 @@ export const buildRouter = (): Router => {
   );
 
   router.post(
-    ROUTES.CLAIMS,
+    ROUTES.INDEX,
     async (
       req: Request<unknown, unknown, ViewClaimsActionRequest>,
       res: Response,
@@ -92,7 +92,7 @@ export const buildRouter = (): Router => {
   /* GET view upload evidence individually page.*/
   registerIf(config.featureFlags.lineItemUploadEnabled, () => {
     router.get(
-      ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY, //TODO: Needs to be renamed to line items or something similar
+      ROUTES.LINE_ITEM_UPLOAD.UPLOAD_EVIDENCE_INDIVIDUALLY,
       async (
         req: Request,
         res: Response,
@@ -100,48 +100,48 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await viewUploadEvidenceIndividuallyPage(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   /* GET choose how to upload file page. */
   registerIf(config.featureFlags.lineItemUploadEnabled, () => {
     router.get(
-      ROUTES.CHOOSE_UPLOAD,
-      (req: Request, res: Response, next: NextFunction): void =>{
+      ROUTES.LINE_ITEM_UPLOAD.CHOOSE_UPLOAD,
+      (req: Request, res: Response, next: NextFunction): void => {
         chooseFileUpload(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   /* POST choose how to upload file page. */
   registerIf(config.featureFlags.lineItemUploadEnabled, () => {
     router.post(
-      ROUTES.CHOOSE_UPLOAD,
-      (req: Request, res: Response, next: NextFunction): void =>{
+      ROUTES.LINE_ITEM_UPLOAD.CHOOSE_UPLOAD,
+      (req: Request, res: Response, next: NextFunction): void => {
         submitChooseFileUpload(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   registerIf(config.featureFlags.lineItemUploadEnabled, () => {
     router.post(
-      ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM,
+      ROUTES.LINE_ITEM_UPLOAD.AJAX_UPLOAD,
       evidenceUpload.single("documents"),
       multerErrorHandler,
       uploadEvidenceFileForLineItem,
-    )}
-  );
+    );
+  });
 
   registerIf(config.featureFlags.lineItemUploadEnabled, () => {
     router.post(
-      ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM,
+      ROUTES.LINE_ITEM_UPLOAD.AJAX_DELETE,
       unlinkEvidenceFileFromLineItem,
-    )}
-  );
+    );
+  });
 
   registerIf(config.featureFlags.lineItemUploadEnabled, () => {
     router.get(
-      ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
+      ROUTES.LINE_ITEM_UPLOAD.FILE_UPLOAD,
       async (
         req: Request,
         res: Response,
@@ -149,13 +149,13 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await fileUploadForLineItemPage(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   /* POST linked evidence. */
   registerIf(config.featureFlags.lineItemUploadEnabled, () => {
     router.post(
-      ROUTES.UPLOAD_FILE_FOR_LINE_ITEM,
+      ROUTES.LINE_ITEM_UPLOAD.FILE_UPLOAD,
       async (
         req: Request,
         res: Response,
@@ -163,11 +163,11 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await linkEvidenceToLineItem(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   router.get(
-    ROUTES.POA_EVIDENCE_UPLOAD,
+    ROUTES.POA.EVIDENCE_UPLOAD,
     async (
       req: Request,
       res: Response,
@@ -177,20 +177,23 @@ export const buildRouter = (): Router => {
     },
   );
 
-  router.post(ROUTES.POA_EVIDENCE_UPLOAD, submitPoaEvidenceUpload);
+  router.post(ROUTES.POA.EVIDENCE_UPLOAD, submitPoaEvidenceUpload);
 
   router.post(
-    ROUTES.AJAX_UPLOAD_POA_EVIDENCE,
+    ROUTES.POA.AJAX_UPLOAD_EVIDENCE,
     evidenceUpload.single("documents"),
     multerErrorHandler,
     uploadEvidenceFile,
   );
 
-  router.post(ROUTES.AJAX_DELETE_POA_EVIDENCE, deleteEvidenceFileFromClaim);
+  router.post(
+    ROUTES.POA.AJAX_DELETE_EVIDENCE,
+    deleteEvidenceFileFromClaim,
+  );
 
   registerIf(config.featureFlags.poaProfitCostEnabled, () => {
     router.get(
-      ROUTES.HOW_MANY_CLIENTS_RETAINED,
+      ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED,
       async (
         req: Request,
         res: Response,
@@ -198,12 +201,12 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await howManyClientsRetained(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   registerIf(config.featureFlags.poaProfitCostEnabled, () => {
     router.post(
-      ROUTES.HOW_MANY_CLIENTS_RETAINED,
+      ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED,
       async (
         req: Request,
         res: Response,
@@ -211,18 +214,18 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await submitHowManyClientsRetained(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   router.get(
-    ROUTES.POA_CLAIM_TYPE,
+    ROUTES.POA.CLAIM_TYPE,
     async (req, res, next): Promise<void> => {
       await poaClaimTypePage(req, res, next);
     },
   );
 
   router.post(
-    ROUTES.POA_CLAIM_TYPE,
+    ROUTES.POA.CLAIM_TYPE,
     async (req, res, next): Promise<void> => {
       await submitPoaClaimType(req, res, next);
     },
@@ -230,7 +233,7 @@ export const buildRouter = (): Router => {
 
   registerIf(config.featureFlags.poaProfitCostEnabled, () => {
     router.get(
-      ROUTES.PROFIT_COST_DETAILS,
+      ROUTES.POA.PROFIT_COST.DETAILS,
       async (
         req: Request,
         res: Response,
@@ -238,12 +241,12 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await profitCostDetails(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   registerIf(config.featureFlags.poaProfitCostEnabled, () => {
     router.post(
-      ROUTES.PROFIT_COST_DETAILS,
+      ROUTES.POA.PROFIT_COST.DETAILS,
       async (
         req: Request,
         res: Response,
@@ -251,11 +254,11 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await submitProfitCostDetails(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   router.get(
-    ROUTES.DISBURSEMENT_DETAILS,
+    ROUTES.POA.DISBURSEMENTS.DETAILS,
     async (
       req: Request,
       res: Response,
@@ -266,7 +269,7 @@ export const buildRouter = (): Router => {
   );
 
   router.post(
-    ROUTES.DISBURSEMENT_DETAILS,
+    ROUTES.POA.DISBURSEMENTS.DETAILS,
     async (
       req: Request,
       res: Response,
@@ -277,7 +280,7 @@ export const buildRouter = (): Router => {
   );
 
   router.get(
-    ROUTES.ADD_ANOTHER_DISBURSEMENT,
+    ROUTES.POA.DISBURSEMENTS.ADD,
     async (
       req: Request,
       res: Response,
@@ -288,7 +291,7 @@ export const buildRouter = (): Router => {
   );
 
   router.post(
-    ROUTES.ADD_ANOTHER_DISBURSEMENT,
+    ROUTES.POA.DISBURSEMENTS.ADD,
     async (
       req: Request,
       res: Response,
@@ -299,7 +302,7 @@ export const buildRouter = (): Router => {
   );
 
   router.get(
-    ROUTES.REMOVE_DISBURSEMENT,
+    ROUTES.POA.DISBURSEMENTS.REMOVE,
     async (
       req: Request,
       res: Response,
@@ -310,7 +313,7 @@ export const buildRouter = (): Router => {
   );
 
   router.post(
-    ROUTES.REMOVE_DISBURSEMENT,
+    ROUTES.POA.DISBURSEMENTS.REMOVE,
     async (
       req: Request,
       res: Response,
@@ -322,7 +325,7 @@ export const buildRouter = (): Router => {
 
   registerIf(config.featureFlags.poaProfitCostEnabled, () => {
     router.get(
-      ROUTES.MULTIPLE_CLIENT_HEARINGS,
+      ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS,
       async (
         req: Request,
         res: Response,
@@ -330,12 +333,12 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await multipleClientHearings(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   registerIf(config.featureFlags.poaProfitCostEnabled, () => {
     router.post(
-      ROUTES.MULTIPLE_CLIENT_HEARINGS,
+      ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS,
       async (
         req: Request,
         res: Response,
@@ -343,12 +346,12 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await submitMultipleClientHearings(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   registerIf(config.featureFlags.poaProfitCostEnabled, () => {
     router.get(
-      ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
+      ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE,
       async (
         req: Request,
         res: Response,
@@ -356,12 +359,12 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await profitCostBillLine(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   registerIf(config.featureFlags.poaProfitCostEnabled, () => {
     router.post(
-      ROUTES.CPGFS_PROFIT_COST_BILL_LINE,
+      ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE,
       async (
         req: Request,
         res: Response,
@@ -369,12 +372,12 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await submitProfitCostBillLine(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   registerIf(config.featureFlags.poaProfitCostEnabled, () => {
     router.get(
-      ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
+      ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE,
       async (
         req: Request,
         res: Response,
@@ -382,12 +385,12 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await numberOfClientsStartOfCase(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   registerIf(config.featureFlags.poaProfitCostEnabled, () => {
     router.post(
-      ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE,
+      ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE,
       async (
         req: Request,
         res: Response,
@@ -395,12 +398,12 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await submitNumberOfClientsStartOfCase(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   registerIf(config.featureFlags.poaProfitCostEnabled, () => {
     router.get(
-      ROUTES.ESCAPING_FIXED_FEE,
+      ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE,
       async (
         req: Request,
         res: Response,
@@ -408,12 +411,12 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await escapingFixedFee(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   registerIf(config.featureFlags.poaProfitCostEnabled, () => {
     router.post(
-      ROUTES.ESCAPING_FIXED_FEE,
+      ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE,
       async (
         req: Request,
         res: Response,
@@ -421,11 +424,11 @@ export const buildRouter = (): Router => {
       ): Promise<void> => {
         await submitEscapingFixedFee(req, res, next);
       },
-    )}
-  );
+    );
+  });
 
   router.get(
-    ROUTES.POA_CHECK_YOUR_DETAILS,
+    ROUTES.POA.CHECK_DETAILS,
     async (
       req: Request,
       res: Response,
@@ -436,14 +439,14 @@ export const buildRouter = (): Router => {
   );
 
   router.post(
-    ROUTES.POA_CHECK_YOUR_DETAILS,
+    ROUTES.POA.CHECK_DETAILS,
     (req: Request, res: Response, next: NextFunction): void => {
       submitYourDetails(req, res, next);
     },
   );
 
   router.get(
-    ROUTES.POA_SUBMISSION_SUCCESSFUL,
+    ROUTES.POA.SUBMISSION_SUCCESSFUL,
     (req: Request, res: Response, next: NextFunction): void => {
       poaSubmissionSuccessfulPage(req, res, next);
     },
@@ -484,4 +487,3 @@ export const buildRouter = (): Router => {
 
   return router;
 };
-
