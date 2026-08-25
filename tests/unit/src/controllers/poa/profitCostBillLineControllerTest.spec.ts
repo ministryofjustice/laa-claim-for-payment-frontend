@@ -224,7 +224,7 @@ describe("profitCostBillLineController", () => {
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, {
+        buildRoute(ROUTES.POA.EVIDENCE_UPLOAD, {
           claimId: claimId,
         }),
       ),
@@ -264,7 +264,7 @@ describe("profitCostBillLineController", () => {
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA_CHECK_YOUR_DETAILS, {
+        buildRoute(ROUTES.POA.CHECK_DETAILS, {
           claimId: claimId,
         }),
       ),
@@ -303,7 +303,7 @@ describe("profitCostBillLineController", () => {
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.ESCAPING_FIXED_FEE, {
+        buildRoute(ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE, {
           claimId: claimId,
         }),
       ),

@@ -55,7 +55,7 @@ export async function confirmRemoveExpertLineItem(
           vm: buildViewModel(form),
         });
       } else {
-        res.redirect(buildRoute(ROUTES.POA_CLAIM_TYPE, { claimId }));
+        res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
       }
     }
   } catch (error) {
@@ -104,7 +104,7 @@ export async function submitRemoveExpertLineItem(
           return;
         }
 
-        const nextPage = buildRoute(ROUTES.ADD_ANOTHER_DISBURSEMENT, { claimId });
+        const nextPage = buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, { claimId });
 
         if (form.getValue()) {
           const deleted = await claimService.deleteLineItem(
@@ -124,7 +124,7 @@ export async function submitRemoveExpertLineItem(
           res.redirect(nextPage)
         }
       } else {
-        res.redirect(buildRoute(ROUTES.POA_CLAIM_TYPE, { claimId }));
+        res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
       }
     }
   } catch (error) {

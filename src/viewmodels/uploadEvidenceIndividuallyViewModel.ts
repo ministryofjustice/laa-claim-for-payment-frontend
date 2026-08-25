@@ -70,7 +70,7 @@ export class UploadEvidenceIndividuallyViewModel {
         title: {
           text: lineItem.title,
         },
-        href: buildRoute(ROUTES.UPLOAD_FILE_FOR_LINE_ITEM, {
+        href: buildRoute(ROUTES.LINE_ITEM_UPLOAD.FILE_UPLOAD, {
           claimId: claim.id,
           lineItemId: lineItem.id,
         }),
@@ -88,7 +88,7 @@ export class UploadEvidenceIndividuallyViewModel {
         title: {
           text: this.buildLineItemTitle(lineItem.title, lineItem.date),
         },
-        href: buildRoute(ROUTES.UPLOAD_FILE_FOR_LINE_ITEM, {
+        href: buildRoute(ROUTES.LINE_ITEM_UPLOAD.FILE_UPLOAD, {
           claimId: claim.id,
           lineItemId: lineItem.id,
         }),

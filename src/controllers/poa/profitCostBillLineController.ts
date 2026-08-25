@@ -139,10 +139,10 @@ export async function submitProfitCostBillLine(
 
       const route =
         escaped === true
-          ? ROUTES.POA_EVIDENCE_UPLOAD
+          ? ROUTES.POA.EVIDENCE_UPLOAD
           : escaped === false
-            ? ROUTES.POA_CHECK_YOUR_DETAILS
-            : ROUTES.ESCAPING_FIXED_FEE;
+            ? ROUTES.POA.CHECK_DETAILS
+            : ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE;
 
       res.redirect(buildRoute(route, { claimId }));
     } else {

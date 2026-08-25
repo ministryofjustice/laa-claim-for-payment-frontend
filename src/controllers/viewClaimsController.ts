@@ -40,7 +40,7 @@ export async function handleYourClaimsPage(
   } catch (error) {
     if (error instanceof InvalidPageError) {
       console.info(error.message);
-      res.redirect(`${ROUTES.CLAIMS}?page=${error.pageToRedirectTo}`);
+      res.redirect(`${ROUTES.INDEX}?page=${error.pageToRedirectTo}`);
     } else {
       next(processError(error, `fetching claims details for user`));
     }
@@ -65,7 +65,7 @@ export async function handleYourClaimsActionPage(
   switch (action) {
     case "create": {
       res.redirect(
-        buildRoute(ROUTES.CHOOSE_UPLOAD, {
+        buildRoute(ROUTES.LINE_ITEM_UPLOAD.CHOOSE_UPLOAD, {
           claimId: "019f5c43-d9f0-732e-88b2-1ca29c6c41de", //todo test only
         }),
       );
@@ -79,7 +79,7 @@ export async function handleYourClaimsActionPage(
       const response = await claimService.createClaim(req.axiosMiddleware);
       if (response.status === "success") {
         res.redirect(
-          buildRoute(ROUTES.POA_CLAIM_TYPE, {
+          buildRoute(ROUTES.POA.CLAIM_TYPE, {
             claimId: response.body.toString(),
           }),
         );

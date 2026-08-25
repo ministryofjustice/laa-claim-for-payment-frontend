@@ -66,7 +66,7 @@ export class CheckDetailsViewModel {
         break;
       default:
         throw new AnswerMissingError(
-          buildRoute(ROUTES.POA_CLAIM_TYPE, { claimId: claim.id }),
+          buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId: claim.id }),
         );
     }
 
@@ -134,7 +134,7 @@ export class CheckDetailsViewModel {
       [
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.courtType" },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#courtTypeChoice`,
+          `${buildRoute(ROUTES.POA.PROFIT_COST.DETAILS, { claimId })}#courtTypeChoice`,
           claim.courtType == null
             ? undefined
             : {
@@ -147,7 +147,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientPartyStatus",
           },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#clientStatusChoice`,
+          `${buildRoute(ROUTES.POA.PROFIT_COST.DETAILS, { claimId })}#clientStatusChoice`,
           claim.clientPartyStatus == null
             ? undefined
             : {
@@ -160,7 +160,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.firstSolicitor",
           },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#firstSolicitorChoice`,
+          `${buildRoute(ROUTES.POA.PROFIT_COST.DETAILS, { claimId })}#firstSolicitorChoice`,
           claim.firstActingSolicitorFlag == null
             ? undefined
             : { text: { key: formatBoolean(claim.firstActingSolicitorFlag) } },
@@ -169,7 +169,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.transferOfSolicitor",
           },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#transferOfSolicitorChoice`,
+          `${buildRoute(ROUTES.POA.PROFIT_COST.DETAILS, { claimId })}#transferOfSolicitorChoice`,
           claim.transferOfSolicitorFlag == null
             ? undefined
             : { text: { key: formatBoolean(claim.transferOfSolicitorFlag) } },
@@ -178,7 +178,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientsRetained",
           },
-          buildRoute(ROUTES.HOW_MANY_CLIENTS_RETAINED, { claimId }),
+          buildRoute(ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED, { claimId }),
           claim.clientsRetainedCount == null
             ? undefined
             : {
@@ -191,7 +191,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientsStart",
           },
-          buildRoute(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, { claimId }),
+          buildRoute(ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE, { claimId }),
           claim.clientsStartCount == null
             ? undefined
             : {
@@ -204,7 +204,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.attendedHearings",
           },
-          buildRoute(ROUTES.MULTIPLE_CLIENT_HEARINGS, { claimId }),
+          buildRoute(ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS, { claimId }),
           claim.multiClientHearingFlag == null
             ? undefined
             : { text: { key: formatBoolean(claim.multiClientHearingFlag) } },
@@ -213,7 +213,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.escapedStandardFixedFee",
           },
-          buildRoute(ROUTES.ESCAPING_FIXED_FEE, { claimId }),
+          buildRoute(ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE, { claimId }),
           claim.escapedFlag == null
             ? undefined
             : { text: { key: formatBoolean(claim.escapedFlag) } },
@@ -271,7 +271,7 @@ export class CheckDetailsViewModel {
             ],
             [
               {
-                href: buildRoute(ROUTES.CPGFS_PROFIT_COST_BILL_LINE, {
+                href: buildRoute(ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE, {
                   claimId,
                 }),
                 text: {
@@ -338,7 +338,7 @@ export class CheckDetailsViewModel {
             ],
             [
               {
-                href: buildRoute(ROUTES.REMOVE_DISBURSEMENT, {
+                href: buildRoute(ROUTES.POA.DISBURSEMENTS.REMOVE, {
                   claimId,
                   lineItemId: lineItem.id,
                 }),
@@ -351,7 +351,7 @@ export class CheckDetailsViewModel {
               },
               {
                 href: buildRoute(
-                  ROUTES.DISBURSEMENT_DETAILS,
+                  ROUTES.POA.DISBURSEMENTS.DETAILS,
                   { claimId },
                   { lineItemId: lineItem.id },
                 ),
@@ -388,7 +388,7 @@ export class CheckDetailsViewModel {
         .filter((row) => row !== undefined),
       [
         {
-          href: buildRoute(ROUTES.POA_EVIDENCE_UPLOAD, { claimId: claim.id }),
+          href: buildRoute(ROUTES.POA.EVIDENCE_UPLOAD, { claimId: claim.id }),
           text: {
             key: "common.change",
           },

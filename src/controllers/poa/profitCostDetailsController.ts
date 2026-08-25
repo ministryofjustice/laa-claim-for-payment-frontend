@@ -105,8 +105,8 @@ export async function submitProfitCostDetails(
       );
 
       const redirectUrl = form.getValue().transferOfSolicitor
-        ? buildRoute(ROUTES.HOW_MANY_CLIENTS_RETAINED, { claimId })
-        : buildRoute(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, { claimId });
+        ? buildRoute(ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED, { claimId })
+        : buildRoute(ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE, { claimId });
 
       res.redirect(redirectUrl);
     } else {

@@ -149,7 +149,7 @@ describe("removeDisbursementController", () => {
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA_CLAIM_TYPE, {
+        buildRoute(ROUTES.POA.CLAIM_TYPE, {
           claimId: claimId,
         }),
       ),
@@ -178,7 +178,7 @@ describe("removeDisbursementController", () => {
 
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA_CLAIM_TYPE, {
+        buildRoute(ROUTES.POA.CLAIM_TYPE, {
           claimId: claimId,
         }),
       ),

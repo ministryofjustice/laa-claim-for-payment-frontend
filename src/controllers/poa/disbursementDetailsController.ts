@@ -70,7 +70,7 @@ export async function disbursementDetails(
           vm: new DisbursementDetailsViewModel({ form }),
         });
       } else {
-        res.redirect(buildRoute(ROUTES.POA_CLAIM_TYPE, { claimId }));
+        res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
       }
     } else {
       next(
@@ -144,12 +144,12 @@ export async function submitDisbursementDetails(
         }
 
         res.redirect(
-          buildRoute(ROUTES.ADD_ANOTHER_DISBURSEMENT, {
+          buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, {
             claimId,
           }),
         );
       } else {
-        res.redirect(buildRoute(ROUTES.POA_CLAIM_TYPE, { claimId }));
+        res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
       }
     } else {
       next(

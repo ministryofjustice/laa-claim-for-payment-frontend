@@ -105,7 +105,7 @@ describe("Profit cost details controller", () => {
 
     expect(redirectStub.calledOnce).to.be.true;
 
-    const expectedRoute = buildRoute(ROUTES.HOW_MANY_CLIENTS_RETAINED, {
+    const expectedRoute = buildRoute(ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED, {
       claimId: claimId,
     });
 
@@ -149,7 +149,7 @@ describe("Profit cost details controller", () => {
 
     expect(redirectStub.calledOnce).to.be.true;
 
-    const expectedRoute = buildRoute(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, {
+    const expectedRoute = buildRoute(ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE, {
       claimId: claimId,
     });
 

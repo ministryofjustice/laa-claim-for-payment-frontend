@@ -26,7 +26,7 @@ export class FileUploadForLineItemViewModel {
     lineItem: LineItem,
   ) {
     this.uploadUrl = buildRoute(
-      ROUTES.AJAX_UPLOAD_FILE_FOR_LINE_ITEM,
+      ROUTES.LINE_ITEM_UPLOAD.AJAX_UPLOAD,
       {
         claimId: claim.id,
         lineItemId: lineItem.id,
@@ -35,7 +35,7 @@ export class FileUploadForLineItemViewModel {
     );
 
     this.deleteUrl = buildRoute(
-      ROUTES.AJAX_DELETE_FILE_FOR_LINE_ITEM,
+      ROUTES.LINE_ITEM_UPLOAD.AJAX_DELETE,
       {
         claimId: claim.id,
         lineItemId: lineItem.id,
@@ -46,7 +46,7 @@ export class FileUploadForLineItemViewModel {
     this.title = FileUploadForLineItemViewModel.buildTitle(lineItem);
 
     this.saveAndContinueHref = buildRoute(
-      ROUTES.UPLOAD_EVIDENCE_INDIVIDUALLY,
+      ROUTES.LINE_ITEM_UPLOAD.UPLOAD_EVIDENCE_INDIVIDUALLY,
       {
         claimId: claim.id,
       },

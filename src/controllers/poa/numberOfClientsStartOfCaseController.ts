@@ -39,7 +39,7 @@ const controller = createRadioQuestionController({
   renderErrorContext: "rendering number of clients start of case page",
   submitErrorContext: "submitting number of clients start of case page",
   getRedirectUrl: (req) =>
-    buildRoute(ROUTES.MULTIPLE_CLIENT_HEARINGS, {
+    buildRoute(ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS, {
       claimId: UUID.parse(req.params.claimId),
     }),
   getValue: (claim) => claim.clientsStartCount,

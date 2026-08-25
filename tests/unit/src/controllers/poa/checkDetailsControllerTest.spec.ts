@@ -80,7 +80,7 @@ describe("Check Details Controller", () => {
 
       expect(
         (res.redirect as sinon.SinonStub).calledWith(
-          buildRoute(ROUTES.POA_CLAIM_TYPE, {
+          buildRoute(ROUTES.POA.CLAIM_TYPE, {
             claimId: claimId,
           }),
         ),
@@ -119,7 +119,7 @@ describe("Check Details Controller", () => {
     it("should redirect to success page with claimId", () => {
       submitYourDetails(req as Request, res as Response, next);
 
-      const expectedRoute = ROUTES.POA_SUBMISSION_SUCCESSFUL.replace(
+      const expectedRoute = ROUTES.POA.SUBMISSION_SUCCESSFUL.replace(
         ":claimId",
         claimId.toString(),
       );

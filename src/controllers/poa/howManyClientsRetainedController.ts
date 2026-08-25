@@ -85,11 +85,11 @@ export async function submitHowManyClientsRetained(
       );
 
       const redirectByChoice: Record<Count, string> = {
-        [Count.ZERO]: buildRoute(ROUTES.NUMBER_OF_CLIENTS_START_OF_CASE, {
+        [Count.ZERO]: buildRoute(ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE, {
           claimId,
         }),
-        [Count.ONE]: buildRoute(ROUTES.MULTIPLE_CLIENT_HEARINGS, { claimId }),
-        [Count.TWO_OR_MORE]: buildRoute(ROUTES.MULTIPLE_CLIENT_HEARINGS, {
+        [Count.ONE]: buildRoute(ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS, { claimId }),
+        [Count.TWO_OR_MORE]: buildRoute(ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS, {
           claimId,
         }),
       };
