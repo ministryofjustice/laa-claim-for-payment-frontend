@@ -104,7 +104,7 @@ export function requiresAuth() {
  */
 export const oidcSetup = (app: Application): void => {
   const BASE_URL = getRequiredEnv('BASE_URL');
-  const SCOPE = getRequiredEnv('OIDC_SCOPE') + " " + getRequiredEnv('CLAIMS_API_SCOPE');
+  const SCOPE = `${getRequiredEnv('OIDC_SCOPE')} ${getRequiredEnv('CLAIMS_API_SCOPE')}`;
   const CALLBACK_PATH = getRequiredEnv('OIDC_CALLBACK_PATH');
   const LOGIN_PATH = getRequiredEnv('OIDC_LOGIN_PATH');
   const LOGOUT_PATH = getRequiredEnv('OIDC_LOGOUT_PATH');
@@ -162,6 +162,7 @@ export const oidcSetup = (app: Application): void => {
 
       const idTokenPayload = decodeIdToken(tokens.id_token);
 
+      // eslint-disable-next-line require-atomic-updates -- sess is a snapshot captured before await
       req.session.oidc = {
         ...sess,
         tokens,
@@ -171,11 +172,10 @@ export const oidcSetup = (app: Application): void => {
       // redirect to home page
       res.redirect('/');
     } catch (err) {
-
       handleCallbackError(err, req);
 
-  next(err);
-}
+      next(err);
+    }
   });
 
   // GET /logout -> clear session, optionally call OP logout if available

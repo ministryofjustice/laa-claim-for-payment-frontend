@@ -1,8 +1,8 @@
 import {
   type Claim,
   CostType,
+  type DisbursementLineItem,
   type EvidenceItem,
-  type ExpertCostLineItem,
   type ProfitCostBillLineItem
 } from "#src/types/Claim.js";
 import type { Table } from "#src/viewmodels/components/table.js";
@@ -16,12 +16,6 @@ import {
 } from "#src/viewmodels/components/summaryList.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import {
-  clientStatusFieldName,
-  courtTypeFieldName,
-  firstSolicitorFieldName,
-  transferOfSolicitorFieldName
-} from "#src/controllers/poa/profitCostDetailsController.js";
 import { AnswerMissingError } from "#src/types/errors.js";
 import { formatBoolean, formatClaimed, formatDateReadable } from "#src/helpers/index.js";
 
@@ -58,9 +52,17 @@ export class CheckDetailsViewModel {
         break;
       case CostType.EXPERT_COST:
         this.lineItemSummaryLists =
-          CheckDetailsViewModel.buildExpertCostLineItemSummaryLists(claim);
+          CheckDetailsViewModel.buildLineItemSummaryLists(
+            claim,
+            "pages.poa.checkYourDetails.cya.disbursementBillLine.title.expertCost",
+          );
         break;
       case CostType.NON_EXPERT_DISBURSEMENT:
+        this.lineItemSummaryLists =
+          CheckDetailsViewModel.buildLineItemSummaryLists(
+            claim,
+            "pages.poa.checkYourDetails.cya.disbursementBillLine.title.nonExpertDisbursement",
+          );
         break;
       default:
         throw new AnswerMissingError(
@@ -132,7 +134,7 @@ export class CheckDetailsViewModel {
       [
         buildSummaryListRowWithChangeLink(
           { key: "pages.poa.checkYourDetails.cya.profitCostDetails.courtType" },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${courtTypeFieldName}`,
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#courtTypeChoice`,
           claim.courtType == null
             ? undefined
             : {
@@ -145,7 +147,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientPartyStatus",
           },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${clientStatusFieldName}`,
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#clientStatusChoice`,
           claim.clientPartyStatus == null
             ? undefined
             : {
@@ -158,7 +160,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.firstSolicitor",
           },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${firstSolicitorFieldName}`,
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#firstSolicitorChoice`,
           claim.firstActingSolicitorFlag == null
             ? undefined
             : { text: { key: formatBoolean(claim.firstActingSolicitorFlag) } },
@@ -167,7 +169,7 @@ export class CheckDetailsViewModel {
           {
             key: "pages.poa.checkYourDetails.cya.profitCostDetails.transferOfSolicitor",
           },
-          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#${transferOfSolicitorFieldName}`,
+          `${buildRoute(ROUTES.PROFIT_COST_DETAILS, { claimId })}#transferOfSolicitorChoice`,
           claim.transferOfSolicitorFlag == null
             ? undefined
             : { text: { key: formatBoolean(claim.transferOfSolicitorFlag) } },
@@ -194,7 +196,7 @@ export class CheckDetailsViewModel {
             ? undefined
             : {
                 text: {
-                  key: `pages.howManyClientsRetained.${claim.clientsStartCount}.text`,
+                  key: `pages.numberOfClientsStartOfCase.${claim.clientsStartCount}.text`,
                 },
               },
         ),
@@ -286,56 +288,57 @@ export class CheckDetailsViewModel {
     return result;
   }
 
-  private static buildExpertCostLineItemSummaryLists(
+  private static buildLineItemSummaryLists(
     claim: Claim,
+    title: string,
   ): SummaryList[] {
     const result: SummaryList[] = [];
     const { id: claimId } = claim;
     claim.lineItems
       // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
-      .map((lineItem) => lineItem as ExpertCostLineItem)
-      .forEach((lineItem: ExpertCostLineItem, index: number) => {
+      .map((lineItem) => lineItem as DisbursementLineItem)
+      .forEach((lineItem: DisbursementLineItem, index: number) => {
         result.push(
           buildSummaryListWithCard(
             {
-              key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title",
+              key: title,
             },
-            `expert-cost-bill-line-${index + 1}`,
+            `disbursement-bill-line-${index + 1}`,
             [
               buildSummaryListRow(
                 {
-                  key: "pages.poa.checkYourDetails.cya.expertCostBillLine.date",
+                  key: "pages.poa.checkYourDetails.cya.disbursementBillLine.date",
                 },
                 { text: formatDateReadable(lineItem.date.toDate()) },
               ),
               buildSummaryListRow(
                 {
-                  key: "pages.poa.checkYourDetails.cya.expertCostBillLine.actualNetValue",
+                  key: "pages.poa.checkYourDetails.cya.disbursementBillLine.actualNetValue",
                 },
                 { text: formatClaimed(lineItem.actualNetValue) },
               ),
               buildSummaryListRow(
                 {
-                  key: "pages.poa.checkYourDetails.cya.expertCostBillLine.doesVatApply",
+                  key: "pages.poa.checkYourDetails.cya.disbursementBillLine.doesVatApply",
                 },
                 { text: { key: formatBoolean(lineItem.vatApplicable) } },
               ),
               buildSummaryListRow(
                 {
-                  key: "pages.poa.checkYourDetails.cya.expertCostBillLine.feeEarnerName",
+                  key: "pages.poa.checkYourDetails.cya.disbursementBillLine.feeEarnerName",
                 },
                 { text: lineItem.feeEarnerName },
               ),
               buildSummaryListRow(
                 {
-                  key: "pages.poa.checkYourDetails.cya.expertCostBillLine.description",
+                  key: "pages.poa.checkYourDetails.cya.disbursementBillLine.description",
                 },
                 { text: lineItem.title },
               ),
             ],
             [
               {
-                href: buildRoute(ROUTES.REMOVE_EXPERT_COST_DETAILS, {
+                href: buildRoute(ROUTES.REMOVE_DISBURSEMENT, {
                   claimId,
                   lineItemId: lineItem.id,
                 }),
@@ -343,12 +346,12 @@ export class CheckDetailsViewModel {
                   key: "common.delete",
                 },
                 visuallyHiddenText: {
-                  key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title",
+                  key: "pages.poa.checkYourDetails.cya.disbursementBillLine.title",
                 },
               },
               {
                 href: buildRoute(
-                  ROUTES.EXPERT_COST_DETAILS,
+                  ROUTES.DISBURSEMENT_DETAILS,
                   { claimId },
                   { lineItemId: lineItem.id },
                 ),
@@ -356,7 +359,7 @@ export class CheckDetailsViewModel {
                   key: "common.change",
                 },
                 visuallyHiddenText: {
-                  key: "pages.poa.checkYourDetails.cya.expertCostBillLine.title",
+                  key: "pages.poa.checkYourDetails.cya.disbursementBillLine.title",
                 },
               },
             ],

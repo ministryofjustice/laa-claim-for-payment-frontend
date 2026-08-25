@@ -1,6 +1,8 @@
 import type { Message } from "#src/viewmodels/components/message.js";
-import { type FieldValidationError, getError, getErrorSummary } from "#src/helpers/validation.js";
+import type { BooleanChoice } from "#src/models/booleanChoice.js";
+import { buildRadios, type Radios } from "#src/viewmodels/components/radios.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
+import type { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 export interface RadioQuestionOptions<ChoiceType> {
   value: ChoiceType;
@@ -11,23 +13,19 @@ export interface RadioQuestionOptions<ChoiceType> {
   checked?: boolean;
 }
 
-export interface RadioQuestionViewModelParams<ChoiceType> {
-  title: Message;
-  fieldName: string;
-  fieldId: string;
-  choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
-  selectedValue?: ChoiceType;
-  errors?: FieldValidationError[];
+export interface RadioQuestionViewModelParams<ChoiceType, ValueType> {
+  title: string;
+  form: RadioQuestionForm<ChoiceType, ValueType>;
+  isLegendPageHeading: boolean;
 }
 
 /**
  * View model for the Radio Questions page.
  */
-export class RadioQuestionViewModel<ChoiceType> {
+export class RadioQuestionViewModel<ChoiceType, ValueType> {
   readonly title: Message;
-  readonly choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
-  readonly form: RadioQuestionForm<ChoiceType>;
-  readonly errorSummary: ErrorSummary;
+  readonly radios: Radios<ChoiceType>;
+  readonly errorSummary?: ErrorSummary;
 
   /**
    * Creates a radio question page view model.
@@ -36,56 +34,22 @@ export class RadioQuestionViewModel<ChoiceType> {
    */
   constructor({
     title,
-    fieldName,
-    fieldId,
-    choices,
-    selectedValue,
-    errors = [],
-  }: RadioQuestionViewModelParams<ChoiceType>) {
-    this.title = title;
-    this.choices = choices;
-    this.form = radioQuestionForm<ChoiceType>(
-      fieldName,
-      fieldId,
-      choices,
-      errors,
-      selectedValue,
+    form,
+    isLegendPageHeading,
+  }: RadioQuestionViewModelParams<ChoiceType, ValueType>) {
+    this.title = {
+      key: title,
+    };
+    this.radios = buildRadios(
+      form.fields.field,
+      this.title,
+      isLegendPageHeading,
     );
-    this.errorSummary = getErrorSummary(errors)
+    this.errorSummary = form.getErrorSummary();
   }
 }
 
-export interface RadioQuestionForm<ChoiceType> {
-  fieldName: string;
-  fieldId: string;
-  choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>;
-  error?: FieldValidationError;
-}
-
-/**
- * Radio question form builder.
- * @param {string} fieldName field name
- * @param {string} fieldId field ID
- * @param {ReadonlyArray<RadioQuestionOptions>} choices radio choices
- * @param {FieldValidationError[]} errors errors
- * @param {unknown} selectedValue selected value
- * @returns {RadioQuestionForm} radio question form object
- */
-// eslint-disable-next-line @typescript-eslint/max-params -- ignore
-export function radioQuestionForm<ChoiceType>(
-  fieldName: string,
-  fieldId: string,
-  choices: ReadonlyArray<RadioQuestionOptions<ChoiceType>>,
-  errors: FieldValidationError[],
-  selectedValue?: unknown,
-): RadioQuestionForm<ChoiceType> {
-  return {
-    fieldName,
-    fieldId,
-    choices: choices.map((choice) => ({
-      ...choice,
-      checked: choice.value === selectedValue,
-    })),
-    error: getError(errors, fieldName),
-  };
-}
+export type YesNoQuestionViewModel = RadioQuestionViewModel<
+  BooleanChoice,
+  boolean
+>;

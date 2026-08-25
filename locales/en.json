@@ -96,7 +96,7 @@
         "text" : "Associated to specific line items",
         "hint" : "Upload evidence individually, and associate specific evidence with individual work items or disbursements. This makes it less likely that your claim will be ejected due to a lack of documentation"
       },
-      "error" : {
+      "errors" : {
         "empty" : "Select how you want to upload your evidence"
       }
     },
@@ -300,8 +300,11 @@
             "title": "Evidence",
             "value": "{fileSize}<br>{submittedOn}"
           },
-          "expertCostBillLine": {
-            "title": "Expert cost bill line",
+          "disbursementBillLine": {
+            "title": {
+              "expertCost": "Expert cost bill line",
+              "nonExpertDisbursement": "Non-expert disbursement bill line"
+            },
             "date": "Date",
             "actualNetValue": "Actual net value",
             "doesVatApply": "Does VAT apply?",
@@ -371,12 +374,81 @@
           "errors": {
             "empty": "Select yes if you wish to add another expert cost"
           }
+        },
+        "remove": {
+          "title" : "Are you sure you want to remove this expert cost?",
+          "errors": {
+            "empty": "Select yes if you want to remove this expert cost"
+          }
         }
       },
-      "removeExpertLineItem": {
-        "title" : "Are you sure you want to remove this expert cost?",
-        "errors": {
-          "empty": "Select yes if you want to remove this expert cost"
+      "nonExpertDisbursementDetails": {
+        "title": "Non-expert disbursement",
+        "activityDate": {
+          "title": "Activity date",
+          "hint": "For example, 27 3 2007",
+          "day": "Day",
+          "month": "Month",
+          "year": "Year",
+          "errors": {
+            "empty": "Enter the activity date",
+            "invalid": "Activity date must be a real date",
+            "future": "Activity date must be today or in the past",
+            "incomplete": {
+              "day": "Activity date must include a day",
+              "month": "Activity date must include a month",
+              "year": "Activity date must include a year",
+              "dayAndMonth": "Activity date must include a day and month",
+              "dayAndYear": "Activity date must include a day and year",
+              "monthAndYear": "Activity date must include a month and year"
+            }
+          }
+        },
+        "actualNetValue": {
+          "title": "Actual net value",
+          "errors": {
+            "empty": "Enter actual net value",
+            "invalid": "Actual net value must be a number",
+            "pence": "Actual net value must include pence, like 123.45 or 156.00"
+          }
+        },
+        "vatApplies": {
+          "title": "Does VAT apply?",
+          "yes": "Yes",
+          "no": "No",
+          "errors": {
+            "empty": "Select yes if VAT applies"
+          }
+        },
+        "feeEarnerName": {
+          "title": "Fee earner name",
+          "errors": {
+            "empty": "Enter a fee earner name",
+            "invalid": "Fee earner name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
+          }
+        },
+        "description": {
+          "title": "Description",
+          "errors": {
+            "empty": "Enter a description of the expert cost",
+            "invalid": "Description must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
+          }
+        },
+        "addAnother": {
+          "title": {
+            "singular": "You have added a non-expert disbursement",
+            "multiple": "You have added {count} non-expert disbursements"
+          },
+          "question": "Do you need to add another non-expert disbursement?",
+          "errors": {
+            "empty": "Select yes if you wish to add another non-expert disbursement"
+          }
+        },
+        "remove": {
+          "title" : "Are you sure you want to remove this non-expert disbursement?",
+          "errors": {
+            "empty": "Select yes if you want to remove this non-expert disbursement"
+          }
         }
       }
     },
@@ -462,6 +534,9 @@
       },
       "filesAdded": {
         "title": "Files added"
+      },
+      "errors": {
+        "empty": "You must upload evidence before you can continue"
       }
     }
   },

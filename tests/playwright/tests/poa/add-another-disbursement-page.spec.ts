@@ -1,23 +1,21 @@
 import { expect, test } from "../../fixtures/index.js";
-import { MultipleClientHearingsPage } from "#tests/playwright/pages/poa/MultipleClientHearingsPage.js";
-import {
-  claim1Id,
-  expertCostDraftClaim1Id,
-} from "#tests/playwright/factories/handlers/api.js";
-import { AddAnotherExpertCostPage } from "#tests/playwright/pages/poa/AddAnotherExpertCostPage.js";
+import { expertCostDraftClaim2Id } from "#tests/playwright/factories/handlers/api.js";
+import { AddAnotherDisbursementPage } from "#tests/playwright/pages/poa/AddAnotherDisbursementPage.js";
 
-test.describe("Add another expert cost page", () => {
-  test("displays the page", async ({
-    page,
-    checkAccessibility,
-  }) => {
-    const addAnotherExpertCostPage = new AddAnotherExpertCostPage(page, expertCostDraftClaim1Id);
+test.describe("Add another disbursement page", () => {
+  test("displays the page", async ({ page, checkAccessibility }) => {
+    const addAnotherExpertCostPage = new AddAnotherDisbursementPage(
+      page,
+      expertCostDraftClaim2Id,
+    );
 
     await addAnotherExpertCostPage.navigate();
     await addAnotherExpertCostPage.waitForLoad();
 
     await expect(addAnotherExpertCostPage.heading).toBeVisible();
-    await expect(addAnotherExpertCostPage.heading).toHaveText("You have added an expert cost");
+    await expect(addAnotherExpertCostPage.heading).toHaveText(
+      "You have added an expert cost",
+    );
     await expect(addAnotherExpertCostPage.radio.yesRadio).toBeVisible();
     await expect(addAnotherExpertCostPage.radio.noRadio).toBeVisible();
     await expect(addAnotherExpertCostPage.saveAndContinueButton).toBeVisible();
@@ -26,7 +24,10 @@ test.describe("Add another expert cost page", () => {
   });
 
   test("redirects to expert cost when Yes is selected", async ({ page }) => {
-    const addAnotherExpertCostPage = new AddAnotherExpertCostPage(page, expertCostDraftClaim1Id);
+    const addAnotherExpertCostPage = new AddAnotherDisbursementPage(
+      page,
+      expertCostDraftClaim2Id,
+    );
 
     await addAnotherExpertCostPage.navigate();
     await addAnotherExpertCostPage.waitForLoad();
@@ -35,12 +36,17 @@ test.describe("Add another expert cost page", () => {
     await addAnotherExpertCostPage.saveAndContinueButton.click();
 
     await expect(page).toHaveURL(
-      new RegExp(`/claims/${expertCostDraftClaim1Id}/poa/expert-cost-details$`)
+      new RegExp(
+        `/claims/${expertCostDraftClaim2Id}/poa/disbursement-details$`,
+      ),
     );
   });
 
   test("redirects to evidence upload when No is selected", async ({ page }) => {
-    const addAnotherExpertCostPage = new AddAnotherExpertCostPage(page, expertCostDraftClaim1Id);
+    const addAnotherExpertCostPage = new AddAnotherDisbursementPage(
+      page,
+      expertCostDraftClaim2Id,
+    );
 
     await addAnotherExpertCostPage.navigate();
     await addAnotherExpertCostPage.waitForLoad();
@@ -49,12 +55,15 @@ test.describe("Add another expert cost page", () => {
     await addAnotherExpertCostPage.saveAndContinueButton.click();
 
     await expect(page).toHaveURL(
-      new RegExp(`/claims/${expertCostDraftClaim1Id}/poa/evidence-upload$`)
+      new RegExp(`/claims/${expertCostDraftClaim2Id}/poa/evidence-upload$`),
     );
   });
 
   test("show an error summary when nothing is selected", async ({ page }) => {
-    const addAnotherExpertCostPage = new AddAnotherExpertCostPage(page, expertCostDraftClaim1Id);
+    const addAnotherExpertCostPage = new AddAnotherDisbursementPage(
+      page,
+      expertCostDraftClaim2Id,
+    );
 
     await addAnotherExpertCostPage.navigate();
     await addAnotherExpertCostPage.waitForLoad();
@@ -62,9 +71,13 @@ test.describe("Add another expert cost page", () => {
     await addAnotherExpertCostPage.saveAndContinueButton.click();
 
     await expect(addAnotherExpertCostPage.errorSummary).toBeVisible();
-    await expect(addAnotherExpertCostPage.errorSummary).toContainText("Select yes if you wish to add another expert cost");
+    await expect(addAnotherExpertCostPage.errorSummary).toContainText(
+      "Select yes if you wish to add another expert cost",
+    );
 
     await expect(addAnotherExpertCostPage.inlineError).toBeVisible();
-    await expect(addAnotherExpertCostPage.inlineError).toContainText("Select yes if you wish to add another expert cost");
+    await expect(addAnotherExpertCostPage.inlineError).toContainText(
+      "Select yes if you wish to add another expert cost",
+    );
   });
 });

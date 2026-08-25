@@ -1,73 +1,61 @@
 import type { ProfitCostBillLineForm } from "#src/helpers/profitCostBillLineValidation.js";
+import { buildRadios, type Radios } from "#src/viewmodels/components/radios.js";
+import type { BooleanChoice } from "#src/models/booleanChoice.js";
 import {
-  type FieldValidationError,
-  getError,
-  getErrorSummary,
-  getStringValue,
-} from "#src/helpers/validation.js";
+  buildDateInput,
+  type DateInput,
+} from "#src/viewmodels/components/dateInput.js";
+import {
+  buildTextInput,
+  buildMonetaryInput,
+  type TextInput,
+} from "#src/viewmodels/components/textInput.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
-import { radioQuestionForm } from "#src/viewmodels/radioQuestionViewModel.js";
-import { type BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
-import type { UUID } from "uuidv7";
 
 export interface ProfitCostBillLineViewModelParams {
-  claimId: UUID;
-  form?: ProfitCostBillLineForm;
-  errors?: FieldValidationError[];
+  form: ProfitCostBillLineForm;
 }
 
 /**
  * View model for the POA CPGFS profit cost bill line page.
  */
 export class ProfitCostBillLineViewModel {
-  readonly claimId: string;
   readonly title: string;
-  readonly form;
-  readonly errorSummary: ErrorSummary;
+  readonly activityDateInput: DateInput;
+  readonly actualNetProfitCostExcludingAdvocacyInput: TextInput;
+  readonly actualNetAdvocacyCostsInput: TextInput;
+  readonly vatApplicableRadios: Radios<BooleanChoice>;
+  readonly feeEarnerNameInput: TextInput;
+  readonly errorSummary?: ErrorSummary;
 
   /**
    * Creates a profit cost bill line page view model.
    *
    * @param {ProfitCostBillLineViewModelParams} params View model params.
    */
-  constructor({
-    claimId,
-    form = {},
-    errors = [],
-  }: ProfitCostBillLineViewModelParams) {
-    this.claimId = claimId.toString();
-    this.title = "pages.profitCostBillLine.title";
+  constructor({ form }: ProfitCostBillLineViewModelParams) {
+    this.title = `${form.messagePrefix}.title`;
 
-    this.form = {
-      activityDate: {
-        value: {
-          day: getStringValue(form.activityDateDay),
-          month: getStringValue(form.activityDateMonth),
-          year: getStringValue(form.activityDateYear),
-        },
-        error: getError(errors, "activityDate"),
-      },
-      actualNetProfitCostExcludingAdvocacy: {
-        value: getStringValue(form.actualNetProfitCostExcludingAdvocacy),
-        error: getError(errors, "actualNetProfitCostExcludingAdvocacy"),
-      },
-      actualNetAdvocacyCosts: {
-        value: getStringValue(form.actualNetAdvocacyCosts),
-        error: getError(errors, "actualNetAdvocacyCosts"),
-      },
-      vatApplies: radioQuestionForm<BooleanChoice>(
-        "vatApplies",
-        "vatApplies",
-        booleanChoices,
-        errors,
-        form.vatApplies,
-      ),
-      feeEarnerName: {
-        value: getStringValue(form.feeEarnerName),
-        error: getError(errors, "feeEarnerName"),
-      },
-    };
+    this.activityDateInput = buildDateInput(form.fields.activityDate);
 
-    this.errorSummary = getErrorSummary(errors);
+    this.actualNetProfitCostExcludingAdvocacyInput = buildMonetaryInput(
+      form.fields.actualNetProfitCostExcludingAdvocacy,
+    );
+
+    this.actualNetAdvocacyCostsInput = buildMonetaryInput(
+      form.fields.actualNetAdvocacyCosts,
+    );
+
+    this.vatApplicableRadios = buildRadios(
+      form.fields.vatApplies,
+      {
+        key: `${form.fields.vatApplies.messagePrefix}.title`,
+      },
+      false,
+    );
+
+    this.feeEarnerNameInput = buildTextInput(form.fields.feeEarnerName);
+
+    this.errorSummary = form.getErrorSummary();
   }
 }

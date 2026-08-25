@@ -11,7 +11,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      {% if vm.errorSummary.errorList.length %}
+      {% if vm.errorSummary %}
         {{ govukErrorSummary(vm.errorSummary | translate) }}
       {% endif %}
 
@@ -40,20 +40,7 @@
           {{ t('pages.escapingFixedFee.p3') }}
         </p>
 
-        {{ govukRadios({
-          name: vm.form.fieldName,
-          fieldset: {
-            legend: {
-              text: vm.title,
-              isPageHeading: false,
-              classes: "govuk-fieldset__legend--m"
-            }
-          },
-          errorMessage: vm.form.error and {
-            text: vm.form.error.text
-          },
-          items: vm.form.choices
-        } | translate) }}
+        {{ govukRadios(vm.radios | translate) }}
 
         {{ govukButton({
           text: t("common.saveAndContinue")

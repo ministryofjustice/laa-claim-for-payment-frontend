@@ -1,0 +1,44 @@
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% extends "base.njk" %}
+
+{% set title = t(vm.title) %}
+{% set showBackLink = true %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      {% if vm.errorSummary %}
+        {{ govukErrorSummary(vm.errorSummary | translate) }}
+      {% endif %}
+
+      <form method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+        <h1 class="govuk-heading-l">
+          {{ t(vm.title) }}
+        </h1>
+
+        {{ govukDateInput(vm.activityDateInput | translate) }}
+
+        {{ govukInput(vm.actualNetValueInput | translate) }}
+
+        {{ govukRadios(vm.vatApplicableRadios | translate) }}
+
+        {{ govukInput(vm.feeEarnerNameInput | translate) }}
+
+        {{ govukTextarea(vm.descriptionInput | translate) }}
+
+        {{ govukButton({
+          text: t("common.saveAndContinue")
+        }) }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

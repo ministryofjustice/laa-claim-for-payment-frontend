@@ -1,15 +1,12 @@
-import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
+import { RadioQuestionViewModel, type YesNoQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { booleanChoices } from "#src/models/booleanChoice.js";
-import { validateBooleanInput } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { formatBooleanChoice } from "#src/helpers/dataFormatters.js";
 import { draftService } from "#src/services/draftService.js";
-
-const escapingFixedFeeFieldName = "escapingFixedFee" as const;
+import { BooleanField } from "#src/helpers/fields.js";
+import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 /**
  * get how many clients retained view
@@ -31,17 +28,13 @@ export async function escapingFixedFee(
     );
 
     if (claim.status === "success") {
+      const form = new YesNoQuestionForm(buildField());
+      if (claim.body.escapedFlag != null) {
+        form.fill(claim.body.escapedFlag);
+      }
       res.render("main/poa/escapingFixedFeeView.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.escapingFixedFee.question",
-          },
-          fieldName: escapingFixedFeeFieldName,
-          fieldId: escapingFixedFeeFieldName,
-          choices: booleanChoices,
-          selectedValue: formatBooleanChoice(claim.body.escapedFlag),
-        }),
+        vm: buildViewModel(form),
       });
     } else {
       next(
@@ -72,30 +65,16 @@ export async function submitEscapingFixedFee(
   next: NextFunction,
 ): Promise<void> {
   try {
+    const field = buildField();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-    const selectedChoice: unknown = req.body?.[escapingFixedFeeFieldName];
+    const selectedChoice: unknown = req.body?.[field.name];
+    const form = new YesNoQuestionForm(field);
+    form.validate(selectedChoice);
 
-    const validationResult = validateBooleanInput(
-      selectedChoice,
-      escapingFixedFeeFieldName,
-      escapingFixedFeeFieldName,
-      "pages.escapingFixedFee",
-    );
-
-    if (!validationResult.isValid) {
+    if (form.isNotValid()) {
       res.status(400).render("main/poa/escapingFixedFeeView.njk", {
         csrfToken: res.locals.csrfToken,
-        vm: new RadioQuestionViewModel({
-          title: {
-            key: "pages.escapingFixedFee.question",
-          },
-          fieldName: escapingFixedFeeFieldName,
-          fieldId: escapingFixedFeeFieldName,
-          choices: booleanChoices,
-          selectedValue:
-            typeof selectedChoice === "string" ? selectedChoice : undefined,
-          errors: validationResult.errors,
-        }),
+        vm: buildViewModel(form),
       });
       return;
     }
@@ -111,7 +90,7 @@ export async function submitEscapingFixedFee(
       await draftService.setEscapedFlag(
         req.axiosMiddleware,
         claim.body,
-        validationResult.value,
+        form.getValue(),
       );
 
       res.redirect(buildRoute(ROUTES.CPGFS_PROFIT_COST_BILL_LINE, { claimId }));
@@ -130,4 +109,19 @@ export async function submitEscapingFixedFee(
     );
     next(processedError);
   }
+}
+
+function buildField(): BooleanField {
+  const messagePrefix = "pages.escapingFixedFee";
+  return new BooleanField(messagePrefix, "escapingFixedFee", "escapingFixedFee");
+}
+
+function buildViewModel(
+  form: YesNoQuestionForm,
+): YesNoQuestionViewModel {
+  return new RadioQuestionViewModel({
+    title: `${form.messagePrefix}.question`,
+    form,
+    isLegendPageHeading: false,
+  });
 }

@@ -152,7 +152,7 @@ describe("poaEvidenceUploadController", () => {
 
       expect(renderArgs.vm.errorSummary.errorList).to.have.length(1);
       expect(renderArgs.vm.errorSummary.errorList[0].text.key).to.equal(
-        "multiFileUpload.errors.noFileSelected",
+        "pages.poaEvidenceUpload.errors.empty",
       );
     });
   });

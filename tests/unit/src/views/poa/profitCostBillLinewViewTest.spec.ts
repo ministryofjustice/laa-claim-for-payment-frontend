@@ -2,21 +2,19 @@ import { config as chaiConfig, expect } from "chai";
 import { CheerioAPI } from "cheerio";
 import { renderView } from "#tests/unit/src/views/base/renderView.js";
 import { ProfitCostBillLineViewModel } from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
-import { V7Generator } from "uuidv7";
+import { ProfitCostBillLineForm } from "#src/helpers/profitCostBillLineValidation.js";
 
 chaiConfig.truncateThreshold = 0;
-
-const claimId = new V7Generator().generate();
 
 describe("views/main/poa/profitCostBillLineView.njk", () => {
   let $: CheerioAPI;
 
+  const form = new ProfitCostBillLineForm();
+
   beforeEach(async () => {
     $ = await renderView("main/poa/profitCostBillLineView.njk", {
       csrfToken: "test-csrf-token",
-      vm: new ProfitCostBillLineViewModel({
-        claimId: claimId,
-      }),
+      vm: new ProfitCostBillLineViewModel({ form }),
     });
   });
 
@@ -129,58 +127,22 @@ describe("views/main/poa/profitCostBillLineView.njk", () => {
 describe("views/main/poa/profitCostBillLineView.njk with errors", () => {
   let $: CheerioAPI;
 
+  const form = new ProfitCostBillLineForm();
+
+  form.validate({
+    activityDateDay: "",
+    activityDateMonth: "",
+    activityDateYear: "",
+    actualNetProfitCostExcludingAdvocacy: "",
+    actualNetAdvocacyCosts: "",
+    vatApplies: "",
+    feeEarnerName: "",
+  });
+
   beforeEach(async () => {
     $ = await renderView("main/poa/profitCostBillLineView.njk", {
       csrfToken: "test-csrf-token",
-      vm: new ProfitCostBillLineViewModel({
-        claimId: claimId,
-        form: {
-          activityDateDay: "",
-          activityDateMonth: "",
-          activityDateYear: "",
-          actualNetProfitCostExcludingAdvocacy: "",
-          actualNetAdvocacyCosts: "",
-          vatApplies: "",
-          feeEarnerName: "",
-        },
-        errors: [
-          {
-            fieldName: "activityDate",
-            href: "#activityDate-day",
-            text: {
-              key: "pages.profitCostBillLine.activityDate.errors.empty"
-            },
-          },
-          {
-            fieldName: "actualNetProfitCostExcludingAdvocacy",
-            href: "#actualNetProfitCostExcludingAdvocacy",
-            text: {
-              key: "pages.profitCostBillLine.actualNetProfitCostExcludingAdvocacy.errors.empty"
-            },
-          },
-          {
-            fieldName: "actualNetAdvocacyCosts",
-            href: "#actualNetAdvocacyCosts",
-            text: {
-              key: "pages.profitCostBillLine.actualNetAdvocacyCosts.errors.empty"
-            },
-          },
-          {
-            fieldName: "vatApplies",
-            href: "#vatApplies",
-            text: {
-              key: "pages.profitCostBillLine.vatApplies.errors.empty"
-            },
-          },
-          {
-            fieldName: "feeEarnerName",
-            href: "#feeEarnerName",
-            text: {
-              key: "pages.profitCostBillLine.feeEarnerName.errors.empty"
-            },
-          },
-        ],
-      }),
+      vm: new ProfitCostBillLineViewModel({ form }),
     });
   });
 
@@ -228,20 +190,21 @@ describe("views/main/poa/profitCostBillLineView.njk with errors", () => {
   });
 
   it("preserves submitted values", async () => {
+    const form = new ProfitCostBillLineForm();
+
+    form.validate({
+      activityDateDay: "27",
+      activityDateMonth: "3",
+      activityDateYear: "2007",
+      actualNetProfitCostExcludingAdvocacy: "123.45",
+      actualNetAdvocacyCosts: "156",
+      vatApplies: "yes",
+      feeEarnerName: "John Smith",
+    });
+
     $ = await renderView("main/poa/profitCostBillLineView.njk", {
       csrfToken: "test-csrf-token",
-      vm: new ProfitCostBillLineViewModel({
-        claimId: claimId,
-        form: {
-          activityDateDay: "27",
-          activityDateMonth: "3",
-          activityDateYear: "2007",
-          actualNetProfitCostExcludingAdvocacy: "123.45",
-          actualNetAdvocacyCosts: "156.00",
-          vatApplies: "yes",
-          feeEarnerName: "John Smith",
-        },
-      }),
+      vm: new ProfitCostBillLineViewModel({ form }),
     });
 
     expect($("input[name='activityDateDay']").attr("value")).to.equal("27");
@@ -251,7 +214,7 @@ describe("views/main/poa/profitCostBillLineView.njk with errors", () => {
       $("input[name='actualNetProfitCostExcludingAdvocacy']").attr("value"),
     ).to.equal("123.45");
     expect($("input[name='actualNetAdvocacyCosts']").attr("value")).to.equal(
-      "156.00",
+      "156",
     );
     expect($("input[name='vatApplies'][value='yes']").attr("checked")).to.equal(
       "checked",

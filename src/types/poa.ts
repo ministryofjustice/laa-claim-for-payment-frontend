@@ -34,7 +34,7 @@ export const ProfitCostBillLineSchema = z.object({
 
 export type ProfitCostBillLine = z.infer<typeof ProfitCostBillLineSchema>;
 
-export const ExpertCostDetailsSchema = z.object({
+export const DisbursementDetailsSchema = z.object({
   activityDate: IsoDateSchema,
   actualNetValue: z.number(),
   vatApplies: z.boolean(),
@@ -42,7 +42,7 @@ export const ExpertCostDetailsSchema = z.object({
   description: z.string(),
 });
 
-export type ExpertCostDetails = z.infer<typeof ExpertCostDetailsSchema>;
+export type DisbursementDetails = z.infer<typeof DisbursementDetailsSchema>;
 
 export const ProfitCostPoaSchema = z.object({
   type: z.literal(CostType.PROFIT_COST),
@@ -59,7 +59,7 @@ export type ProfitCostPoa = z.infer<typeof ProfitCostPoaSchema>;
 
 export const ExpertCostPoaSchema = z.object({
   type: z.literal(CostType.EXPERT_COST),
-  details: z.array(ExpertCostDetailsSchema),
+  details: z.array(DisbursementDetailsSchema),
   evidence: z.array(EvidenceSchema).optional(),
 });
 
@@ -67,6 +67,8 @@ export type ExpertCostPoa = z.infer<typeof ExpertCostPoaSchema>;
 
 export const NonExpertDisbursementPoaSchema = z.object({
   type: z.literal(CostType.NON_EXPERT_DISBURSEMENT),
+  details: z.array(DisbursementDetailsSchema),
+  evidence: z.array(EvidenceSchema).optional(),
 });
 
 export type NonExpertDisbursementPoa = z.infer<
@@ -76,7 +78,7 @@ export type NonExpertDisbursementPoa = z.infer<
 export type LineItemForm =
   | {
   type: CostType.EXPERT_COST;
-  value: ExpertCostDetails;
+  value: DisbursementDetails;
 }
   | {
   type: CostType.PROFIT_COST;

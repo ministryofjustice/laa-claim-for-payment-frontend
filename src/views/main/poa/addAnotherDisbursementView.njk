@@ -12,7 +12,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      {% if vm.radioQuestionViewModel.errorSummary.errorList.length %}
+      {% if vm.radioQuestionViewModel.errorSummary %}
         {{ govukErrorSummary(vm.radioQuestionViewModel.errorSummary | translate) }}
       {% endif %}
 
@@ -25,21 +25,7 @@
 
         {{ govukSummaryList(vm.lineItemsSummaryList | translate) }}
 
-        {{ govukRadios({
-          name: vm.radioQuestionViewModel.form.fieldName,
-          idPrefix: vm.radioQuestionViewModel.form.fieldId,
-          fieldset: {
-            legend: {
-              text: vm.radioQuestionViewModel.title,
-              isPageHeading: false,
-              classes: "govuk-fieldset__legend--m"
-            }
-          },
-          errorMessage: vm.radioQuestionViewModel.form.error and {
-            text: vm.radioQuestionViewModel.form.error.text
-          },
-          items: vm.radioQuestionViewModel.form.choices
-        } | translate) }}
+        {{ govukRadios(vm.radioQuestionViewModel.radios | translate) }}
 
         {{ govukButton({
           text: t("common.saveAndContinue")

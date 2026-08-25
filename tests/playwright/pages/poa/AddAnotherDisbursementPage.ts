@@ -1,12 +1,12 @@
 import type { Page } from "@playwright/test";
-import type { UUID } from "#node_modules/uuidv7/dist/index.js";
+import type { UUID } from "uuidv7";
 import { YesNoInput } from "#tests/playwright/pages/base/Components.js";
 import { QuestionPage } from "#tests/playwright/pages/base/QuestionPage.js";
 
 /**
- * Page object for adding another expert cost.
+ * Page object for adding another disbursement.
  */
-export class AddAnotherExpertCostPage extends QuestionPage {
+export class AddAnotherDisbursementPage extends QuestionPage {
   /**
    * Creates a page object.
    *
@@ -14,7 +14,7 @@ export class AddAnotherExpertCostPage extends QuestionPage {
    * @param {UUID} claimId The claim ID.
    */
   constructor(page: Page, claimId: UUID) {
-    super(page, `claims/${claimId.toString()}/poa/expert-cost-details/add`);
+    super(page, `claims/${claimId.toString()}/poa/disbursement-details/add`);
   }
 
   readonly radio = new YesNoInput(this.page, "add-another");

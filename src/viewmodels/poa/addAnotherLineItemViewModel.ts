@@ -1,4 +1,4 @@
-import type { ExpertCostLineItem, LineItem } from "#src/types/Claim.js";
+import type { DisbursementLineItem, LineItem } from "#src/types/Claim.js";
 import {
   buildSummaryList,
   buildSummaryListRowWithChangeAndRemoveLinks,
@@ -6,31 +6,25 @@ import {
 } from "#src/viewmodels/components/summaryList.js";
 import type { Message } from "#src/viewmodels/components/message.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import {
-  type BooleanChoice,
-  booleanChoices,
-} from "#src/models/booleanChoice.js";
-import type { FieldValidationError } from "#src/helpers/validation.js";
-import {
-  addAnotherExpertCostFieldId,
-  addAnotherExpertCostFieldName,
-} from "#src/controllers/poa/addAnotherExpertCostController.js";
+  RadioQuestionViewModel,
+  type YesNoQuestionViewModel,
+} from "#src/viewmodels/radioQuestionViewModel.js";
 import { formatClaimed, formatDateReadable } from "#src/helpers/index.js";
+import type { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 interface AddAnotherLineItemViewModelParams<T extends LineItem> {
   claimId: string;
   lineItems: T[];
-  prefix: string;
+  form: YesNoQuestionForm;
   getValue: (lineItem: T) => string;
   summaryListId: string;
-  errors?: FieldValidationError[];
 }
 
-export interface AddAnotherExpertCostViewModelParams {
+export interface AddAnotherDisbursementViewModelParams {
   claimId: string;
-  lineItems: ExpertCostLineItem[];
-  errors?: FieldValidationError[];
+  lineItems: DisbursementLineItem[];
+  form: YesNoQuestionForm;
 }
 
 /**
@@ -39,7 +33,7 @@ export interface AddAnotherExpertCostViewModelParams {
 abstract class AddAnotherLineItemViewModel<T extends LineItem> {
   readonly title: Message;
   readonly lineItemsSummaryList: SummaryList;
-  readonly radioQuestionViewModel: RadioQuestionViewModel<BooleanChoice>;
+  readonly radioQuestionViewModel: YesNoQuestionViewModel;
 
   /**
    * Creates a profit cost bill line page view model.
@@ -47,14 +41,13 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
    * @param {AddAnotherLineItemViewModelParams} params View model params.
    */
   constructor(params: AddAnotherLineItemViewModelParams<T>) {
-    const { claimId, lineItems, prefix, getValue, summaryListId, errors } =
-      params;
+    const { claimId, lineItems, form, getValue, summaryListId } = params;
 
     if (lineItems.length === 1) {
-      this.title = { key: `${prefix}.title.singular` };
+      this.title = { key: `${form.messagePrefix}.title.singular` };
     } else {
       this.title = {
-        key: `${prefix}.title.multiple`,
+        key: `${form.messagePrefix}.title.multiple`,
         args: { count: lineItems.length },
       };
     }
@@ -63,11 +56,11 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
       buildSummaryListRowWithChangeAndRemoveLinks(
         formatDateReadable(lineItem.date.toDate()),
         buildRoute(
-          ROUTES.EXPERT_COST_DETAILS,
+          ROUTES.DISBURSEMENT_DETAILS,
           { claimId },
           { lineItemId: lineItem.id },
         ),
-        buildRoute(ROUTES.REMOVE_EXPERT_COST_DETAILS, {
+        buildRoute(ROUTES.REMOVE_DISBURSEMENT, {
           claimId,
           lineItemId: lineItem.id,
         }),
@@ -80,13 +73,9 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
     this.lineItemsSummaryList = buildSummaryList(summaryListId, rows);
 
     this.radioQuestionViewModel = new RadioQuestionViewModel({
-      title: {
-        key: `${prefix}.question`,
-      },
-      fieldName: addAnotherExpertCostFieldName,
-      fieldId: addAnotherExpertCostFieldId,
-      choices: booleanChoices,
-      errors,
+      title: `${form.messagePrefix}.question`,
+      form,
+      isLegendPageHeading: false,
     });
   }
 }
@@ -94,18 +83,17 @@ abstract class AddAnotherLineItemViewModel<T extends LineItem> {
 /**
  *
  */
-export class AddAnotherExpertCostViewModel extends AddAnotherLineItemViewModel<ExpertCostLineItem> {
+export class AddAnotherDisbursementViewModel extends AddAnotherLineItemViewModel<DisbursementLineItem> {
   /**
-   * Creates an add another expert cost view model.
+   * Creates an add another disbursement view model.
    *
-   * @param {AddAnotherExpertCostViewModelParams} params View model params.
+   * @param {AddAnotherDisbursementViewModelParams} params View model params.
    */
-  constructor(params: AddAnotherExpertCostViewModelParams) {
+  constructor(params: AddAnotherDisbursementViewModelParams) {
     super({
       ...params,
-      prefix: "pages.poa.expertCostDetails.addAnother",
       getValue: (lineItem) => formatClaimed(lineItem.actualNetValue),
-      summaryListId: "expert-cost",
+      summaryListId: "disbursement",
     });
   }
 }

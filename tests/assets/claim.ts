@@ -257,3 +257,47 @@ export const claim11: ClaimDto = {
     }
   ]
 };
+
+/**
+ * Draft claim with non-expert disbursement bill line items
+ */
+export const claim12: ClaimDto = {
+  id: "01a024b3-c2b8-7004-a46a-82e6385f86a8",
+  costType: CostType.NON_EXPERT_DISBURSEMENT,
+  lineItems: [
+    {
+      id: "019fae76-e8a7-73bc-af8d-990543ec4a65",
+      title: "Cost of petrol",
+      category: Category.DISBURSEMENT,
+      date: new LocalDate(20, 12, 2023),
+      actualNetValue: 150,
+      vatApplicable: true,
+      feeEarnerName: "Carol Spencer",
+      evidenceItems: []
+    },
+    {
+      id: "019fae77-87c3-734c-a38d-54624d48d7e5",
+      title: "Line item 2",
+      category: Category.DISBURSEMENT,
+      date: new LocalDate(30, 7, 2026),
+      actualNetValue: 456,
+      vatApplicable: true,
+      feeEarnerName: "Joe Bloggs",
+      evidenceItems: []
+    }
+  ],
+  evidence: [
+    {
+      id: "019f5fa3-e258-7583-9626-eb7febb94b62",
+      fileKey: "evidence1.pdf",
+      fileSize: 1000,
+      submittedOn: "2026-06-17T14:34:01.226855Z",
+    },
+    {
+      id: "019fae78-414c-71e8-b4a7-d1cc65cabee1",
+      fileKey: "evidence2.pdf",
+      fileSize: 2000,
+      submittedOn: "2026-06-18T14:34:01.226855Z",
+    }
+  ]
+};

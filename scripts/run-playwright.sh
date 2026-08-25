@@ -9,4 +9,4 @@ cleanup() {
 
 trap cleanup EXIT
 
-yarn playwright test --config=playwright.config.ts
+yarn playwright test --config=playwright.config.ts --headed

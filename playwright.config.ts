@@ -33,7 +33,7 @@ export default defineConfig({
   webServer: {
     command: 'concurrently "yarn tsx scripts/stub-backend.ts" "yarn tsx scripts/test-server-with-msw.ts"',
     url: 'http://127.0.0.1:3000',
-    reuseExistingServer: process.env.CI !== 'true',
+    reuseExistingServer: false,
     stdout: 'pipe',
     stderr: 'pipe',
     timeout: 60000,
