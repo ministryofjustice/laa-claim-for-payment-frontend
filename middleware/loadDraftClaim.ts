@@ -15,8 +15,6 @@ export async function loadDraftClaim(
   next: NextFunction,
 ): Promise<void> {
   try {
-    console.log("*");
-    console.log(req.params);
     const claimId = UUID.parse(req.params.claimId);
 
     const claim = await claimService.getDraftClaim(
@@ -33,8 +31,6 @@ export async function loadDraftClaim(
       next(processApiError(claim, "retrieving draft claim"));
     }
   } catch (error) {
-    console.log("***");
-    console.log(error);
     next(processError(error, "retrieving draft claim"));
   }
 }
