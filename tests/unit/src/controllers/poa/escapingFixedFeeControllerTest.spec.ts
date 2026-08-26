@@ -14,7 +14,6 @@ import { draftService } from "#src/services/draftService.js";
 describe("escapingFixedFeeController", () => {
   let res: Response;
   let next: NextFunction;
-  let getClaimStub: sinon.SinonStub;
   let setEscapedFlagStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
@@ -31,7 +30,6 @@ describe("escapingFixedFeeController", () => {
 
     next = sinon.stub() as unknown as NextFunction;
 
-    getClaimStub = sinon.stub(claimService, "getDraftClaim");
     setEscapedFlagStub = sinon.stub(draftService, "setEscapedFlag");
   });
 
@@ -41,17 +39,10 @@ describe("escapingFixedFeeController", () => {
 
   it("renders the escaping the fixed fee radio question page", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
+      claim: {
+        id: claimId.toString(),
       },
     } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-      }),
-    });
 
     await escapingFixedFee(req, res, next);
 
@@ -69,20 +60,13 @@ describe("escapingFixedFeeController", () => {
 
   it("redirects to CPGFS profit cost bill line page when escaping fixed fee answer is given", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
+      claim: {
+        id: claimId.toString(),
       },
       body: {
         escapingFixedFee: "yes",
       },
     } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-      }),
-    });
 
     setEscapedFlagStub.resolves({
       status: "success",
@@ -109,8 +93,8 @@ describe("escapingFixedFeeController", () => {
 
   it("rerenders the radio question page with an error when no option is selected", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
+      claim: {
+        id: claimId.toString(),
       },
       body: {},
     } as unknown as Request;
@@ -126,8 +110,8 @@ describe("escapingFixedFeeController", () => {
 
   it("rerenders with selected invalid string preserved when invalid option is submitted", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
+      claim: {
+        id: claimId.toString(),
       },
       body: {
         escapingFixedFee: "invalid",

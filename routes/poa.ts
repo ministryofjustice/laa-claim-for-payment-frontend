@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response, Router } from "express";
+import type { Router } from "express";
 import express from "express";
 import config from "#config.js";
 import { evidenceUpload } from "#src/helpers/multerUpload.js";
@@ -17,6 +17,7 @@ import { deleteEvidenceFileFromClaim, uploadEvidenceFile } from "#src/controller
 import { confirmRemoveExpertLineItem, submitRemoveExpertLineItem } from "#src/controllers/poa/removeDisbursementController.js";
 import { addAnotherDisbursement, submitAddAnotherDisbursement } from "#src/controllers/poa/addAnotherDisbursementController.js";
 import { multerErrorHandler, registerIf, ROUTES } from "./helper.js";
+import { loadDraftClaim } from "#middleware/loadDraftClaim.js";
 
 /**
  * Builds the POA router.
@@ -26,16 +27,7 @@ import { multerErrorHandler, registerIf, ROUTES } from "./helper.js";
 export const buildPoaRouter = (): Router => {
   const router = express.Router();
 
-  router.get(
-    ROUTES.POA.EVIDENCE_UPLOAD,
-    async (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> => {
-      await poaEvidenceUploadPage(req, res, next);
-    },
-  );
+  router.get(ROUTES.POA.EVIDENCE_UPLOAD, poaEvidenceUploadPage);
 
   router.post(ROUTES.POA.EVIDENCE_UPLOAD, submitPoaEvidenceUpload);
 
@@ -46,249 +38,80 @@ export const buildPoaRouter = (): Router => {
     uploadEvidenceFile,
   );
 
-  router.post(
-    ROUTES.POA.AJAX_DELETE_EVIDENCE,
-    deleteEvidenceFileFromClaim,
-  );
+  router.post(ROUTES.POA.AJAX_DELETE_EVIDENCE, deleteEvidenceFileFromClaim);
 
-  router.get(
-    ROUTES.POA.CLAIM_TYPE,
-    async (req, res, next): Promise<void> => {
-      await poaClaimTypePage(req, res, next);
-    },
-  );
+  router.get(ROUTES.POA.CLAIM_TYPE, poaClaimTypePage);
 
-  router.post(
-    ROUTES.POA.CLAIM_TYPE,
-    async (req, res, next): Promise<void> => {
-      await submitPoaClaimType(req, res, next);
-    },
-  );
+  router.post(ROUTES.POA.CLAIM_TYPE, submitPoaClaimType);
 
   registerIf(config.featureFlags.poaProfitCostEnabled, () => {
     router.get(
       ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED,
-      async (
-        req: Request,
-        res: Response,
-        next: NextFunction,
-      ): Promise<void> => {
-        await howManyClientsRetained(req, res, next);
-      },
+      howManyClientsRetained,
     );
 
     router.post(
       ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED,
-      async (
-        req: Request,
-        res: Response,
-        next: NextFunction,
-      ): Promise<void> => {
-        await submitHowManyClientsRetained(req, res, next);
-      },
+      submitHowManyClientsRetained,
     );
 
-    router.get(
-      ROUTES.POA.PROFIT_COST.DETAILS,
-      async (
-        req: Request,
-        res: Response,
-        next: NextFunction,
-      ): Promise<void> => {
-        await profitCostDetails(req, res, next);
-      },
-    );
+    router.get(ROUTES.POA.PROFIT_COST.DETAILS, profitCostDetails);
 
-    router.post(
-      ROUTES.POA.PROFIT_COST.DETAILS,
-      async (
-        req: Request,
-        res: Response,
-        next: NextFunction,
-      ): Promise<void> => {
-        await submitProfitCostDetails(req, res, next);
-      },
-    );
+    router.post(ROUTES.POA.PROFIT_COST.DETAILS, submitProfitCostDetails);
 
     router.get(
       ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS,
-      async (
-        req: Request,
-        res: Response,
-        next: NextFunction,
-      ): Promise<void> => {
-        await multipleClientHearings(req, res, next);
-      },
+      multipleClientHearings,
     );
 
     router.post(
       ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS,
-      async (
-        req: Request,
-        res: Response,
-        next: NextFunction,
-      ): Promise<void> => {
-        await submitMultipleClientHearings(req, res, next);
-      },
+      submitMultipleClientHearings,
     );
 
-    router.get(
-      ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE,
-      async (
-        req: Request,
-        res: Response,
-        next: NextFunction,
-      ): Promise<void> => {
-        await profitCostBillLine(req, res, next);
-      },
-    );
+    router.get(ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE, profitCostBillLine);
 
     router.post(
       ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE,
-      async (
-        req: Request,
-        res: Response,
-        next: NextFunction,
-      ): Promise<void> => {
-        await submitProfitCostBillLine(req, res, next);
-      },
+      submitProfitCostBillLine,
     );
 
     router.get(
       ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE,
-      async (
-        req: Request,
-        res: Response,
-        next: NextFunction,
-      ): Promise<void> => {
-        await numberOfClientsStartOfCase(req, res, next);
-      },
+      numberOfClientsStartOfCase,
     );
 
     router.post(
       ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE,
-      async (
-        req: Request,
-        res: Response,
-        next: NextFunction,
-      ): Promise<void> => {
-        await submitNumberOfClientsStartOfCase(req, res, next);
-      },
+      submitNumberOfClientsStartOfCase,
     );
 
-    router.get(
-      ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE,
-      async (
-        req: Request,
-        res: Response,
-        next: NextFunction,
-      ): Promise<void> => {
-        await escapingFixedFee(req, res, next);
-      },
-    );
+    router.get(ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE, loadDraftClaim, escapingFixedFee);
 
     router.post(
       ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE,
-      async (
-        req: Request,
-        res: Response,
-        next: NextFunction,
-      ): Promise<void> => {
-        await submitEscapingFixedFee(req, res, next);
-      },
+      loadDraftClaim,
+      submitEscapingFixedFee,
     );
   });
 
-  router.get(
-    ROUTES.POA.DISBURSEMENTS.DETAILS,
-    async (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> => {
-      await disbursementDetails(req, res, next);
-    },
-  );
+  router.get(ROUTES.POA.DISBURSEMENTS.DETAILS, disbursementDetails);
 
-  router.post(
-    ROUTES.POA.DISBURSEMENTS.DETAILS,
-    async (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> => {
-      await submitDisbursementDetails(req, res, next);
-    },
-  );
+  router.post(ROUTES.POA.DISBURSEMENTS.DETAILS, submitDisbursementDetails);
 
-  router.get(
-    ROUTES.POA.DISBURSEMENTS.ADD,
-    async (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> => {
-      await addAnotherDisbursement(req, res, next);
-    },
-  );
+  router.get(ROUTES.POA.DISBURSEMENTS.ADD, addAnotherDisbursement);
 
-  router.post(
-    ROUTES.POA.DISBURSEMENTS.ADD,
-    async (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> => {
-      await submitAddAnotherDisbursement(req, res, next);
-    },
-  );
+  router.post(ROUTES.POA.DISBURSEMENTS.ADD, submitAddAnotherDisbursement);
 
-  router.get(
-    ROUTES.POA.DISBURSEMENTS.REMOVE,
-    async (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> => {
-      await confirmRemoveExpertLineItem(req, res, next);
-    },
-  );
+  router.get(ROUTES.POA.DISBURSEMENTS.REMOVE, confirmRemoveExpertLineItem);
 
-  router.post(
-    ROUTES.POA.DISBURSEMENTS.REMOVE,
-    async (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> => {
-      await submitRemoveExpertLineItem(req, res, next);
-    },
-  );
+  router.post(ROUTES.POA.DISBURSEMENTS.REMOVE, submitRemoveExpertLineItem);
 
-  router.get(
-    ROUTES.POA.CHECK_DETAILS,
-    async (
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ): Promise<void> => {
-      await checkYourDetailsPage(req, res, next);
-    },
-  );
+  router.get(ROUTES.POA.CHECK_DETAILS, checkYourDetailsPage);
 
-  router.post(
-    ROUTES.POA.CHECK_DETAILS,
-    (req: Request, res: Response, next: NextFunction): void => {
-      submitYourDetails(req, res, next);
-    },
-  );
+  router.post(ROUTES.POA.CHECK_DETAILS, submitYourDetails);
 
-  router.get(
-    ROUTES.POA.SUBMISSION_SUCCESSFUL,
-    (req: Request, res: Response, next: NextFunction): void => {
-      poaSubmissionSuccessfulPage(req, res, next);
-    },
-  );
+  router.get(ROUTES.POA.SUBMISSION_SUCCESSFUL, poaSubmissionSuccessfulPage);
 
   return router;
 };

@@ -6,6 +6,7 @@ declare module "express-serve-static-core" {
   interface Request {
     axiosMiddleware: AxiosInstanceWrapper;
     locale: ExpressLocaleLoader;
+    claim?: Claim;
   }
 }
 
