@@ -1,4 +1,4 @@
-import { type Claim, type DisbursementCostType, isDisbursementCostType } from "#src/types/Claim.js";
+import { type Claim, CostType, type DisbursementCostType } from "#src/types/Claim.js";
 import type { Request } from "express";
 
 /**
@@ -28,4 +28,18 @@ export function requireDisbursementCostType(claim: Claim): DisbursementCostType 
   }
 
   throw new Error("Claim does not have a disbursement cost type");
+}
+
+/**
+ * Gets whether the cost type is a disbursement type.
+ * @param {CostType | null | undefined} costType cost type
+ * @returns {boolean} whether the cost type is a disbursement type
+ */
+export function isDisbursementCostType(
+  costType: CostType | null | undefined,
+): costType is DisbursementCostType {
+  return (
+    costType === CostType.EXPERT_COST ||
+    costType === CostType.NON_EXPERT_DISBURSEMENT
+  );
 }

@@ -1,6 +1,10 @@
-import { Claim } from "#src/types/Claim.js";
+import { Claim, CostType } from "#src/types/Claim.js";
 import { V7Generator } from "uuidv7";
-import { requireClaim } from "#src/helpers/requireClaim.js";
+import {
+  isDisbursementCostType,
+  requireClaim,
+  requireDisbursementCostType,
+} from "#src/helpers/requireClaim.js";
 import type { Request } from "express";
 import { expect } from "chai";
 
@@ -27,5 +31,84 @@ describe("requireClaim", () => {
     const result = () => requireClaim(req);
 
     expect(result).to.throw(Error);
+  });
+});
+
+describe("requireDisbursementCostType", () => {
+  const claimId = new V7Generator().generate();
+
+  it("returns cost type when claim has expert cost type", () => {
+    const claim = new Claim({
+      id: claimId.toString(),
+      costType: CostType.EXPERT_COST,
+    });
+
+    const result = requireDisbursementCostType(claim);
+
+    expect(result).to.equal(CostType.EXPERT_COST);
+  });
+
+  it("returns cost type when claim has non-expert disbursement type", () => {
+    const claim = new Claim({
+      id: claimId.toString(),
+      costType: CostType.NON_EXPERT_DISBURSEMENT,
+    });
+
+    const result = requireDisbursementCostType(claim);
+
+    expect(result).to.equal(CostType.NON_EXPERT_DISBURSEMENT);
+  });
+
+  it("throws when claim has profit cost type", () => {
+    const claim = new Claim({
+      id: claimId.toString(),
+      costType: CostType.PROFIT_COST,
+    });
+
+    const result = () => requireDisbursementCostType(claim);
+
+    expect(result).to.throw(Error);
+  });
+
+  it("throws when claim has no cost type", () => {
+    const claim = new Claim({
+      id: claimId.toString(),
+    });
+
+    const result = () => requireDisbursementCostType(claim);
+
+    expect(result).to.throw(Error);
+  });
+});
+
+describe("isDisbursementCostType", () => {
+  it("returns true when expert cost type", () => {
+    const result = isDisbursementCostType(CostType.EXPERT_COST);
+
+    expect(result).to.equal(true);
+  });
+
+  it("returns true when non-expert disbursement type", () => {
+    const result = isDisbursementCostType(CostType.NON_EXPERT_DISBURSEMENT);
+
+    expect(result).to.equal(true);
+  });
+
+  it("returns false when profit cost type", () => {
+    const result = isDisbursementCostType(CostType.PROFIT_COST);
+
+    expect(result).to.equal(false);
+  });
+
+  it("returns false when null cost type", () => {
+    const result = isDisbursementCostType(null);
+
+    expect(result).to.equal(false);
+  });
+
+  it("returns false when undefined cost type", () => {
+    const result = isDisbursementCostType(undefined);
+
+    expect(result).to.equal(false);
   });
 });

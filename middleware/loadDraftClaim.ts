@@ -2,8 +2,10 @@ import type { NextFunction, Request, Response } from "express";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { processApiError, processError } from "#src/helpers/index.js";
-import { requireClaim } from "#src/helpers/requireClaim.js";
-import { isDisbursementCostType } from "#src/types/Claim.js";
+import {
+  isDisbursementCostType,
+  requireClaim,
+} from "#src/helpers/requireClaim.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 
 /**

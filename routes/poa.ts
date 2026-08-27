@@ -17,7 +17,10 @@ import { deleteEvidenceFileFromClaim, uploadEvidenceFile } from "#src/controller
 import { confirmRemoveExpertLineItem, submitRemoveExpertLineItem } from "#src/controllers/poa/removeDisbursementController.js";
 import { addAnotherDisbursement, submitAddAnotherDisbursement } from "#src/controllers/poa/addAnotherDisbursementController.js";
 import { multerErrorHandler, registerIf, ROUTES } from "./helper.js";
-import { loadDraftClaim } from "#middleware/loadDraftClaim.js";
+import {
+  loadDraftClaim,
+  requireDisbursementCostType,
+} from "#middleware/loadDraftClaim.js";
 
 /**
  * Builds the POA router.
@@ -102,17 +105,17 @@ export const buildPoaRouter = (): Router => {
     );
   });
 
-  router.get(ROUTES.POA.DISBURSEMENTS.DETAILS, loadDraftClaim, disbursementDetails);
+  router.get(ROUTES.POA.DISBURSEMENTS.DETAILS, loadDraftClaim, requireDisbursementCostType, disbursementDetails);
 
-  router.post(ROUTES.POA.DISBURSEMENTS.DETAILS, loadDraftClaim, submitDisbursementDetails);
+  router.post(ROUTES.POA.DISBURSEMENTS.DETAILS, loadDraftClaim, requireDisbursementCostType, submitDisbursementDetails);
 
-  router.get(ROUTES.POA.DISBURSEMENTS.ADD, loadDraftClaim, addAnotherDisbursement);
+  router.get(ROUTES.POA.DISBURSEMENTS.ADD, loadDraftClaim, requireDisbursementCostType, addAnotherDisbursement);
 
-  router.post(ROUTES.POA.DISBURSEMENTS.ADD, loadDraftClaim, submitAddAnotherDisbursement);
+  router.post(ROUTES.POA.DISBURSEMENTS.ADD, loadDraftClaim, requireDisbursementCostType, submitAddAnotherDisbursement);
 
-  router.get(ROUTES.POA.DISBURSEMENTS.REMOVE, loadDraftClaim, confirmRemoveExpertLineItem);
+  router.get(ROUTES.POA.DISBURSEMENTS.REMOVE, loadDraftClaim, requireDisbursementCostType, confirmRemoveExpertLineItem);
 
-  router.post(ROUTES.POA.DISBURSEMENTS.REMOVE, loadDraftClaim, submitRemoveExpertLineItem);
+  router.post(ROUTES.POA.DISBURSEMENTS.REMOVE, loadDraftClaim, requireDisbursementCostType, submitRemoveExpertLineItem);
 
   router.get(ROUTES.POA.CHECK_DETAILS, loadDraftClaim, checkYourDetailsPage);
 
