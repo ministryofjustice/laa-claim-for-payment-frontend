@@ -4,19 +4,11 @@ import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import {
-  type Claim,
-  type DisbursementCostType,
-  DisbursementCostTypeMessagePrefix,
-  type DisbursementLineItem,
-} from "#src/types/Claim.js";
+import { type DisbursementCostType, DisbursementCostTypeMessagePrefix } from "#src/types/Claim.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 import createHttpError from "http-errors";
-import {
-  requireClaim,
-  requireDisbursementCostType,
-} from "#src/helpers/claimGuards.js";
+import { requireClaim, requireDisbursementCostType } from "#src/helpers/claimGuards.js";
 
 /**
  * get confirm remove expert line item page
@@ -34,7 +26,7 @@ export function confirmRemoveExpertLineItem(
     const lineItemId = UUID.parse(req.params.lineItemId);
     const costType = requireDisbursementCostType(claim);
 
-    const lineItem = getLineItem(claim, lineItemId);
+    const lineItem = claim.getDisbursementLineItem(lineItemId);
 
     if (lineItem === undefined) {
       next(
@@ -133,14 +125,4 @@ function buildViewModel(form: YesNoQuestionForm): YesNoQuestionViewModel {
     form,
     isLegendPageHeading: true,
   });
-}
-
-function getLineItem(
-  claim: Claim,
-  lineItemId: UUID,
-): DisbursementLineItem | undefined {
-  return claim.lineItems.find(
-    (lineItem): lineItem is DisbursementLineItem =>
-      lineItem.id === lineItemId.toString(),
-  );
 }

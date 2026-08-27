@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { ProfitCostDetails } from "#src/types/poa.js";
 import { LocalDate } from "#src/types/date.js";
+import type { UUID } from "uuidv7";
 
 export const EvidenceItemSchema = z.object({
   id: z.uuidv7(),
@@ -18,9 +19,9 @@ export enum Category {
 }
 
 export enum CostType {
-  PROFIT_COST = 'PROFIT_COST',
-  EXPERT_COST = 'EXPERT_COST',
-  NON_EXPERT_DISBURSEMENT = 'NON_EXPERT_DISBURSEMENT',
+  PROFIT_COST = "PROFIT_COST",
+  EXPERT_COST = "EXPERT_COST",
+  NON_EXPERT_DISBURSEMENT = "NON_EXPERT_DISBURSEMENT",
 }
 
 export type DisbursementCostType =
@@ -33,22 +34,22 @@ export const DisbursementCostTypeMessagePrefix: Record<DisbursementCostType, str
 };
 
 export enum CourtType {
-  COUNTY_COURT = 'COUNTY_COURT',
-  HIGH_COURT = 'HIGH_COURT',
-  MAGISTRATES_COURT = 'MAGISTRATES_COURT',
-  OTHER_JUDGE = 'OTHER_JUDGE',
+  COUNTY_COURT = "COUNTY_COURT",
+  HIGH_COURT = "HIGH_COURT",
+  MAGISTRATES_COURT = "MAGISTRATES_COURT",
+  OTHER_JUDGE = "OTHER_JUDGE",
 }
 
 export enum Count {
-  ZERO = 'ZERO',
-  ONE = 'ONE',
-  TWO_OR_MORE = 'TWO_OR_MORE',
+  ZERO = "ZERO",
+  ONE = "ONE",
+  TWO_OR_MORE = "TWO_OR_MORE",
 }
 
 export enum ClientPartyStatus {
-  CHILD = 'CHILD',
-  JOINED_PARTY = 'JOINED_PARTY',
-  PARENT = 'PARENT',
+  CHILD = "CHILD",
+  JOINED_PARTY = "JOINED_PARTY",
+  PARENT = "PARENT",
 }
 
 export enum ClaimStatus {
@@ -175,7 +176,10 @@ export class Claim {
    * @returns {DisbursementCostType | null | undefined} the disbursement cost type.
    */
   get disbursementCostType(): DisbursementCostType | null | undefined {
-    if (this.costType === CostType.EXPERT_COST || this.costType === CostType.NON_EXPERT_DISBURSEMENT) {
+    if (
+      this.costType === CostType.EXPERT_COST ||
+      this.costType === CostType.NON_EXPERT_DISBURSEMENT
+    ) {
       return this.costType;
     }
     return undefined;
@@ -287,6 +291,45 @@ export class Claim {
    */
   get hasEvidence(): boolean {
     return this.evidence.length > 0;
+  }
+
+  /**
+   * Gets the disbursement line items.
+   *
+   * @returns {DisbursementLineItem[]} the disbursement line items.
+   */
+  get disbursementLineItems(): DisbursementLineItem[] {
+    return this.lineItems.map(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
+      (lineItem) => lineItem as DisbursementLineItem,
+    );
+  }
+
+  /**
+   * Gets a disbursement line item for a given line item ID.
+   *
+   * @param {UUID} lineItemId line item ID
+   * @returns {DisbursementLineItem | undefined} the disbursement line item, or undefined if it doesn't exist.
+   */
+  getDisbursementLineItem(
+    lineItemId: UUID,
+  ): DisbursementLineItem | undefined {
+    return this.disbursementLineItems.find(
+      (lineItem) => lineItem.id === lineItemId.toString(),
+    );
+  }
+
+  /**
+   * Gets the profit cost line item.
+   *
+   * @returns {ProfitCostBillLineItem | undefined} the profit cost line item, or undefined if it doesn't exist.
+   */
+  get profitCostLineItem(): ProfitCostBillLineItem | undefined {
+    if (this.lineItems.length === 1) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
+      return this.lineItems[0] as ProfitCostBillLineItem;
+    }
+    return undefined;
   }
 
   /**

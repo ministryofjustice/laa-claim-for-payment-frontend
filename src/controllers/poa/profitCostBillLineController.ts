@@ -9,7 +9,7 @@ import type { NextFunction, Request, Response } from "express";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { getRequestBody } from "#src/helpers/validation.js";
-import { CostType, type ProfitCostBillLineItem } from "#src/types/Claim.js";
+import { CostType } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
 import { requireClaim } from "#src/helpers/claimGuards.js";
 
@@ -32,9 +32,9 @@ export function profitCostBillLine(
 
     const form = new ProfitCostBillLineForm();
 
-    if (claim.lineItems.length === 1) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
-      const lineItem = claim.lineItems[0] as ProfitCostBillLineItem;
+    const { profitCostLineItem: lineItem } = claim;
+
+    if (lineItem != null) {
       ({ id: lineItemId } = lineItem);
       form.fill({
         activityDate: lineItem.date,

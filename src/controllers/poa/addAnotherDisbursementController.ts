@@ -3,17 +3,13 @@ import { processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { AddAnotherDisbursementViewModel } from "#src/viewmodels/poa/addAnotherLineItemViewModel.js";
 import {
-  type Claim,
   type DisbursementCostType,
   DisbursementCostTypeMessagePrefix,
   type DisbursementLineItem
 } from "#src/types/Claim.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
-import {
-  requireClaim,
-  requireDisbursementCostType,
-} from "#src/helpers/claimGuards.js";
+import { requireClaim, requireDisbursementCostType } from "#src/helpers/claimGuards.js";
 
 /**
  * get add another expert cost view
@@ -31,7 +27,7 @@ export function addAnotherDisbursement(
     const { id: claimId } = claim;
     const costType = requireDisbursementCostType(claim);
 
-    const lineItems: DisbursementLineItem[] = getLineItems(claim);
+    const lineItems: DisbursementLineItem[] = claim.disbursementLineItems;
     if (lineItems.length === 0) {
       res.redirect(buildRoute(ROUTES.POA.DISBURSEMENTS.DETAILS, { claimId }));
     } else {
@@ -76,12 +72,11 @@ export function submitAddAnotherDisbursement(
     const form = new YesNoQuestionForm(field);
     form.validate(selectedChoice);
     if (form.isNotValid()) {
-      const lineItems = getLineItems(claim);
       res.status(400).render("main/poa/addAnotherDisbursementView.njk", {
         csrfToken: res.locals.csrfToken,
         vm: new AddAnotherDisbursementViewModel({
           claimId,
-          lineItems,
+          lineItems: claim.disbursementLineItems,
           form,
         }),
       });
@@ -100,13 +95,6 @@ export function submitAddAnotherDisbursement(
     );
     next(processedError);
   }
-}
-
-function getLineItems(claim: Claim): DisbursementLineItem[] {
-  return claim.lineItems.map(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
-    (lineItem) => lineItem as DisbursementLineItem,
-  );
 }
 
 function buildField(costType: DisbursementCostType): BooleanField {

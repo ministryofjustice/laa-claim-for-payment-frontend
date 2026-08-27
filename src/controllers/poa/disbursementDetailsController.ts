@@ -9,7 +9,7 @@ import {
 import { getRequestBody } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { type Claim, CostType, type DisbursementLineItem } from "#src/types/Claim.js";
+import { CostType } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
 import createHttpError from "http-errors";
 import { requireClaim, requireDisbursementCostType } from "#src/helpers/claimGuards.js";
@@ -34,7 +34,7 @@ export function disbursementDetails(
     const form = new DisbursementDetailsForm(costType);
 
     if (lineItemId != null) {
-      const lineItem = getLineItem(claim, lineItemId);
+      const lineItem = claim.getDisbursementLineItem(lineItemId);
 
       if (lineItem === undefined) {
         next(
@@ -129,14 +129,4 @@ function getLineItemId(req: Request): UUID | undefined {
   return typeof req.query.lineItemId === "string"
     ? UUID.parse(req.query.lineItemId)
     : undefined;
-}
-
-function getLineItem(
-  claim: Claim,
-  lineItemId: UUID,
-): DisbursementLineItem | undefined {
-  return claim.lineItems.find(
-    (lineItem): lineItem is DisbursementLineItem =>
-      lineItem.id === lineItemId.toString(),
-  );
 }
