@@ -9,12 +9,14 @@ import {
   type DisbursementCostType,
   DisbursementCostTypeMessagePrefix,
   type DisbursementLineItem,
-  isDisbursementCostType
 } from "#src/types/Claim.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 import createHttpError from "http-errors";
-import { requireClaim } from "#src/helpers/requireClaim.js";
+import {
+  requireClaim,
+  requireDisbursementCostType,
+} from "#src/helpers/requireClaim.js";
 
 /**
  * get confirm remove expert line item page
@@ -29,29 +31,25 @@ export function confirmRemoveExpertLineItem(
 ): void {
   try {
     const claim = requireClaim(req);
-    const { id: claimId } = claim;
     const lineItemId = UUID.parse(req.params.lineItemId);
+    const costType = requireDisbursementCostType(claim);
 
-    if (isDisbursementCostType(claim.costType)) {
-      const lineItem = getLineItem(claim, lineItemId);
+    const lineItem = getLineItem(claim, lineItemId);
 
-      if (lineItem === undefined) {
-        next(
-          new createHttpError.NotFound(
-            `Line item ${lineItemId.toString()} not found`,
-          ),
-        );
-        return;
-      }
-
-      const form = new YesNoQuestionForm(buildField(claim.costType));
-      res.render("main/radioQuestionPage.njk", {
-        csrfToken: res.locals.csrfToken,
-        vm: buildViewModel(form),
-      });
-    } else {
-      res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
+    if (lineItem === undefined) {
+      next(
+        new createHttpError.NotFound(
+          `Line item ${lineItemId.toString()} not found`,
+        ),
+      );
+      return;
     }
+
+    const form = new YesNoQuestionForm(buildField(costType));
+    res.render("main/radioQuestionPage.njk", {
+      csrfToken: res.locals.csrfToken,
+      vm: buildViewModel(form),
+    });
   } catch (error) {
     const processedError = processError(
       error,
@@ -76,43 +74,40 @@ export async function submitRemoveExpertLineItem(
     const claim = requireClaim(req);
     const { id: claimId } = claim;
     const lineItemId = UUID.parse(req.params.lineItemId);
+    const costType = requireDisbursementCostType(claim);
 
-    if (isDisbursementCostType(claim.costType)) {
-      const field = buildField(claim.costType);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-      const selectedChoice: unknown = req.body?.[field.name];
-      const form = new YesNoQuestionForm(field);
-      form.validate(selectedChoice);
+    const field = buildField(costType);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
+    const selectedChoice: unknown = req.body?.[field.name];
+    const form = new YesNoQuestionForm(field);
+    form.validate(selectedChoice);
 
-      if (form.isNotValid()) {
-        res.status(400).render("main/radioQuestionPage.njk", {
-          csrfToken: res.locals.csrfToken,
-          vm: buildViewModel(form),
-        });
-        return;
-      }
+    if (form.isNotValid()) {
+      res.status(400).render("main/radioQuestionPage.njk", {
+        csrfToken: res.locals.csrfToken,
+        vm: buildViewModel(form),
+      });
+      return;
+    }
 
-      const nextPage = buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, { claimId });
+    const nextPage = buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, { claimId });
 
-      if (form.getValue()) {
-        const deleted = await claimService.deleteLineItem(
-          req.axiosMiddleware,
-          claimId,
-          lineItemId.toString(),
-        );
+    if (form.getValue()) {
+      const deleted = await claimService.deleteLineItem(
+        req.axiosMiddleware,
+        claimId,
+        lineItemId.toString(),
+      );
 
-        if (deleted.status === "success") {
-          res.redirect(nextPage);
-        } else {
-          next(
-            processApiError(deleted, "deleting line item for expert cost page"),
-          );
-        }
+      if (deleted.status === "success") {
+        res.redirect(nextPage);
       } else {
-        res.redirect(nextPage)
+        next(
+          processApiError(deleted, "deleting line item for expert cost page"),
+        );
       }
     } else {
-      res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
+      res.redirect(nextPage)
     }
   } catch (error) {
     const processedError = processError(

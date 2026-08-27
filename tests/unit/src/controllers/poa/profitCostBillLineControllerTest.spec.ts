@@ -41,14 +41,14 @@ describe("profitCostBillLineController", () => {
     sinon.restore();
   });
 
-  it("renders the profit cost bill line page", async () => {
+  it("renders the profit cost bill line page", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
       }),
     } as unknown as Request;
 
-    await profitCostBillLine(req, res, next);
+    profitCostBillLine(req, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -61,7 +61,7 @@ describe("profitCostBillLineController", () => {
     expect(renderArgs.vm.title).to.equal("pages.profitCostBillLine.title");
   });
 
-  it("renders the profit cost bill line page when line item exists", async () => {
+  it("renders the profit cost bill line page when line item exists", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -81,7 +81,7 @@ describe("profitCostBillLineController", () => {
       }),
     } as unknown as Request;
 
-    await profitCostBillLine(req, res, next);
+    profitCostBillLine(req, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(

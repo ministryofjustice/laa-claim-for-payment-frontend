@@ -36,14 +36,14 @@ describe("howManyClientsRetainedController", () => {
     sinon.restore();
   });
 
-  it("renders the page", async () => {
+  it("renders the page", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
       }),
     } as unknown as Request;
 
-    await howManyClientsRetained(req, res, next);
+    howManyClientsRetained(req, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(

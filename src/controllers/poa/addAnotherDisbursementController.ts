@@ -6,12 +6,14 @@ import {
   type Claim,
   type DisbursementCostType,
   DisbursementCostTypeMessagePrefix,
-  type DisbursementLineItem,
-  isDisbursementCostType
+  type DisbursementLineItem
 } from "#src/types/Claim.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
-import { requireClaim } from "#src/helpers/requireClaim.js";
+import {
+  requireClaim,
+  requireDisbursementCostType,
+} from "#src/helpers/requireClaim.js";
 
 /**
  * get add another expert cost view
@@ -27,24 +29,21 @@ export function addAnotherDisbursement(
   try {
     const claim = requireClaim(req);
     const { id: claimId } = claim;
+    const costType = requireDisbursementCostType(claim);
 
-    if (isDisbursementCostType(claim.costType)) {
-      const lineItems: DisbursementLineItem[] = getLineItems(claim);
-      if (lineItems.length === 0) {
-        res.redirect(buildRoute(ROUTES.POA.DISBURSEMENTS.DETAILS, { claimId }));
-      } else {
-        const form = new YesNoQuestionForm(buildField(claim.costType));
-        res.render("main/poa/addAnotherDisbursementView.njk", {
-          csrfToken: res.locals.csrfToken,
-          vm: new AddAnotherDisbursementViewModel({
-            claimId,
-            lineItems,
-            form,
-          }),
-        });
-      }
+    const lineItems: DisbursementLineItem[] = getLineItems(claim);
+    if (lineItems.length === 0) {
+      res.redirect(buildRoute(ROUTES.POA.DISBURSEMENTS.DETAILS, { claimId }));
     } else {
-      res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
+      const form = new YesNoQuestionForm(buildField(costType));
+      res.render("main/poa/addAnotherDisbursementView.njk", {
+        csrfToken: res.locals.csrfToken,
+        vm: new AddAnotherDisbursementViewModel({
+          claimId,
+          lineItems,
+          form,
+        }),
+      });
     }
   } catch (error) {
     const processedError = processError(
@@ -69,33 +68,30 @@ export function submitAddAnotherDisbursement(
   try {
     const claim = requireClaim(req);
     const { id: claimId } = claim;
+    const costType = requireDisbursementCostType(claim);
 
-    if (isDisbursementCostType(claim.costType)) {
-      const field = buildField(claim.costType);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-      const selectedChoice: unknown = req.body?.[field.name];
-      const form = new YesNoQuestionForm(field);
-      form.validate(selectedChoice);
-      if (form.isNotValid()) {
-        const lineItems = getLineItems(claim);
-        res.status(400).render("main/poa/addAnotherDisbursementView.njk", {
-          csrfToken: res.locals.csrfToken,
-          vm: new AddAnotherDisbursementViewModel({
-            claimId,
-            lineItems,
-            form,
-          }),
-        });
-        return;
-      }
+    const field = buildField(costType);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
+    const selectedChoice: unknown = req.body?.[field.name];
+    const form = new YesNoQuestionForm(field);
+    form.validate(selectedChoice);
+    if (form.isNotValid()) {
+      const lineItems = getLineItems(claim);
+      res.status(400).render("main/poa/addAnotherDisbursementView.njk", {
+        csrfToken: res.locals.csrfToken,
+        vm: new AddAnotherDisbursementViewModel({
+          claimId,
+          lineItems,
+          form,
+        }),
+      });
+      return;
+    }
 
-      if (form.getValue()) {
-        res.redirect(buildRoute(ROUTES.POA.DISBURSEMENTS.DETAILS, { claimId }));
-      } else {
-        res.redirect(buildRoute(ROUTES.POA.EVIDENCE_UPLOAD, { claimId }));
-      }
+    if (form.getValue()) {
+      res.redirect(buildRoute(ROUTES.POA.DISBURSEMENTS.DETAILS, { claimId }));
     } else {
-      res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
+      res.redirect(buildRoute(ROUTES.POA.EVIDENCE_UPLOAD, { claimId }));
     }
   } catch (error) {
     const processedError = processError(

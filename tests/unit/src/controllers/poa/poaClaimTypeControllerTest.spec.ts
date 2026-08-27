@@ -38,7 +38,7 @@ describe("poaClaimTypeController", () => {
     sinon.restore();
   });
 
-  it("renders the POA claim type choices when profit cost is enabled", async () => {
+  it("renders the POA claim type choices when profit cost is enabled", () => {
     sinon.stub(config.featureFlags, "poaProfitCostEnabled").value(true);
 
     req = {
@@ -47,7 +47,7 @@ describe("poaClaimTypeController", () => {
       }),
     };
 
-    await poaClaimTypePage(req as Request, res, next);
+    poaClaimTypePage(req as Request, res, next);
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
@@ -79,7 +79,7 @@ describe("poaClaimTypeController", () => {
     ]);
   });
 
-  it("does not render the profit cost choice when profit cost is disabled", async () => {
+  it("does not render the profit cost choice when profit cost is disabled", () => {
     sinon.stub(config.featureFlags, "poaProfitCostEnabled").value(false);
 
     req = {
@@ -88,7 +88,7 @@ describe("poaClaimTypeController", () => {
       }),
     };
 
-    await poaClaimTypePage(req as Request, res, next);
+    poaClaimTypePage(req as Request, res, next);
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 

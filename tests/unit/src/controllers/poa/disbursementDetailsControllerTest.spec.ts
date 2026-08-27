@@ -54,7 +54,7 @@ describe("disbursementDetailsController", () => {
         query: {},
       } as unknown as Request;
 
-      await disbursementDetails(req, res, next);
+      disbursementDetails(req, res, next);
 
       expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
       expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -104,7 +104,7 @@ describe("disbursementDetailsController", () => {
         },
       } as unknown as Request;
 
-      await disbursementDetails(req, res, next);
+      disbursementDetails(req, res, next);
 
       expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
       expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -154,7 +154,7 @@ describe("disbursementDetailsController", () => {
         },
       } as unknown as Request;
 
-      await disbursementDetails(req, res, next);
+      disbursementDetails(req, res, next);
 
       expect((next as sinon.SinonStub).calledOnce).to.be.true;
       expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(HttpError);
@@ -162,7 +162,7 @@ describe("disbursementDetailsController", () => {
     });
   });
 
-  it("redirects when cost type is profit cost", async () => {
+  it("errors when cost type is profit cost", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -171,18 +171,13 @@ describe("disbursementDetailsController", () => {
       query: {},
     } as unknown as Request;
 
-    await disbursementDetails(req, res, next);
+    disbursementDetails(req, res, next);
 
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA.CLAIM_TYPE, {
-          claimId: claimId,
-        }),
-      ),
-    ).to.be.true;
+    expect((next as sinon.SinonStub).calledOnce).to.be.true;
+    expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(Error);
   });
 
-  it("redirects when cost type is missing", async () => {
+  it("errors when cost type is missing", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -190,15 +185,10 @@ describe("disbursementDetailsController", () => {
       query: {},
     } as unknown as Request;
 
-    await disbursementDetails(req, res, next);
+    disbursementDetails(req, res, next);
 
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA.CLAIM_TYPE, {
-          claimId: claimId,
-        }),
-      ),
-    ).to.be.true;
+    expect((next as sinon.SinonStub).calledOnce).to.be.true;
+    expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(Error);
   });
 
   it("redirects to POA evidence upload when form is valid when there isn't a line item ID", () => {

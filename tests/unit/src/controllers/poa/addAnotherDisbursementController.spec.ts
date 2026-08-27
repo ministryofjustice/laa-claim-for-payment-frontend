@@ -100,7 +100,7 @@ describe("addAnotherDisbursementController", () => {
     expect(renderArgs.vm.radioQuestionViewModel.radios.name).to.equal("addAnother");
   });
 
-  it("redirects when profit cost type", () => {
+  it("errors when profit cost type", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -110,14 +110,11 @@ describe("addAnotherDisbursementController", () => {
 
     addAnotherDisbursement(req, res, next);
 
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        `/claims/${claimId.toString()}/poa/claim-type`,
-      ),
-    ).to.equal(true);
+    expect((next as sinon.SinonStub).calledOnce).to.be.true;
+    expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(Error);
   });
 
-  it("redirects when no cost type", () => {
+  it("errors when no cost type", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -126,11 +123,8 @@ describe("addAnotherDisbursementController", () => {
 
     addAnotherDisbursement(req, res, next);
 
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        `/claims/${claimId.toString()}/poa/claim-type`,
-      ),
-    ).to.equal(true);
+    expect((next as sinon.SinonStub).calledOnce).to.be.true;
+    expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(Error);
   });
 
   it("redirects to expert cost page when no line items", () => {

@@ -2,6 +2,9 @@ import type { NextFunction, Request, Response } from "express";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { processApiError, processError } from "#src/helpers/index.js";
+import { requireClaim } from "#src/helpers/requireClaim.js";
+import { isDisbursementCostType } from "#src/types/Claim.js";
+import { buildRoute, ROUTES } from "#routes/helper.js";
 
 /**
  * load draft claim into request
@@ -32,5 +35,29 @@ export async function loadDraftClaim(
     }
   } catch (error) {
     next(processError(error, "retrieving draft claim"));
+  }
+}
+
+/**
+ * require that claim has a disbursement cost type
+ * @param {Request} req Express request object
+ * @param {Response} res Express response object
+ * @param {NextFunction} next Express next function
+ */
+export function requireDisbursementCostType(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  try {
+    const claim = requireClaim(req);
+    const { id: claimId } = claim;
+    if (isDisbursementCostType(claim.costType)) {
+      next();
+    } else {
+      res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
+    }
+  } catch (error) {
+    next(processError(error, "requiring disbursement cost type"));
   }
 }

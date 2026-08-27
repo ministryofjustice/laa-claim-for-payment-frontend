@@ -64,8 +64,8 @@ describe("poaEvidenceUploadController", () => {
       };
     });
 
-    it("renders the POA evidence upload page", async () => {
-      await poaEvidenceUploadPage(req as Request, res, next);
+    it("renders the POA evidence upload page", () => {
+      poaEvidenceUploadPage(req as Request, res, next);
 
       expect(renderStub.calledOnce).to.equal(true);
       expect(renderStub.firstCall.args[0]).to.equal(
@@ -92,7 +92,7 @@ describe("poaEvidenceUploadController", () => {
   describe("uploadEvidenceFile", () => {
     let req: Partial<Request>;
 
-    it("redirects to check your details on submit", async () => {
+    it("redirects to check your details on submit", () => {
       req = {
         axiosMiddleware: {} as any,
         claim: new Claim({
@@ -108,7 +108,7 @@ describe("poaEvidenceUploadController", () => {
         }),
       };
 
-      await submitPoaEvidenceUpload(req as Request, res, next);
+      submitPoaEvidenceUpload(req as Request, res, next);
 
       expect(
         (res.redirect as sinon.SinonStub).calledWith(
@@ -119,7 +119,7 @@ describe("poaEvidenceUploadController", () => {
       ).to.equal(true);
     });
 
-    it("renders with an error when no evidence has been uploaded", async () => {
+    it("renders with an error when no evidence has been uploaded", () => {
       req = {
         axiosMiddleware: {} as any,
         claim: new Claim({
@@ -130,7 +130,7 @@ describe("poaEvidenceUploadController", () => {
 
       (res.status as unknown) = sinon.stub().returns(res);
 
-      await submitPoaEvidenceUpload(req as Request, res, next);
+      submitPoaEvidenceUpload(req as Request, res, next);
 
       expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
       expect(renderStub.calledOnce).to.equal(true);

@@ -51,14 +51,14 @@ describe("Profit cost details controller", () => {
     sinon.restore();
   });
 
-  it("should render the profit cost details page with the correct template", async () => {
+  it("should render the profit cost details page with the correct template", () => {
     req = {
       claim: new Claim({
         id: claimId.toString(),
       }),
     };
 
-    await profitCostDetails(req as Request, res as Response, next);
+    profitCostDetails(req as Request, res as Response, next);
 
     expect(renderStub.calledOnce).to.be.true;
     expect(renderStub.calledWith("main/poa/profitCostDetailsView.njk")).to.be

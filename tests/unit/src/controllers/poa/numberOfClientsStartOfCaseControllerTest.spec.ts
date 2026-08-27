@@ -36,14 +36,14 @@ describe("numberOfClientsStartOfCaseController", () => {
     sinon.restore();
   });
 
-  it("renders the number of clients start of case radio question page", async () => {
+  it("renders the number of clients start of case radio question page", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
       }),
     } as unknown as Request;
 
-    await numberOfClientsStartOfCase(req, res, next);
+    numberOfClientsStartOfCase(req, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(

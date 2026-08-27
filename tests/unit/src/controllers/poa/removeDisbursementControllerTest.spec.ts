@@ -58,7 +58,7 @@ describe("removeDisbursementController", () => {
     sinon.restore();
   });
 
-  it("renders the confirm remove expert cost line item radio question page", async () => {
+  it("renders the confirm remove expert cost line item radio question page", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -72,7 +72,7 @@ describe("removeDisbursementController", () => {
       },
     } as unknown as Request;
 
-    await confirmRemoveExpertLineItem(req, res, next);
+    confirmRemoveExpertLineItem(req, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -86,7 +86,7 @@ describe("removeDisbursementController", () => {
     expect(renderArgs.vm.radios.name).to.equal("confirmRemoveExpertLineItem");
   });
 
-  it("renders the confirm remove non-expert disbursement line item radio question page", async () => {
+  it("renders the confirm remove non-expert disbursement line item radio question page", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -100,7 +100,7 @@ describe("removeDisbursementController", () => {
       },
     } as unknown as Request;
 
-    await confirmRemoveExpertLineItem(req, res, next);
+    confirmRemoveExpertLineItem(req, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -114,7 +114,7 @@ describe("removeDisbursementController", () => {
     expect(renderArgs.vm.radios.name).to.equal("confirmRemoveExpertLineItem");
   });
 
-  it("redirects when cost type is profit cost", async () => {
+  it("errors when cost type is profit cost", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -128,18 +128,13 @@ describe("removeDisbursementController", () => {
       },
     } as unknown as Request;
 
-    await confirmRemoveExpertLineItem(req, res, next);
+    confirmRemoveExpertLineItem(req, res, next);
 
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA.CLAIM_TYPE, {
-          claimId: claimId,
-        }),
-      ),
-    ).to.be.true;
+    expect((next as sinon.SinonStub).calledOnce).to.be.true;
+    expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(Error);
   });
 
-  it("redirects when no cost type", async () => {
+  it("errors when no cost type", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -152,15 +147,10 @@ describe("removeDisbursementController", () => {
       },
     } as unknown as Request;
 
-    await confirmRemoveExpertLineItem(req, res, next);
+    confirmRemoveExpertLineItem(req, res, next);
 
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA.CLAIM_TYPE, {
-          claimId: claimId,
-        }),
-      ),
-    ).to.be.true;
+    expect((next as sinon.SinonStub).calledOnce).to.be.true;
+    expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(Error);
   });
 
   it("redirects back to add a line when deleting", async () => {

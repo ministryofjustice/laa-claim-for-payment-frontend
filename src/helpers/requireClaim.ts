@@ -1,4 +1,4 @@
-import type { Claim } from "#src/types/Claim.js";
+import { type Claim, type DisbursementCostType, isDisbursementCostType } from "#src/types/Claim.js";
 import type { Request } from "express";
 
 /**
@@ -14,4 +14,18 @@ export function requireClaim(req: Request): Claim {
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- ignore
   return req.claim;
+}
+
+/**
+ * Require that claim has a disbursement cost type
+ * @param {Claim} claim claim
+ * @returns {DisbursementCostType} the disbursement cost type
+ * @throws if claim does not have a disbursement cost type
+ */
+export function requireDisbursementCostType(claim: Claim): DisbursementCostType {
+  if (isDisbursementCostType(claim.costType)) {
+    return claim.costType;
+  }
+
+  throw new Error("Claim does not have a disbursement cost type");
 }

@@ -33,14 +33,14 @@ describe("multipleClientHearingsController", () => {
     sinon.restore();
   });
 
-  it("renders the multiple client hearings radio question page", async () => {
+  it("renders the multiple client hearings radio question page", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
       }),
     } as unknown as Request;
 
-    await multipleClientHearings(req, res, next);
+    multipleClientHearings(req, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
