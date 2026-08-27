@@ -1,11 +1,11 @@
 import { RadioQuestionViewModel, type YesNoQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
-import { processApiError, processError } from "#src/helpers/index.js";
+import { processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import { requireClaim } from "#src/helpers/requireClaim.js";
 
 /**
  * get how many clients retained view
@@ -13,36 +13,22 @@ import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
  */
-export async function multipleClientHearings(
+export function multipleClientHearings(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+): void {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claim = requireClaim(req);
 
-    const claim = await claimService.getDraftClaim(
-      req.axiosMiddleware,
-      claimId,
-    );
-
-    if (claim.status === "success") {
-      const form = new YesNoQuestionForm(buildField());
-      if (claim.body.multiClientHearingFlag != null) {
-        form.fill(claim.body.multiClientHearingFlag);
-      }
-      res.render("main/radioQuestionPage.njk", {
-        csrfToken: res.locals.csrfToken,
-        vm: buildViewModel(form),
-      });
-    } else {
-      next(
-        processApiError(
-          claim,
-          "retrieving claim for rendering multiple client hearings page",
-        ),
-      );
+    const form = new YesNoQuestionForm(buildField());
+    if (claim.multiClientHearingFlag != null) {
+      form.fill(claim.multiClientHearingFlag);
     }
+    res.render("main/radioQuestionPage.njk", {
+      csrfToken: res.locals.csrfToken,
+      vm: buildViewModel(form),
+    });
   } catch (error) {
     const processedError = processError(
       error,
@@ -78,28 +64,14 @@ export async function submitMultipleClientHearings(
       return;
     }
 
-    const claimId = UUID.parse(req.params.claimId);
+    const claim = requireClaim(req);
 
-    const claim = await claimService.getDraftClaim(
+    await claimService.updateClaim(
       req.axiosMiddleware,
-      claimId,
+      claim.setMultiClientHearingFlag(form.getValue()),
     );
 
-    if (claim.status === "success") {
-      await claimService.updateClaim(
-        req.axiosMiddleware,
-        claim.body.setMultiClientHearingFlag(form.getValue()),
-      );
-
-      res.redirect(buildRoute(ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE, { claimId }));
-    } else {
-      next(
-        processApiError(
-          claim,
-          "retrieving claim for submitting multiple client hearings page",
-        ),
-      );
-    }
+    res.redirect(buildRoute(ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE, { claimId: claim.id }));
   } catch (error) {
     const processedError = processError(
       error,

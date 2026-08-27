@@ -15,7 +15,6 @@ import { LocalDate } from "#src/types/date.js";
 describe("profitCostBillLineController", () => {
   let res: Response;
   let next: NextFunction;
-  let getClaimStub: sinon.SinonStub;
   let createLineItemStub: sinon.SinonStub;
   let updateLineItemStub: sinon.SinonStub;
 
@@ -34,7 +33,6 @@ describe("profitCostBillLineController", () => {
 
     next = sinon.stub() as unknown as NextFunction;
 
-    getClaimStub = sinon.stub(claimService, "getDraftClaim");
     createLineItemStub = sinon.stub(claimService, "addLineItemToClaim");
     updateLineItemStub = sinon.stub(claimService, "updateLineItem");
   });
@@ -45,17 +43,10 @@ describe("profitCostBillLineController", () => {
 
   it("renders the profit cost bill line page", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
-    } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
+      claim: new Claim({
         id: claimId.toString(),
       }),
-    });
+    } as unknown as Request;
 
     await profitCostBillLine(req, res, next);
 
@@ -72,14 +63,7 @@ describe("profitCostBillLineController", () => {
 
   it("renders the profit cost bill line page when line item exists", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
-    } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
+      claim: new Claim({
         id: claimId.toString(),
         lineItems: [
           {
@@ -95,7 +79,7 @@ describe("profitCostBillLineController", () => {
           },
         ],
       }),
-    });
+    } as unknown as Request;
 
     await profitCostBillLine(req, res, next);
 
@@ -122,9 +106,9 @@ describe("profitCostBillLineController", () => {
 
   it("creates line item when it doesn't already exist", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {
         activityDateDay: "27",
         activityDateMonth: "3",
@@ -157,9 +141,9 @@ describe("profitCostBillLineController", () => {
 
   it("updates line item when it does already exist", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {
         activityDateDay: "27",
         activityDateMonth: "3",
@@ -193,9 +177,10 @@ describe("profitCostBillLineController", () => {
 
   it("redirects to POA evidence upload when escaping standard fixed fee", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+        escaped: true,
+      }),
       body: {
         activityDateDay: "27",
         activityDateMonth: "3",
@@ -210,14 +195,6 @@ describe("profitCostBillLineController", () => {
     createLineItemStub.resolves({
       status: "success",
       body: null,
-    });
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-        escaped: true,
-      }),
     });
 
     await submitProfitCostBillLine(req, res, next);
@@ -233,9 +210,10 @@ describe("profitCostBillLineController", () => {
 
   it("redirects to CYA when not escaping standard fixed fee", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+        escaped: false,
+      }),
       body: {
         activityDateDay: "27",
         activityDateMonth: "3",
@@ -250,14 +228,6 @@ describe("profitCostBillLineController", () => {
     createLineItemStub.resolves({
       status: "success",
       body: null,
-    });
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-        escaped: false,
-      }),
     });
 
     await submitProfitCostBillLine(req, res, next);
@@ -273,9 +243,9 @@ describe("profitCostBillLineController", () => {
 
   it("redirects to escape yes/no when that question is unanswered", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {
         activityDateDay: "27",
         activityDateMonth: "3",
@@ -292,13 +262,6 @@ describe("profitCostBillLineController", () => {
       body: null,
     });
 
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-      }),
-    });
-
     await submitProfitCostBillLine(req, res, next);
 
     expect(
@@ -312,9 +275,6 @@ describe("profitCostBillLineController", () => {
 
   it("rerenders with 400 when form is invalid", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
       body: {},
     } as unknown as Request;
 

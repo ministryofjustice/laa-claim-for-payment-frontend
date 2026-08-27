@@ -1,17 +1,17 @@
 import type { NextFunction, Request, Response } from "express";
-import { processApiError, processError } from "#src/helpers/index.js";
+import { processError } from "#src/helpers/index.js";
 import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
-import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import type { Claim } from "#src/types/Claim.js";
 import type { RadioField } from "#src/helpers/fields.js";
 import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import { requireClaim } from "#src/helpers/requireClaim.js";
 
 interface RadioQuestionControllerParams<ChoiceType extends string> {
   buildField: () => RadioField<ChoiceType, ChoiceType>;
   renderErrorContext: string;
   submitErrorContext: string;
-  getRedirectUrl: (req: Request, selectedChoice: ChoiceType) => string;
+  getRedirectUrl: (claim: Claim, selectedChoice: ChoiceType) => string;
   getValue: (claim: Claim) => ChoiceType | null | undefined;
   setValue: (claim: Claim, selectedChoice: ChoiceType) => Claim;
 }
@@ -30,37 +30,22 @@ export function createRadioQuestionController<ChoiceType extends string>({
   getValue,
   setValue,
 }: RadioQuestionControllerParams<ChoiceType>): {
-  get: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+  get: (req: Request, res: Response, next: NextFunction) => void;
   post: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 } {
   return {
-    async get(req: Request, res: Response, next: NextFunction): Promise<void> {
+    get(req: Request, res: Response, next: NextFunction): void {
       try {
-        const claimId = UUID.parse(req.params.claimId);
-
-        const claim = await claimService.getDraftClaim(
-          req.axiosMiddleware,
-          claimId,
-        );
-
-        if (claim.status === "success") {
-          const form = new RadioQuestionForm(buildField());
-          const value = getValue(claim.body);
-          if (value != null) {
-            form.fill(value);
-          }
-          res.render("main/radioQuestionPage.njk", {
-            csrfToken: res.locals.csrfToken,
-            vm: buildViewModel(form),
-          });
-        } else {
-          next(
-            processApiError(
-              claim,
-              `retrieving claim for ${renderErrorContext}`,
-            ),
-          );
+        const claim = requireClaim(req);
+        const form = new RadioQuestionForm(buildField());
+        const value = getValue(claim);
+        if (value != null) {
+          form.fill(value);
         }
+        res.render("main/radioQuestionPage.njk", {
+          csrfToken: res.locals.csrfToken,
+          vm: buildViewModel(form),
+        });
       } catch (error) {
         next(processError(error, renderErrorContext));
       }
@@ -82,28 +67,14 @@ export function createRadioQuestionController<ChoiceType extends string>({
           return;
         }
 
-        const claimId = UUID.parse(req.params.claimId);
+        const claim = requireClaim(req);
 
-        const claim = await claimService.getDraftClaim(
+        await claimService.updateClaim(
           req.axiosMiddleware,
-          claimId,
+          setValue(claim, form.getValue()),
         );
 
-        if (claim.status === "success") {
-          await claimService.updateClaim(
-            req.axiosMiddleware,
-            setValue(claim.body, form.getValue()),
-          );
-
-          res.redirect(getRedirectUrl(req, form.getValue()));
-        } else {
-          next(
-            processApiError(
-              claim,
-              `retrieving claim for ${submitErrorContext}`,
-            ),
-          );
-        }
+        res.redirect(getRedirectUrl(claim, form.getValue()));
       } catch (error) {
         next(processError(error, submitErrorContext));
       }

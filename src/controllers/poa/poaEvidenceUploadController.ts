@@ -1,13 +1,10 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { processApiError, processError } from "#src/helpers/index.js";
-import { claimService } from "#src/services/claimService.js";
-import {
-  PoaEvidenceUploadViewModel
-} from "#src/viewmodels/poa/evidenceUploadViewModel.js";
+import { processError } from "#src/helpers/index.js";
+import { PoaEvidenceUploadViewModel } from "#src/viewmodels/poa/evidenceUploadViewModel.js";
 import type { NextFunction, Request, Response } from "express";
-import { UUID } from "uuidv7";
 import { UploadField } from "#src/helpers/fields.js";
 import { UploadForm } from "#src/helpers/fileUploadValidation.js";
+import { requireClaim } from "#src/helpers/requireClaim.js";
 
 /**
  * Display POA evidence upload page.
@@ -16,24 +13,14 @@ import { UploadForm } from "#src/helpers/fileUploadValidation.js";
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
  */
-export async function poaEvidenceUploadPage(
+export function poaEvidenceUploadPage(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+): void {
   try {
-    const claimId = UUID.parse(req.params.claimId);
-    const response = await claimService.getDraftClaim(
-      req.axiosMiddleware,
-      claimId,
-    );
-
-    if (response.status !== "success") {
-      next(processApiError(response, "fetching POA evidence upload details"));
-      return;
-    }
-
-    const { body: claim } = response;
+    const claim = requireClaim(req);
+    const { id: claimId } = claim;
 
     const form = new UploadForm(buildField());
     form.fill(claim.evidence);
@@ -59,24 +46,14 @@ export async function poaEvidenceUploadPage(
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
  */
-export async function submitPoaEvidenceUpload(
+export function submitPoaEvidenceUpload(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+): void {
   try {
-    const claimId = UUID.parse(req.params.claimId);
-    const response = await claimService.getDraftClaim(
-      req.axiosMiddleware,
-      claimId,
-    );
-
-    if (response.status !== "success") {
-      next(processApiError(response, "fetching POA evidence upload details"));
-      return;
-    }
-
-    const { body: claim } = response;
+    const claim = requireClaim(req);
+    const { id: claimId } = claim;
 
     const form = new UploadForm(buildField());
     form.validate(claim.evidence);

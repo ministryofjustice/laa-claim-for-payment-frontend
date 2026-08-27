@@ -13,7 +13,6 @@ import { claimService } from "#src/services/claimService.js";
 describe("numberOfClientsStartOfCaseController", () => {
   let res: Response;
   let next: NextFunction;
-  let getClaimStub: sinon.SinonStub;
   let updateClaimStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
@@ -30,7 +29,6 @@ describe("numberOfClientsStartOfCaseController", () => {
 
     next = sinon.stub() as unknown as NextFunction;
 
-    getClaimStub = sinon.stub(claimService, "getDraftClaim");
     updateClaimStub = sinon.stub(claimService, "updateClaim");
   });
 
@@ -40,17 +38,10 @@ describe("numberOfClientsStartOfCaseController", () => {
 
   it("renders the number of clients start of case radio question page", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
-    } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
+      claim: new Claim({
         id: claimId.toString(),
       }),
-    });
+    } as unknown as Request;
 
     await numberOfClientsStartOfCase(req, res, next);
 
@@ -95,20 +86,13 @@ describe("numberOfClientsStartOfCaseController", () => {
 
   it("redirects to multiple client hearings when 0 is selected", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {
         numberOfClientsStartOfCase: "ZERO",
       },
     } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-      }),
-    });
 
     updateClaimStub.resolves({
       status: "success",
@@ -136,20 +120,13 @@ describe("numberOfClientsStartOfCaseController", () => {
 
   it("redirects to multiple client hearings when 1 is selected", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {
         numberOfClientsStartOfCase: "ONE",
       },
     } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-      }),
-    });
 
     updateClaimStub.resolves({
       status: "success",
@@ -177,20 +154,13 @@ describe("numberOfClientsStartOfCaseController", () => {
 
   it("redirects to multiple client hearings when 2+ is selected", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {
         numberOfClientsStartOfCase: "TWO_OR_MORE",
       },
     } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-      }),
-    });
 
     updateClaimStub.resolves({
       status: "success",
@@ -218,9 +188,6 @@ describe("numberOfClientsStartOfCaseController", () => {
 
   it("rerenders with an error when no option is selected", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
       body: {},
     } as unknown as Request;
 

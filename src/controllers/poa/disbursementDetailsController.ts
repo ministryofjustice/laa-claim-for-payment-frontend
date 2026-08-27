@@ -1,5 +1,5 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { processApiError, processError } from "#src/helpers/index.js";
+import { processError } from "#src/helpers/index.js";
 import type { NextFunction, Request, Response } from "express";
 import { DisbursementDetailsViewModel } from "#src/viewmodels/poa/disbursementDetailsViewModel.js";
 import {
@@ -17,6 +17,7 @@ import {
 } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
 import createHttpError from "http-errors";
+import { requireClaim } from "#src/helpers/requireClaim.js";
 
 /**
  * Display POA expert cost details page.
@@ -25,60 +26,45 @@ import createHttpError from "http-errors";
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
  */
-export async function disbursementDetails(
+export function disbursementDetails(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+): void {
   try {
-    const claimId = getClaimId(req);
+    const claim = requireClaim(req);
     const lineItemId = getLineItemId(req);
 
-    const claimResponse = await claimService.getDraftClaim(
-      req.axiosMiddleware,
-      claimId,
-    );
+    if (isDisbursementCostType(claim.costType)) {
+      const form = new DisbursementDetailsForm(claim.costType);
 
-    if (claimResponse.status === "success") {
-      const { body: claim } = claimResponse;
-      if (isDisbursementCostType(claim.costType)) {
-        const form = new DisbursementDetailsForm(claim.costType);
+      if (lineItemId != null) {
+        const lineItem = getLineItem(claim, lineItemId);
 
-        if (lineItemId != null) {
-          const lineItem = getLineItem(claim, lineItemId);
-
-          if (lineItem === undefined) {
-            next(
-              new createHttpError.NotFound(
-                `Line item ${lineItemId.toString()} not found`,
-              ),
-            );
-            return;
-          }
-
-          form.fill({
-            activityDate: lineItem.date,
-            actualNetValue: lineItem.actualNetValue,
-            vatApplies: lineItem.vatApplicable,
-            feeEarnerName: lineItem.feeEarnerName,
-            description: lineItem.title,
-          });
+        if (lineItem === undefined) {
+          next(
+            new createHttpError.NotFound(
+              `Line item ${lineItemId.toString()} not found`,
+            ),
+          );
+          return;
         }
 
-        res.render("main/poa/disbursementDetailsView.njk", {
-          csrfToken: res.locals.csrfToken,
-          vm: new DisbursementDetailsViewModel({ form }),
+        form.fill({
+          activityDate: lineItem.date,
+          actualNetValue: lineItem.actualNetValue,
+          vatApplies: lineItem.vatApplicable,
+          feeEarnerName: lineItem.feeEarnerName,
+          description: lineItem.title,
         });
-      } else {
-        res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
       }
+
+      res.render("main/poa/disbursementDetailsView.njk", {
+        csrfToken: res.locals.csrfToken,
+        vm: new DisbursementDetailsViewModel({ form }),
+      });
     } else {
-      next(
-        processApiError(
-          claimResponse,
-          "retrieving line item for rendering expert cost details page",
-        ),
-      );
+      res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId: claim.id }));
     }
   } catch (error) {
     next(processError(error, "rendering expert cost details page"));
@@ -98,74 +84,56 @@ export async function submitDisbursementDetails(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = getClaimId(req);
+    const claim = requireClaim(req);
+    const { id: claimId } = claim;
     const lineItemId = getLineItemId(req);
 
     const requestBody = getRequestBody(
       req.body,
     ) as DisbursementDetailsRequestBody;
 
-    const claimResponse = await claimService.getDraftClaim(
-      req.axiosMiddleware,
-      claimId,
-    );
+    if (isDisbursementCostType(claim.costType)) {
+      const form = new DisbursementDetailsForm(claim.costType);
+      form.validate(requestBody);
+      if (form.isNotValid()) {
+        res.status(400).render("main/poa/disbursementDetailsView.njk", {
+          csrfToken: res.locals.csrfToken,
+          vm: new DisbursementDetailsViewModel({ form }),
+        });
+        return;
+      }
 
-    if (claimResponse.status === "success") {
-      const { body: claim } = claimResponse;
-      if (isDisbursementCostType(claim.costType)) {
-        const form = new DisbursementDetailsForm(claim.costType);
-        form.validate(requestBody);
-        if (form.isNotValid()) {
-          res.status(400).render("main/poa/disbursementDetailsView.njk", {
-            csrfToken: res.locals.csrfToken,
-            vm: new DisbursementDetailsViewModel({ form }),
-          });
-          return;
-        }
+      const lineItemForm: LineItemForm = {
+        type: CostType.EXPERT_COST,
+        value: form.getValue(),
+      };
 
-        const lineItemForm: LineItemForm = {
-          type: CostType.EXPERT_COST,
-          value: form.getValue(),
-        };
-
-        if (lineItemId == null) {
-          await claimService.addLineItemToClaim(
-            req.axiosMiddleware,
-            claimId,
-            lineItemForm,
-          );
-        } else {
-          await claimService.updateLineItem(
-            req.axiosMiddleware,
-            claimId,
-            lineItemId,
-            lineItemForm,
-          );
-        }
-
-        res.redirect(
-          buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, {
-            claimId,
-          }),
+      if (lineItemId == null) {
+        await claimService.addLineItemToClaim(
+          req.axiosMiddleware,
+          claimId,
+          lineItemForm,
         );
       } else {
-        res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
+        await claimService.updateLineItem(
+          req.axiosMiddleware,
+          claimId,
+          lineItemId.toString(),
+          lineItemForm,
+        );
       }
-    } else {
-      next(
-        processApiError(
-          claimResponse,
-          "retrieving claim for submitting expert cost details page",
-        ),
+
+      res.redirect(
+        buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, {
+          claimId,
+        }),
       );
+    } else {
+      res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
     }
   } catch (error) {
     next(processError(error, "submitting expert cost details page"));
   }
-}
-
-function getClaimId(req: Request): UUID {
-  return UUID.parse(req.params.claimId);
 }
 
 function getLineItemId(req: Request): UUID | undefined {

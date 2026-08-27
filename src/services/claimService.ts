@@ -253,14 +253,14 @@ class ClaimService {
    * Adds a line item to a draft claim and returns the ID in the Location header.
    *
    * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
-   * @param {UUID} claimId - Claim ID.
+   * @param {string} claimId - Claim ID.
    * @param {LineItemForm} lineItemForm - Line item form.
    * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
    * @returns {Promise<ApiResponse<null>>} App response format.
    */
   static async addLineItemToClaim(
     axiosMiddleware: AxiosInstanceWrapper,
-    claimId: UUID,
+    claimId: string,
     lineItemForm?: LineItemForm,
     deps: ClaimServiceDeps = defaultDeps,
   ): Promise<ApiResponse<UUID>> {
@@ -272,7 +272,7 @@ class ClaimService {
 
     try {
       const response = await deps.addLineItemToClaim<true>({
-        path: { claimId: claimId.toString() },
+        path: { claimId },
         query: { status: ClaimStatus.DRAFT },
         body: lineItemForm == null ? {} : toLineItemRequestBody(lineItemForm),
         client: apiClient,
@@ -334,8 +334,8 @@ class ClaimService {
    * Updates a line item.
    *
    * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
-   * @param {UUID} claimId - Claim identifier.
-   * @param {UUID} lineItemId - Line item identifier.
+   * @param {string} claimId - Claim identifier.
+   * @param {string} lineItemId - Line item identifier.
    * @param {LineItemForm} lineItemForm - Line item form.
    * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
    * @returns {Promise<ApiResponse<null>>} App response format.
@@ -343,8 +343,8 @@ class ClaimService {
   // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   static async updateLineItem(
     axiosMiddleware: AxiosInstanceWrapper,
-    claimId: UUID,
-    lineItemId: UUID,
+    claimId: string,
+    lineItemId: string,
     lineItemForm: LineItemForm,
     deps: ClaimServiceDeps = defaultDeps,
   ): Promise<ApiResponse<null>> {
@@ -357,8 +357,8 @@ class ClaimService {
     try {
       await deps.updateLineItem({
         path: {
-          claimId: claimId.toString(),
-          lineItemId: lineItemId.toString(),
+          claimId,
+          lineItemId,
         },
         query: { status: ClaimStatus.DRAFT },
         body: toLineItemRequestBody(lineItemForm),
@@ -378,15 +378,15 @@ class ClaimService {
    * Delete a line item.
    *
    * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
-   * @param {UUID} claimId - Claim identifier.
-   * @param {UUID} lineItemId - Line item identifier.
+   * @param {string} claimId - Claim identifier.
+   * @param {string} lineItemId - Line item identifier.
    * @param {ClaimServiceDeps} deps - Service dependencies used to create the client and call the generated API.
    * @returns {Promise<ApiResponse<null>>} App response format.
    */
   static async deleteLineItem(
     axiosMiddleware: AxiosInstanceWrapper,
-    claimId: UUID,
-    lineItemId: UUID,
+    claimId: string,
+    lineItemId: string,
     deps: ClaimServiceDeps = defaultDeps,
   ): Promise<ApiResponse<null>> {
     const apiClient = deps.createClient({
@@ -398,8 +398,8 @@ class ClaimService {
     try {
       await deps.deleteLineItem({
         path: {
-          claimId: claimId.toString(),
-          lineItemId: lineItemId.toString(),
+          claimId,
+          lineItemId,
         },
         query: { status: ClaimStatus.DRAFT },
         client: apiClient,

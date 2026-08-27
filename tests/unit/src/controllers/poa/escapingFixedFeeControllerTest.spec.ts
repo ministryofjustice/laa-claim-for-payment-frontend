@@ -7,7 +7,6 @@ import {
   submitEscapingFixedFee,
 } from "#src/controllers/poa/escapingFixedFeeController.js";
 import { V7Generator } from "uuidv7";
-import { claimService } from "#src/services/claimService.js";
 import { Claim } from "#src/types/Claim.js";
 import { draftService } from "#src/services/draftService.js";
 
@@ -39,9 +38,9 @@ describe("escapingFixedFeeController", () => {
 
   it("renders the escaping the fixed fee radio question page", async () => {
     const req = {
-      claim: {
+      claim: new Claim({
         id: claimId.toString(),
-      },
+      }),
     } as unknown as Request;
 
     await escapingFixedFee(req, res, next);
@@ -60,9 +59,9 @@ describe("escapingFixedFeeController", () => {
 
   it("redirects to CPGFS profit cost bill line page when escaping fixed fee answer is given", async () => {
     const req = {
-      claim: {
+      claim: new Claim({
         id: claimId.toString(),
-      },
+      }),
       body: {
         escapingFixedFee: "yes",
       },
@@ -93,9 +92,9 @@ describe("escapingFixedFeeController", () => {
 
   it("rerenders the radio question page with an error when no option is selected", async () => {
     const req = {
-      claim: {
+      claim: new Claim({
         id: claimId.toString(),
-      },
+      }),
       body: {},
     } as unknown as Request;
 
@@ -110,9 +109,9 @@ describe("escapingFixedFeeController", () => {
 
   it("rerenders with selected invalid string preserved when invalid option is submitted", async () => {
     const req = {
-      claim: {
+      claim: new Claim({
         id: claimId.toString(),
-      },
+      }),
       body: {
         escapingFixedFee: "invalid",
       },

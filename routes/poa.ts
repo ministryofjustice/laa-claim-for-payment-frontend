@@ -27,9 +27,9 @@ import { loadDraftClaim } from "#middleware/loadDraftClaim.js";
 export const buildPoaRouter = (): Router => {
   const router = express.Router();
 
-  router.get(ROUTES.POA.EVIDENCE_UPLOAD, poaEvidenceUploadPage);
+  router.get(ROUTES.POA.EVIDENCE_UPLOAD, loadDraftClaim, poaEvidenceUploadPage);
 
-  router.post(ROUTES.POA.EVIDENCE_UPLOAD, submitPoaEvidenceUpload);
+  router.post(ROUTES.POA.EVIDENCE_UPLOAD, loadDraftClaim, submitPoaEvidenceUpload);
 
   router.post(
     ROUTES.POA.AJAX_UPLOAD_EVIDENCE,
@@ -40,49 +40,56 @@ export const buildPoaRouter = (): Router => {
 
   router.post(ROUTES.POA.AJAX_DELETE_EVIDENCE, deleteEvidenceFileFromClaim);
 
-  router.get(ROUTES.POA.CLAIM_TYPE, poaClaimTypePage);
+  router.get(ROUTES.POA.CLAIM_TYPE, loadDraftClaim, poaClaimTypePage);
 
-  router.post(ROUTES.POA.CLAIM_TYPE, submitPoaClaimType);
+  router.post(ROUTES.POA.CLAIM_TYPE, loadDraftClaim, submitPoaClaimType);
 
   registerIf(config.featureFlags.poaProfitCostEnabled, () => {
     router.get(
       ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED,
+      loadDraftClaim,
       howManyClientsRetained,
     );
 
     router.post(
       ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED,
+      loadDraftClaim,
       submitHowManyClientsRetained,
     );
 
-    router.get(ROUTES.POA.PROFIT_COST.DETAILS, profitCostDetails);
+    router.get(ROUTES.POA.PROFIT_COST.DETAILS, loadDraftClaim, profitCostDetails);
 
-    router.post(ROUTES.POA.PROFIT_COST.DETAILS, submitProfitCostDetails);
+    router.post(ROUTES.POA.PROFIT_COST.DETAILS, loadDraftClaim, submitProfitCostDetails);
 
     router.get(
       ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS,
+      loadDraftClaim,
       multipleClientHearings,
     );
 
     router.post(
       ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS,
+      loadDraftClaim,
       submitMultipleClientHearings,
     );
 
-    router.get(ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE, profitCostBillLine);
+    router.get(ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE, loadDraftClaim, profitCostBillLine);
 
     router.post(
       ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE,
+      loadDraftClaim,
       submitProfitCostBillLine,
     );
 
     router.get(
       ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE,
+      loadDraftClaim,
       numberOfClientsStartOfCase,
     );
 
     router.post(
       ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE,
+      loadDraftClaim,
       submitNumberOfClientsStartOfCase,
     );
 
@@ -95,21 +102,21 @@ export const buildPoaRouter = (): Router => {
     );
   });
 
-  router.get(ROUTES.POA.DISBURSEMENTS.DETAILS, disbursementDetails);
+  router.get(ROUTES.POA.DISBURSEMENTS.DETAILS, loadDraftClaim, disbursementDetails);
 
-  router.post(ROUTES.POA.DISBURSEMENTS.DETAILS, submitDisbursementDetails);
+  router.post(ROUTES.POA.DISBURSEMENTS.DETAILS, loadDraftClaim, submitDisbursementDetails);
 
-  router.get(ROUTES.POA.DISBURSEMENTS.ADD, addAnotherDisbursement);
+  router.get(ROUTES.POA.DISBURSEMENTS.ADD, loadDraftClaim, addAnotherDisbursement);
 
-  router.post(ROUTES.POA.DISBURSEMENTS.ADD, submitAddAnotherDisbursement);
+  router.post(ROUTES.POA.DISBURSEMENTS.ADD, loadDraftClaim, submitAddAnotherDisbursement);
 
-  router.get(ROUTES.POA.DISBURSEMENTS.REMOVE, confirmRemoveExpertLineItem);
+  router.get(ROUTES.POA.DISBURSEMENTS.REMOVE, loadDraftClaim, confirmRemoveExpertLineItem);
 
-  router.post(ROUTES.POA.DISBURSEMENTS.REMOVE, submitRemoveExpertLineItem);
+  router.post(ROUTES.POA.DISBURSEMENTS.REMOVE, loadDraftClaim, submitRemoveExpertLineItem);
 
-  router.get(ROUTES.POA.CHECK_DETAILS, checkYourDetailsPage);
+  router.get(ROUTES.POA.CHECK_DETAILS, loadDraftClaim, checkYourDetailsPage);
 
-  router.post(ROUTES.POA.CHECK_DETAILS, submitYourDetails);
+  router.post(ROUTES.POA.CHECK_DETAILS, loadDraftClaim, submitYourDetails);
 
   router.get(ROUTES.POA.SUBMISSION_SUCCESSFUL, poaSubmissionSuccessfulPage);
 

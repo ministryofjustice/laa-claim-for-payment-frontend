@@ -13,7 +13,6 @@ import { Claim } from "#src/types/Claim.js";
 describe("howManyClientsRetainedController", () => {
   let res: Response;
   let next: NextFunction;
-  let getClaimStub: sinon.SinonStub;
   let updateClaimStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
@@ -30,7 +29,6 @@ describe("howManyClientsRetainedController", () => {
 
     next = sinon.stub() as unknown as NextFunction;
 
-    getClaimStub = sinon.stub(claimService, "getDraftClaim");
     updateClaimStub = sinon.stub(claimService, "updateClaim");
   });
 
@@ -40,17 +38,10 @@ describe("howManyClientsRetainedController", () => {
 
   it("renders the page", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
-    } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
+      claim: new Claim({
         id: claimId.toString(),
       }),
-    });
+    } as unknown as Request;
 
     await howManyClientsRetained(req, res, next);
 
@@ -62,26 +53,21 @@ describe("howManyClientsRetainedController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
-    expect(renderArgs.vm.title.key).to.equal("pages.howManyClientsRetained.title");
+    expect(renderArgs.vm.title.key).to.equal(
+      "pages.howManyClientsRetained.title",
+    );
     expect(renderArgs.vm.radios.name).to.equal("howManyClientsRetained");
   });
 
   it("redirects to number of clients at start of case when answer is 0", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {
         howManyClientsRetained: "ZERO",
       },
     } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-      }),
-    });
 
     updateClaimStub.resolves({
       status: "success",
@@ -112,20 +98,13 @@ describe("howManyClientsRetainedController", () => {
 
     for (const selection of selections) {
       const req = {
-        params: {
-          claimId: claimId.toString(),
-        },
+        claim: new Claim({
+          id: claimId.toString(),
+        }),
         body: {
           howManyClientsRetained: selection,
         },
       } as unknown as Request;
-
-      getClaimStub.resolves({
-        status: "success",
-        body: new Claim({
-          id: claimId.toString(),
-        }),
-      });
 
       updateClaimStub.resolves({
         status: "success",
@@ -154,9 +133,6 @@ describe("howManyClientsRetainedController", () => {
 
   it("re-renders the page with an error when no option is selected", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
       body: {},
     } as unknown as Request;
 
@@ -171,9 +147,6 @@ describe("howManyClientsRetainedController", () => {
 
   it("re-renders the page with an error when an invalid option is selected", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
       body: {
         howManyClientsRetained: "invalid",
       },

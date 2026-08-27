@@ -3,10 +3,7 @@ import { expect } from "chai";
 import * as sinon from "sinon";
 import type { Request, Response } from "express";
 import "#utils/axiosSetup.js";
-import { claimService } from "#src/services/claimService.js";
-import { ApiResponse } from "#src/types/api-types.js";
-import { Claim, ClaimDto } from "#src/types/Claim.js";
-import { HttpError } from "http-errors";
+import { Claim } from "#src/types/Claim.js";
 import {
   checkYourDetailsPage,
   submitYourDetails,
@@ -21,17 +18,10 @@ describe("Check Details Controller", () => {
   let next: any;
   let renderStub: sinon.SinonStub;
   let statusStub: sinon.SinonStub;
-  let claimServiceStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
 
   beforeEach(() => {
-    req = {
-      axiosMiddleware: {} as any,
-      path: `/claims/${claimId.toString()}/poa-check-details`,
-      params: { claimId: claimId.toString() },
-    };
-
     renderStub = sinon.stub();
     statusStub = sinon.stub().returns({ render: renderStub });
 
@@ -42,8 +32,6 @@ describe("Check Details Controller", () => {
     };
 
     next = sinon.stub();
-
-    claimServiceStub = sinon.stub(claimService, "getDraftClaim");
   });
 
   afterEach(() => {
@@ -51,32 +39,24 @@ describe("Check Details Controller", () => {
   });
 
   describe("Check Details controller test", () => {
-    it("should render the page with data and correct template", async () => {
-      const mockApiResponse = {
-        body: new Claim({ ...claim9 }),
-        status: "success",
+    it("should render the page with data and correct template", () => {
+      req = {
+        claim: new Claim({ ...claim9 }),
       };
 
-      claimServiceStub.resolves(mockApiResponse);
+      checkYourDetailsPage(req as Request, res as Response, next);
 
-      await checkYourDetailsPage(req as Request, res as Response, next);
-
-      expect(claimServiceStub.calledOnce).to.be.true;
-      expect(claimServiceStub.calledWith(req.axiosMiddleware)).to.be.true;
       expect(renderStub.calledWith("main/poa/checkDetailsView.njk")).to.be.true;
     });
 
-    it("should redirect when cost type missing from claim", async () => {
-      const mockApiResponse = {
-        body: new Claim({
+    it("should redirect when cost type missing from claim", () => {
+      req = {
+        claim: new Claim({
           id: claimId.toString(),
         }),
-        status: "success",
       };
 
-      claimServiceStub.resolves(mockApiResponse);
-
-      await checkYourDetailsPage(req as Request, res as Response, next);
+      checkYourDetailsPage(req as Request, res as Response, next);
 
       expect(
         (res.redirect as sinon.SinonStub).calledWith(
@@ -87,42 +67,26 @@ describe("Check Details Controller", () => {
       ).to.be.true;
     });
 
-    it("should redirect to appropriate page when no claim is returned", async () => {
-      const mockApiResponse: ApiResponse<ClaimDto> = {
-        status: "error",
-        statusCode: 500,
-        message: "not found",
-      };
+    it("should redirect to appropriate page when no claim is returned", () => {
+      req = {};
 
-      claimServiceStub.resolves(mockApiResponse);
-
-      await checkYourDetailsPage(req as Request, res as Response, next);
-
-      expect(claimServiceStub.calledOnce).to.be.true;
-      expect(claimServiceStub.calledWith(req.axiosMiddleware)).to.be.true;
-      expect(next.calledOnce).to.be.true;
-      expect(next.firstCall.args[0]).to.be.instanceOf(HttpError);
-      expect(next.firstCall.args[0].message).to.include("not found");
-    });
-
-    it("should delegate API errors to Express error handling middleware with user-friendly message", async () => {
-      const error = new Error("API Error");
-      claimServiceStub.rejects(error);
-
-      await checkYourDetailsPage(req as Request, res as Response, next);
+      checkYourDetailsPage(req as Request, res as Response, next);
 
       expect(next.calledOnce).to.be.true;
       expect(next.firstCall.args[0]).to.be.instanceOf(Error);
-      expect(next.firstCall.args[0].message).to.include("API Error");
+      expect(next.firstCall.args[0].message).to.equal("Draft claim not loaded");
     });
 
     it("should redirect to success page with claimId", () => {
+      req = {
+        claim: new Claim({
+          id: claimId.toString(),
+        }),
+      };
+
       submitYourDetails(req as Request, res as Response, next);
 
-      const expectedRoute = ROUTES.POA.SUBMISSION_SUCCESSFUL.replace(
-        ":claimId",
-        claimId.toString(),
-      );
+      const expectedRoute = `/claims/${claimId.toString()}/poa-submitted`;
 
       expect(res.redirect.calledOnce).to.be.true;
       expect(res.redirect.calledWith(expectedRoute)).to.be.true;

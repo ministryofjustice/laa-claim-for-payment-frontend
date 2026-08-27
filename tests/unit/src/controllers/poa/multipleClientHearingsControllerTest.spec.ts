@@ -10,7 +10,6 @@ import { Claim } from "#src/types/Claim.js";
 describe("multipleClientHearingsController", () => {
   let res: Response;
   let next: NextFunction;
-  let getClaimStub: sinon.SinonStub;
   let updateClaimStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
@@ -27,7 +26,6 @@ describe("multipleClientHearingsController", () => {
 
     next = sinon.stub() as unknown as NextFunction;
 
-    getClaimStub = sinon.stub(claimService, "getDraftClaim");
     updateClaimStub = sinon.stub(claimService, "updateClaim");
   });
 
@@ -37,17 +35,10 @@ describe("multipleClientHearingsController", () => {
 
   it("renders the multiple client hearings radio question page", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
-    } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
+      claim: new Claim({
         id: claimId.toString(),
       }),
-    });
+    } as unknown as Request;
 
     await multipleClientHearings(req, res, next);
 
@@ -65,20 +56,13 @@ describe("multipleClientHearingsController", () => {
 
   it("redirects to escaping the standard fixed fee page when multiple client hearings answer is given", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {
         multipleClientHearings: "yes",
       },
     } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-      }),
-    });
 
     updateClaimStub.resolves({
       status: "success",
@@ -104,9 +88,9 @@ describe("multipleClientHearingsController", () => {
 
   it("rerenders the radio question page with an error when no option is selected", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {},
     } as unknown as Request;
 
@@ -121,9 +105,9 @@ describe("multipleClientHearingsController", () => {
 
   it("rerenders with selected invalid string preserved when invalid option is submitted", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {
         multipleClientHearings: "invalid",
       },

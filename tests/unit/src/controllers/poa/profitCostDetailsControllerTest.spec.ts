@@ -18,7 +18,6 @@ describe("Profit cost details controller", () => {
   let renderStub: sinon.SinonStub;
   let statusStub: sinon.SinonStub;
   let redirectStub: sinon.SinonStub;
-  let getClaimStub: sinon.SinonStub;
   let updateClaimStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
@@ -45,7 +44,6 @@ describe("Profit cost details controller", () => {
 
     next = sinon.stub();
 
-    getClaimStub = sinon.stub(claimService, "getDraftClaim");
     updateClaimStub = sinon.stub(claimService, "updateClaim");
   });
 
@@ -54,12 +52,11 @@ describe("Profit cost details controller", () => {
   });
 
   it("should render the profit cost details page with the correct template", async () => {
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
+    req = {
+      claim: new Claim({
         id: claimId.toString(),
       }),
-    });
+    };
 
     await profitCostDetails(req as Request, res as Response, next);
 
@@ -69,19 +66,17 @@ describe("Profit cost details controller", () => {
   });
 
   it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'", async () => {
-    req.body = {
-      ["courtTypeChoice"]: "COUNTY_COURT",
-      ["clientStatusChoice"]: "CHILD",
-      ["firstSolicitorChoice"]: "yes",
-      ["transferOfSolicitorChoice"]: "yes",
-    };
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
+    req = {
+      claim: new Claim({
         id: claimId.toString(),
       }),
-    });
+      body: {
+        ["courtTypeChoice"]: "COUNTY_COURT",
+        ["clientStatusChoice"]: "CHILD",
+        ["firstSolicitorChoice"]: "yes",
+        ["transferOfSolicitorChoice"]: "yes",
+      },
+    };
 
     updateClaimStub.resolves({
       status: "success",
@@ -113,19 +108,17 @@ describe("Profit cost details controller", () => {
   });
 
   it("redirects to NUMBER_OF_CLIENTS_START_OF_CASE when transfer of solicitor is 'no'", async () => {
-    req.body = {
-      ["courtTypeChoice"]: "COUNTY_COURT",
-      ["clientStatusChoice"]: "CHILD",
-      ["firstSolicitorChoice"]: "yes",
-      ["transferOfSolicitorChoice"]: "no",
-    };
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
+    req = {
+      claim: new Claim({
         id: claimId.toString(),
       }),
-    });
+      body: {
+        ["courtTypeChoice"]: "COUNTY_COURT",
+        ["clientStatusChoice"]: "CHILD",
+        ["firstSolicitorChoice"]: "yes",
+        ["transferOfSolicitorChoice"]: "no",
+      },
+    };
 
     updateClaimStub.resolves({
       status: "success",
@@ -158,12 +151,11 @@ describe("Profit cost details controller", () => {
 
   describe("Court type question", () => {
     it("should render the court type radios correctly", async () => {
-      getClaimStub.resolves({
-        status: "success",
-        body: new Claim({
+      req = {
+        claim: new Claim({
           id: claimId.toString(),
         }),
-      });
+      };
 
       await profitCostDetails(req as Request, res as Response, next);
 
@@ -206,12 +198,11 @@ describe("Profit cost details controller", () => {
 
   describe("Client status question", () => {
     it("should render the client status radios correctly", async () => {
-      getClaimStub.resolves({
-        status: "success",
-        body: new Claim({
+      req = {
+        claim: new Claim({
           id: claimId.toString(),
         }),
-      });
+      };
 
       await profitCostDetails(req as Request, res as Response, next);
 
@@ -254,12 +245,11 @@ describe("Profit cost details controller", () => {
 
   describe("First solicitor firm question", () => {
     it("should render the first solicitor firm radios correctly", async () => {
-      getClaimStub.resolves({
-        status: "success",
-        body: new Claim({
+      req = {
+        claim: new Claim({
           id: claimId.toString(),
         }),
-      });
+      };
 
       await profitCostDetails(req as Request, res as Response, next);
 
@@ -302,12 +292,11 @@ describe("Profit cost details controller", () => {
 
   describe("Transfer of solicitor question", () => {
     it("should render the transfer of solicitor radios correctly", async () => {
-      getClaimStub.resolves({
-        status: "success",
-        body: new Claim({
+      req = {
+        claim: new Claim({
           id: claimId.toString(),
         }),
-      });
+      };
 
       await profitCostDetails(req as Request, res as Response, next);
 

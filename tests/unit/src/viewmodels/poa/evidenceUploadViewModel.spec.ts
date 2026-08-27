@@ -6,8 +6,8 @@ import { UploadField } from "#src/helpers/fields.js";
 import { EvidenceItem } from "#src/types/Claim.js";
 
 describe("PoaEvidenceUploadViewModel constructor()", () => {
-  const claimId = new V7Generator().generate();
-  const evidenceId = new V7Generator().generate();
+  const claimId = new V7Generator().generate().toString();
+  const evidenceId = new V7Generator().generate().toString();
 
   it("builds the POA evidence upload view model", () => {
     const field = new UploadField("prefix", "name", "id");
@@ -20,13 +20,13 @@ describe("PoaEvidenceUploadViewModel constructor()", () => {
 
     expect(vm.title).to.equal("prefix.title");
     expect(vm.uploadUrl).to.equal(
-      `/claims/${claimId.toString()}/poa/evidence-upload/ajax-upload?claimStatus=DRAFT`,
+      `/claims/${claimId}/poa/evidence-upload/ajax-upload?claimStatus=DRAFT`,
     );
     expect(vm.deleteUrl).to.equal(
-      `/claims/${claimId.toString()}/poa/evidence-upload/ajax-delete?claimStatus=DRAFT`,
+      `/claims/${claimId}/poa/evidence-upload/ajax-delete?claimStatus=DRAFT`,
     );
     expect(vm.saveAndContinueHref).to.equal(
-      `/claims/${claimId.toString()}/poa/check-details`,
+      `/claims/${claimId}/poa/check-details`,
     );
     expect(vm.saveAndComeBackLaterHref).to.equal("#");
     expect(vm.uploadedFiles).to.deep.equal([]);
@@ -35,7 +35,7 @@ describe("PoaEvidenceUploadViewModel constructor()", () => {
   it("uses uploaded files when provided", () => {
     const uploadedFiles: EvidenceItem[] = [
       {
-        id: evidenceId.toString(),
+        id: evidenceId,
         fileKey: "evidence.pdf",
         fileSize: 1000,
         submittedOn: "2026-06-17T14:34:01.226855Z",
@@ -52,7 +52,7 @@ describe("PoaEvidenceUploadViewModel constructor()", () => {
 
     expect(vm.uploadedFiles).to.deep.equal([
       {
-        id: evidenceId.toString(),
+        id: evidenceId,
         name: "evidence.pdf",
         size: "1KB",
       },

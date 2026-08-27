@@ -7,7 +7,6 @@ import {
   submitPoaClaimType,
 } from "#src/controllers/poa/poaClaimTypeController.js";
 import { V7Generator } from "uuidv7";
-import { claimService } from "#src/services/claimService.js";
 import { Claim } from "#src/types/Claim.js";
 import { draftService } from "#src/services/draftService.js";
 import config from "#config.js";
@@ -16,7 +15,6 @@ describe("poaClaimTypeController", () => {
   let req: Partial<Request>;
   let res: Response;
   let next: NextFunction;
-  let getClaimStub: sinon.SinonStub;
   let setCostTypeStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
@@ -33,7 +31,6 @@ describe("poaClaimTypeController", () => {
 
     next = sinon.stub() as unknown as NextFunction;
 
-    getClaimStub = sinon.stub(claimService, "getDraftClaim");
     setCostTypeStub = sinon.stub(draftService, "setCostType");
   });
 
@@ -45,17 +42,10 @@ describe("poaClaimTypeController", () => {
     sinon.stub(config.featureFlags, "poaProfitCostEnabled").value(true);
 
     req = {
-      params: {
-        claimId: claimId.toString(),
-      },
-    };
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
+      claim: new Claim({
         id: claimId.toString(),
       }),
-    });
+    };
 
     await poaClaimTypePage(req as Request, res, next);
 
@@ -93,17 +83,10 @@ describe("poaClaimTypeController", () => {
     sinon.stub(config.featureFlags, "poaProfitCostEnabled").value(false);
 
     req = {
-      params: {
-        claimId: claimId.toString(),
-      },
-    };
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
+      claim: new Claim({
         id: claimId.toString(),
       }),
-    });
+    };
 
     await poaClaimTypePage(req as Request, res, next);
 
@@ -139,20 +122,13 @@ describe("poaClaimTypeController", () => {
     sinon.stub(config.featureFlags, "poaProfitCostEnabled").value(true);
 
     req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {
         poaClaimType: "PROFIT_COST",
       },
     };
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-      }),
-    });
 
     setCostTypeStub.resolves({
       status: "success",
@@ -169,20 +145,13 @@ describe("poaClaimTypeController", () => {
 
   it("redirects to expert cost details when Expert cost is selected", async () => {
     req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {
         poaClaimType: "EXPERT_COST",
       },
     };
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-      }),
-    });
 
     setCostTypeStub.resolves({
       status: "success",
@@ -199,20 +168,13 @@ describe("poaClaimTypeController", () => {
 
   it("redirects to non expert disbursement when Non expert disbursement is selected", async () => {
     req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {
         poaClaimType: "NON_EXPERT_DISBURSEMENT",
       },
     };
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-      }),
-    });
 
     setCostTypeStub.resolves({
       status: "success",
@@ -229,9 +191,6 @@ describe("poaClaimTypeController", () => {
 
   it("rerenders the radio question page with an error when no option is selected", async () => {
     req = {
-      params: {
-        claimId: claimId.toString(),
-      },
       body: {},
     };
 
@@ -246,9 +205,6 @@ describe("poaClaimTypeController", () => {
 
   it("rerenders with selected invalid string preserved when invalid option is submitted", async () => {
     req = {
-      params: {
-        claimId: claimId.toString(),
-      },
       body: {
         poaClaimType: "something-invalid",
       },

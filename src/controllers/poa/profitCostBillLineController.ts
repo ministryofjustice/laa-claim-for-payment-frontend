@@ -1,8 +1,8 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { processApiError, processError } from "#src/helpers/index.js";
+import { processError } from "#src/helpers/index.js";
 import {
   ProfitCostBillLineForm,
-  type ProfitCostBillLineRequestBody,
+  type ProfitCostBillLineRequestBody
 } from "#src/helpers/profitCostBillLineValidation.js";
 import { ProfitCostBillLineViewModel } from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
 import type { NextFunction, Request, Response } from "express";
@@ -11,6 +11,7 @@ import { claimService } from "#src/services/claimService.js";
 import { getRequestBody } from "#src/helpers/validation.js";
 import { CostType, type ProfitCostBillLineItem } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
+import { requireClaim } from "#src/helpers/requireClaim.js";
 
 /**
  * Display POA CPGFS profit cost bill line page.
@@ -19,52 +20,38 @@ import type { LineItemForm } from "#src/types/poa.js";
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
  */
-export async function profitCostBillLine(
+export function profitCostBillLine(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+): void {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    let lineItemId: string | undefined = undefined;
 
-    const claim = await claimService.getDraftClaim(
-      req.axiosMiddleware,
-      claimId,
-    );
+    const claim = requireClaim(req);
 
-    if (claim.status === "success") {
-      let lineItemId: string | undefined = undefined;
+    const form = new ProfitCostBillLineForm();
 
-      const form = new ProfitCostBillLineForm();
-
-      if (claim.body.lineItems.length === 1) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
-        const lineItem = claim.body.lineItems[0] as ProfitCostBillLineItem;
-        ({ id: lineItemId } = lineItem);
-        form.fill({
-          activityDate: lineItem.date,
-          actualNetProfitCostExcludingAdvocacy: lineItem.netProfitCostAmount,
-          actualNetAdvocacyCosts: lineItem.netAdvocacyCostAmount,
-          vatApplies: lineItem.vatApplicable,
-          feeEarnerName: lineItem.feeEarnerName,
-        });
-      }
-
-      res.render("main/poa/profitCostBillLineView.njk", {
-        csrfToken: res.locals.csrfToken,
-        lineItemId,
-        vm: new ProfitCostBillLineViewModel({
-          form,
-        }),
+    if (claim.lineItems.length === 1) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
+      const lineItem = claim.lineItems[0] as ProfitCostBillLineItem;
+      ({ id: lineItemId } = lineItem);
+      form.fill({
+        activityDate: lineItem.date,
+        actualNetProfitCostExcludingAdvocacy: lineItem.netProfitCostAmount,
+        actualNetAdvocacyCosts: lineItem.netAdvocacyCostAmount,
+        vatApplies: lineItem.vatApplicable,
+        feeEarnerName: lineItem.feeEarnerName,
       });
-    } else {
-      next(
-        processApiError(
-          claim,
-          "retrieving claim for rendering profit cost bill line page",
-        ),
-      );
     }
+
+    res.render("main/poa/profitCostBillLineView.njk", {
+      csrfToken: res.locals.csrfToken,
+      lineItemId,
+      vm: new ProfitCostBillLineViewModel({
+        form,
+      }),
+    });
   } catch (error) {
     next(processError(error, "rendering profit cost bill line page"));
   }
@@ -83,7 +70,6 @@ export async function submitProfitCostBillLine(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
     const body = req.body as { lineItemId?: unknown };
     const lineItemId =
@@ -113,6 +99,9 @@ export async function submitProfitCostBillLine(
       value: form.getValue(),
     };
 
+    const claim = requireClaim(req);
+    const { id: claimId } = claim;
+
     if (lineItemId == null) {
       await claimService.addLineItemToClaim(
         req.axiosMiddleware,
@@ -123,36 +112,21 @@ export async function submitProfitCostBillLine(
       await claimService.updateLineItem(
         req.axiosMiddleware,
         claimId,
-        lineItemId,
+        lineItemId.toString(),
         lineItemForm,
       );
     }
 
-    const claim = await claimService.getDraftClaim(
-      req.axiosMiddleware,
-      claimId,
-    );
+    const { escapedFlag: escaped } = claim;
 
-    if (claim.status === "success") {
-      // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- Ignore.
-      const escaped = claim.body.escapedFlag;
+    const route =
+      escaped === true
+        ? ROUTES.POA.EVIDENCE_UPLOAD
+        : escaped === false
+          ? ROUTES.POA.CHECK_DETAILS
+          : ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE;
 
-      const route =
-        escaped === true
-          ? ROUTES.POA.EVIDENCE_UPLOAD
-          : escaped === false
-            ? ROUTES.POA.CHECK_DETAILS
-            : ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE;
-
-      res.redirect(buildRoute(route, { claimId }));
-    } else {
-      next(
-        processApiError(
-          claim,
-          "retrieving claim for submitting profit cost bill line page",
-        ),
-      );
-    }
+    res.redirect(buildRoute(route, { claimId }));
   } catch (error) {
     next(processError(error, "submitting profit cost bill line page"));
   }

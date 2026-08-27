@@ -7,7 +7,6 @@ import {
   submitPoaEvidenceUpload,
 } from "#src/controllers/poa/poaEvidenceUploadController.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { claimService } from "#src/services/claimService.js";
 import { V7Generator } from "uuidv7";
 import { DeleteFileRequest } from "#src/types/requests.js";
 import { TFunction } from "#node_modules/i18next/index.js";
@@ -20,7 +19,6 @@ describe("poaEvidenceUploadController", () => {
   let next: any;
 
   let renderStub: sinon.SinonStub;
-  let getClaimStub: sinon.SinonStub;
   let deleteEvidenceFromClaimStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
@@ -43,7 +41,6 @@ describe("poaEvidenceUploadController", () => {
 
     next = sinon.stub();
 
-    getClaimStub = sinon.stub(claimService, "getDraftClaim");
     deleteEvidenceFromClaimStub = sinon.stub(
       uploadService,
       "deleteEvidenceFromClaim",
@@ -60,21 +57,14 @@ describe("poaEvidenceUploadController", () => {
     beforeEach(() => {
       req = {
         axiosMiddleware: {} as any,
-        params: {
-          claimId: claimId.toString(),
-        },
+        claim: new Claim({
+          id: claimId.toString(),
+          evidence: [],
+        }),
       };
     });
 
     it("renders the POA evidence upload page", async () => {
-      getClaimStub.resolves({
-        status: "success",
-        body: new Claim({
-          id: claimId.toString(),
-          evidence: [],
-        }),
-      });
-
       await poaEvidenceUploadPage(req as Request, res, next);
 
       expect(renderStub.calledOnce).to.equal(true);
@@ -86,9 +76,15 @@ describe("poaEvidenceUploadController", () => {
 
       expect(renderArgs.csrfToken).to.equal("test-csrf-token");
       expect(renderArgs.vm.title).to.equal("pages.poaEvidenceUpload.title");
-      expect(renderArgs.vm.uploadUrl).to.equal(`/claims/${claimId.toString()}/poa/evidence-upload/ajax-upload?claimStatus=DRAFT`);
-      expect(renderArgs.vm.deleteUrl).to.equal(`/claims/${claimId.toString()}/poa/evidence-upload/ajax-delete?claimStatus=DRAFT`);
-      expect(renderArgs.vm.saveAndContinueHref).to.equal(`/claims/${claimId.toString()}/poa/check-details`);
+      expect(renderArgs.vm.uploadUrl).to.equal(
+        `/claims/${claimId.toString()}/poa/evidence-upload/ajax-upload?claimStatus=DRAFT`,
+      );
+      expect(renderArgs.vm.deleteUrl).to.equal(
+        `/claims/${claimId.toString()}/poa/evidence-upload/ajax-delete?claimStatus=DRAFT`,
+      );
+      expect(renderArgs.vm.saveAndContinueHref).to.equal(
+        `/claims/${claimId.toString()}/poa/check-details`,
+      );
       expect(renderArgs.vm.saveAndComeBackLaterHref).to.equal("#");
     });
   });
@@ -96,19 +92,10 @@ describe("poaEvidenceUploadController", () => {
   describe("uploadEvidenceFile", () => {
     let req: Partial<Request>;
 
-    beforeEach(() => {
+    it("redirects to check your details on submit", async () => {
       req = {
         axiosMiddleware: {} as any,
-        params: {
-          claimId: claimId.toString(),
-        },
-      };
-    });
-
-    it("redirects to check your details on submit", async () => {
-      getClaimStub.resolves({
-        status: "success",
-        body: new Claim({
+        claim: new Claim({
           id: claimId.toString(),
           evidence: [
             {
@@ -119,7 +106,7 @@ describe("poaEvidenceUploadController", () => {
             },
           ],
         }),
-      } as any);
+      };
 
       await submitPoaEvidenceUpload(req as Request, res, next);
 
@@ -133,13 +120,13 @@ describe("poaEvidenceUploadController", () => {
     });
 
     it("renders with an error when no evidence has been uploaded", async () => {
-      getClaimStub.resolves({
-        status: "success",
-        body: new Claim({
+      req = {
+        axiosMiddleware: {} as any,
+        claim: new Claim({
           id: claimId.toString(),
           evidence: [],
         }),
-      } as any);
+      };
 
       (res.status as unknown) = sinon.stub().returns(res);
 
