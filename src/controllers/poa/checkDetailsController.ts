@@ -3,7 +3,7 @@ import { processError } from "#src/helpers/index.js";
 import { CheckDetailsViewModel } from "#src/viewmodels/poa/checkDetailsViewModel.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { AnswerMissingError } from "#src/types/errors.js";
-import { requireClaim } from "#src/helpers/requireClaim.js";
+import { requireClaim } from "#src/helpers/claimGuards.js";
 
 /**
  * Handle claim view with API data

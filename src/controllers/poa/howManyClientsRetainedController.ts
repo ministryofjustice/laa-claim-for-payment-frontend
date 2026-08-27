@@ -6,7 +6,7 @@ import { Count } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
 import { RadioField } from "#src/helpers/fields.js";
 import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
-import { requireClaim } from "#src/helpers/requireClaim.js";
+import { requireClaim } from "#src/helpers/claimGuards.js";
 
 /**
  * get how many clients retained view

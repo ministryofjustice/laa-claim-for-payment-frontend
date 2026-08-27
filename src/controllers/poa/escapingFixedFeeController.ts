@@ -5,7 +5,7 @@ import { buildRoute, ROUTES } from "#routes/helper.js";
 import { draftService } from "#src/services/draftService.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
-import { requireClaim } from "#src/helpers/requireClaim.js";
+import { requireClaim } from "#src/helpers/claimGuards.js";
 
 /**
  * get how many clients retained view

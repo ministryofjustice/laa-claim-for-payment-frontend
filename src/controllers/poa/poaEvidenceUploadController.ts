@@ -4,7 +4,7 @@ import { PoaEvidenceUploadViewModel } from "#src/viewmodels/poa/evidenceUploadVi
 import type { NextFunction, Request, Response } from "express";
 import { UploadField } from "#src/helpers/fields.js";
 import { UploadForm } from "#src/helpers/fileUploadValidation.js";
-import { requireClaim } from "#src/helpers/requireClaim.js";
+import { requireClaim } from "#src/helpers/claimGuards.js";
 
 /**
  * Display POA evidence upload page.

@@ -12,7 +12,7 @@ import { claimService } from "#src/services/claimService.js";
 import { type Claim, CostType, type DisbursementLineItem } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
 import createHttpError from "http-errors";
-import { requireClaim, requireDisbursementCostType } from "#src/helpers/requireClaim.js";
+import { requireClaim, requireDisbursementCostType } from "#src/helpers/claimGuards.js";
 
 /**
  * Display POA expert cost details page.

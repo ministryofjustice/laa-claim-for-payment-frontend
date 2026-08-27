@@ -2,10 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { processApiError, processError } from "#src/helpers/index.js";
-import {
-  isDisbursementCostType,
-  requireClaim,
-} from "#src/helpers/requireClaim.js";
+import { requireClaim } from "#src/helpers/claimGuards.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 
 /**
@@ -54,10 +51,10 @@ export function requireDisbursementCostType(
   try {
     const claim = requireClaim(req);
     const { id: claimId } = claim;
-    if (isDisbursementCostType(claim.costType)) {
-      next();
-    } else {
+    if (claim.disbursementCostType == null) {
       res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
+    } else {
+      next();
     }
   } catch (error) {
     next(processError(error, "requiring disbursement cost type"));

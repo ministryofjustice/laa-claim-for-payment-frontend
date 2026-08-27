@@ -16,7 +16,7 @@ import createHttpError from "http-errors";
 import {
   requireClaim,
   requireDisbursementCostType,
-} from "#src/helpers/requireClaim.js";
+} from "#src/helpers/claimGuards.js";
 
 /**
  * get confirm remove expert line item page

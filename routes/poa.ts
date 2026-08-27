@@ -20,7 +20,7 @@ import { multerErrorHandler, registerIf, ROUTES } from "./helper.js";
 import {
   loadDraftClaim,
   requireDisbursementCostType,
-} from "#middleware/loadDraftClaim.js";
+} from "#middleware/requestHandlers.js";
 
 /**
  * Builds the POA router.

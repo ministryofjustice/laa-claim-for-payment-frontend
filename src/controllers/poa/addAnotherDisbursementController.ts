@@ -13,7 +13,7 @@ import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 import {
   requireClaim,
   requireDisbursementCostType,
-} from "#src/helpers/requireClaim.js";
+} from "#src/helpers/claimGuards.js";
 
 /**
  * get add another expert cost view

@@ -170,6 +170,18 @@ export class Claim {
   }
 
   /**
+   * Gets the disbursement cost type.
+   *
+   * @returns {DisbursementCostType | null | undefined} the disbursement cost type.
+   */
+  get disbursementCostType(): DisbursementCostType | null | undefined {
+    if (this.costType === CostType.EXPERT_COST || this.costType === CostType.NON_EXPERT_DISBURSEMENT) {
+      return this.costType;
+    }
+    return undefined;
+  }
+
+  /**
    * Gets the court type.
    *
    * @returns {CourtType | null | undefined} the court type.

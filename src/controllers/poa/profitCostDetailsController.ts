@@ -5,7 +5,7 @@ import { buildRoute, ROUTES } from "#routes/helper.js";
 import { getRequestBody } from "#src/helpers/validation.js";
 import { ProfitCostDetailsForm, type ProfitCostDetailsRequestBody } from "#src/helpers/profitCostDetailsValidation.js";
 import { claimService } from "#src/services/claimService.js";
-import { requireClaim } from "#src/helpers/requireClaim.js";
+import { requireClaim } from "#src/helpers/claimGuards.js";
 
 /**
  * Profit cost details journey view

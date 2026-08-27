@@ -5,7 +5,7 @@ import { claimService } from "#src/services/claimService.js";
 import type { Claim } from "#src/types/Claim.js";
 import type { RadioField } from "#src/helpers/fields.js";
 import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
-import { requireClaim } from "#src/helpers/requireClaim.js";
+import { requireClaim } from "#src/helpers/claimGuards.js";
 
 interface RadioQuestionControllerParams<ChoiceType extends string> {
   buildField: () => RadioField<ChoiceType, ChoiceType>;

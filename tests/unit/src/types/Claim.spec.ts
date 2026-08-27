@@ -131,6 +131,56 @@ describe("ClaimResponseSchema", () => {
     });
   });
 
+  describe("disbursementCostType", () => {
+
+    describe("get", () => {
+      it("returns cost when expert cost", () => {
+        const claim = new Claim({
+          id: id.toString(),
+          costType: CostType.EXPERT_COST,
+        });
+
+        expect(claim.disbursementCostType).to.equal(CostType.EXPERT_COST);
+      });
+
+      it("returns cost when non-expert disbursement", () => {
+        const claim = new Claim({
+          id: id.toString(),
+          costType: CostType.NON_EXPERT_DISBURSEMENT,
+        });
+
+        expect(claim.disbursementCostType).to.equal(CostType.NON_EXPERT_DISBURSEMENT);
+      });
+
+      it("returns undefined when profit cost", () => {
+        const claim = new Claim({
+          id: id.toString(),
+          costType: CostType.PROFIT_COST,
+        });
+
+        expect(claim.disbursementCostType).to.be.undefined;
+      });
+
+      it("returns undefined when undefined cost", () => {
+        const claim = new Claim({
+          id: id.toString(),
+          costType: undefined,
+        });
+
+        expect(claim.disbursementCostType).to.be.undefined;
+      });
+
+      it("returns undefined when null cost", () => {
+        const claim = new Claim({
+          id: id.toString(),
+          costType: null,
+        });
+
+        expect(claim.disbursementCostType).to.be.undefined;
+      });
+    });
+  });
+
   describe("profit cost details", () => {
     it("sets", () => {
       const claim = new Claim({

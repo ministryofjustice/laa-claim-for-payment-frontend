@@ -11,7 +11,7 @@ import { claimService } from "#src/services/claimService.js";
 import { getRequestBody } from "#src/helpers/validation.js";
 import { CostType, type ProfitCostBillLineItem } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
-import { requireClaim } from "#src/helpers/requireClaim.js";
+import { requireClaim } from "#src/helpers/claimGuards.js";
 
 /**
  * Display POA CPGFS profit cost bill line page.
