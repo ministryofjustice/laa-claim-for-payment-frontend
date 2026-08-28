@@ -41,6 +41,15 @@ export function toLineItemRequestBody(
         vatApplicable: form.value.vatApplies,
         feeEarnerName: form.value.feeEarnerName,
       }
+    case CostType.NON_EXPERT_DISBURSEMENT:
+      return {
+        title: form.value.description,
+        category: Category.DISBURSEMENT.toString(),
+        date: form.value.activityDate.toIsoString(),
+        actualNetValue: form.value.actualNetValue,
+        vatApplicable: form.value.vatApplies,
+        feeEarnerName: form.value.feeEarnerName,
+      }
     case CostType.PROFIT_COST:
       return {
         title: "TODO", // TODO - what should this be?

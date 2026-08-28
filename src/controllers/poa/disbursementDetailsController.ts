@@ -9,7 +9,6 @@ import {
 import { getRequestBody } from "#src/helpers/validation.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { CostType } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
 import createHttpError from "http-errors";
 import { requireClaim, requireDisbursementCostType } from "#src/helpers/claimGuards.js";
@@ -96,7 +95,7 @@ export async function submitDisbursementDetails(
     }
 
     const lineItemForm: LineItemForm = {
-      type: CostType.EXPERT_COST,
+      type: costType,
       value: form.getValue(),
     };
 

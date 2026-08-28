@@ -45,7 +45,7 @@ describe("disbursementDetailsController", () => {
   });
 
   it("renders the page when there isn't a line item ID", () => {
-    validCostTypes.forEach(async (input) => {
+    for (const input of validCostTypes) {
       const req = {
         claim: new Claim({
           id: claimId.toString(),
@@ -56,12 +56,11 @@ describe("disbursementDetailsController", () => {
 
       disbursementDetails(req, res, next);
 
-      expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
-      expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
+      expect((res.render as sinon.SinonStub).lastCall.args[0]).to.equal(
         "main/poa/disbursementDetailsView.njk",
       );
 
-      const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
+      const renderArgs = (res.render as sinon.SinonStub).lastCall.args[1];
 
       expect(renderArgs.csrfToken).to.equal("test-csrf-token");
 
@@ -77,11 +76,11 @@ describe("disbursementDetailsController", () => {
       );
       expect(renderArgs.vm.feeEarnerNameInput.value).to.be.undefined;
       expect(renderArgs.vm.descriptionInput.value).to.be.undefined;
-    });
+    }
   });
 
   it("renders the page when there is a line item ID", () => {
-    validCostTypes.forEach(async (input) => {
+    for (const input of validCostTypes) {
       const req = {
         claim: new Claim({
           id: claimId.toString(),
@@ -106,12 +105,11 @@ describe("disbursementDetailsController", () => {
 
       disbursementDetails(req, res, next);
 
-      expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
-      expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
+      expect((res.render as sinon.SinonStub).lastCall.args[0]).to.equal(
         "main/poa/disbursementDetailsView.njk",
       );
 
-      const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
+      const renderArgs = (res.render as sinon.SinonStub).lastCall.args[1];
 
       expect(renderArgs.csrfToken).to.equal("test-csrf-token");
 
@@ -127,11 +125,11 @@ describe("disbursementDetailsController", () => {
       expect(renderArgs.vm.descriptionInput.value).to.equal(
         "Interim hearing on 20 December 2023",
       );
-    });
+    }
   });
 
   it("redirects when line item not found", () => {
-    validCostTypes.forEach(async (input) => {
+    for (const input of validCostTypes) {
       const req = {
         claim: new Claim({
           id: claimId.toString(),
@@ -156,10 +154,9 @@ describe("disbursementDetailsController", () => {
 
       disbursementDetails(req, res, next);
 
-      expect((next as sinon.SinonStub).calledOnce).to.be.true;
-      expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(HttpError);
-      expect((next as sinon.SinonStub).firstCall.args[0].message).to.include("not found");
-    });
+      expect((next as sinon.SinonStub).lastCall.args[0]).to.be.instanceOf(HttpError);
+      expect((next as sinon.SinonStub).lastCall.args[0].message).to.include("not found");
+    }
   });
 
   it("errors when cost type is profit cost", () => {
@@ -174,7 +171,7 @@ describe("disbursementDetailsController", () => {
     disbursementDetails(req, res, next);
 
     expect((next as sinon.SinonStub).calledOnce).to.be.true;
-    expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(Error);
+    expect((next as sinon.SinonStub).lastCall.args[0]).to.be.instanceOf(Error);
   });
 
   it("errors when cost type is missing", () => {
@@ -188,11 +185,11 @@ describe("disbursementDetailsController", () => {
     disbursementDetails(req, res, next);
 
     expect((next as sinon.SinonStub).calledOnce).to.be.true;
-    expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(Error);
+    expect((next as sinon.SinonStub).lastCall.args[0]).to.be.instanceOf(Error);
   });
 
-  it("redirects to POA evidence upload when form is valid when there isn't a line item ID", () => {
-    validCostTypes.forEach(async (input) => {
+  it("redirects to POA evidence upload when form is valid when there isn't a line item ID", async () => {
+    for (const input of validCostTypes) {
       const req = {
         claim: new Claim({
           id: claimId.toString(),
@@ -217,10 +214,10 @@ describe("disbursementDetailsController", () => {
 
       await submitDisbursementDetails(req, res, next);
 
-      expect(createLineItemStub.firstCall.args[1]).to.deep.equal(claimId);
+      expect(createLineItemStub.lastCall.args[1]).to.deep.equal(claimId.toString());
 
-      expect(createLineItemStub.firstCall.args[2]).to.deep.equal({
-        type: CostType.EXPERT_COST,
+      expect(createLineItemStub.lastCall.args[2]).to.deep.equal({
+        type: input,
         value: {
           activityDate: new LocalDate(27, 3, 2007),
           actualNetValue: 123.45,
@@ -233,15 +230,15 @@ describe("disbursementDetailsController", () => {
       expect(
         (res.redirect as sinon.SinonStub).calledWith(
           buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, {
-            claimId: claimId,
+            claimId,
           }),
         ),
       ).to.be.true;
-    });
+    }
   });
 
-  it("redirects to POA evidence upload when form is valid when there is a line item ID", () => {
-    validCostTypes.forEach(async (input) => {
+  it("redirects to POA evidence upload when form is valid when there is a line item ID", async () => {
+    for (const input of validCostTypes) {
       const req = {
         claim: new Claim({
           id: claimId.toString(),
@@ -280,12 +277,12 @@ describe("disbursementDetailsController", () => {
 
       await submitDisbursementDetails(req, res, next);
 
-      expect(updateLineItemStub.firstCall.args[1]).to.deep.equal(claimId);
+      expect(updateLineItemStub.lastCall.args[1]).to.deep.equal(claimId.toString());
 
-      expect(updateLineItemStub.firstCall.args[2]).to.deep.equal(lineItemId);
+      expect(updateLineItemStub.lastCall.args[2]).to.deep.equal(lineItemId.toString());
 
-      expect(updateLineItemStub.firstCall.args[3]).to.deep.equal({
-        type: CostType.EXPERT_COST,
+      expect(updateLineItemStub.lastCall.args[3]).to.deep.equal({
+        type: input,
         value: {
           activityDate: new LocalDate(27, 3, 2007),
           actualNetValue: 123.45,
@@ -302,11 +299,11 @@ describe("disbursementDetailsController", () => {
           }),
         ),
       ).to.be.true;
-    });
+    }
   });
 
-  it("rerenders with 400 when form is invalid", () => {
-    validCostTypes.forEach(async (input) => {
+  it("rerenders with 400 when form is invalid", async () => {
+    for (const input of validCostTypes) {
       const req = {
         claim: new Claim({
           id: claimId.toString(),
@@ -319,10 +316,9 @@ describe("disbursementDetailsController", () => {
       await submitDisbursementDetails(req, res, next);
 
       expect((res.status as sinon.SinonStub).calledWith(400)).to.be.true;
-      expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
-      expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
+      expect((res.render as sinon.SinonStub).lastCall.args[0]).to.equal(
         "main/poa/disbursementDetailsView.njk",
       );
-    });
+    }
   });
 });
