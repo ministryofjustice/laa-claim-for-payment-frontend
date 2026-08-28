@@ -1,6 +1,6 @@
 import { expect, test } from "../../fixtures/index.js";
 import { ProfitCostBillLinePage } from "#tests/playwright/pages/poa/ProfitCostBillLinePage.js";
-import { profitCostDraftClaim1Id } from "#tests/playwright/factories/handlers/api.js";
+import { profitCostDraftClaim2Id } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("Profit cost bill line page", () => {
   test("displays the profit cost bill line page", async ({
@@ -9,7 +9,7 @@ test.describe("Profit cost bill line page", () => {
   }) => {
     const profitCostBillLinePage = new ProfitCostBillLinePage(
       page,
-      profitCostDraftClaim1Id,
+      profitCostDraftClaim2Id,
     );
 
     await profitCostBillLinePage.navigate();
@@ -39,7 +39,7 @@ test.describe("Profit cost bill line page", () => {
   }) => {
     const profitCostBillLinePage = new ProfitCostBillLinePage(
       page,
-      profitCostDraftClaim1Id,
+      profitCostDraftClaim2Id,
     );
 
     await profitCostBillLinePage.navigate();
@@ -49,7 +49,7 @@ test.describe("Profit cost bill line page", () => {
     await profitCostBillLinePage.saveAndContinueButton.click();
 
     await expect(page).toHaveURL(
-      new RegExp(`/claims/${profitCostDraftClaim1Id}/poa/evidence-upload$`),
+      new RegExp(`/claims/${profitCostDraftClaim2Id}/poa/evidence-upload$`),
     );
   });
 
@@ -58,7 +58,7 @@ test.describe("Profit cost bill line page", () => {
   }) => {
     const profitCostBillLinePage = new ProfitCostBillLinePage(
       page,
-      profitCostDraftClaim1Id,
+      profitCostDraftClaim2Id,
     );
 
     await profitCostBillLinePage.navigate();
