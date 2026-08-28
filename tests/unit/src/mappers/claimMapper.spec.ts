@@ -98,6 +98,29 @@ describe("ClaimMapper", () => {
       expect(result.title).to.equal("Lorem ipsum");
     });
 
+    it("when non-expert disbursement details", () => {
+      const lineItem: DisbursementDetails = {
+        activityDate: new LocalDate(12, 3, 2026),
+        actualNetValue: 123,
+        vatApplies: true,
+        feeEarnerName: "Joe Bloggs",
+        description: "Lorem ipsum",
+      };
+
+      const form: LineItemForm = {
+        type: CostType.NON_EXPERT_DISBURSEMENT,
+        value: lineItem,
+      };
+
+      const result = toLineItemRequestBody(form);
+
+      expect(result.date).to.equal("2026-03-12");
+      expect(result.actualNetValue).to.equal(123);
+      expect(result.vatApplicable).to.equal(true);
+      expect(result.feeEarnerName).to.equal("Joe Bloggs");
+      expect(result.title).to.equal("Lorem ipsum");
+    });
+
     it("when profit cost bill line", () => {
       const lineItem: ProfitCostBillLine = {
         activityDate: new LocalDate(12, 3, 2026),

@@ -77,13 +77,17 @@ export type NonExpertDisbursementPoa = z.infer<
 
 export type LineItemForm =
   | {
-  type: CostType.EXPERT_COST;
-  value: DisbursementDetails;
-}
+      type: CostType.EXPERT_COST;
+      value: DisbursementDetails;
+    }
   | {
-  type: CostType.PROFIT_COST;
-  value: ProfitCostBillLine;
-};
+      type: CostType.PROFIT_COST;
+      value: ProfitCostBillLine;
+    }
+  | {
+      type: CostType.NON_EXPERT_DISBURSEMENT;
+      value: DisbursementDetails;
+    };
 
 export const PoaSchema = z.discriminatedUnion("type", [
   ProfitCostPoaSchema,
