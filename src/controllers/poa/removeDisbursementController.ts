@@ -4,16 +4,11 @@ import { processApiError, processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import {
-  type Claim,
-  type DisbursementCostType,
-  DisbursementCostTypeMessagePrefix,
-  type DisbursementLineItem,
-  isDisbursementCostType
-} from "#src/types/Claim.js";
+import { type DisbursementCostType, DisbursementCostTypeMessagePrefix } from "#src/types/Claim.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 import createHttpError from "http-errors";
+import { requireClaim, requireDisbursementCostType } from "#src/helpers/claimGuards.js";
 
 /**
  * get confirm remove expert line item page
@@ -21,43 +16,32 @@ import createHttpError from "http-errors";
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
  */
-export async function confirmRemoveExpertLineItem(
+export function confirmRemoveExpertLineItem(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+): void {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claim = requireClaim(req);
     const lineItemId = UUID.parse(req.params.lineItemId);
+    const costType = requireDisbursementCostType(claim);
 
-    const claimResponse = await claimService.getDraftClaim(
-      req.axiosMiddleware,
-      claimId,
-    );
+    const lineItem = claim.getDisbursementLineItem(lineItemId);
 
-    if (claimResponse.status === "success") {
-      const { body: claim } = claimResponse;
-      if (isDisbursementCostType(claim.costType)) {
-        const lineItem = getLineItem(claim, lineItemId);
-
-        if (lineItem === undefined) {
-          next(
-            new createHttpError.NotFound(
-              `Line item ${lineItemId.toString()} not found`,
-            ),
-          );
-          return;
-        }
-
-        const form = new YesNoQuestionForm(buildField(claim.costType));
-        res.render("main/radioQuestionPage.njk", {
-          csrfToken: res.locals.csrfToken,
-          vm: buildViewModel(form),
-        });
-      } else {
-        res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
-      }
+    if (lineItem === undefined) {
+      next(
+        new createHttpError.NotFound(
+          `Line item ${lineItemId.toString()} not found`,
+        ),
+      );
+      return;
     }
+
+    const form = new YesNoQuestionForm(buildField(costType));
+    res.render("main/radioQuestionPage.njk", {
+      csrfToken: res.locals.csrfToken,
+      vm: buildViewModel(form),
+    });
   } catch (error) {
     const processedError = processError(
       error,
@@ -79,53 +63,43 @@ export async function submitRemoveExpertLineItem(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claim = requireClaim(req);
+    const { id: claimId } = claim;
     const lineItemId = UUID.parse(req.params.lineItemId);
+    const costType = requireDisbursementCostType(claim);
 
-    const claimResponse = await claimService.getDraftClaim(
-      req.axiosMiddleware,
-      claimId,
-    );
+    const field = buildField(costType);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
+    const selectedChoice: unknown = req.body?.[field.name];
+    const form = new YesNoQuestionForm(field);
+    form.validate(selectedChoice);
 
-    if (claimResponse.status === "success") {
-      const { body: claim } = claimResponse;
-      if (isDisbursementCostType(claim.costType)) {
-        const field = buildField(claim.costType);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- Express request bodies are untyped at the controller boundary.
-        const selectedChoice: unknown = req.body?.[field.name];
-        const form = new YesNoQuestionForm(field);
-        form.validate(selectedChoice);
+    if (form.isNotValid()) {
+      res.status(400).render("main/radioQuestionPage.njk", {
+        csrfToken: res.locals.csrfToken,
+        vm: buildViewModel(form),
+      });
+      return;
+    }
 
-        if (form.isNotValid()) {
-          res.status(400).render("main/radioQuestionPage.njk", {
-            csrfToken: res.locals.csrfToken,
-            vm: buildViewModel(form),
-          });
-          return;
-        }
+    const nextPage = buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, { claimId });
 
-        const nextPage = buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, { claimId });
+    if (form.getValue()) {
+      const deleted = await claimService.deleteLineItem(
+        req.axiosMiddleware,
+        claimId,
+        lineItemId.toString(),
+      );
 
-        if (form.getValue()) {
-          const deleted = await claimService.deleteLineItem(
-            req.axiosMiddleware,
-            claimId,
-            lineItemId,
-          );
-
-          if (deleted.status === "success") {
-            res.redirect(nextPage);
-          } else {
-            next(
-              processApiError(deleted, "deleting line item for expert cost page"),
-            );
-          }
-        } else {
-          res.redirect(nextPage)
-        }
+      if (deleted.status === "success") {
+        res.redirect(nextPage);
       } else {
-        res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
+        next(
+          processApiError(deleted, "deleting line item for expert cost page"),
+        );
       }
+    } else {
+      res.redirect(nextPage)
     }
   } catch (error) {
     const processedError = processError(
@@ -151,14 +125,4 @@ function buildViewModel(form: YesNoQuestionForm): YesNoQuestionViewModel {
     form,
     isLegendPageHeading: true,
   });
-}
-
-function getLineItem(
-  claim: Claim,
-  lineItemId: UUID,
-): DisbursementLineItem | undefined {
-  return claim.lineItems.find(
-    (lineItem): lineItem is DisbursementLineItem =>
-      lineItem.id === lineItemId.toString(),
-  );
 }

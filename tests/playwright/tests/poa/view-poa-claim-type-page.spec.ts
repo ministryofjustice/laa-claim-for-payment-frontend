@@ -4,7 +4,8 @@ import {
   claim1Id,
   expertCostDraftClaim1Id,
   expertCostDraftClaim2Id,
-  nonExpertDisbursementDraftClaim1Id
+  nonExpertDisbursementDraftClaim1Id,
+  profitCostDraftClaim1Id,
 } from "#tests/playwright/factories/handlers/api.js";
 
 test.describe("POA claim type page", () => {
@@ -30,7 +31,7 @@ test.describe("POA claim type page", () => {
   test("redirects to profit cost details when Profit cost is selected", async ({
     page,
   }) => {
-    const poaClaimTypePage = new PoaClaimTypePage(page, claim1Id);
+    const poaClaimTypePage = new PoaClaimTypePage(page, profitCostDraftClaim1Id);
 
     await poaClaimTypePage.navigate();
     await poaClaimTypePage.waitForLoad();
@@ -39,7 +40,7 @@ test.describe("POA claim type page", () => {
     await poaClaimTypePage.saveAndContinueButton.click();
 
     await expect(page).toHaveURL(
-      new RegExp(`/claims/${claim1Id}/poa/profit-cost-details$`)
+      new RegExp(`/claims/${profitCostDraftClaim1Id}/poa/profit-cost-details$`)
     );
   });
 

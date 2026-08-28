@@ -1,14 +1,13 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { processApiError, processError } from "#src/helpers/index.js";
+import { processError } from "#src/helpers/index.js";
 import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
-import { UUID } from "uuidv7";
 import { CostType } from "#src/types/Claim.js";
-import { claimService } from "#src/services/claimService.js";
 import { draftService } from "#src/services/draftService.js";
 import { RadioField } from "#src/helpers/fields.js";
 import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 import config from "#config.js";
+import { requireClaim } from "#src/helpers/claimGuards.js";
 
 /**
  * Display POA claim type page.
@@ -17,36 +16,22 @@ import config from "#config.js";
  * @param {Response} res Express response object.
  * @param {NextFunction} next Express next function.
  */
-export async function poaClaimTypePage(
+export function poaClaimTypePage(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+): void {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claim = requireClaim(req);
 
-    const claim = await claimService.getDraftClaim(
-      req.axiosMiddleware,
-      claimId,
-    );
-
-    if (claim.status === "success") {
-      const form = new RadioQuestionForm(buildField());
-      if (claim.body.costType != null) {
-        form.fill(claim.body.costType);
-      }
-      res.render("main/radioQuestionPage.njk", {
-        csrfToken: res.locals.csrfToken,
-        vm: buildViewModel(form),
-      });
-    } else {
-      next(
-        processApiError(
-          claim,
-          "retrieving claim for rendering POA claim type page",
-        ),
-      );
+    const form = new RadioQuestionForm(buildField());
+    if (claim.costType != null) {
+      form.fill(claim.costType);
     }
+    res.render("main/radioQuestionPage.njk", {
+      csrfToken: res.locals.csrfToken,
+      vm: buildViewModel(form),
+    });
   } catch (error) {
     next(processError(error, "rendering POA claim type page"));
   }
@@ -79,47 +64,34 @@ export async function submitPoaClaimType(
       return;
     }
 
-    const claimId = UUID.parse(req.params.claimId);
+    const claim = requireClaim(req);
+    const { id: claimId } = claim;
 
-    const claim = await claimService.getDraftClaim(
+    await draftService.setCostType(
       req.axiosMiddleware,
-      claimId,
+      claim,
+      form.getValue(),
     );
 
-    if (claim.status === "success") {
-      await draftService.setCostType(
-        req.axiosMiddleware,
-        claim.body,
-        form.getValue(),
-      );
-
-      const redirectByChoice: Record<CostType, string> = {
-        [CostType.PROFIT_COST]: buildRoute(ROUTES.POA.PROFIT_COST.DETAILS, {
+    const redirectByChoice: Record<CostType, string> = {
+      [CostType.PROFIT_COST]: buildRoute(ROUTES.POA.PROFIT_COST.DETAILS, {
+        claimId,
+      }),
+      [CostType.EXPERT_COST]: buildRoute(
+        ROUTES.POA.DISBURSEMENTS.ADD,
+        {
           claimId,
-        }),
-        [CostType.EXPERT_COST]: buildRoute(
-          ROUTES.POA.DISBURSEMENTS.ADD,
-          {
-            claimId,
-          },
-        ),
-        [CostType.NON_EXPERT_DISBURSEMENT]: buildRoute(
-          ROUTES.POA.DISBURSEMENTS.ADD,
-          {
-            claimId,
-          },
-        ),
-      };
+        },
+      ),
+      [CostType.NON_EXPERT_DISBURSEMENT]: buildRoute(
+        ROUTES.POA.DISBURSEMENTS.ADD,
+        {
+          claimId,
+        },
+      ),
+    };
 
-      res.redirect(redirectByChoice[form.getValue()]);
-    } else {
-      next(
-        processApiError(
-          claim,
-          "retrieving claim for submitting POA claim type page",
-        ),
-      );
-    }
+    res.redirect(redirectByChoice[form.getValue()]);
   } catch (error) {
     next(processError(error, "submitting POA claim type page"));
   }

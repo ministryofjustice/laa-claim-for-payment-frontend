@@ -7,14 +7,12 @@ import {
   submitEscapingFixedFee,
 } from "#src/controllers/poa/escapingFixedFeeController.js";
 import { V7Generator } from "uuidv7";
-import { claimService } from "#src/services/claimService.js";
 import { Claim } from "#src/types/Claim.js";
 import { draftService } from "#src/services/draftService.js";
 
 describe("escapingFixedFeeController", () => {
   let res: Response;
   let next: NextFunction;
-  let getClaimStub: sinon.SinonStub;
   let setEscapedFlagStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
@@ -31,7 +29,6 @@ describe("escapingFixedFeeController", () => {
 
     next = sinon.stub() as unknown as NextFunction;
 
-    getClaimStub = sinon.stub(claimService, "getDraftClaim");
     setEscapedFlagStub = sinon.stub(draftService, "setEscapedFlag");
   });
 
@@ -39,21 +36,14 @@ describe("escapingFixedFeeController", () => {
     sinon.restore();
   });
 
-  it("renders the escaping the fixed fee radio question page", async () => {
+  it("renders the escaping the fixed fee radio question page", () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
-    } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
+      claim: new Claim({
         id: claimId.toString(),
       }),
-    });
+    } as unknown as Request;
 
-    await escapingFixedFee(req, res, next);
+    escapingFixedFee(req, res, next);
 
     expect((res.render as sinon.SinonStub).calledOnce).to.equal(true);
     expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -69,20 +59,13 @@ describe("escapingFixedFeeController", () => {
 
   it("redirects to CPGFS profit cost bill line page when escaping fixed fee answer is given", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {
         escapingFixedFee: "yes",
       },
     } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
-        id: claimId.toString(),
-      }),
-    });
 
     setEscapedFlagStub.resolves({
       status: "success",
@@ -109,9 +92,9 @@ describe("escapingFixedFeeController", () => {
 
   it("rerenders the radio question page with an error when no option is selected", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {},
     } as unknown as Request;
 
@@ -126,9 +109,9 @@ describe("escapingFixedFeeController", () => {
 
   it("rerenders with selected invalid string preserved when invalid option is submitted", async () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
+      claim: new Claim({
+        id: claimId.toString(),
+      }),
       body: {
         escapingFixedFee: "invalid",
       },

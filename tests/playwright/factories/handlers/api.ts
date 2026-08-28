@@ -8,6 +8,10 @@ export const lineItemId = UUID.parse("019f6098-0f50-7f43-9508-7f5da5817a72");
 export const evidenceId = UUID.parse("019f6098-3305-70be-82c6-e4b74c5749d0");
 
 export const profitCostDraftClaim1Id = UUID.parse(
+  "01a047b2-c50e-7358-8363-542cf9689114",
+);
+
+export const profitCostDraftClaim2Id = UUID.parse(
   "019faf99-e88a-71f7-b467-cd3aa9f643aa",
 );
 
@@ -54,6 +58,13 @@ function makeFakeClaim(id: UUID, overrides = {}): object {
 
 const profitCostDraftClaim1: object = {
   id: profitCostDraftClaim1Id.toString(),
+  costType: "PROFIT_COST",
+  lineItems: [],
+  evidence: [],
+};
+
+const profitCostDraftClaim2: object = {
+  id: profitCostDraftClaim2Id.toString(),
   costType: "PROFIT_COST",
   courtType: "COUNTY_COURT",
   clientPartyStatus: "CHILD",
@@ -139,6 +150,8 @@ export function createApiHandlers(uploadGate?: Gate): HttpHandler[] {
           return HttpResponse.error();
         case profitCostDraftClaim1Id.toString():
           return HttpResponse.json(profitCostDraftClaim1);
+        case profitCostDraftClaim2Id.toString():
+          return HttpResponse.json(profitCostDraftClaim2);
         case expertCostDraftClaim1Id.toString():
           return HttpResponse.json(expertCostDraftClaim1);
         case expertCostDraftClaim2Id.toString():

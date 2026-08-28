@@ -1,12 +1,12 @@
 import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
-import { processApiError, processError } from "#src/helpers/index.js";
+import { processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { UUID } from "uuidv7";
 import { Count } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
 import { RadioField } from "#src/helpers/fields.js";
 import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import { requireClaim } from "#src/helpers/claimGuards.js";
 
 /**
  * get how many clients retained view
@@ -14,31 +14,22 @@ import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
  */
-export async function howManyClientsRetained(
+export function howManyClientsRetained(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+): void {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claim = requireClaim(req);
 
-    const claim = await claimService.getDraftClaim(
-      req.axiosMiddleware,
-      claimId,
-    );
-
-    if (claim.status === "success") {
-      const form = new RadioQuestionForm(buildField());
-      if (claim.body.clientsStartCount != null) {
-        form.fill(claim.body.clientsStartCount);
-      }
-      res.render("main/radioQuestionPage.njk", {
-        csrfToken: res.locals.csrfToken,
-        vm: buildViewModel(form),
-      });
-    } else {
-      next(processApiError(claim, "retrieving claim for rendering how many clients retained page"));
+    const form = new RadioQuestionForm(buildField());
+    if (claim.clientsStartCount != null) {
+      form.fill(claim.clientsStartCount);
     }
+    res.render("main/radioQuestionPage.njk", {
+      csrfToken: res.locals.csrfToken,
+      vm: buildViewModel(form),
+    });
   } catch (error) {
     const processedError = processError(error, "rendering how many clients retained page");
     next(processedError);
@@ -71,33 +62,25 @@ export async function submitHowManyClientsRetained(
       return;
     }
 
-    const claimId = UUID.parse(req.params.claimId);
+    const claim = requireClaim(req);
+    const { id: claimId } = claim;
 
-    const claim = await claimService.getDraftClaim(
+    await claimService.updateClaim(
       req.axiosMiddleware,
-      claimId,
+      claim.setClientsRetainedCount(form.getValue()),
     );
 
-    if (claim.status === "success") {
-      await claimService.updateClaim(
-        req.axiosMiddleware,
-        claim.body.setClientsRetainedCount(form.getValue()),
-      );
+    const redirectByChoice: Record<Count, string> = {
+      [Count.ZERO]: buildRoute(ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE, {
+        claimId,
+      }),
+      [Count.ONE]: buildRoute(ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS, { claimId }),
+      [Count.TWO_OR_MORE]: buildRoute(ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS, {
+        claimId,
+      }),
+    };
 
-      const redirectByChoice: Record<Count, string> = {
-        [Count.ZERO]: buildRoute(ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE, {
-          claimId,
-        }),
-        [Count.ONE]: buildRoute(ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS, { claimId }),
-        [Count.TWO_OR_MORE]: buildRoute(ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS, {
-          claimId,
-        }),
-      };
-
-      res.redirect(redirectByChoice[form.getValue()]);
-    } else {
-      next(processApiError(claim, "retrieving claim for submitting how many clients retained page"));
-    }
+    res.redirect(redirectByChoice[form.getValue()]);
   } catch (error) {
     const processedError = processError(error, "submitting how many clients retained page");
     next(processedError);

@@ -1,10 +1,4 @@
-import {
-  type Claim,
-  CostType,
-  type DisbursementLineItem,
-  type EvidenceItem,
-  type ProfitCostBillLineItem
-} from "#src/types/Claim.js";
+import { type Claim, CostType, type DisbursementLineItem, type EvidenceItem } from "#src/types/Claim.js";
 import type { Table } from "#src/viewmodels/components/table.js";
 import type { TableCell, TableHeader } from "#src/viewmodels/components/index.js";
 import {
@@ -225,67 +219,63 @@ export class CheckDetailsViewModel {
   private static buildProfitCostBillLineItemSummaryLists(
     claim: Claim,
   ): SummaryList[] {
-    const result: SummaryList[] = [];
-    const { id: claimId } = claim;
-    claim.lineItems
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
-      .map((lineItem) => lineItem as ProfitCostBillLineItem)
-      .forEach((lineItem: ProfitCostBillLineItem) => {
-        result.push(
-          buildSummaryListWithCard(
-            {
-              key: "pages.poa.checkYourDetails.cya.profitCostBillLine.title",
-            },
-            "profit-cost-bill-line",
-            [
-              buildSummaryListRow(
-                {
-                  key: "pages.poa.checkYourDetails.cya.profitCostBillLine.date",
-                },
-                { text: formatDateReadable(lineItem.date.toDate()) },
-              ),
-              buildSummaryListRow(
-                {
-                  key: "pages.poa.checkYourDetails.cya.profitCostBillLine.netProfitCost",
-                },
-                { text: formatClaimed(lineItem.netProfitCostAmount) },
-              ),
-              buildSummaryListRow(
-                {
-                  key: "pages.poa.checkYourDetails.cya.profitCostBillLine.netAdvocacyCost",
-                },
-                { text: formatClaimed(lineItem.netAdvocacyCostAmount) },
-              ),
-              buildSummaryListRow(
-                {
-                  key: "pages.poa.checkYourDetails.cya.profitCostBillLine.doesVatApply",
-                },
-                { text: { key: formatBoolean(lineItem.vatApplicable) } },
-              ),
-              buildSummaryListRow(
-                {
-                  key: "pages.poa.checkYourDetails.cya.profitCostBillLine.feeEarnerName",
-                },
-                { text: lineItem.feeEarnerName },
-              ),
-            ],
-            [
+    const { id: claimId, profitCostLineItem: lineItem } = claim;
+    if (lineItem != null) {
+      return [
+        buildSummaryListWithCard(
+          {
+            key: "pages.poa.checkYourDetails.cya.profitCostBillLine.title",
+          },
+          "profit-cost-bill-line",
+          [
+            buildSummaryListRow(
               {
-                href: buildRoute(ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE, {
-                  claimId,
-                }),
-                text: {
-                  key: "common.change",
-                },
-                visuallyHiddenText: {
-                  key: "pages.poa.checkYourDetails.cya.profitCostBillLine.title",
-                },
+                key: "pages.poa.checkYourDetails.cya.profitCostBillLine.date",
               },
-            ],
-          ),
-        );
-      });
-    return result;
+              { text: formatDateReadable(lineItem.date.toDate()) },
+            ),
+            buildSummaryListRow(
+              {
+                key: "pages.poa.checkYourDetails.cya.profitCostBillLine.netProfitCost",
+              },
+              { text: formatClaimed(lineItem.netProfitCostAmount) },
+            ),
+            buildSummaryListRow(
+              {
+                key: "pages.poa.checkYourDetails.cya.profitCostBillLine.netAdvocacyCost",
+              },
+              { text: formatClaimed(lineItem.netAdvocacyCostAmount) },
+            ),
+            buildSummaryListRow(
+              {
+                key: "pages.poa.checkYourDetails.cya.profitCostBillLine.doesVatApply",
+              },
+              { text: { key: formatBoolean(lineItem.vatApplicable) } },
+            ),
+            buildSummaryListRow(
+              {
+                key: "pages.poa.checkYourDetails.cya.profitCostBillLine.feeEarnerName",
+              },
+              { text: lineItem.feeEarnerName },
+            ),
+          ],
+          [
+            {
+              href: buildRoute(ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE, {
+                claimId,
+              }),
+              text: {
+                key: "common.change",
+              },
+              visuallyHiddenText: {
+                key: "pages.poa.checkYourDetails.cya.profitCostBillLine.title",
+              },
+            },
+          ],
+        ),
+      ]
+    }
+    return [];
   }
 
   private static buildLineItemSummaryLists(

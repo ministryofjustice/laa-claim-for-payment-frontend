@@ -1,11 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
-import { processApiError, processError } from "#src/helpers/index.js";
+import { processError } from "#src/helpers/index.js";
 import { ProfitCostDetailsViewModel } from "#src/viewmodels/poa/profitCostDetailsViewModel.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { getRequestBody } from "#src/helpers/validation.js";
 import { ProfitCostDetailsForm, type ProfitCostDetailsRequestBody } from "#src/helpers/profitCostDetailsValidation.js";
-import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
+import { requireClaim } from "#src/helpers/claimGuards.js";
 
 /**
  * Profit cost details journey view
@@ -13,49 +13,35 @@ import { claimService } from "#src/services/claimService.js";
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
  */
-export async function profitCostDetails(
+export function profitCostDetails(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+): void {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claim = requireClaim(req);
 
-    const claim = await claimService.getDraftClaim(
-      req.axiosMiddleware,
-      claimId,
-    );
-
-    if (claim.status === "success") {
-      const form = new ProfitCostDetailsForm();
-      if (claim.body.courtType != null) {
-        form.fill({ courtType: claim.body.courtType });
-      }
-
-      if (claim.body.clientPartyStatus != null) {
-        form.fill({ clientStatus: claim.body.clientPartyStatus });
-      }
-
-      if (claim.body.firstActingSolicitorFlag != null) {
-        form.fill({ firstSolicitor: claim.body.firstActingSolicitorFlag });
-      }
-
-      if (claim.body.transferOfSolicitorFlag != null) {
-        form.fill({ transferOfSolicitor: claim.body.transferOfSolicitorFlag });
-      }
-
-      res.render("main/poa/profitCostDetailsView.njk", {
-        csrfToken: res.locals.csrfToken,
-        vm: new ProfitCostDetailsViewModel({ form }),
-      });
-    } else {
-      next(
-        processApiError(
-          claim,
-          "retrieving claim for rendering profit cost details page",
-        ),
-      );
+    const form = new ProfitCostDetailsForm();
+    if (claim.courtType != null) {
+      form.fill({ courtType: claim.courtType });
     }
+
+    if (claim.clientPartyStatus != null) {
+      form.fill({ clientStatus: claim.clientPartyStatus });
+    }
+
+    if (claim.firstActingSolicitorFlag != null) {
+      form.fill({ firstSolicitor: claim.firstActingSolicitorFlag });
+    }
+
+    if (claim.transferOfSolicitorFlag != null) {
+      form.fill({ transferOfSolicitor: claim.transferOfSolicitorFlag });
+    }
+
+    res.render("main/poa/profitCostDetailsView.njk", {
+      csrfToken: res.locals.csrfToken,
+      vm: new ProfitCostDetailsViewModel({ form }),
+    });
   } catch (error) {
     const processedError = processError(
       error,
@@ -91,32 +77,19 @@ export async function submitProfitCostDetails(
       return;
     }
 
-    const claimId = UUID.parse(req.params.claimId);
+    const claim = requireClaim(req);
+    const { id: claimId } = claim;
 
-    const claim = await claimService.getDraftClaim(
+    await claimService.updateClaim(
       req.axiosMiddleware,
-      claimId,
+      claim.setProfitCostDetails(form.getValue()),
     );
 
-    if (claim.status === "success") {
-      await claimService.updateClaim(
-        req.axiosMiddleware,
-        claim.body.setProfitCostDetails(form.getValue()),
-      );
+    const redirectUrl = form.getValue().transferOfSolicitor
+      ? buildRoute(ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED, { claimId })
+      : buildRoute(ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE, { claimId });
 
-      const redirectUrl = form.getValue().transferOfSolicitor
-        ? buildRoute(ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED, { claimId })
-        : buildRoute(ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE, { claimId });
-
-      res.redirect(redirectUrl);
-    } else {
-      next(
-        processApiError(
-          claim,
-          "retrieving claim for submitting profit cost details page",
-        ),
-      );
-    }
+    res.redirect(redirectUrl);
   } catch (error) {
     const processedError = processError(
       error,

@@ -1,6 +1,5 @@
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { createRadioQuestionController } from "#src/helpers/radioQuestionController.js";
-import { UUID } from "uuidv7";
 import { Count } from "#src/types/Claim.js";
 import { RadioField } from "#src/helpers/fields.js";
 
@@ -38,9 +37,9 @@ const controller = createRadioQuestionController({
   buildField: () => buildField(),
   renderErrorContext: "rendering number of clients start of case page",
   submitErrorContext: "submitting number of clients start of case page",
-  getRedirectUrl: (req) =>
+  getRedirectUrl: (claim) =>
     buildRoute(ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS, {
-      claimId: UUID.parse(req.params.claimId),
+      claimId: claim.id,
     }),
   getValue: (claim) => claim.clientsStartCount,
   setValue: (claim, selectedChoice) =>

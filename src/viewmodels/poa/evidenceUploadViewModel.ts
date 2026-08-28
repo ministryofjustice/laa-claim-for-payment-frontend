@@ -1,14 +1,13 @@
 import type { ReusableDocument } from "#src/viewmodels/components/taskList.js";
 import type { Message } from "#src/viewmodels/components/message.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import type { UUID } from "uuidv7";
 import { ClaimStatus } from "#src/types/Claim.js";
 import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
 import type { UploadForm } from "#src/helpers/fileUploadValidation.js";
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 
 export interface PoaEvidenceUploadViewModelParams {
-  claimId: UUID;
+  claimId: string;
   form: UploadForm;
 }
 

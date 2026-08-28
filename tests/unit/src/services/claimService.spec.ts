@@ -642,7 +642,7 @@ describe("Claim Service", () => {
 
       const result = await claimService.addLineItemToClaim(
         { axiosInstance: {} } as any,
-        claimId,
+        claimId.toString(),
         undefined,
         deps as any,
       );
@@ -665,7 +665,7 @@ describe("Claim Service", () => {
 
       const result = await claimService.addLineItemToClaim(
         { axiosInstance: {} } as any,
-        claimId,
+        claimId.toString(),
         {
           type: CostType.EXPERT_COST,
           value: {
@@ -707,7 +707,7 @@ describe("Claim Service", () => {
 
       const result = (await claimService.addLineItemToClaim(
         { axiosInstance: {} } as any,
-        claimId,
+        claimId.toString(),
         undefined,
         deps as any,
       )) as ApiError;
@@ -727,7 +727,7 @@ describe("Claim Service", () => {
 
       const result = await claimService.addLineItemToClaim(
         { axiosInstance: {} } as any,
-        claimId,
+        claimId.toString(),
         undefined,
         deps as any,
       );
@@ -751,7 +751,7 @@ describe("Claim Service", () => {
 
       const result = await claimService.addLineItemToClaim(
         { axiosInstance: {} } as any,
-        claimId,
+        claimId.toString(),
         undefined,
         deps as any,
       );
@@ -775,7 +775,7 @@ describe("Claim Service", () => {
 
       const result = await claimService.addLineItemToClaim(
         { axiosInstance: {} } as any,
-        claimId,
+        claimId.toString(),
         undefined,
         deps as any,
       );
@@ -797,7 +797,7 @@ describe("Claim Service", () => {
 
       const result = await claimService.addLineItemToClaim(
         { axiosInstance: {} } as any,
-        claimId,
+        claimId.toString(),
         undefined,
         deps as any,
       );
@@ -817,7 +817,7 @@ describe("Claim Service", () => {
 
       const result = await claimService.addLineItemToClaim(
         { axiosInstance: {} } as any,
-        claimId,
+        claimId.toString(),
         undefined,
         deps as any,
       );
@@ -1087,8 +1087,8 @@ describe("Claim Service", () => {
 
       const result = await claimService.updateLineItem(
         { axiosInstance: {} } as any,
-        claimId,
-        lineItemId,
+        claimId.toString(),
+        lineItemId.toString(),
         lineItemForm,
         deps as any,
       );
@@ -1140,8 +1140,8 @@ describe("Claim Service", () => {
 
       const result = (await claimService.updateLineItem(
         { axiosInstance: {} } as any,
-        claimId,
-        lineItemId,
+        claimId.toString(),
+        lineItemId.toString(),
         lineItemForm,
         deps as any,
       )) as ApiError;
@@ -1161,8 +1161,8 @@ describe("Claim Service", () => {
 
       const result = await claimService.updateLineItem(
         { axiosInstance: {} } as any,
-        claimId,
-        lineItemId,
+        claimId.toString(),
+        lineItemId.toString(),
         lineItemForm,
         deps as any,
       );
@@ -1184,8 +1184,8 @@ describe("Claim Service", () => {
 
       const result = await claimService.deleteLineItem(
         { axiosInstance: {} } as any,
-        claimId,
-        lineItemId,
+        claimId.toString(),
+        lineItemId.toString(),
         deps as any,
       );
 
@@ -1228,8 +1228,8 @@ describe("Claim Service", () => {
 
       const result = (await claimService.deleteLineItem(
         { axiosInstance: {} } as any,
-        claimId,
-        lineItemId,
+        claimId.toString(),
+        lineItemId.toString(),
         deps as any,
       )) as ApiError;
 
@@ -1261,8 +1261,8 @@ describe("Claim Service", () => {
 
       const result = (await claimService.deleteLineItem(
         { axiosInstance: {} } as any,
-        claimId,
-        lineItemId,
+        claimId.toString(),
+        lineItemId.toString(),
         deps as any,
       )) as ApiError;
 
@@ -1281,8 +1281,8 @@ describe("Claim Service", () => {
 
       const result = await claimService.deleteLineItem(
         { axiosInstance: {} } as any,
-        claimId,
-        lineItemId,
+        claimId.toString(),
+        lineItemId.toString(),
         deps as any,
       );
 

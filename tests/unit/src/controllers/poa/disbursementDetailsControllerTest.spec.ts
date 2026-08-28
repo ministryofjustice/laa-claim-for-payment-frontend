@@ -16,7 +16,6 @@ import { HttpError } from "http-errors";
 describe("disbursementDetailsController", () => {
   let res: Response;
   let next: NextFunction;
-  let getClaimStub: sinon.SinonStub;
   let createLineItemStub: sinon.SinonStub;
   let updateLineItemStub: sinon.SinonStub;
 
@@ -37,7 +36,6 @@ describe("disbursementDetailsController", () => {
 
     next = sinon.stub() as unknown as NextFunction;
 
-    getClaimStub = sinon.stub(claimService, "getDraftClaim");
     createLineItemStub = sinon.stub(claimService, "addLineItemToClaim");
     updateLineItemStub = sinon.stub(claimService, "updateLineItem");
   });
@@ -49,21 +47,14 @@ describe("disbursementDetailsController", () => {
   it("renders the page when there isn't a line item ID", () => {
     validCostTypes.forEach(async (input) => {
       const req = {
-        params: {
-          claimId: claimId.toString(),
-        },
-        query: {},
-      } as unknown as Request;
-
-      getClaimStub.resolves({
-        status: "success",
-        body: new Claim({
+        claim: new Claim({
           id: claimId.toString(),
           costType: input,
         }),
-      });
+        query: {},
+      } as unknown as Request;
 
-      await disbursementDetails(req, res, next);
+      disbursementDetails(req, res, next);
 
       expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
       expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -92,17 +83,7 @@ describe("disbursementDetailsController", () => {
   it("renders the page when there is a line item ID", () => {
     validCostTypes.forEach(async (input) => {
       const req = {
-        params: {
-          claimId: claimId.toString(),
-        },
-        query: {
-          lineItemId: lineItemId.toString(),
-        },
-      } as unknown as Request;
-
-      getClaimStub.resolves({
-        status: "success",
-        body: new Claim({
+        claim: new Claim({
           id: claimId.toString(),
           costType: input,
           lineItems: [
@@ -118,9 +99,12 @@ describe("disbursementDetailsController", () => {
             },
           ],
         }),
-      });
+        query: {
+          lineItemId: lineItemId.toString(),
+        },
+      } as unknown as Request;
 
-      await disbursementDetails(req, res, next);
+      disbursementDetails(req, res, next);
 
       expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
       expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
@@ -149,17 +133,7 @@ describe("disbursementDetailsController", () => {
   it("redirects when line item not found", () => {
     validCostTypes.forEach(async (input) => {
       const req = {
-        params: {
-          claimId: claimId.toString(),
-        },
-        query: {
-          lineItemId: lineItemId.toString(),
-        },
-      } as unknown as Request;
-
-      getClaimStub.resolves({
-        status: "success",
-        body: new Claim({
+        claim: new Claim({
           id: claimId.toString(),
           costType: input,
           lineItems: [
@@ -175,9 +149,12 @@ describe("disbursementDetailsController", () => {
             },
           ],
         }),
-      });
+        query: {
+          lineItemId: lineItemId.toString(),
+        },
+      } as unknown as Request;
 
-      await disbursementDetails(req, res, next);
+      disbursementDetails(req, res, next);
 
       expect((next as sinon.SinonStub).calledOnce).to.be.true;
       expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(HttpError);
@@ -185,65 +162,42 @@ describe("disbursementDetailsController", () => {
     });
   });
 
-  it("redirects when cost type is profit cost", async () => {
+  it("errors when cost type is profit cost", () => {
     const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
-      query: {},
-    } as unknown as Request;
-
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
+      claim: new Claim({
         id: claimId.toString(),
         costType: CostType.PROFIT_COST,
       }),
-    });
-
-    await disbursementDetails(req, res, next);
-
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA.CLAIM_TYPE, {
-          claimId: claimId,
-        }),
-      ),
-    ).to.be.true;
-  });
-
-  it("redirects when cost type is missing", async () => {
-    const req = {
-      params: {
-        claimId: claimId.toString(),
-      },
       query: {},
     } as unknown as Request;
 
-    getClaimStub.resolves({
-      status: "success",
-      body: new Claim({
+    disbursementDetails(req, res, next);
+
+    expect((next as sinon.SinonStub).calledOnce).to.be.true;
+    expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(Error);
+  });
+
+  it("errors when cost type is missing", () => {
+    const req = {
+      claim: new Claim({
         id: claimId.toString(),
       }),
-    });
+      query: {},
+    } as unknown as Request;
 
-    await disbursementDetails(req, res, next);
+    disbursementDetails(req, res, next);
 
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA.CLAIM_TYPE, {
-          claimId: claimId,
-        }),
-      ),
-    ).to.be.true;
+    expect((next as sinon.SinonStub).calledOnce).to.be.true;
+    expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(Error);
   });
 
   it("redirects to POA evidence upload when form is valid when there isn't a line item ID", () => {
     validCostTypes.forEach(async (input) => {
       const req = {
-        params: {
-          claimId: claimId.toString(),
-        },
+        claim: new Claim({
+          id: claimId.toString(),
+          costType: input,
+        }),
         query: {},
         body: {
           activityDateDay: "27",
@@ -255,14 +209,6 @@ describe("disbursementDetailsController", () => {
           description: "Lorem ipsum",
         },
       } as unknown as Request;
-
-      getClaimStub.resolves({
-        status: "success",
-        body: new Claim({
-          id: claimId.toString(),
-          costType: input,
-        }),
-      });
 
       createLineItemStub.resolves({
         status: "success",
@@ -297,26 +243,7 @@ describe("disbursementDetailsController", () => {
   it("redirects to POA evidence upload when form is valid when there is a line item ID", () => {
     validCostTypes.forEach(async (input) => {
       const req = {
-        params: {
-          claimId: claimId.toString(),
-        },
-        query: {
-          lineItemId: lineItemId.toString(),
-        },
-        body: {
-          activityDateDay: "27",
-          activityDateMonth: "3",
-          activityDateYear: "2007",
-          actualNetValue: "123.45",
-          vatApplies: "yes",
-          feeEarnerName: "John Smith",
-          description: "Lorem ipsum",
-        },
-      } as unknown as Request;
-
-      getClaimStub.resolves({
-        status: "success",
-        body: new Claim({
+        claim: new Claim({
           id: claimId.toString(),
           costType: input,
           lineItems: [
@@ -332,7 +259,19 @@ describe("disbursementDetailsController", () => {
             },
           ],
         }),
-      });
+        query: {
+          lineItemId: lineItemId.toString(),
+        },
+        body: {
+          activityDateDay: "27",
+          activityDateMonth: "3",
+          activityDateYear: "2007",
+          actualNetValue: "123.45",
+          vatApplies: "yes",
+          feeEarnerName: "John Smith",
+          description: "Lorem ipsum",
+        },
+      } as unknown as Request;
 
       updateLineItemStub.resolves({
         status: "success",
@@ -369,20 +308,13 @@ describe("disbursementDetailsController", () => {
   it("rerenders with 400 when form is invalid", () => {
     validCostTypes.forEach(async (input) => {
       const req = {
-        params: {
-          claimId: claimId.toString(),
-        },
-        query: {},
-        body: {},
-      } as unknown as Request;
-
-      getClaimStub.resolves({
-        status: "success",
-        body: new Claim({
+        claim: new Claim({
           id: claimId.toString(),
           costType: input,
         }),
-      });
+        query: {},
+        body: {},
+      } as unknown as Request;
 
       await submitDisbursementDetails(req, res, next);
 

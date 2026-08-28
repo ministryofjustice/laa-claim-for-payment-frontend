@@ -1,12 +1,11 @@
 import { RadioQuestionViewModel, type YesNoQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
-import { processApiError, processError } from "#src/helpers/index.js";
+import { processError } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
-import { UUID } from "uuidv7";
-import { claimService } from "#src/services/claimService.js";
 import { draftService } from "#src/services/draftService.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
+import { requireClaim } from "#src/helpers/claimGuards.js";
 
 /**
  * get how many clients retained view
@@ -14,36 +13,22 @@ import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
  * @param {Response} res Express response object
  * @param {NextFunction} next Express next function
  */
-export async function escapingFixedFee(
+export function escapingFixedFee(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+): void {
   try {
-    const claimId = UUID.parse(req.params.claimId);
+    const claim = requireClaim(req);
 
-    const claim = await claimService.getDraftClaim(
-      req.axiosMiddleware,
-      claimId,
-    );
-
-    if (claim.status === "success") {
-      const form = new YesNoQuestionForm(buildField());
-      if (claim.body.escapedFlag != null) {
-        form.fill(claim.body.escapedFlag);
-      }
-      res.render("main/poa/escapingFixedFeeView.njk", {
-        csrfToken: res.locals.csrfToken,
-        vm: buildViewModel(form),
-      });
-    } else {
-      next(
-        processApiError(
-          claim,
-          "retrieving claim for rendering escaping fixed fee page",
-        ),
-      );
+    const form = new YesNoQuestionForm(buildField());
+    if (claim.escapedFlag != null) {
+      form.fill(claim.escapedFlag);
     }
+    res.render("main/poa/escapingFixedFeeView.njk", {
+      csrfToken: res.locals.csrfToken,
+      vm: buildViewModel(form),
+    });
   } catch (error) {
     const processedError = processError(
       error,
@@ -79,29 +64,15 @@ export async function submitEscapingFixedFee(
       return;
     }
 
-    const claimId = UUID.parse(req.params.claimId);
+    const claim = requireClaim(req);
 
-    const claim = await claimService.getDraftClaim(
+    await draftService.setEscapedFlag(
       req.axiosMiddleware,
-      claimId,
+      claim,
+      form.getValue(),
     );
 
-    if (claim.status === "success") {
-      await draftService.setEscapedFlag(
-        req.axiosMiddleware,
-        claim.body,
-        form.getValue(),
-      );
-
-      res.redirect(buildRoute(ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE, { claimId }));
-    } else {
-      next(
-        processApiError(
-          claim,
-          "retrieving claim for submitting escaping fixed fee page",
-        ),
-      );
-    }
+    res.redirect(buildRoute(ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE, { claimId: claim.id }));
   } catch (error) {
     const processedError = processError(
       error,

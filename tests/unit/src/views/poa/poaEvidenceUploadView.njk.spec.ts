@@ -11,7 +11,7 @@ chaiConfig.truncateThreshold = 0;
 describe("views/main/poa/poaEvidenceUploadView.njk", () => {
   let $: CheerioAPI;
 
-  const claimId = new V7Generator().generate();
+  const claimId = new V7Generator().generate().toString();
 
   const field = new UploadField("prefix", "name", "id");
 
@@ -88,10 +88,10 @@ describe("views/main/poa/poaEvidenceUploadView.njk", () => {
 
     expect(config).to.have.length(1);
     expect(config.attr("data-upload-url")).to.equal(
-      `/claims/${claimId.toString()}/poa/evidence-upload/ajax-upload?claimStatus=DRAFT`,
+      `/claims/${claimId}/poa/evidence-upload/ajax-upload?claimStatus=DRAFT`,
     );
     expect(config.attr("data-delete-url")).to.equal(
-      `/claims/${claimId.toString()}/poa/evidence-upload/ajax-delete?claimStatus=DRAFT`,
+      `/claims/${claimId}/poa/evidence-upload/ajax-delete?claimStatus=DRAFT`,
     );
   });
 
