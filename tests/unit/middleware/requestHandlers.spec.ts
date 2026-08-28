@@ -4,6 +4,7 @@ import sinon from "sinon";
 import {
   loadDraftClaim,
   requireDisbursementCostType,
+  requireProfitCostType,
 } from "#middleware/requestHandlers.js";
 import { Claim, CostType } from "#src/types/Claim.js";
 import { V7Generator } from "uuidv7";
@@ -135,7 +136,7 @@ describe("requestHandlers", () => {
       sinon.restore();
     });
 
-    it("loads expert disbursement onto request and calls next", () => {
+    it("when expert cost calls next", () => {
       const req = {
         claim: new Claim({
           id: claimId.toString(),
@@ -148,7 +149,7 @@ describe("requestHandlers", () => {
       expect((next as sinon.SinonStub).calledOnce).to.be.true;
     });
 
-    it("loads non-expert disbursement onto request and calls next", () => {
+    it("when non-expert disbursement calls next", () => {
       const req = {
         claim: new Claim({
           id: claimId.toString(),
@@ -182,6 +183,81 @@ describe("requestHandlers", () => {
       const req = {} as unknown as Request;
 
       requireDisbursementCostType(req, res, next);
+
+      const error = (next as sinon.SinonStub).firstCall.args[0];
+
+      expect(error).to.exist;
+    });
+  });
+
+  describe("requireProfitCostType", () => {
+    let res: Response;
+    let next: NextFunction;
+
+    const claimId = new V7Generator().generate();
+
+    beforeEach(() => {
+      res = {
+        redirect: sinon.stub(),
+      } as unknown as Response;
+      next = sinon.stub() as unknown as NextFunction;
+    });
+
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it("when profit cost calls next", () => {
+      const req = {
+        claim: new Claim({
+          id: claimId.toString(),
+          costType: CostType.PROFIT_COST,
+        }),
+      } as unknown as Request;
+
+      requireProfitCostType(req, res, next);
+
+      expect((next as sinon.SinonStub).calledOnce).to.be.true;
+    });
+
+    it("redirects when expert cost type", () => {
+      const req = {
+        claim: new Claim({
+          id: claimId.toString(),
+          costType: CostType.EXPERT_COST,
+        }),
+      } as unknown as Request;
+
+      requireProfitCostType(req, res, next);
+
+      expect(
+        (res.redirect as sinon.SinonStub).calledWith(
+          `/claims/${claimId.toString()}/poa/claim-type`,
+        ),
+      ).to.be.true;
+    });
+
+    it("redirects when non-expert disbursement cost type", () => {
+      const req = {
+        claim: new Claim({
+          id: claimId.toString(),
+          costType: CostType.NON_EXPERT_DISBURSEMENT,
+        }),
+      } as unknown as Request;
+
+      requireProfitCostType(req, res, next);
+
+      expect(
+        (res.redirect as sinon.SinonStub).calledWith(
+          `/claims/${claimId.toString()}/poa/claim-type`,
+        ),
+      ).to.be.true;
+    });
+
+    it("fails when no claim in request", () => {
+      const req = {} as unknown as Request;
+
+      requireProfitCostType(req, res, next);
 
       const error = (next as sinon.SinonStub).firstCall.args[0];
 

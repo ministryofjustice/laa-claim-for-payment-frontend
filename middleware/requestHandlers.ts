@@ -4,6 +4,7 @@ import { claimService } from "#src/services/claimService.js";
 import { processApiError, processError } from "#src/helpers/index.js";
 import { requireClaim } from "#src/helpers/claimGuards.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
+import { CostType } from "#src/types/Claim.js";
 
 /**
  * load draft claim into request
@@ -55,6 +56,30 @@ export function requireDisbursementCostType(
       res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
     } else {
       next();
+    }
+  } catch (error) {
+    next(processError(error, "requiring disbursement cost type"));
+  }
+}
+
+/**
+ * require that claim has a profit cost type
+ * @param {Request} req Express request object
+ * @param {Response} res Express response object
+ * @param {NextFunction} next Express next function
+ */
+export function requireProfitCostType(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  try {
+    const claim = requireClaim(req);
+    const { id: claimId } = claim;
+    if (claim.costType === CostType.PROFIT_COST) {
+      next();
+    } else {
+      res.redirect(buildRoute(ROUTES.POA.CLAIM_TYPE, { claimId }));
     }
   } catch (error) {
     next(processError(error, "requiring disbursement cost type"));
