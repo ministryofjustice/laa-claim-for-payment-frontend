@@ -355,14 +355,16 @@
           "title": "Fee earner name",
           "errors": {
             "empty": "Enter a fee earner name",
-            "invalid": "Fee earner name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
+            "invalid": "Fee earner name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes",
+            "length": "Fee earner name must be {length} characters or less"
           }
         },
         "description": {
           "title": "Description",
           "errors": {
             "empty": "Enter a description of the expert cost",
-            "invalid": "Description must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
+            "invalid": "Description must only include letters a to z, and special characters such as hyphens, spaces and apostrophes",
+            "length": "Description must be {length} characters or less"
           }
         },
         "addAnother": {
@@ -424,14 +426,16 @@
           "title": "Fee earner name",
           "errors": {
             "empty": "Enter a fee earner name",
-            "invalid": "Fee earner name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
+            "invalid": "Fee earner name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes",
+            "length": "Fee earner name must be {length} characters or less"
           }
         },
         "description": {
           "title": "Description",
           "errors": {
             "empty": "Enter a description of the expert cost",
-            "invalid": "Description must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
+            "invalid": "Description must only include letters a to z, and special characters such as hyphens, spaces and apostrophes",
+            "length": "Description must be {length} characters or less"
           }
         },
         "addAnother": {
@@ -515,7 +519,8 @@
         "title": "Fee earner name",
         "errors": {
           "empty": "Enter a fee earner name",
-          "invalid": "Fee earner name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes"
+          "invalid": "Fee earner name must only include letters a to z, and special characters such as hyphens, spaces and apostrophes",
+          "length": "Fee earner name must be {length} characters or less"
         }
       }
     },

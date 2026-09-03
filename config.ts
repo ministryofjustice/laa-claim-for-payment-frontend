@@ -80,6 +80,12 @@ const config: Config = {
   featureFlags: {
     poaProfitCostEnabled: process.env.POA_PROFIT_COST_ENABLED === "true",
     lineItemUploadEnabled: process.env.LINE_ITEM_UPLOAD_ENABLED === "true",
+  },
+  fields: {
+    poa: {
+      feeEarnerNameLength: Number(process.env.POA_FEE_EARNER_NAME_FIELD_LENGTH) ?? 150,
+      descriptionLength: Number(process.env.POA_DESCRIPTION_FIELD_LENGTH) ?? 500,
+    }
   }
 };
 

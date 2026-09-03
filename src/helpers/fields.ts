@@ -1,4 +1,8 @@
-import { type FieldValidationError, getStringValue, type ValidationResult } from "#src/helpers/validation.js";
+import {
+  type FieldValidationError,
+  getStringValue,
+  type ValidationResult,
+} from "#src/helpers/validation.js";
 import { BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
 import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewModel.js";
 import { LocalDate } from "#src/types/date.js";
@@ -144,6 +148,7 @@ export class StringField extends Field<unknown, string> {
     name: string,
     id: string,
     private readonly regex: RegExp,
+    private readonly maxLength: number,
   ) {
     super(messagePrefix, name, id);
   }
@@ -160,6 +165,17 @@ export class StringField extends Field<unknown, string> {
         href: `#${this.id}`,
         text: {
           key: `${this.messagePrefix}.errors.empty`,
+        },
+      });
+      return;
+    }
+
+    if (stringValue.length > this.maxLength) {
+      this.error({
+        href: `#${this.id}`,
+        text: {
+          key: `${this.messagePrefix}.errors.length`,
+          args: { length: this.maxLength },
         },
       });
       return;

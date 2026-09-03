@@ -73,11 +73,14 @@ describe("getStringValue", () => {
 });
 
 describe("validateStringInput", () => {
+  const maxLength = 10;
+
   const field: StringField = new StringField(
     "prefix",
     "fieldName",
     "id",
     /^[A-Za-z]+$/,
+    maxLength,
   );
 
   it("returns success for valid input", () => {
@@ -111,6 +114,30 @@ describe("validateStringInput", () => {
     expect(errors[0].href).to.equal("#id");
     expect(errors[0].text.key).to.equal("prefix.errors.invalid");
     expect(errors[0].fields).to.be.undefined;
+  });
+
+  it("returns failure with array of errors for input that is too long", () => {
+    const value = "a".repeat(maxLength + 1);
+    field.validate(value);
+    const result = field.validation;
+
+    const errors = expectFailure(result).errors;
+
+    expect(errors).to.have.length(1);
+    expect(errors[0].href).to.equal("#id");
+    expect(errors[0].text.key).to.equal("prefix.errors.length");
+    expect(errors[0].text.args).to.deep.equal({ length: 10 });
+    expect(errors[0].fields).to.be.undefined;
+  });
+
+  it("returns success for input that is appropriate length after trim", () => {
+    const value = "a".repeat(maxLength);
+    field.validate(`${value} `);
+    const result = field.validation;
+
+    const success = expectSuccess(result);
+
+    expect(success.value).to.equal(value);
   });
 });
 

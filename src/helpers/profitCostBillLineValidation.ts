@@ -6,6 +6,7 @@ import {
   MoneyField,
   StringField,
 } from "#src/helpers/fields.js";
+import config from "#config.js";
 
 export interface ProfitCostBillLineRequestBody {
   activityDateDay?: unknown;
@@ -110,6 +111,7 @@ function buildProfitCostBillLineFields(
       "feeEarnerName",
       "feeEarnerName",
       /^[A-Za-z' -]+$/u,
+      config.fields.poa.feeEarnerNameLength,
     ),
   };
 }
