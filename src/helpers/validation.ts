@@ -132,8 +132,8 @@ export function getRequestBody(body: any): object {
 }
 
 type FieldValues<TFields> = {
-  [K in keyof TFields]: TFields[K] extends Field<unknown, infer TValidated>
-    ? TValidated
+  [K in keyof TFields]: TFields[K] extends Field<unknown, infer TValidField>
+    ? TValidField
     : never;
 };
 
@@ -147,8 +147,8 @@ type FieldValues<TFields> = {
 export function combine<TRaw, TFields>(
   value: TRaw,
   fields: TFields & {
-    [K in keyof TFields]: TFields[K] extends Field<infer _Raw, infer TValidated>
-      ? Field<_Raw, TValidated>
+    [K in keyof TFields]: TFields[K] extends Field<infer TRawField, infer TValidField>
+      ? Field<TRawField, TValidField>
       : never;
   },
 ): ValidationResult<TRaw, FieldValues<TFields>> {
