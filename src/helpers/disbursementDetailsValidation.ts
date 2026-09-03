@@ -75,7 +75,7 @@ export class DisbursementDetailsForm extends Form<
     this.fields.feeEarnerName.validate(value.feeEarnerName);
     this.fields.description.validate(value.description);
 
-    this.validation = combine(this.fields);
+    this.validation = combine(value, this.fields);
   }
 }
 

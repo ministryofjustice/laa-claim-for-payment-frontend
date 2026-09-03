@@ -76,5 +76,14 @@ describe("expertCostDetailsViewModel constructor", () => {
     const result = new DisbursementDetailsViewModel(params);
 
     expect(result.errorSummary?.errorList).to.have.length(5);
+
+    expect(result.activityDateInput.items[0].value).to.equal("");
+    expect(result.activityDateInput.items[1].value).to.equal("");
+    expect(result.activityDateInput.items[2].value).to.equal("");
+    expect(result.actualNetValueInput.value).to.equal("");
+    expect(result.vatApplicableRadios.items[0].checked).to.equal(false);
+    expect(result.vatApplicableRadios.items[1].checked).to.equal(false);
+    expect(result.feeEarnerNameInput.value).to.equal("");
+    expect(result.descriptionInput.value).to.equal("");
   });
 });

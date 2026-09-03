@@ -3,15 +3,11 @@ import {
   ProfitCostBillLineViewModel,
   ProfitCostBillLineViewModelParams,
 } from "#src/viewmodels/poa/profitCostBillLineViewModel.js";
-import { V7Generator } from "uuidv7";
-import { Category, ProfitCostBillLineItem } from "#src/types/Claim.js";
 import { LocalDate } from "#src/types/date.js";
 import { ProfitCostBillLineForm } from "#src/helpers/profitCostBillLineValidation.js";
 import type { ProfitCostBillLine } from "#src/types/poa.js";
 
 describe("profitCostBillLineViewModel constructor", () => {
-  const lineItemId = new V7Generator().generate();
-
   it("constructs view model when empty form", () => {
     const form = new ProfitCostBillLineForm();
 
@@ -82,5 +78,14 @@ describe("profitCostBillLineViewModel constructor", () => {
     expect(result.title).to.equal("pages.profitCostBillLine.title");
 
     expect(result.errorSummary?.errorList).to.have.length(5);
+
+    expect(result.activityDateInput.items[0].value).to.equal("");
+    expect(result.activityDateInput.items[1].value).to.equal("");
+    expect(result.activityDateInput.items[2].value).to.equal("");
+    expect(result.actualNetProfitCostExcludingAdvocacyInput.value).to.equal("");
+    expect(result.actualNetAdvocacyCostsInput.value).to.equal("");
+    expect(result.vatApplicableRadios.items[0].checked).to.equal(false);
+    expect(result.vatApplicableRadios.items[1].checked).to.equal(false);
+    expect(result.feeEarnerNameInput.value).to.equal("");
   });
 });

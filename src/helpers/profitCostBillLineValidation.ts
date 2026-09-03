@@ -74,7 +74,7 @@ export class ProfitCostBillLineForm extends Form<
     this.fields.vatApplies.validate(value.vatApplies);
     this.fields.feeEarnerName.validate(value.feeEarnerName);
 
-    this.validation = combine(this.fields);
+    this.validation = combine(value, this.fields);
   }
 }
 

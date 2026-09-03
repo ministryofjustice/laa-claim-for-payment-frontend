@@ -8,8 +8,8 @@ import type { Field } from "#src/helpers/fields.js";
 /**
  * Abstracted form.
  */
-export abstract class Form<TFields, TRequest, TValid> {
-  public validation?: ValidationResult<TValid>;
+export abstract class Form<TFields, TRaw, TValid> {
+  public validation?: ValidationResult<TRaw, TValid>;
 
   /**
    * Creates a form.
@@ -23,7 +23,7 @@ export abstract class Form<TFields, TRequest, TValid> {
 
   abstract fill(value: TValid): void;
 
-  abstract validate(value: TRequest): void;
+  abstract validate(value: TRaw): void;
 
   /**
    * Get errors for all fields.
@@ -70,7 +70,7 @@ export abstract class Form<TFields, TRequest, TValid> {
    * @returns {boolean} whether the form is not valid
    */
   isNotValid(): this is this & {
-    validation: ValidationFailure;
+    validation: ValidationFailure<TRaw>;
   } {
     return this.validation?.isValid === false;
   }
@@ -94,17 +94,18 @@ export interface FieldValidationError {
   fields?: string[];
 }
 
-export interface ValidationSuccess<T> {
+export interface ValidationSuccess<TValid> {
   isValid: true;
-  value: T;
+  value: TValid;
 }
 
-export interface ValidationFailure {
+export interface ValidationFailure<TRaw> {
   isValid: false;
   errors: FieldValidationError[];
+  value: TRaw;
 }
 
-export type ValidationResult<T> = ValidationSuccess<T> | ValidationFailure;
+export type ValidationResult<TRaw, TValid> = ValidationSuccess<TValid> | ValidationFailure<TRaw>;
 
 /**
  * Get string value.
@@ -139,16 +140,18 @@ type FieldValues<TFields> = {
 /**
  * Combines the validation results of all fields into a single form validation result.
  *
+ * @param {object} value - The raw value.
  * @param {object} fields - An object containing the fields to combine.
  * @returns {ValidationResult} A combined validation result containing either all field values or errors.
  */
-export function combine<TFields>(
+export function combine<TRaw, TFields>(
+  value: TRaw,
   fields: TFields & {
     [K in keyof TFields]: TFields[K] extends Field<infer _Raw, infer TValidated>
       ? Field<_Raw, TValidated>
       : never;
   },
-): ValidationResult<FieldValues<TFields>> {
+): ValidationResult<TRaw, FieldValues<TFields>> {
   const values: Record<PropertyKey, unknown> = {};
   const errors: FieldValidationError[] = [];
 
@@ -170,6 +173,7 @@ export function combine<TFields>(
     return {
       isValid: false,
       errors,
+      value,
     };
   }
 

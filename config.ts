@@ -83,8 +83,8 @@ const config: Config = {
   },
   fields: {
     poa: {
-      feeEarnerNameLength: Number(process.env.POA_FEE_EARNER_NAME_FIELD_LENGTH) ?? 150,
-      descriptionLength: Number(process.env.POA_DESCRIPTION_FIELD_LENGTH) ?? 500,
+      feeEarnerNameLength: Number(process.env.POA_FEE_EARNER_NAME_FIELD_LENGTH ?? 150),
+      descriptionLength: Number(process.env.POA_DESCRIPTION_FIELD_LENGTH ?? 500),
     }
   }
 };
