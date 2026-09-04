@@ -54,7 +54,7 @@ export class ProfitCostDetailsForm extends Form<
     this.fields.firstSolicitor.validate(value.firstSolicitorChoice);
     this.fields.transferOfSolicitor.validate(value.transferOfSolicitorChoice);
 
-    this.validation = combine(this.fields);
+    this.validation = combine(value, this.fields);
   }
 }
 

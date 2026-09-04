@@ -10,6 +10,7 @@ import {
   type DisbursementCostType,
   DisbursementCostTypeMessagePrefix,
 } from "#src/types/Claim.js";
+import config from "#config.js";
 
 export interface DisbursementDetailsRequestBody {
   activityDateDay?: unknown;
@@ -74,7 +75,7 @@ export class DisbursementDetailsForm extends Form<
     this.fields.feeEarnerName.validate(value.feeEarnerName);
     this.fields.description.validate(value.description);
 
-    this.validation = combine(this.fields);
+    this.validation = combine(value, this.fields);
   }
 }
 
@@ -105,6 +106,7 @@ function buildDisbursementDetailsFields(
       "feeEarnerName",
       "fee-earner-name",
       /^[A-Za-z' -]+$/u,
+      config.fields.poa.feeEarnerNameLength,
     ),
 
     description: new StringField(
@@ -112,6 +114,7 @@ function buildDisbursementDetailsFields(
       "description",
       "description",
       /^[\p{L}\p{N}\p{P}\p{Zs}\n\r]*$/u,
+      config.fields.poa.descriptionLength,
     ),
   };
 }

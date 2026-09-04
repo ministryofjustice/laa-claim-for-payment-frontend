@@ -71,8 +71,14 @@ export interface Config {
   api: ApiConfig;
   pagination: PaginationConfig;
   redis?: RedisLocalConfig | RedisEnvConfig;
-  featureFlags:{
+  featureFlags: {
     poaProfitCostEnabled: boolean
     lineItemUploadEnabled: boolean
+  },
+  fields: {
+    poa: {
+      feeEarnerNameLength: number;
+      descriptionLength: number;
+    }
   }
 }

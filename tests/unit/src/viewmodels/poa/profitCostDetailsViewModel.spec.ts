@@ -75,5 +75,20 @@ describe("ProfitCostDetailsViewModel", () => {
     const result = new ProfitCostDetailsViewModel(params);
 
     expect(result.errorSummary?.errorList).to.have.length(4);
+
+    expect(result.courtTypeRadios.items[0].checked).to.equal(false);
+    expect(result.courtTypeRadios.items[1].checked).to.equal(false);
+    expect(result.courtTypeRadios.items[2].checked).to.equal(false);
+    expect(result.courtTypeRadios.items[3].checked).to.equal(false);
+
+    expect(result.clientStatusRadios.items[0].checked).to.equal(false);
+    expect(result.clientStatusRadios.items[1].checked).to.equal(false);
+    expect(result.clientStatusRadios.items[2].checked).to.equal(false);
+
+    expect(result.firstSolicitorRadios.items[0].checked).to.equal(false);
+    expect(result.firstSolicitorRadios.items[1].checked).to.equal(false);
+
+    expect(result.transferOfSolicitorRadios.items[0].checked).to.equal(false);
+    expect(result.transferOfSolicitorRadios.items[1].checked).to.equal(false);
   });
 });

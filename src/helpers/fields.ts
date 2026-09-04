@@ -1,4 +1,8 @@
-import { type FieldValidationError, getStringValue, type ValidationResult } from "#src/helpers/validation.js";
+import {
+  type FieldValidationError,
+  getStringValue,
+  type ValidationResult,
+} from "#src/helpers/validation.js";
 import { BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
 import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewModel.js";
 import { LocalDate } from "#src/types/date.js";
@@ -8,8 +12,8 @@ import type { EvidenceItem } from "#src/types/Claim.js";
 /**
  * Form field.
  */
-export abstract class Field<RawType, ValidatedType> {
-  public validation?: ValidationResult<ValidatedType>;
+export abstract class Field<TRaw, TValid> {
+  public validation?: ValidationResult<TRaw, TValid>;
 
   /**
    * Creates a form field.
@@ -23,13 +27,13 @@ export abstract class Field<RawType, ValidatedType> {
     public readonly id: string,
   ) {}
 
-  abstract validate(value: RawType): void;
+  abstract validate(value: TRaw): void;
 
   /**
    * Marks the field as valid for the given validated value.
    * @param {object} value the validated value.
    */
-  valid(value: ValidatedType): void {
+  valid(value: TValid): void {
     this.validation = {
       isValid: true,
       value,
@@ -39,11 +43,13 @@ export abstract class Field<RawType, ValidatedType> {
   /**
    * Marks the field as invalid for the given validated value.
    * @param {FieldValidationError} error the validation error for the field
+   * @param {unknown} value the raw value
    */
-  error(error: FieldValidationError): void {
+  error(error: FieldValidationError, value: TRaw): void {
     this.validation = {
       isValid: false,
       errors: [error],
+      value,
     };
   }
 
@@ -52,7 +58,7 @@ export abstract class Field<RawType, ValidatedType> {
    * @returns {ValidationResult} the validation result
    * @throws if the field has not been validated
    */
-  getResult(): ValidationResult<ValidatedType> {
+  getResult(): ValidationResult<TRaw, TValid> {
     if (this.validation === undefined) {
       throw new Error(`Field "${this.name}" has not been validated`);
     }
@@ -64,19 +70,19 @@ export abstract class Field<RawType, ValidatedType> {
    * Gets the field value.
    * @returns {object | undefined} the field value
    */
-  getValue(): ValidatedType | undefined {
-    if (this.validation?.isValid !== true) {
-      return undefined;
+  getValue(): TRaw | TValid | undefined {
+    if (this.validation != null) {
+      return this.validation.value;
     }
 
-    return this.validation.value;
+    return undefined;
   }
 
   /**
    * Sets the field value.
    * @param {object | null | undefined} value the field value
    */
-  setValue(value: ValidatedType | null | undefined): void {
+  setValue(value: TValid | null | undefined): void {
     if (value != null) {
       this.valid(value);
     }
@@ -118,12 +124,15 @@ export class UploadField extends Field<EvidenceItem[], EvidenceItem[]> {
     if (value.length > 0) {
       this.valid(value);
     } else {
-      this.error({
-        href: `#${this.id}`,
-        text: {
-          key: `${this.messagePrefix}.errors.empty`,
+      this.error(
+        {
+          href: `#${this.id}`,
+          text: {
+            key: `${this.messagePrefix}.errors.empty`,
+          },
         },
-      });
+        value,
+      );
     }
   }
 }
@@ -138,12 +147,15 @@ export class StringField extends Field<unknown, string> {
    * @param {string} name field name
    * @param {string} id field ID
    * @param {RegExp} regex regex to validate against
+   * @param {number} maxLength max. string length to validate against
    */
+  // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   constructor(
     messagePrefix: string,
     name: string,
     id: string,
     private readonly regex: RegExp,
+    private readonly maxLength: number,
   ) {
     super(messagePrefix, name, id);
   }
@@ -156,22 +168,42 @@ export class StringField extends Field<unknown, string> {
     const stringValue = getStringValue(value);
 
     if (stringValue === "") {
-      this.error({
-        href: `#${this.id}`,
-        text: {
-          key: `${this.messagePrefix}.errors.empty`,
+      this.error(
+        {
+          href: `#${this.id}`,
+          text: {
+            key: `${this.messagePrefix}.errors.empty`,
+          },
         },
-      });
+        value,
+      );
+      return;
+    }
+
+    if (stringValue.length > this.maxLength) {
+      this.error(
+        {
+          href: `#${this.id}`,
+          text: {
+            key: `${this.messagePrefix}.errors.length`,
+            args: { length: this.maxLength },
+          },
+        },
+        value,
+      );
       return;
     }
 
     if (!this.regex.test(stringValue)) {
-      this.error({
-        href: `#${this.id}`,
-        text: {
-          key: `${this.messagePrefix}.errors.invalid`,
+      this.error(
+        {
+          href: `#${this.id}`,
+          text: {
+            key: `${this.messagePrefix}.errors.invalid`,
+          },
         },
-      });
+        value,
+      );
       return;
     }
 
@@ -210,12 +242,15 @@ export class RadioField<TChoice, TValue> extends Field<unknown, TValue> {
     const selection = this.choices.find((choice) => choice.value === value);
 
     if (selection === undefined) {
-      this.error({
-        href: `#${this.id}`,
-        text: {
-          key: `${this.messagePrefix}.errors.empty`,
+      this.error(
+        {
+          href: `#${this.id}`,
+          text: {
+            key: `${this.messagePrefix}.errors.empty`,
+          },
         },
-      });
+        value,
+      );
 
       return;
     }
@@ -270,23 +305,29 @@ export class MoneyField extends Field<unknown, number> {
     const stringValue = getStringValue(value);
 
     if (stringValue === "") {
-      this.error({
-        href: `#${this.id}`,
-        text: {
-          key: `${this.messagePrefix}.errors.empty`,
+      this.error(
+        {
+          href: `#${this.id}`,
+          text: {
+            key: `${this.messagePrefix}.errors.empty`,
+          },
         },
-      });
+        value,
+      );
 
       return;
     }
 
     if (!/^[\d.]+$/u.test(stringValue)) {
-      this.error({
-        href: `#${this.id}`,
-        text: {
-          key: `${this.messagePrefix}.errors.invalid`,
+      this.error(
+        {
+          href: `#${this.id}`,
+          text: {
+            key: `${this.messagePrefix}.errors.invalid`,
+          },
         },
-      });
+        value,
+      );
 
       return;
     }
@@ -294,12 +335,15 @@ export class MoneyField extends Field<unknown, number> {
     const MONEY_REGEX = /^\d+(\.\d{1,2})?$/u;
 
     if (!MONEY_REGEX.test(stringValue)) {
-      this.error({
-        href: `#${this.id}`,
-        text: {
-          key: `${this.messagePrefix}.errors.pence`,
+      this.error(
+        {
+          href: `#${this.id}`,
+          text: {
+            key: `${this.messagePrefix}.errors.pence`,
+          },
         },
-      });
+        value,
+      );
 
       return;
     }
@@ -339,26 +383,32 @@ export class DateField extends Field<RawDate, LocalDate> {
 
     if (missing.length > 0) {
       if (missing.length === 3) {
-        this.error({
-          href: `#${this.id}-day`,
-          text: {
-            key: `${this.messagePrefix}.errors.empty`,
+        this.error(
+          {
+            href: `#${this.id}-day`,
+            text: {
+              key: `${this.messagePrefix}.errors.empty`,
+            },
+            fields: ["day", "month", "year"],
           },
-          fields: ["day", "month", "year"],
-        });
+          value,
+        );
 
         return;
       }
 
       const errorKey = buildMissingDateKey(missing);
 
-      this.error({
-        href: `#${this.id}-${missing[0]}`,
-        text: {
-          key: `${this.messagePrefix}.errors.incomplete.${errorKey}`,
+      this.error(
+        {
+          href: `#${this.id}-${missing[0]}`,
+          text: {
+            key: `${this.messagePrefix}.errors.incomplete.${errorKey}`,
+          },
+          fields: missing,
         },
-        fields: missing,
-      });
+        value,
+      );
 
       return;
     }
@@ -370,13 +420,16 @@ export class DateField extends Field<RawDate, LocalDate> {
       !NUMBERS_ONLY_REGEX.test(month) ||
       !NUMBERS_ONLY_REGEX.test(year)
     ) {
-      this.error({
-        href: `#${this.id}-day`,
-        text: {
-          key: `${this.messagePrefix}.errors.invalid`,
+      this.error(
+        {
+          href: `#${this.id}-day`,
+          text: {
+            key: `${this.messagePrefix}.errors.invalid`,
+          },
+          fields: ["day", "month", "year"],
         },
-        fields: ["day", "month", "year"],
-      });
+        value,
+      );
 
       return;
     }
@@ -385,26 +438,32 @@ export class DateField extends Field<RawDate, LocalDate> {
       const date = LocalDate.of(Number(day), Number(month), Number(year));
 
       if (date.isFutureDate()) {
-        this.error({
-          href: `#${this.id}-day`,
-          text: {
-            key: `${this.messagePrefix}.errors.future`,
+        this.error(
+          {
+            href: `#${this.id}-day`,
+            text: {
+              key: `${this.messagePrefix}.errors.future`,
+            },
+            fields: ["day", "month", "year"],
           },
-          fields: ["day", "month", "year"],
-        });
+          value,
+        );
 
         return;
       }
 
       this.valid(date);
     } catch {
-      this.error({
-        href: `#${this.id}-day`,
-        text: {
-          key: `${this.messagePrefix}.errors.invalid`,
+      this.error(
+        {
+          href: `#${this.id}-day`,
+          text: {
+            key: `${this.messagePrefix}.errors.invalid`,
+          },
+          fields: ["day", "month", "year"],
         },
-        fields: ["day", "month", "year"],
-      });
+        value,
+      );
     }
   }
 

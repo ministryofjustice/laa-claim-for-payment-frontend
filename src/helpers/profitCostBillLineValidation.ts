@@ -6,6 +6,7 @@ import {
   MoneyField,
   StringField,
 } from "#src/helpers/fields.js";
+import config from "#config.js";
 
 export interface ProfitCostBillLineRequestBody {
   activityDateDay?: unknown;
@@ -73,7 +74,7 @@ export class ProfitCostBillLineForm extends Form<
     this.fields.vatApplies.validate(value.vatApplies);
     this.fields.feeEarnerName.validate(value.feeEarnerName);
 
-    this.validation = combine(this.fields);
+    this.validation = combine(value, this.fields);
   }
 }
 
@@ -110,6 +111,7 @@ function buildProfitCostBillLineFields(
       "feeEarnerName",
       "feeEarnerName",
       /^[A-Za-z' -]+$/u,
+      config.fields.poa.feeEarnerNameLength,
     ),
   };
 }

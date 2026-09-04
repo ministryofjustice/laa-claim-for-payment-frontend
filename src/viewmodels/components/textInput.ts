@@ -4,7 +4,7 @@ import type { MoneyField, StringField } from "#src/helpers/fields.js";
 export interface TextInput {
   id: string;
   name: string;
-  value: unknown;
+  value?: unknown;
   classes?: string;
   label: {
     text: Message;
