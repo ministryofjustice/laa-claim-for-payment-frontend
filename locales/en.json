@@ -228,14 +228,14 @@
       "transferOfSolicitor": {
         "title": "Has there been a transfer of solicitor on this case?",
         "errors": {
-          "empty": "Select yes if there has been a transfer of solicitor on this case "
+          "empty": "Select yes if there has been a transfer of solicitor on this case"
         }
       }
     },
     "multipleClientHearings": {
       "title": "Have you attended at least one hearing where you have represented more than one client?",
       "errors": {
-        "empty": "Select yes if you have attended at least one hearing where you have represented more than one client."
+        "empty": "Select yes if you have attended at least one hearing where you have represented more than one client"
       }
     },
     "numberOfClientsStartOfCase": {
@@ -363,7 +363,7 @@
           "title": "Description",
           "errors": {
             "empty": "Enter a description of the expert cost",
-            "invalid": "Description must only include letters a to z, and special characters such as hyphens, spaces and apostrophes",
+            "invalid": "Description must only include letters a to z, numbers 0 to 9, and special characters such as hyphens, spaces and apostrophes",
             "length": "Description must be {length} characters or less"
           }
         },
@@ -434,7 +434,7 @@
           "title": "Description",
           "errors": {
             "empty": "Enter a description of the expert cost",
-            "invalid": "Description must only include letters a to z, and special characters such as hyphens, spaces and apostrophes",
+            "invalid": "Description must only include letters a to z, numbers 0 to 9, and special characters such as hyphens, spaces and apostrophes",
             "length": "Description must be {length} characters or less"
           }
         },
@@ -496,7 +496,7 @@
         "errors": {
           "empty": "Enter actual net profit cost excluding advocacy",
           "invalid": "Actual net profit cost excluding advocacy must be a number",
-          "pence": "Actual net profit cost excluding advocacy must include pence, like 123.45 or 156.00."
+          "pence": "Actual net profit cost excluding advocacy must include pence, like 123.45 or 156.00"
         }
       },
       "actualNetAdvocacyCosts": {
@@ -504,7 +504,7 @@
         "errors": {
           "empty": "Enter actual net advocacy costs",
           "invalid": "Actual net advocacy costs must be a number",
-          "pence": "Actual net advocacy costs must include pence, like 123.45 or 156.00."
+          "pence": "Actual net advocacy costs must include pence, like 123.45 or 156.00"
         }
       },
       "vatApplies": {
@@ -512,7 +512,7 @@
         "yes": "Yes",
         "no": "No",
         "errors": {
-          "empty": "Select yes if VAT applies."
+          "empty": "Select yes if VAT applies"
         }
       },
       "feeEarnerName": {
