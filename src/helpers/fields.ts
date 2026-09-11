@@ -293,62 +293,94 @@ export class BooleanField extends RadioField<BooleanChoice, boolean> {
   }
 }
 
+const DEFAULT_MONEY_MAXIMUM = 25000;
 /**
  * Monetary form field.
  */
 export class MoneyField extends Field<unknown, number> {
   /**
-   * Validate the field against the given value.
+   * Validate a monetary value.
    * @param {unknown} value the entered value
+   * @param {number} [maximum] optional backend-provided field limit in pounds; defaults to 25000
    */
-  validate(value: unknown): void {
+validate(
+  value: unknown,
+  maximum: number = DEFAULT_MONEY_MAXIMUM,
+  ): void {
+    if (!Number.isFinite(maximum) || maximum < 0) {
+      throw new Error("Invalid monetary maximum");
+    }
+
     const stringValue = getStringValue(value);
 
+    const reject = (
+      reason: "empty" | "invalid" | "negative" | "pence" | "maximum",
+      args?: Message["args"],
+    ): void => {
+      this.error(
+        {
+          href: `#${this.id}`,
+          text: {
+            key: `${this.messagePrefix}.errors.${reason}`,
+            args,
+          },
+        },
+        value,
+      );
+    };
+
     if (stringValue === "") {
-      this.error(
-        {
-          href: `#${this.id}`,
-          text: {
-            key: `${this.messagePrefix}.errors.empty`,
-          },
-        },
-        value,
-      );
-
+      reject("empty");
       return;
     }
 
-    if (!/^[\d.]+$/u.test(stringValue)) {
-      this.error(
-        {
-          href: `#${this.id}`,
-          text: {
-            key: `${this.messagePrefix}.errors.invalid`,
-          },
-        },
-        value,
-      );
+    // Remove spaces commonly introduced when copying currency values.
+    // Accept a leading £, including negative forms £-10 and -£10.
+    const cleaned = stringValue
+      .replace(/[ \u00a0\u202f]/gu, "")
+      .replace(/^£/u, "")
+      .replace(/^-£/u, "-");
 
+    // Validate comma grouping before removing commas.
+    // Accept 1234.50 or 1,234.50, but reject 1,23.50.
+    const amountPattern =
+      /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/u;
+
+    if (!amountPattern.test(cleaned)) {
+      reject("invalid");
       return;
     }
 
-    const MONEY_REGEX = /^\d+(\.\d{1,2})?$/u;
-
-    if (!MONEY_REGEX.test(stringValue)) {
-      this.error(
-        {
-          href: `#${this.id}`,
-          text: {
-            key: `${this.messagePrefix}.errors.pence`,
-          },
-        },
-        value,
-      );
-
+    if (cleaned.startsWith("-")) {
+      reject("negative");
       return;
     }
 
-    this.valid(Number(stringValue));
+    const normalised = cleaned.replace(/,/gu, "");
+
+    if (!/^\d+(?:\.\d{1,2})?$/u.test(normalised)) {
+      reject("pence");
+      return;
+    }
+
+    const amount = Number(normalised);
+
+    if (!Number.isFinite(amount)) {
+      reject("invalid");
+      return;
+    }
+
+    if (amount > maximum) {
+      reject("maximum", {
+        maximum: new Intl.NumberFormat("en-GB", {
+          style: "currency",
+          currency: "GBP",
+        }).format(maximum),
+      });
+      return;
+    }
+
+    this.valid(amount);
   }
 }
 
