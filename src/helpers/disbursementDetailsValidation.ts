@@ -62,15 +62,19 @@ export class DisbursementDetailsForm extends Form<
   /**
    * Validates the form.
    * @param {DisbursementDetailsRequestBody} value value to validate
+   * @param {number} [maximum] optional override for the default monetary limit
    */
-  validate(value: DisbursementDetailsRequestBody): void {
+  validate(
+    value: DisbursementDetailsRequestBody,
+    maximum?: number,
+  ): void {
     this.fields.activityDate.validate({
       day: value.activityDateDay,
       month: value.activityDateMonth,
       year: value.activityDateYear,
     });
 
-    this.fields.actualNetValue.validate(value.actualNetValue);
+    this.fields.actualNetValue.validate(value.actualNetValue, maximum);
     this.fields.vatApplies.validate(value.vatApplies);
     this.fields.feeEarnerName.validate(value.feeEarnerName);
     this.fields.description.validate(value.description);
