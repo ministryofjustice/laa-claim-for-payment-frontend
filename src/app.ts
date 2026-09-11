@@ -102,6 +102,14 @@ const createApp = async (): Promise<express.Application> => {
   // Set up application-specific configurations
   setupConfig(app);
 
+  app.use((req: Request, res: Response, next: NextFunction): void => {
+    res.set({
+      "Cache-Control": "no-cache, no-store, max-age=0",
+    });
+
+    next();
+  });
+
   if (process.env.AUTH_ENABLED === "true") {
     // Set up the OIDC authentication
     oidcSetup(app);
