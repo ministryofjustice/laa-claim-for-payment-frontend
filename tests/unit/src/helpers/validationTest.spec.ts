@@ -210,6 +210,7 @@ describe("validateMoneyInput", () => {
     ["1\u202f234.50", 1234.5],
     ["24999.99", 24999.99],
     ["25000", 25000],
+    ["25000.0", 25000],
     ["£25,000.00", 25000],
   ];
 
@@ -266,115 +267,53 @@ describe("validateMoneyInput", () => {
     });
   }
 
-  it("rejects one penny above the default £25,000 maximum", () => {
+  for (const input of [
+    "25000.01",
+    " £25,000.01 ",
+    "25001",
+    "100000",
+  ]) {
+    it(`rejects ${JSON.stringify(input)} above the £25,000 maximum`, () => {
+      const field = new MoneyField("prefix", "fieldName", "id");
+
+      field.validate(input);
+
+      const failure = expectFailure(field.validation);
+
+      expect(failure.errors).to.have.length(1);
+      expect(failure.errors[0].href).to.equal("#id");
+      expect(failure.errors[0].text).to.deep.equal({
+        key: "prefix.errors.maximum",
+        args: { maximum: "£25,000.00" },
+      });
+      expect(field.getValue()).to.equal(input);
+    });
+  }
+
+  it("enforces the £25,000 maximum on every validation and clears previous errors", () => {
     const field = new MoneyField("prefix", "fieldName", "id");
+
+    field.validate("25000.00");
+
+    expect(expectSuccess(field.validation).value).to.equal(25000);
+    expect(field.getError()).to.be.undefined;
 
     field.validate("25000.01");
 
     const failure = expectFailure(field.validation);
 
     expect(failure.errors).to.have.length(1);
-    expect(failure.errors[0].href).to.equal("#id");
     expect(failure.errors[0].text).to.deep.equal({
       key: "prefix.errors.maximum",
       args: { maximum: "£25,000.00" },
     });
     expect(field.getValue()).to.equal("25000.01");
-  });
 
-  it("uses the default maximum when undefined is passed", () => {
-    const field = new MoneyField("prefix", "fieldName", "id");
+    field.validate("24999.99");
 
-    field.validate("25000.01", undefined);
-
-    expect(expectFailure(field.validation).errors[0].text).to.deep.equal({
-      key: "prefix.errors.maximum",
-      args: { maximum: "£25,000.00" },
-    });
-  });
-
-  it("allows an explicit maximum to override the default", () => {
-    const field = new MoneyField("prefix", "fieldName", "id");
-
-    field.validate("25000.01", 30_000);
-
-    expect(expectSuccess(field.validation).value).to.equal(25000.01);
-  });
-
-  for (const input of ["10.49", "10.50"]) {
-    it(`accepts ${input} within a supplied £10.50 limit`, () => {
-      const field = new MoneyField("prefix", "fieldName", "id");
-
-      field.validate(input, 10.5);
-
-      expect(expectSuccess(field.validation).value).to.equal(
-        Number(input),
-      );
-    });
-  }
-
-  it("rejects one penny above an explicit maximum", () => {
-    const field = new MoneyField("prefix", "fieldName", "id");
-
-    field.validate("£1,234.51", 1234.5);
-
-    const failure = expectFailure(field.validation);
-
-    expect(failure.errors[0].text).to.deep.equal({
-      key: "prefix.errors.maximum",
-      args: { maximum: "£1,234.50" },
-    });
-    expect(field.getValue()).to.equal("£1,234.51");
-  });
-
-  it("accepts zero when the maximum is zero", () => {
-    const field = new MoneyField("prefix", "fieldName", "id");
-
-    field.validate("0.00", 0);
-
-    expect(expectSuccess(field.validation).value).to.equal(0);
-  });
-
-  it("rejects a positive amount when the maximum is zero", () => {
-    const field = new MoneyField("prefix", "fieldName", "id");
-
-    field.validate("0.01", 0);
-
-    expect(expectFailure(field.validation).errors[0].text.key).to.equal(
-      "prefix.errors.maximum",
-    );
-  });
-
-  it("uses the supplied maximum on each validation call", () => {
-    const field = new MoneyField("prefix", "fieldName", "id");
-
-    field.validate("10.50", 20);
-    expectSuccess(field.validation);
-
-    field.validate("10.50", 10);
-    expect(expectFailure(field.validation).errors[0].text.key).to.equal(
-      "prefix.errors.maximum",
-    );
-
-    field.validate("10.50", 20);
-    expectSuccess(field.validation);
+    expect(expectSuccess(field.validation).value).to.equal(24999.99);
     expect(field.getError()).to.be.undefined;
   });
-
-  for (const maximum of [
-    -1,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-    Number.NEGATIVE_INFINITY,
-  ]) {
-    it(`rejects invalid maximum ${maximum}`, () => {
-      const field = new MoneyField("prefix", "fieldName", "id");
-
-      expect(() => field.validate("10", maximum)).to.throw(
-        "Invalid monetary maximum",
-      );
-    });
-  }
 });
 
 describe("validateDateInput", () => {

@@ -8,6 +8,7 @@ import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewMode
 import { LocalDate } from "#src/types/date.js";
 import type { Message } from "#src/viewmodels/components/message.js";
 import type { EvidenceItem } from "#src/types/Claim.js";
+import { formatClaimed } from "#src/helpers/dataFormatters.js";
 
 /**
  * Form field.
@@ -294,23 +295,36 @@ export class BooleanField extends RadioField<BooleanChoice, boolean> {
 }
 
 const DEFAULT_MONEY_MAXIMUM = 25000;
+
 /**
  * Monetary form field.
  */
 export class MoneyField extends Field<unknown, number> {
   /**
-   * Validate a monetary value.
-   * @param {unknown} value the entered value
-   * @param {number} [maximum] optional backend-provided field limit in pounds; defaults to 25000
+   * Creates a monetary form field.
+   * @param {string} messagePrefix message prefix for the field
+   * @param {string} name field name
+   * @param {string} id field ID
+   * @param {number} [maximum] inclusive monetary limit in pounds; defaults to 25000
    */
-validate(
-  value: unknown,
-  maximum: number = DEFAULT_MONEY_MAXIMUM,
-  ): void {
+  constructor(
+    messagePrefix: string,
+    name: string,
+    id: string,
+    private readonly maximum: number = DEFAULT_MONEY_MAXIMUM,
+  ) {
+    super(messagePrefix, name, id);
+
     if (!Number.isFinite(maximum) || maximum < 0) {
       throw new Error("Invalid monetary maximum");
     }
+  }
 
+  /**
+   * Validates a monetary value.
+   * @param {unknown} value the entered value
+   */
+  validate(value: unknown): void {
     const stringValue = getStringValue(value);
 
     const reject = (
@@ -343,8 +357,7 @@ validate(
 
     // Validate comma grouping before removing commas.
     // Accept 1234.50 or 1,234.50, but reject 1,23.50.
-    const amountPattern =
-      /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/u;
+    const amountPattern = /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/u;
 
     if (!amountPattern.test(cleaned)) {
       reject("invalid");
@@ -370,12 +383,9 @@ validate(
       return;
     }
 
-    if (amount > maximum) {
+    if (amount > this.maximum) {
       reject("maximum", {
-        maximum: new Intl.NumberFormat("en-GB", {
-          style: "currency",
-          currency: "GBP",
-        }).format(maximum),
+        maximum: formatClaimed(this.maximum)
       });
       return;
     }

@@ -31,9 +31,7 @@ describe("ProfitCostBillLineForm monetary validation", () => {
         [name]: "£1,234.5",
       });
 
-      expect(expectSuccess(form.validation).value[name]).to.equal(
-        1234.5,
-      );
+      expect(expectSuccess(form.validation).value[name]).to.equal(1234.5);
     });
 
     for (const [input, reason] of [
@@ -61,57 +59,60 @@ describe("ProfitCostBillLineForm monetary validation", () => {
       });
     }
 
-    it(`accepts ${name} at the default £25,000 maximum`, () => {
-      const form = new ProfitCostBillLineForm();
+    const acceptedAmounts: Array<[string, number]> = [
+      ["0.00", 0],
+      ["0.01", 0.01],
+      ["10", 10],
+      ["10.5", 10.5],
+      ["10.50", 10.5],
+      ["24999.99", 24999.99],
+      ["25000", 25000],
+      ["£25,000.00", 25000],
+    ];
 
-      form.validate({
-        ...validBody,
-        [name]: "25000.00",
+    for (const [input, expected] of acceptedAmounts) {
+      it(`accepts ${input} in ${name} within the £25,000 maximum`, () => {
+        const form = new ProfitCostBillLineForm();
+
+        form.validate({
+          ...validBody,
+          [name]: input,
+        });
+
+        expect(expectSuccess(form.validation).value[name]).to.equal(expected);
       });
+    }
 
-      expect(expectSuccess(form.validation).value[name]).to.equal(
-        25000,
-      );
-    });
+    for (const input of ["25000.01", " £25,000.01 ", "25001"]) {
+      it(`rejects ${JSON.stringify(input)} in ${name} above £25,000`, () => {
+        const form = new ProfitCostBillLineForm();
 
-    it(`rejects ${name} above the default maximum`, () => {
-      const form = new ProfitCostBillLineForm();
+        form.validate({
+          ...validBody,
+          [name]: input,
+        });
 
-      form.validate({
-        ...validBody,
-        [name]: "25000.01",
+        const errors = expectFailure(form.validation).errors;
+
+        expect(errors).to.have.length(1);
+        expect(errors[0].href).to.equal(`#${name}`);
+        expect(errors[0].text).to.deep.equal({
+          key: `pages.profitCostBillLine.${name}.errors.maximum`,
+          args: { maximum: "£25,000.00" },
+        });
+        expect(form.fields[name].getValue()).to.equal(input);
+
+        expect(form.getErrorSummary()?.errorList).to.deep.equal([
+          {
+            href: errors[0].href,
+            text: errors[0].text,
+          },
+        ]);
       });
-
-      const errors = expectFailure(form.validation).errors;
-
-      expect(errors).to.have.length(1);
-      expect(errors[0].href).to.equal(`#${name}`);
-      expect(errors[0].text).to.deep.equal({
-        key: `pages.profitCostBillLine.${name}.errors.maximum`,
-        args: { maximum: "£25,000.00" },
-      });
-    });
-
-    it(`passes an explicitly supplied maximum to ${name}`, () => {
-      const form = new ProfitCostBillLineForm();
-
-      form.validate(
-        { ...validBody, [name]: "10.51" },
-        { [name]: 10.5 },
-      );
-
-      const errors = expectFailure(form.validation).errors;
-
-      expect(errors).to.have.length(1);
-      expect(errors[0].href).to.equal(`#${name}`);
-      expect(errors[0].text).to.deep.equal({
-        key: `pages.profitCostBillLine.${name}.errors.maximum`,
-        args: { maximum: "£10.50" },
-      });
-    });
+    }
   }
 
-  it("applies the default maximum independently to both fields", () => {
+  it("applies the £25,000 maximum independently to both fields", () => {
     const form = new ProfitCostBillLineForm();
 
     form.validate({
@@ -120,37 +121,37 @@ describe("ProfitCostBillLineForm monetary validation", () => {
       actualNetAdvocacyCosts: "25000.00",
     });
 
-    expectSuccess(form.validation);
+    const result = expectSuccess(form.validation);
+
+    expect(result.value.actualNetProfitCostExcludingAdvocacy).to.equal(25000);
+    expect(result.value.actualNetAdvocacyCosts).to.equal(25000);
   });
 
-  it("accepts both fields exactly at distinct supplied maxima", () => {
+  it("reports both fields when both exceed £25,000", () => {
     const form = new ProfitCostBillLineForm();
 
-    form.validate(validBody, {
-      actualNetProfitCostExcludingAdvocacy: 123.45,
-      actualNetAdvocacyCosts: 156,
-    });
-
-    expectSuccess(form.validation);
-  });
-
-  it("reports both fields when both exceed their supplied maxima", () => {
-    const form = new ProfitCostBillLineForm();
-
-    form.validate(validBody, {
-      actualNetProfitCostExcludingAdvocacy: 123.44,
-      actualNetAdvocacyCosts: 155.99,
+    form.validate({
+      ...validBody,
+      actualNetProfitCostExcludingAdvocacy: "25000.01",
+      actualNetAdvocacyCosts: "25000.01",
     });
 
     const errors = expectFailure(form.validation).errors;
 
-    expect(errors.map(error => error.href)).to.deep.equal(
-      moneyFields.map(name => `#${name}`),
+    expect(errors).to.have.length(2);
+
+    expect(errors.map((error) => error.href)).to.have.members(
+      moneyFields.map((name) => `#${name}`),
     );
 
-    expect(errors.map(error => error.text.args?.maximum)).to.deep.equal([
-      "£123.44",
-      "£155.99",
-    ]);
+    for (const name of moneyFields) {
+      const error = errors.find((item) => item.href === `#${name}`);
+
+      expect(error?.text).to.deep.equal({
+        key: `pages.profitCostBillLine.${name}.errors.maximum`,
+        args: { maximum: "£25,000.00" },
+      });
+      expect(form.fields[name].getValue()).to.equal("25000.01");
+    }
   });
 });

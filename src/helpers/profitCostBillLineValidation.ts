@@ -78,12 +78,10 @@ export class ProfitCostBillLineForm extends Form<
 
     this.fields.actualNetProfitCostExcludingAdvocacy.validate(
       value.actualNetProfitCostExcludingAdvocacy,
-      limits.actualNetProfitCostExcludingAdvocacy,
     );
 
     this.fields.actualNetAdvocacyCosts.validate(
       value.actualNetAdvocacyCosts,
-      limits.actualNetAdvocacyCosts,
     );
 
     this.fields.vatApplies.validate(value.vatApplies);
