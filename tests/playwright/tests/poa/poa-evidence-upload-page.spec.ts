@@ -75,6 +75,32 @@ test("upload a file of invalid type", async ({ page, checkAccessibility }) => {
   await checkAccessibility();
 });
 
+test("upload a file of maximum size", async ({ page, checkAccessibility }) => {
+  const fileName = `${crypto.randomUUID()}.pdf`;
+
+  const poaEvidenceUploadPage = new PoaEvidenceUploadPage(page, claim1Id);
+
+  await poaEvidenceUploadPage.navigate();
+  await poaEvidenceUploadPage.waitForLoad();
+
+  const bytes = 10 * 1024 * 1024;
+  const filePath = EvidenceUploadPage.createFile(fileName, bytes);
+
+  await poaEvidenceUploadPage.resetGate();
+
+  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([filePath]);
+
+  await poaEvidenceUploadPage.releaseGate();
+
+  await poaEvidenceUploadPage.checkFileRow(
+    fileName,
+    "10MB",
+    "Uploaded",
+  );
+
+  await checkAccessibility();
+});
+
 test("upload a file of invalid size", async ({ page, checkAccessibility }) => {
   const fileName = `${crypto.randomUUID()}.pdf`;
 
@@ -83,7 +109,8 @@ test("upload a file of invalid size", async ({ page, checkAccessibility }) => {
   await poaEvidenceUploadPage.navigate();
   await poaEvidenceUploadPage.waitForLoad();
 
-  const filePath = EvidenceUploadPage.createFile(fileName, 10 * 1024 * 1024);
+  const bytes = 10 * 1024 * 1024;
+  const filePath = EvidenceUploadPage.createFile(fileName, bytes + 1);
 
   await poaEvidenceUploadPage.resetGate();
 

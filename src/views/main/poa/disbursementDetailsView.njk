@@ -18,7 +18,7 @@
         {{ govukErrorSummary(vm.errorSummary | translate) }}
       {% endif %}
 
-      <form method="post">
+      <form method="post" autocomplete="off">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
         <h1 class="govuk-heading-l">
