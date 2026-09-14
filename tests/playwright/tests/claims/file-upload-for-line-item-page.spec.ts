@@ -92,6 +92,36 @@ test("upload a file of invalid type", async ({ page, checkAccessibility }) => {
   await checkAccessibility();
 });
 
+test("upload a file of maximum size", async ({ page, checkAccessibility }) => {
+  const fileName = `${crypto.randomUUID()}.pdf`;
+
+  const fileUploadForLineItemPage = new FileUploadForLineItemPage(
+    page,
+    claim1Id,
+    lineItemId,
+  );
+
+  await fileUploadForLineItemPage.navigate();
+  await fileUploadForLineItemPage.waitForLoad();
+
+  const bytes = 10 * 1024 * 1024;
+  const filePath = EvidenceUploadPage.createFile(fileName, bytes);
+
+  await fileUploadForLineItemPage.resetGate();
+
+  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
+
+  await fileUploadForLineItemPage.releaseGate();
+
+  await fileUploadForLineItemPage.checkFileRow(
+    fileName,
+    "10MB",
+    "Uploaded",
+  );
+
+  await checkAccessibility();
+});
+
 test("upload a file of invalid size", async ({ page, checkAccessibility }) => {
   const fileName = `${crypto.randomUUID()}.pdf`;
 
@@ -104,7 +134,8 @@ test("upload a file of invalid size", async ({ page, checkAccessibility }) => {
   await fileUploadForLineItemPage.navigate();
   await fileUploadForLineItemPage.waitForLoad();
 
-  const filePath = EvidenceUploadPage.createFile(fileName, 10 * 1024 * 1024);
+  const bytes = 10 * 1024 * 1024;
+  const filePath = EvidenceUploadPage.createFile(fileName, bytes + 1);
 
   await fileUploadForLineItemPage.resetGate();
 
