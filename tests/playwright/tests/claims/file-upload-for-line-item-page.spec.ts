@@ -104,7 +104,11 @@ test("upload a file of invalid size", async ({ page, checkAccessibility }) => {
   await fileUploadForLineItemPage.navigate();
   await fileUploadForLineItemPage.waitForLoad();
 
-  const filePath = EvidenceUploadPage.createFile(fileName, 10 * 1024 * 1024);
+  // Create a file one byte above the permitted maximum.
+  const filePath = EvidenceUploadPage.createFile(
+    fileName,
+    10 * 1024 * 1024 + 1,
+  );
 
   await fileUploadForLineItemPage.resetGate();
 
