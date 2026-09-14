@@ -8,7 +8,7 @@ import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewMode
 import { LocalDate } from "#src/types/date.js";
 import type { Message } from "#src/viewmodels/components/message.js";
 import type { EvidenceItem } from "#src/types/Claim.js";
-import { formatClaimed } from "#src/helpers/dataFormatters.js";
+import { formatMoney } from "#src/helpers/dataFormatters.js";
 
 /**
  * Form field.
@@ -385,7 +385,7 @@ export class MoneyField extends Field<unknown, number> {
 
     if (amount > this.maximum) {
       reject("maximum", {
-        maximum: formatClaimed(this.maximum)
+        maximum: formatMoney(this.maximum)
       });
       return;
     }

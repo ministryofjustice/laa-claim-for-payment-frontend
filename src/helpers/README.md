@@ -109,7 +109,7 @@ Consistent data formatting utilities for UI components and tables.
 
 #### Functions
 
-- `formatClaimed(value: number | undefined): string` - Format claimed amount as a currency (GBP)
+- `formatMoney(value: number | undefined): string` - Format claimed amount as a currency (GBP)
 - `formatClaimId(value: number): string` - Format claim ID with `LAA-` prefix
 - `formatDate(value: Date | undefined): string` - Format date in "DD MMM YYYY" format
 
@@ -424,7 +424,7 @@ export function helperFunction(param: Type): ReturnType {
 | Helper | Purpose | Key Functions |
 |--------|---------|---------------|
 | `devLogger` | Development logging | `devLog`, `devWarn`, `devError` |
-| `dataFormatterss` | Data formatting | `formatClaimed`, `formatClaimId`, `formatDate` |
+| `dataFormatterss` | Data formatting | `formatMoney`, `formatClaimId`, `formatDate` |
 | `errorHandler` | Error handling/user-friendly messages | `extractErrorMessage`, `createProcessedError`, `extractAndLogError`, `isAuthError`, `isServerError` |
 
 Import any helper with:

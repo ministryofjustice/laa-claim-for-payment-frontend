@@ -1,5 +1,5 @@
 import type { ClaimDto } from "#src/types/Claim.js";
-import { formatClaimed, formatDate } from "#src/helpers/index.js";
+import { formatMoney, formatDate } from "#src/helpers/index.js";
 import type { SummaryListRow } from "./components/summaryList.js";
 
 /**
@@ -53,7 +53,7 @@ export class ClaimViewModel {
     if (claim.claimed != null) {
       rows.push({
         key: { text: "Claimed" },
-        value: { text: formatClaimed(claim.claimed) },
+        value: { text: formatMoney(claim.claimed) },
       });
     }
 

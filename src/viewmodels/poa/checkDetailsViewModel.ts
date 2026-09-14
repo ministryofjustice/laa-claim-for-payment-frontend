@@ -11,7 +11,7 @@ import {
 import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
 import { AnswerMissingError } from "#src/types/errors.js";
-import { formatBoolean, formatClaimed, formatDateReadable } from "#src/helpers/index.js";
+import { formatBoolean, formatMoney, formatDateReadable } from "#src/helpers/index.js";
 
 /**
  *
@@ -238,13 +238,13 @@ export class CheckDetailsViewModel {
               {
                 key: "pages.poa.checkYourDetails.cya.profitCostBillLine.netProfitCost",
               },
-              { text: formatClaimed(lineItem.netProfitCostAmount) },
+              { text: formatMoney(lineItem.netProfitCostAmount) },
             ),
             buildSummaryListRow(
               {
                 key: "pages.poa.checkYourDetails.cya.profitCostBillLine.netAdvocacyCost",
               },
-              { text: formatClaimed(lineItem.netAdvocacyCostAmount) },
+              { text: formatMoney(lineItem.netAdvocacyCostAmount) },
             ),
             buildSummaryListRow(
               {
@@ -305,7 +305,7 @@ export class CheckDetailsViewModel {
                 {
                   key: "pages.poa.checkYourDetails.cya.disbursementBillLine.actualNetValue",
                 },
-                { text: formatClaimed(lineItem.actualNetValue) },
+                { text: formatMoney(lineItem.actualNetValue) },
               ),
               buildSummaryListRow(
                 {

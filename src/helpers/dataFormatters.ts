@@ -44,7 +44,7 @@ export function formatClaimId(value: number): string {
  * @param {number} value optional value representing the claimed amount
  * @returns {string} Transformed currency value
  */
-export function formatClaimed(value: number): string {
+export function formatMoney(value: number): string {
   return new Intl.NumberFormat("en-GB", {
     style: "currency",
     currency: "GBP",

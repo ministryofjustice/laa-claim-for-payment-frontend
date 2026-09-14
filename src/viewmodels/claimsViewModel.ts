@@ -1,7 +1,7 @@
 import type { ClaimDto } from "#src/types/Claim.js";
 import type { TableCell } from "#src/viewmodels/components/index.js";
 import {
-  formatClaimed,
+  formatMoney,
   formatClaimId,
   formatOptionalString,
   formatOptionalValue,
@@ -62,7 +62,7 @@ export class ClaimsTableViewModel {
       },
       { text: formatOptionalString(claim.feeType) },
       {
-        text: formatOptionalValue(claim.claimed, formatClaimed),
+        text: formatOptionalValue(claim.claimed, formatMoney),
         attributes:
           claim.claimed == null
             ? undefined

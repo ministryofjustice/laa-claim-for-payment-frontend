@@ -10,7 +10,7 @@ import {
   RadioQuestionViewModel,
   type YesNoQuestionViewModel,
 } from "#src/viewmodels/radioQuestionViewModel.js";
-import { formatClaimed, formatDateReadable } from "#src/helpers/index.js";
+import { formatMoney, formatDateReadable } from "#src/helpers/index.js";
 import type { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 
 interface AddAnotherLineItemViewModelParams<T extends LineItem> {
@@ -92,7 +92,7 @@ export class AddAnotherDisbursementViewModel extends AddAnotherLineItemViewModel
   constructor(params: AddAnotherDisbursementViewModelParams) {
     super({
       ...params,
-      getValue: (lineItem) => formatClaimed(lineItem.actualNetValue),
+      getValue: (lineItem) => formatMoney(lineItem.actualNetValue),
       summaryListId: "disbursement",
     });
   }
