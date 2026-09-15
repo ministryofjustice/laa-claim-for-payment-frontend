@@ -94,14 +94,9 @@ export async function submitDisbursementDetails(
       return;
     }
 
-    const formValue = form.getValue();
-
     const lineItemForm: LineItemForm = {
       type: costType,
-      value: {
-        ...formValue,
-        actualNetValue: Number(formValue.actualNetValue),
-      },
+      value: form.getValue(),
     };
 
     if (lineItemId == null) {

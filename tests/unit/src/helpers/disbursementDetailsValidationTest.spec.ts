@@ -37,7 +37,7 @@ for (const [costType, prefix] of categories) {
 
       expect(
         expectSuccess(form.validation).value.actualNetValue,
-      ).to.equal("1234.50");
+      ).to.equal(1234.5);
     });
 
     for (const [input, reason] of [
@@ -72,15 +72,15 @@ for (const [costType, prefix] of categories) {
       });
     }
 
-    const acceptedAmounts: Array<[string, string]> = [
-      ["0.00", "0.00"],
-      ["0.01", "0.01"],
-      ["10", "10.00"],
-      ["10.5", "10.50"],
-      ["10.50", "10.50"],
-      ["24999.99", "24999.99"],
-      ["25000", "25000.00"],
-      ["£25,000.00", "25000.00"],
+    const acceptedAmounts: Array<[string, number]> = [
+      ["0.00", 0],
+      ["0.01", 0.01],
+      ["10", 10],
+      ["10.5", 10.5],
+      ["10.50", 10.5],
+      ["24999.99", 24999.99],
+      ["25000", 25000],
+      ["£25,000.00", 25000],
     ];
 
     for (const [input, expected] of acceptedAmounts) {

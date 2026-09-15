@@ -28,8 +28,8 @@ describe("profitCostBillLineValidation", () => {
     expect(success.value.activityDate.day).to.equal(27);
     expect(success.value.activityDate.month).to.equal(3);
     expect(success.value.activityDate.year).to.equal(2007);
-    expect(success.value.actualNetProfitCostExcludingAdvocacy).to.equal("123.45",);
-    expect(success.value.actualNetAdvocacyCosts).to.equal("156.00");
+    expect(success.value.actualNetProfitCostExcludingAdvocacy).to.equal(123.45);
+    expect(success.value.actualNetAdvocacyCosts).to.equal(156.0);
     expect(success.value.vatApplies).to.equal(true);
     expect(success.value.feeEarnerName).to.equal("John Smith");
   });

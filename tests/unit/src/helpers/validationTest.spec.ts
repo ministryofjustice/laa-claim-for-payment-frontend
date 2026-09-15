@@ -197,21 +197,21 @@ describe("validateBooleanInput", () => {
 });
 
 describe("validateMoneyInput", () => {
-  const accepted: Array<[string, string]> = [
-    ["10", "10.00"],
-    ["10.5", "10.50"],
-    ["10.50", "10.50"],
-    ["0", "0.00"],
-    ["0.00", "0.00"],
-    ["0.01", "0.01"],
-    ["£1,234.50", "1234.50"],
-    ["  £ 1 234.50  ", "1234.50"],
-    ["1\u00a0234.50", "1234.50"],
-    ["1\u202f234.50", "1234.50"],
-    ["24999.99", "24999.99"],
-    ["25000", "25000.00"],
-    ["25000.0", "25000.00"],
-    ["£25,000.00", "25000.00"],
+  const accepted: Array<[string, number]> = [
+    ["10", 10],
+    ["10.5", 10.5],
+    ["10.50", 10.5],
+    ["0", 0],
+    ["0.00", 0],
+    ["0.01", 0.01],
+    ["£1,234.50", 1234.5],
+    ["  £ 1 234.50  ", 1234.5],
+    ["1\u00a0234.50", 1234.5],
+    ["1\u202f234.50", 1234.5],
+    ["24999.99", 24999.99],
+    ["25000", 25000],
+    ["25000.0", 25000],
+    ["£25,000.00", 25000],
   ];
 
   for (const [input, expected] of accepted) {
@@ -295,7 +295,7 @@ describe("validateMoneyInput", () => {
 
     field.validate("25000.00");
 
-    expect(expectSuccess(field.validation).value).to.equal("25000.00");
+    expect(expectSuccess(field.validation).value).to.equal(25000);
     expect(field.getError()).to.be.undefined;
 
     field.validate("25000.01");
@@ -311,7 +311,7 @@ describe("validateMoneyInput", () => {
 
     field.validate("24999.99");
 
-    expect(expectSuccess(field.validation).value).to.equal("24999.99");
+    expect(expectSuccess(field.validation).value).to.equal(24999.99);
     expect(field.getError()).to.be.undefined;
   });
 });

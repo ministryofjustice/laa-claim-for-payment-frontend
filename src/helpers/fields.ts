@@ -299,7 +299,7 @@ const DEFAULT_MONEY_MAXIMUM = 25000;
 /**
  * Monetary form field.
  */
-export class MoneyField extends Field<unknown, string> {
+export class MoneyField extends Field<unknown, number> {
   /**
    * Creates a monetary form field.
    * @param {string} messagePrefix message prefix for the field
@@ -317,16 +317,6 @@ export class MoneyField extends Field<unknown, string> {
 
     if (!Number.isFinite(maximum) || maximum < 0) {
       throw new Error("Invalid monetary maximum");
-    }
-  }
-
-  /**
-   * Sets an existing, already-valid monetary value for display.
-   * @param {string | number | null | undefined} value monetary value in pounds
-   */
-  override setValue(value: string | number | null | undefined): void {
-    if (value != null) {
-      this.valid(Number(value).toFixed(2));
     }
   }
 
@@ -395,12 +385,12 @@ export class MoneyField extends Field<unknown, string> {
 
     if (amount > this.maximum) {
       reject("maximum", {
-        maximum: formatMoney(this.maximum),
+        maximum: formatMoney(this.maximum)
       });
       return;
     }
 
-    this.valid(amount.toFixed(2));
+    this.valid(amount);
   }
 }
 
