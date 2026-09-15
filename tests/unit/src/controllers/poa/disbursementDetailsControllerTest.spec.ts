@@ -116,7 +116,7 @@ describe("disbursementDetailsController", () => {
       expect(renderArgs.vm.activityDateInput.items[0].value).to.equal(4);
       expect(renderArgs.vm.activityDateInput.items[1].value).to.equal(1);
       expect(renderArgs.vm.activityDateInput.items[2].value).to.equal(2024);
-      expect(renderArgs.vm.actualNetValueInput.value).to.equal(123);
+      expect(renderArgs.vm.actualNetValueInput.value).to.equal('123.00');
       expect(renderArgs.vm.vatApplicableRadios.items[0].checked).to.equal(
         false,
       );

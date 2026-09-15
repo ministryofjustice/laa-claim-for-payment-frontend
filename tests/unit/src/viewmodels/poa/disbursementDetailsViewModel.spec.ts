@@ -51,7 +51,7 @@ describe("expertCostDetailsViewModel constructor", () => {
     expect(result.activityDateInput.items[0].value).to.equal(1);
     expect(result.activityDateInput.items[1].value).to.equal(1);
     expect(result.activityDateInput.items[2].value).to.equal(2026);
-    expect(result.actualNetValueInput.value).to.equal(123);
+    expect(result.actualNetValueInput.value).to.equal('123.00');
     expect(result.vatApplicableRadios.items[0].checked).to.equal(true);
     expect(result.vatApplicableRadios.items[1].checked).to.equal(false);
     expect(result.feeEarnerNameInput.value).to.equal("Joe Bloggs");

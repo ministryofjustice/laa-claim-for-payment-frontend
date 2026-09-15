@@ -148,24 +148,24 @@
         "fileName": "File name",
         "fileSize": "File size"
       },
-      "uploadFiles":{
+      "uploadFiles": {
         "title": "Upload files",
         "maxSize": "The maximum file size is 10MB."
       }
     },
-    "howManyClientsRetained" : {
-      "title" : "How many clients are retained?",
+    "howManyClientsRetained": {
+      "title": "How many clients are retained?",
       "ZERO": {
-        "text" : "0"
+        "text": "0"
       },
-      "ONE" : {
-        "text" : "1"
+      "ONE": {
+        "text": "1"
       },
-      "TWO_OR_MORE" : {
+      "TWO_OR_MORE": {
         "text": "2+"
       },
-      "errors" : {
-        "empty" : "Select how many clients are retained"
+      "errors": {
+        "empty": "Select how many clients are retained"
       }
     },    
     "poaClaimType": {
@@ -183,7 +183,7 @@
         "empty": "Select what type of POA you are claiming"
       }
     },
-    "profitCostDetails":{
+    "profitCostDetails": {
       "title": "Profit cost details",
       "courtType": {
         "title": "Court or judge type",
@@ -339,7 +339,9 @@
           "errors": {
             "empty": "Enter actual net value",
             "invalid": "Actual net value must be a number",
-            "pence": "Actual net value must include pence, like 123.45 or 156.00"
+            "pence": "Actual net value must include pence, like 123.45 or 156.00",
+            "negative": "Actual net value must be a positive number",
+            "maximum": "Actual net value must be {maximum} or less"
           }
         },
         "vatApplies": {
@@ -377,7 +379,7 @@
           }
         },
         "remove": {
-          "title" : "Are you sure you want to remove this expert cost?",
+          "title": "Are you sure you want to remove this expert cost?",
           "errors": {
             "empty": "Select yes if you want to remove this expert cost"
           }
@@ -410,7 +412,9 @@
           "errors": {
             "empty": "Enter actual net value",
             "invalid": "Actual net value must be a number",
-            "pence": "Actual net value must include pence, like 123.45 or 156.00"
+            "pence": "Actual net value must include pence, like 123.45 or 156.00",
+            "negative": "Actual net value must be a positive number",
+            "maximum": "Actual net value must be {maximum} or less"
           }
         },
         "vatApplies": {
@@ -448,7 +452,7 @@
           }
         },
         "remove": {
-          "title" : "Are you sure you want to remove this non-expert disbursement?",
+          "title": "Are you sure you want to remove this non-expert disbursement?",
           "errors": {
             "empty": "Select yes if you want to remove this non-expert disbursement"
           }
@@ -495,7 +499,9 @@
         "errors": {
           "empty": "Enter actual net profit cost excluding advocacy",
           "invalid": "Actual net profit cost excluding advocacy must be a number",
-          "pence": "Actual net profit cost excluding advocacy must include pence, like 123.45 or 156.00"
+          "pence": "Actual net profit cost excluding advocacy must include pence, like 123.45 or 156.00",
+          "negative": "Actual net profit cost excluding advocacy must be a positive number",
+          "maximum": "Actual net profit cost excluding advocacy must be {maximum} or less"
         }
       },
       "actualNetAdvocacyCosts": {
@@ -503,7 +509,9 @@
         "errors": {
           "empty": "Enter actual net advocacy costs",
           "invalid": "Actual net advocacy costs must be a number",
-          "pence": "Actual net advocacy costs must include pence, like 123.45 or 156.00"
+          "pence": "Actual net advocacy costs must include pence, like 123.45 or 156.00",
+          "negative": "Actual net advocacy costs must be a positive number",
+          "maximum": "Actual net advocacy costs must be {maximum} or less"
         }
       },
       "vatApplies": {
@@ -544,7 +552,6 @@
       }
     }
   },
-
   "forms": {
     "name": {
       "label": "Full name",

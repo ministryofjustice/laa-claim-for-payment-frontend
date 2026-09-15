@@ -15,7 +15,7 @@ export { devLog, devWarn, devError, devDebug, isDevelopment } from "./devLogger.
 export {
   formatBoolean,
   formatBooleanChoice,
-  formatClaimed,
+  formatMoney,
   formatClaimId,
   formatDate,
   formatDateReadable,

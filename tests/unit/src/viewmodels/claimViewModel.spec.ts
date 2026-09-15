@@ -4,7 +4,7 @@ import { getClaimsSuccessResponseData } from "#tests/assets/getClaimsResponseDat
 import { expect } from "chai";
 import {
   formatDate,
-  formatClaimed,
+  formatMoney,
 } from "#src/helpers/index.js";
 
 describe("ClaimViewModel constructor()", () => {

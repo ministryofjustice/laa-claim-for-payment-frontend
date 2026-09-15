@@ -5,7 +5,7 @@
 import {
   formatBoolean,
   formatBooleanChoice,
-  formatClaimed,
+  formatMoney,
   formatClaimId,
   formatDate,
   formatDateReadable,
@@ -105,21 +105,21 @@ describe("Data Transformation Helpers", () => {
     });
   });
 
-  describe("formatClaimed", () => {
+  describe("formatMoney", () => {
     it("should format 1 -> £1.00", async () => {
-      expect(formatClaimed(1)).to.equal("£1.00");
+      expect(formatMoney(1)).to.equal("£1.00");
     });
 
     it("should format 0.1 -> £0.10", async () => {
-      expect(formatClaimed(0.1)).to.equal("£0.10");
+      expect(formatMoney(0.1)).to.equal("£0.10");
     });
 
     it("should format 0.10 -> £0.10", async () => {
-      expect(formatClaimed(0.1)).to.equal("£0.10");
+      expect(formatMoney(0.1)).to.equal("£0.10");
     });
 
     it("should format 1.10 -> £1.10", async () => {
-      expect(formatClaimed(1.1)).to.equal("£1.10");
+      expect(formatMoney(1.1)).to.equal("£1.10");
     });
   });
 

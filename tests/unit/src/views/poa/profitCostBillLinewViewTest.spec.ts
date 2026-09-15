@@ -214,7 +214,7 @@ describe("views/main/poa/profitCostBillLineView.njk with errors", () => {
       $("input[name='actualNetProfitCostExcludingAdvocacy']").attr("value"),
     ).to.equal("123.45");
     expect($("input[name='actualNetAdvocacyCosts']").attr("value")).to.equal(
-      "156",
+      "156.00",
     );
     expect($("input[name='vatApplies'][value='yes']").attr("checked")).to.equal(
       "checked",

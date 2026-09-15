@@ -63,7 +63,9 @@ export class DisbursementDetailsForm extends Form<
    * Validates the form.
    * @param {DisbursementDetailsRequestBody} value value to validate
    */
-  validate(value: DisbursementDetailsRequestBody): void {
+  validate(
+    value: DisbursementDetailsRequestBody,
+  ): void {
     this.fields.activityDate.validate({
       day: value.activityDateDay,
       month: value.activityDateMonth,

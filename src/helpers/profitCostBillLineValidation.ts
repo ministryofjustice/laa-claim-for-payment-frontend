@@ -60,7 +60,9 @@ export class ProfitCostBillLineForm extends Form<
    * Validates the form.
    * @param {ProfitCostBillLineRequestBody} value value to validate
    */
-  validate(value: ProfitCostBillLineRequestBody): void {
+  validate(
+    value: ProfitCostBillLineRequestBody,
+  ): void {
     this.fields.activityDate.validate({
       day: value.activityDateDay,
       month: value.activityDateMonth,
@@ -70,7 +72,11 @@ export class ProfitCostBillLineForm extends Form<
     this.fields.actualNetProfitCostExcludingAdvocacy.validate(
       value.actualNetProfitCostExcludingAdvocacy,
     );
-    this.fields.actualNetAdvocacyCosts.validate(value.actualNetAdvocacyCosts);
+
+    this.fields.actualNetAdvocacyCosts.validate(
+      value.actualNetAdvocacyCosts,
+    );
+
     this.fields.vatApplies.validate(value.vatApplies);
     this.fields.feeEarnerName.validate(value.feeEarnerName);
 
