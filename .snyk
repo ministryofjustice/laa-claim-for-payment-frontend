@@ -42,13 +42,3 @@ ignore:
     - '*':
         reason: "No direct fix available in dependency tree"
         expires: 2026-12-31
-
-  SNYK-JS-JSYAML-19496768:
-    - '*':
-        reason: "No direct fix available in dependency tree"
-        expires: 2026-12-31
-
-  SNYK-JS-PROXYADDR-19812342:
-    - '*':
-        reason: "No direct fix available in dependency tree"
-        expires: 2026-12-31
