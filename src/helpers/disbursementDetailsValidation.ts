@@ -22,6 +22,13 @@ export interface DisbursementDetailsRequestBody {
   description?: unknown;
 }
 
+export type DisbursementDetailsFormValue = Omit<
+  DisbursementDetails,
+  "actualNetValue"
+> & {
+  actualNetValue: string;
+};
+
 interface DisbursementDetailsFields {
   activityDate: DateField;
   actualNetValue: MoneyField;
@@ -36,7 +43,7 @@ interface DisbursementDetailsFields {
 export class DisbursementDetailsForm extends Form<
   DisbursementDetailsFields,
   DisbursementDetailsRequestBody,
-  DisbursementDetails
+  DisbursementDetailsFormValue
 > {
   /**
    * Creates a form.
@@ -49,9 +56,9 @@ export class DisbursementDetailsForm extends Form<
 
   /**
    * Fills the form.
-   * @param {DisbursementDetails} value form value
+   * @param {DisbursementDetails | DisbursementDetailsFormValue} value form value
    */
-  fill(value: DisbursementDetails): void {
+  fill(value: DisbursementDetails | DisbursementDetailsFormValue): void {
     this.fields.activityDate.setValue(value.activityDate);
     this.fields.actualNetValue.setValue(value.actualNetValue);
     this.fields.vatApplies.setValue(value.vatApplies);

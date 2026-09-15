@@ -132,7 +132,9 @@ export function getRequestBody(body: any): object {
 }
 
 type FieldValues<TFields> = {
-  [K in keyof TFields]: TFields[K] extends Field<unknown, infer TValidField>
+  [K in keyof TFields]: TFields[K] extends {
+    getResult: () => ValidationResult<unknown, infer TValidField>;
+  }
     ? TValidField
     : never;
 };

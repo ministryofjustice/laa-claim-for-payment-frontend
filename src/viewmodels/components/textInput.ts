@@ -25,12 +25,10 @@ export interface TextInput {
  * @returns {TextInput} a monetary text input
  */
 export function buildMonetaryInput(field: MoneyField): TextInput {
-  const value = field.getValue();
-
   return {
     id: field.id,
     name: field.name,
-    value: typeof value === "number" ? value.toFixed(2) : value,
+    value: field.getValue(),
     classes: "govuk-input--width-5",
     label: {
       text: {

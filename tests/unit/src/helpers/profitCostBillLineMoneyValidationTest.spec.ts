@@ -31,7 +31,7 @@ describe("ProfitCostBillLineForm monetary validation", () => {
         [name]: "£1,234.5",
       });
 
-      expect(expectSuccess(form.validation).value[name]).to.equal(1234.5);
+      expect(expectSuccess(form.validation).value[name]).to.equal("1234.50");
     });
 
     for (const [input, reason] of [
@@ -59,15 +59,15 @@ describe("ProfitCostBillLineForm monetary validation", () => {
       });
     }
 
-    const acceptedAmounts: Array<[string, number]> = [
-      ["0.00", 0],
-      ["0.01", 0.01],
-      ["10", 10],
-      ["10.5", 10.5],
-      ["10.50", 10.5],
-      ["24999.99", 24999.99],
-      ["25000", 25000],
-      ["£25,000.00", 25000],
+   const acceptedAmounts: Array<[string, string]> = [
+      ["0.00", "0.00"],
+      ["0.01", "0.01"],
+      ["10", "10.00"],
+      ["10.5", "10.50"],
+      ["10.50", "10.50"],
+      ["24999.99", "24999.99"],
+      ["25000", "25000.00"],
+      ["£25,000.00", "25000.00"],
     ];
 
     for (const [input, expected] of acceptedAmounts) {
@@ -123,8 +123,10 @@ describe("ProfitCostBillLineForm monetary validation", () => {
 
     const result = expectSuccess(form.validation);
 
-    expect(result.value.actualNetProfitCostExcludingAdvocacy).to.equal(25000);
-    expect(result.value.actualNetAdvocacyCosts).to.equal(25000);
+    expect(result.value.actualNetProfitCostExcludingAdvocacy).to.equal(
+      "25000.00",
+    );
+    expect(result.value.actualNetAdvocacyCosts).to.equal("25000.00");
   });
 
   it("reports both fields when both exceed £25,000", () => {

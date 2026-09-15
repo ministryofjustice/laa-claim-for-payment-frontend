@@ -94,9 +94,17 @@ export async function submitProfitCostBillLine(
       return;
     }
 
+    const formValue = form.getValue();
+
     const lineItemForm: LineItemForm = {
       type: CostType.PROFIT_COST,
-      value: form.getValue(),
+      value: {
+        ...formValue,
+        actualNetProfitCostExcludingAdvocacy: Number(
+          formValue.actualNetProfitCostExcludingAdvocacy,
+        ),
+        actualNetAdvocacyCosts: Number(formValue.actualNetAdvocacyCosts),
+      },
     };
 
     const claim = requireClaim(req);

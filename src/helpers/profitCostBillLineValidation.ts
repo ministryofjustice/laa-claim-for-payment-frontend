@@ -18,10 +18,13 @@ export interface ProfitCostBillLineRequestBody {
   feeEarnerName?: unknown;
 }
 
-export interface ProfitCostBillLineLimits {
-  actualNetProfitCostExcludingAdvocacy?: number;
-  actualNetAdvocacyCosts?: number;
-}
+export type ProfitCostBillLineFormValue = Omit<
+  ProfitCostBillLine,
+  "actualNetProfitCostExcludingAdvocacy" | "actualNetAdvocacyCosts"
+> & {
+  actualNetProfitCostExcludingAdvocacy: string;
+  actualNetAdvocacyCosts: string;
+};
 
 interface ProfitCostBillLineFields {
   activityDate: DateField;
@@ -37,7 +40,7 @@ interface ProfitCostBillLineFields {
 export class ProfitCostBillLineForm extends Form<
   ProfitCostBillLineFields,
   ProfitCostBillLineRequestBody,
-  ProfitCostBillLine
+  ProfitCostBillLineFormValue
 > {
   /**
    * Creates a form.
@@ -49,9 +52,9 @@ export class ProfitCostBillLineForm extends Form<
 
   /**
    * Fills the form.
-   * @param {ProfitCostBillLine} value form value
+   * @param {ProfitCostBillLine | ProfitCostBillLineFormValue} value form value
    */
-  fill(value: ProfitCostBillLine): void {
+  fill(value: ProfitCostBillLine | ProfitCostBillLineFormValue): void {
     this.fields.activityDate.setValue(value.activityDate);
     this.fields.actualNetProfitCostExcludingAdvocacy.setValue(
       value.actualNetProfitCostExcludingAdvocacy,
@@ -64,12 +67,8 @@ export class ProfitCostBillLineForm extends Form<
   /**
    * Validates the form.
    * @param {ProfitCostBillLineRequestBody} value value to validate
-   * @param {ProfitCostBillLineLimits} [limits] optional overrides for default monetary limits
    */
-  validate(
-    value: ProfitCostBillLineRequestBody,
-    limits: ProfitCostBillLineLimits = {},
-  ): void {
+  validate(value: ProfitCostBillLineRequestBody): void {
     this.fields.activityDate.validate({
       day: value.activityDateDay,
       month: value.activityDateMonth,
