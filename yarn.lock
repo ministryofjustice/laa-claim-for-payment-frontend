@@ -2513,7 +2513,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"compression@npm:1.8.2":
+"compression@npm:^1.8.1":
   version: 1.8.2
   resolution: "compression@npm:1.8.2"
   dependencies:
@@ -5085,7 +5085,7 @@ __metadata:
     chalk: "npm:^5.6.2"
     cheerio: "npm:^1.1.2"
     chokidar: "npm:4.0.3"
-    compression: "npm:1.8.2"
+    compression: "npm:^1.8.1"
     concurrently: "npm:^9.2.1"
     connect-livereload: "npm:^0.6.1"
     connect-redis: "npm:^9.0.0"
@@ -5119,10 +5119,10 @@ __metadata:
     livereload: "npm:^0.10.2"
     middleware-axios: "npm:^3.0.0"
     mocha: "npm:^11.7.3"
-    moment: "npm:^2.30.1"
+    moment: "npm:^2.31.0"
     morgan: "npm:1.12.0"
     msw: "npm:^2.11.3"
-    multer: "npm:2.4.0"
+    multer: "npm:^2.3.0"
     nodemon: "npm:^3.1.11"
     nunjucks: "npm:^3.2.4"
     openid-client: "npm:6.8.1"
@@ -5144,10 +5144,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"moment@npm:^2.30.1":
-  version: 2.30.1
-  resolution: "moment@npm:2.30.1"
-  checksum: 10/ae42d876d4ec831ef66110bdc302c0657c664991e45cf2afffc4b0f6cd6d251dde11375c982a5c0564ccc0fa593fc564576ddceb8c8845e87c15f58aa6baca69
+"moment@npm:^2.31.0":
+  version: 2.31.0
+  resolution: "moment@npm:2.31.0"
+  checksum: 10/fd3708d46f820c64fe1e064a60747533a55ee0aefd944490e18f08b2a83a5b6418bb4f42e1de47ef1f1a29f450c7ac41edd1fa6f940db30ded247c9717301b9f
   languageName: node
   linkType: hard
 
@@ -5211,7 +5211,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"multer@npm:2.4.0":
+"multer@npm:^2.3.0":
   version: 2.4.0
   resolution: "multer@npm:2.4.0"
   dependencies:
@@ -5723,13 +5723,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proxy-addr@npm:^2.0.7":
-  version: 2.0.7
-  resolution: "proxy-addr@npm:2.0.7"
+"proxy-addr@npm:2.0.8":
+  version: 2.0.8
+  resolution: "proxy-addr@npm:2.0.8"
   dependencies:
     forwarded: "npm:0.2.0"
     ipaddr.js: "npm:1.9.1"
-  checksum: 10/f24a0c80af0e75d31e3451398670d73406ec642914da11a2965b80b1898ca6f66a0e3e091a11a4327079b2b268795f6fa06691923fef91887215c3d0e8ea3f68
+  checksum: 10/6922b732c5625a9ba174c053bf3a750a80c87f19b7c62919f88ff01834eb80e2467834cfa72fc48b3a7ed6b3d18daadf773f6efb21db1c5fcc76d784509fcf1f
   languageName: node
   linkType: hard
 
