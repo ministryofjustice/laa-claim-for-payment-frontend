@@ -55,7 +55,7 @@ export function submitPoaEvidenceUpload(
     const { id: claimId } = claim;
 
     const form = new UploadForm(buildField());
-    form.validate(claim.evidence);
+    form.validate(claim);
 
     if (form.isNotValid()) {
       const vm = new PoaEvidenceUploadViewModel({

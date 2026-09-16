@@ -7,7 +7,7 @@ import { BooleanChoice, booleanChoices } from "#src/models/booleanChoice.js";
 import type { RadioQuestionOptions } from "#src/viewmodels/radioQuestionViewModel.js";
 import { LocalDate } from "#src/types/date.js";
 import type { Message } from "#src/viewmodels/components/message.js";
-import type { EvidenceItem } from "#src/types/Claim.js";
+import type { Claim, EvidenceItem } from "#src/types/Claim.js";
 import { formatMoney } from "#src/helpers/dataFormatters.js";
 
 /**
@@ -116,15 +116,13 @@ export abstract class Field<TRaw, TValid> {
 /**
  * Upload form field.
  */
-export class UploadField extends Field<EvidenceItem[], EvidenceItem[]> {
+export class UploadField extends Field<Claim, EvidenceItem[]> {
   /**
    * Validate the field against the given value.
-   * @param {EvidenceItem[]} value the uploads
+   * @param {Claim} value the claim
    */
-  validate(value: EvidenceItem[]): void {
-    if (value.length > 0) {
-      this.valid(value);
-    } else {
+  validate(value: Claim): void {
+    if (value.requiresEvidence && !value.hasEvidence) {
       this.error(
         {
           href: `#${this.id}`,
@@ -134,6 +132,8 @@ export class UploadField extends Field<EvidenceItem[], EvidenceItem[]> {
         },
         value,
       );
+    } else {
+      this.valid(value.evidence);
     }
   }
 }

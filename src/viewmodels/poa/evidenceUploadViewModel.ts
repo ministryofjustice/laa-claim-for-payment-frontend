@@ -54,7 +54,7 @@ export class PoaEvidenceUploadViewModel {
 
     this.saveAndComeBackLaterHref = "#";
 
-    this.uploadedFiles = (form.fields.field.getValue() ?? []).map(
+    this.uploadedFiles = claim.evidence.map(
       (evidence) => ({
         id: evidence.id,
         name: evidence.fileKey,
@@ -64,7 +64,7 @@ export class PoaEvidenceUploadViewModel {
 
     this.errorSummary = form.getErrorSummary();
 
-    if (claim.hasEvidence && !claim.requiresEvidence) {
+    if (!claim.requiresEvidence && claim.hasEvidence) {
       this.alert = {
         variant: "information",
         title: {

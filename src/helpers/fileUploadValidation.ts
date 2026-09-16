@@ -1,5 +1,5 @@
 import { Form } from "#src/helpers/validation.js";
-import type { EvidenceItem } from "#src/types/Claim.js";
+import type { Claim, EvidenceItem } from "#src/types/Claim.js";
 import type { UploadField } from "#src/helpers/fields.js";
 
 interface UploadQuestionField {
@@ -11,7 +11,7 @@ interface UploadQuestionField {
  */
 export class UploadForm extends Form<
   UploadQuestionField,
-  EvidenceItem[],
+  Claim,
   EvidenceItem[]
 > {
   /**
@@ -32,9 +32,9 @@ export class UploadForm extends Form<
 
   /**
    * Validates the form.
-   * @param {EvidenceItem[]} value value to validate
+   * @param {Claim} value value to validate
    */
-  validate(value: EvidenceItem[]): void {
+  validate(value: Claim): void {
     this.fields.field.validate(value);
     this.validation = this.fields.field.getResult();
   }
