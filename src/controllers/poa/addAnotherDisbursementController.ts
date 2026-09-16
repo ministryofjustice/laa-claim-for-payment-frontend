@@ -5,11 +5,14 @@ import { AddAnotherDisbursementViewModel } from "#src/viewmodels/poa/addAnotherL
 import {
   type DisbursementCostType,
   DisbursementCostTypeMessagePrefix,
-  type DisbursementLineItem
+  type DisbursementLineItem,
 } from "#src/types/Claim.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
-import { requireClaim, requireDisbursementCostType } from "#src/helpers/claimGuards.js";
+import {
+  requireClaim,
+  requireDisbursementCostType,
+} from "#src/helpers/claimGuards.js";
 
 /**
  * get add another expert cost view
@@ -85,11 +88,7 @@ export function submitAddAnotherDisbursement(
 
     if (form.getValue()) {
       res.redirect(buildRoute(ROUTES.POA.DISBURSEMENTS.DETAILS, { claimId }));
-    } else if (
-      claim.disbursementLineItems.some((lineItem) => lineItem.actualNetValue >= 20)
-    ) {
-      res.redirect(buildRoute(ROUTES.POA.EVIDENCE_UPLOAD, { claimId }));
-    } else if (claim.hasEvidence) {
+    } else if (claim.requiresEvidence || claim.hasEvidence) {
       res.redirect(buildRoute(ROUTES.POA.EVIDENCE_UPLOAD, { claimId }));
     } else {
       res.redirect(buildRoute(ROUTES.POA.CHECK_DETAILS, { claimId }));

@@ -15,6 +15,7 @@ import {
 } from "#src/types/Claim.js";
 import { UUID, V7Generator } from "uuidv7";
 import { ZodError } from "zod";
+import { LocalDate } from "#src/types/date.js";
 
 describe("ClaimResponseSchema", () => {
   const id = new V7Generator().generate();
@@ -536,6 +537,108 @@ describe("ClaimResponseSchema", () => {
 
         expect(result).to.throw(ZodError);
       });
+    });
+  });
+
+  describe("requiresEvidence", () => {
+    it("returns false when no line items", () => {
+      const claim = new Claim({
+        id: id.toString(),
+      });
+
+      expect(claim.requiresEvidence).to.equal(false);
+    });
+
+    it("returns false when no line item has net value >= threshold", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        costType: CostType.EXPERT_COST,
+        lineItems: [
+          {
+            id: id.toString(),
+            title: "Line item < threshold",
+            category: Category.DISBURSEMENT,
+            date: new LocalDate(29, 7, 2026),
+            actualNetValue: 19.99,
+            vatApplicable: false,
+            feeEarnerName: "John Smith",
+            evidenceItems: [],
+          },
+        ],
+      });
+
+      expect(claim.requiresEvidence).to.equal(false);
+    });
+
+    it("returns true when profit cost", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        costType: CostType.PROFIT_COST,
+      });
+
+      expect(claim.requiresEvidence).to.equal(true);
+    });
+
+    it("returns true when disbursement and a line item has net value = threshold", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        costType: CostType.EXPERT_COST,
+        lineItems: [
+          {
+            id: id.toString(),
+            title: "Line item < threshold",
+            category: Category.DISBURSEMENT,
+            date: new LocalDate(29, 7, 2026),
+            actualNetValue: 19.99,
+            vatApplicable: false,
+            feeEarnerName: "John Smith",
+            evidenceItems: [],
+          },
+          {
+            id: id.toString(),
+            title: "Line item = threshold",
+            category: Category.DISBURSEMENT,
+            date: new LocalDate(29, 7, 2026),
+            actualNetValue: 20,
+            vatApplicable: false,
+            feeEarnerName: "John Smith",
+            evidenceItems: [],
+          },
+        ],
+      });
+
+      expect(claim.requiresEvidence).to.equal(true);
+    });
+
+    it("returns true when disbursement and a line item has net value > threshold", () => {
+      const claim = new Claim({
+        id: id.toString(),
+        costType: CostType.EXPERT_COST,
+        lineItems: [
+          {
+            id: id.toString(),
+            title: "Line item < threshold",
+            category: Category.DISBURSEMENT,
+            date: new LocalDate(29, 7, 2026),
+            actualNetValue: 19.99,
+            vatApplicable: false,
+            feeEarnerName: "John Smith",
+            evidenceItems: [],
+          },
+          {
+            id: id.toString(),
+            title: "Line item = threshold",
+            category: Category.DISBURSEMENT,
+            date: new LocalDate(29, 7, 2026),
+            actualNetValue: 20.01,
+            vatApplicable: false,
+            feeEarnerName: "John Smith",
+            evidenceItems: [],
+          },
+        ],
+      });
+
+      expect(claim.requiresEvidence).to.equal(true);
     });
   });
 

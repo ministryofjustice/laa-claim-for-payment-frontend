@@ -6,6 +6,7 @@ import {
   formatBoolean,
   formatBooleanChoice,
   formatMoney,
+  formatMoneyWhole,
   formatClaimId,
   formatDate,
   formatDateReadable,
@@ -120,6 +121,24 @@ describe("Data Transformation Helpers", () => {
 
     it("should format 1.10 -> £1.10", async () => {
       expect(formatMoney(1.1)).to.equal("£1.10");
+    });
+  });
+
+  describe("formatMoneyWhole", () => {
+    it("should format 1 -> £1", async () => {
+      expect(formatMoneyWhole(1)).to.equal("£1");
+    });
+
+    it("should format 0.1 -> £0.10", async () => {
+      expect(formatMoneyWhole(0.1)).to.equal("£0.10");
+    });
+
+    it("should format 0.10 -> £0.10", async () => {
+      expect(formatMoneyWhole(0.1)).to.equal("£0.10");
+    });
+
+    it("should format 1.10 -> £1.10", async () => {
+      expect(formatMoneyWhole(1.1)).to.equal("£1.10");
     });
   });
 

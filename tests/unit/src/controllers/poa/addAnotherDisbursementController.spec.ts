@@ -178,7 +178,7 @@ describe("addAnotherDisbursementController", () => {
         lineItems: [
           {
             id: lineItemId.toString(),
-            title: "Line item >= £20",
+            title: "Line item >= threshold",
             category: Category.DISBURSEMENT,
             date: new LocalDate(29, 7, 2026),
             actualNetValue: 20,
@@ -210,7 +210,7 @@ describe("addAnotherDisbursementController", () => {
         lineItems: [
           {
             id: lineItemId.toString(),
-            title: "Line item < £20",
+            title: "Line item < threshold",
             category: Category.DISBURSEMENT,
             date: new LocalDate(29, 7, 2026),
             actualNetValue: 19.99,
@@ -250,7 +250,7 @@ describe("addAnotherDisbursementController", () => {
         lineItems: [
           {
             id: lineItemId.toString(),
-            title: "Line item < £20",
+            title: "Line item < threshold",
             category: Category.DISBURSEMENT,
             date: new LocalDate(29, 7, 2026),
             actualNetValue: 19.99,

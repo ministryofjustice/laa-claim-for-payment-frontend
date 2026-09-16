@@ -80,5 +80,8 @@ export interface Config {
       feeEarnerNameLength: number;
       descriptionLength: number;
     }
+  },
+  constants: {
+    evidenceThresholdInPounds: number;
   }
 }

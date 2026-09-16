@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { ProfitCostDetails } from "#src/types/poa.js";
 import { LocalDate } from "#src/types/date.js";
 import type { UUID } from "uuidv7";
+import config from "#config.js";
 
 export const EvidenceItemSchema = z.object({
   id: z.uuidv7(),
@@ -294,6 +295,21 @@ export class Claim {
   }
 
   /**
+   * Gets whether the claim requires evidence.
+   *
+   * @returns {boolean} whether the claim requires evidence.
+   */
+  get requiresEvidence(): boolean {
+    if (this.costType === CostType.PROFIT_COST) {
+      return true;
+    } else {
+      return this.disbursementLineItems.some(
+        (x) => x.actualNetValue >= config.constants.evidenceThresholdInPounds,
+      );
+    }
+  }
+
+  /**
    * Gets the disbursement line items.
    *
    * @returns {DisbursementLineItem[]} the disbursement line items.
@@ -311,9 +327,7 @@ export class Claim {
    * @param {UUID} lineItemId line item ID
    * @returns {DisbursementLineItem | undefined} the disbursement line item, or undefined if it doesn't exist.
    */
-  getDisbursementLineItem(
-    lineItemId: UUID,
-  ): DisbursementLineItem | undefined {
+  getDisbursementLineItem(lineItemId: UUID): DisbursementLineItem | undefined {
     return this.disbursementLineItems.find(
       (lineItem) => lineItem.id === lineItemId.toString(),
     );

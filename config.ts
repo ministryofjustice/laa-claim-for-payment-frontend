@@ -1,6 +1,10 @@
 import dotenv from "dotenv";
-import type { Config, RedisEnvConfig, RedisLocalConfig } from "#src/types/config-types.js";
-import { getRequiredEnv } from '#utils/envHelper.js';
+import type {
+  Config,
+  RedisEnvConfig,
+  RedisLocalConfig,
+} from "#src/types/config-types.js";
+import { getRequiredEnv } from "#utils/envHelper.js";
 dotenv.config();
 
 const DEFAULT_RATE_LIMIT_MAX = 100;
@@ -12,16 +16,15 @@ function getRedisConfig(): RedisLocalConfig | RedisEnvConfig {
   if (process.env.REDIS_URL == null) {
     return {
       local: false,
-      token: getRequiredEnv('REDIS_AUTH_TOKEN'),
+      token: getRequiredEnv("REDIS_AUTH_TOKEN"),
       host: process.env.REDIS_HOST ?? "localhost",
       port: Number(process.env.REDIS_PORT ?? 6379),
-    }
-  }
-  else {
+    };
+  } else {
     return {
       local: true,
-      url: process.env.REDIS_URL
-    }
+      url: process.env.REDIS_URL,
+    };
   }
 }
 
@@ -35,7 +38,7 @@ const config: Config = {
   RATE_LIMIT_MAX: Number(process.env.RATE_LIMIT_MAX ?? DEFAULT_RATE_LIMIT_MAX),
   // Default rate window: 1 minute in milliseconds
   RATE_WINDOW_MS: Number(
-    process.env.RATE_WINDOW_MS ?? String(DEFAULT_RATE_WINDOW_MS)
+    process.env.RATE_WINDOW_MS ?? String(DEFAULT_RATE_WINDOW_MS),
   ),
   SERVICE_PHASE: process.env.SERVICE_PHASE,
   SERVICE_URL: process.env.SERVICE_URL,
@@ -44,11 +47,11 @@ const config: Config = {
     name: process.env.SESSION_NAME ?? "",
     resave: false,
     saveUninitialized: false,
-    cookie : {
+    cookie: {
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      sameSite: 'lax'
-    }
+      sameSite: "lax",
+    },
   },
   app: {
     port: Number(process.env.PORT ?? DEFAULT_PORT),
@@ -69,12 +72,11 @@ const config: Config = {
   api: {
     baseUrl: (process.env.API_URL ?? "").replace(/\/+$/u, ""),
   },
-  ...(process.env.REDIS_DISABLED === "true"
-    ? {}
-    : { redis: getRedisConfig() }),
+  ...(process.env.REDIS_DISABLED === "true" ? {} : { redis: getRedisConfig() }),
   pagination: {
     numberOfClaimsPerPage: Number(
-      process.env.NUMBER_OF_CLAIMS_PER_PAGE ?? DEFAULT_NUMBER_OF_RESULTS_PER_PAGE
+      process.env.NUMBER_OF_CLAIMS_PER_PAGE ??
+        DEFAULT_NUMBER_OF_RESULTS_PER_PAGE,
     ),
   },
   featureFlags: {
@@ -83,10 +85,19 @@ const config: Config = {
   },
   fields: {
     poa: {
-      feeEarnerNameLength: Number(process.env.POA_FEE_EARNER_NAME_FIELD_LENGTH ?? 150),
-      descriptionLength: Number(process.env.POA_DESCRIPTION_FIELD_LENGTH ?? 500),
-    }
-  }
+      feeEarnerNameLength: Number(
+        process.env.POA_FEE_EARNER_NAME_FIELD_LENGTH ?? 150,
+      ),
+      descriptionLength: Number(
+        process.env.POA_DESCRIPTION_FIELD_LENGTH ?? 500,
+      ),
+    },
+  },
+  constants: {
+    evidenceThresholdInPounds: Number(
+      process.env.EVIDENCE_THRESHOLD_IN_POUNDS ?? 20,
+    ),
+  },
 };
 
 export default config;
