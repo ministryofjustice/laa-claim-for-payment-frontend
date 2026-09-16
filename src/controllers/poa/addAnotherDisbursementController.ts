@@ -85,8 +85,14 @@ export function submitAddAnotherDisbursement(
 
     if (form.getValue()) {
       res.redirect(buildRoute(ROUTES.POA.DISBURSEMENTS.DETAILS, { claimId }));
-    } else {
+    } else if (
+      claim.disbursementLineItems.some((lineItem) => lineItem.actualNetValue >= 20)
+    ) {
       res.redirect(buildRoute(ROUTES.POA.EVIDENCE_UPLOAD, { claimId }));
+    } else if (claim.hasEvidence) {
+      res.redirect(buildRoute(ROUTES.POA.EVIDENCE_UPLOAD, { claimId }));
+    } else {
+      res.redirect(buildRoute(ROUTES.POA.CHECK_DETAILS, { claimId }));
     }
   } catch (error) {
     const processedError = processError(
