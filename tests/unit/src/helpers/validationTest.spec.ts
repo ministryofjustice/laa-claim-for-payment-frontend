@@ -11,7 +11,11 @@ import {
   DateField,
   MoneyField,
   StringField,
+  UploadField,
 } from "#src/helpers/fields.js";
+import { Category, Claim, CostType } from "#src/types/Claim.js";
+import { V7Generator } from "uuidv7";
+import { LocalDate } from "#src/types/date.js";
 
 export function expectSuccess<S, T>(
   result: ValidationResult<S, T> | undefined,
@@ -542,5 +546,92 @@ describe("validateDateInput", () => {
     expect(errors[0].href).to.equal("#id-day");
     expect(errors[0].text.key).to.equal("prefix.errors.future");
     expect(errors[0].fields).to.deep.equal(["day", "month", "year"]);
+  });
+});
+
+describe("validateUpload", () => {
+  const claimId = new V7Generator().generate();
+  const lineItemId = new V7Generator().generate();
+  const evidenceId = new V7Generator().generate();
+
+  const field: UploadField = new UploadField(
+    "prefix",
+    "fieldName",
+    "id",
+  );
+
+  it("returns success for claim with no line items", () => {
+    const input = new Claim({
+      id: claimId.toString(),
+    });
+    field.validate(input);
+    const result = field.validation;
+
+    expectSuccess(result);
+
+    expect(field.getValue()).to.deep.equal([]);
+  });
+
+  it("returns success for claim with line items that require evidence and have evidence", () => {
+    const input = new Claim({
+      id: claimId.toString(),
+      costType: CostType.EXPERT_COST,
+      lineItems: [
+        {
+          id: lineItemId.toString(),
+          title: "Line item >= threshold",
+          category: Category.DISBURSEMENT,
+          date: new LocalDate(29, 7, 2026),
+          actualNetValue: 20,
+          vatApplicable: false,
+          feeEarnerName: "John Smith",
+          evidenceItems: [],
+        },
+      ],
+      evidence: [
+        {
+          id: evidenceId.toString(),
+          fileKey: "sample.pdf",
+          fileSize: 1024,
+          submittedOn: "2026-06-17T10:20:05Z",
+        },
+      ],
+    });
+    field.validate(input);
+    const result = field.validation;
+
+    expectSuccess(result);
+
+    expect(field.getValue()).to.deep.equal(input.evidence);
+  });
+
+  it("returns failure with array of errors for claim that requires evidence but has none", () => {
+    const input = new Claim({
+      id: claimId.toString(),
+      costType: CostType.EXPERT_COST,
+      lineItems: [
+        {
+          id: lineItemId.toString(),
+          title: "Line item >= threshold",
+          category: Category.DISBURSEMENT,
+          date: new LocalDate(29, 7, 2026),
+          actualNetValue: 20,
+          vatApplicable: false,
+          feeEarnerName: "John Smith",
+          evidenceItems: [],
+        },
+      ],
+    });
+    field.validate(input);
+    const result = field.validation;
+
+    const failure = expectFailure(result);
+    const errors = failure.errors;
+
+    expect(field.getValue()).to.equal(input);
+    expect(errors).to.have.length(1);
+    expect(errors[0].href).to.equal("#id");
+    expect(errors[0].text.key).to.equal("prefix.errors.empty");
+    expect(errors[0].fields).to.be.undefined;
   });
 });

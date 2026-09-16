@@ -16,6 +16,7 @@ export {
   formatBoolean,
   formatBooleanChoice,
   formatMoney,
+  formatMoneyWhole,
   formatClaimId,
   formatDate,
   formatDateReadable,

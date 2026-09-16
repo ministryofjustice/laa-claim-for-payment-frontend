@@ -16,6 +16,7 @@ describe("addAnotherDisbursementController", () => {
 
   const claimId = new V7Generator().generate();
   const lineItemId = new V7Generator().generate();
+  const evidenceId = new V7Generator().generate();
 
   beforeEach(() => {
     res = {
@@ -64,7 +65,9 @@ describe("addAnotherDisbursementController", () => {
     expect(renderArgs.vm.title.key).to.equal(
       "pages.poa.expertCostDetails.addAnother.title.singular",
     );
-    expect(renderArgs.vm.radioQuestionViewModel.radios.name).to.equal("addAnother");
+    expect(renderArgs.vm.radioQuestionViewModel.radios.name).to.equal(
+      "addAnother",
+    );
   });
 
   it("renders the add another non-expert disbursement page", () => {
@@ -97,7 +100,9 @@ describe("addAnotherDisbursementController", () => {
     expect(renderArgs.vm.title.key).to.equal(
       "pages.poa.nonExpertDisbursementDetails.addAnother.title.singular",
     );
-    expect(renderArgs.vm.radioQuestionViewModel.radios.name).to.equal("addAnother");
+    expect(renderArgs.vm.radioQuestionViewModel.radios.name).to.equal(
+      "addAnother",
+    );
   });
 
   it("errors when profit cost type", () => {
@@ -165,11 +170,23 @@ describe("addAnotherDisbursementController", () => {
     ).to.equal(true);
   });
 
-  it("redirects to evidence upload when no selected", () => {
+  it("redirects to evidence upload when no selected and a line item has a net value of >= 20", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
         costType: CostType.EXPERT_COST,
+        lineItems: [
+          {
+            id: lineItemId.toString(),
+            title: "Line item >= threshold",
+            category: Category.DISBURSEMENT,
+            date: new LocalDate(29, 7, 2026),
+            actualNetValue: 20,
+            vatApplicable: false,
+            feeEarnerName: "John Smith",
+            evidenceItems: [],
+          },
+        ],
       }),
       body: {
         addAnother: "no",
@@ -181,6 +198,78 @@ describe("addAnotherDisbursementController", () => {
     expect(
       (res.redirect as sinon.SinonStub).calledWith(
         `/claims/${claimId.toString()}/poa/evidence-upload`,
+      ),
+    ).to.equal(true);
+  });
+
+  it("redirects to evidence upload when no selected and no line item has a net value of >= 20 and I have already uploaded evidence", () => {
+    const req = {
+      claim: new Claim({
+        id: claimId.toString(),
+        costType: CostType.EXPERT_COST,
+        lineItems: [
+          {
+            id: lineItemId.toString(),
+            title: "Line item < threshold",
+            category: Category.DISBURSEMENT,
+            date: new LocalDate(29, 7, 2026),
+            actualNetValue: 19.99,
+            vatApplicable: false,
+            feeEarnerName: "John Smith",
+            evidenceItems: [],
+          },
+        ],
+        evidence: [
+          {
+            id: evidenceId.toString(),
+            fileKey: "test.pdf",
+            fileSize: 123456,
+            submittedOn: "2026-06-17T14:34:01.226855Z",
+          },
+        ],
+      }),
+      body: {
+        addAnother: "no",
+      },
+    } as unknown as Request;
+
+    submitAddAnotherDisbursement(req, res, next);
+
+    expect(
+      (res.redirect as sinon.SinonStub).calledWith(
+        `/claims/${claimId.toString()}/poa/evidence-upload`,
+      ),
+    ).to.equal(true);
+  });
+
+  it("redirects to CYA when no selected and no line item has a net value of >= 20 and I have not already uploaded evidence", () => {
+    const req = {
+      claim: new Claim({
+        id: claimId.toString(),
+        costType: CostType.EXPERT_COST,
+        lineItems: [
+          {
+            id: lineItemId.toString(),
+            title: "Line item < threshold",
+            category: Category.DISBURSEMENT,
+            date: new LocalDate(29, 7, 2026),
+            actualNetValue: 19.99,
+            vatApplicable: false,
+            feeEarnerName: "John Smith",
+            evidenceItems: [],
+          },
+        ],
+      }),
+      body: {
+        addAnother: "no",
+      },
+    } as unknown as Request;
+
+    submitAddAnotherDisbursement(req, res, next);
+
+    expect(
+      (res.redirect as sinon.SinonStub).calledWith(
+        `/claims/${claimId.toString()}/poa/check-details`,
       ),
     ).to.equal(true);
   });

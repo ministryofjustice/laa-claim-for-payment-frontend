@@ -1,5 +1,8 @@
 import { expect, test } from "../../fixtures/index.js";
-import { expertCostDraftClaim2Id } from "#tests/playwright/factories/handlers/api.js";
+import {
+  expertCostDraftClaim2Id,
+  expertCostDraftClaim3Id,
+} from "#tests/playwright/factories/handlers/api.js";
 import { AddAnotherDisbursementPage } from "#tests/playwright/pages/poa/AddAnotherDisbursementPage.js";
 
 test.describe("Add another disbursement page", () => {
@@ -42,7 +45,7 @@ test.describe("Add another disbursement page", () => {
     );
   });
 
-  test("redirects to evidence upload when No is selected", async ({ page }) => {
+  test("redirects to evidence upload when No is selected and evidence required", async ({ page }) => {
     const addAnotherExpertCostPage = new AddAnotherDisbursementPage(
       page,
       expertCostDraftClaim2Id,
@@ -56,6 +59,23 @@ test.describe("Add another disbursement page", () => {
 
     await expect(page).toHaveURL(
       new RegExp(`/claims/${expertCostDraftClaim2Id}/poa/evidence-upload$`),
+    );
+  });
+
+  test("redirects to CYA when No is selected and evidence not required", async ({ page }) => {
+    const addAnotherExpertCostPage = new AddAnotherDisbursementPage(
+      page,
+      expertCostDraftClaim3Id,
+    );
+
+    await addAnotherExpertCostPage.navigate();
+    await addAnotherExpertCostPage.waitForLoad();
+
+    await addAnotherExpertCostPage.radio.answerNo();
+    await addAnotherExpertCostPage.saveAndContinueButton.click();
+
+    await expect(page).toHaveURL(
+      new RegExp(`/claims/${expertCostDraftClaim3Id}/poa/check-details$`),
     );
   });
 
