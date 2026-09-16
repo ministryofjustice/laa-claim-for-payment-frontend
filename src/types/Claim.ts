@@ -58,7 +58,7 @@ export enum ClaimStatus {
   SUBMITTED = "SUBMITTED",
 }
 
-const NullOrUndefinedSchema = z.union([z.null(), z.undefined()]);
+const NullOrUndefinedSchema = z.union([z.null(), z.undefined()]).optional();
 
 export const IsoDateSchema = z.iso.date().transform((value) => LocalDate.from(value));
 

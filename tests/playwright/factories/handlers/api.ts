@@ -23,6 +23,10 @@ export const expertCostDraftClaim2Id = UUID.parse(
   "019fd69d-1ccd-75ff-bd25-28b7041e1f7a",
 );
 
+export const expertCostDraftClaim3Id = UUID.parse(
+  "01a0aa37-2e88-723c-a24d-e2cd2d49ebb8",
+);
+
 export const nonExpertDisbursementDraftClaim1Id = UUID.parse(
   "01a0245c-d2d2-76c8-9ec2-fb14c538f392",
 );
@@ -103,6 +107,24 @@ const expertCostDraftClaim2: object = {
   evidence: [],
 };
 
+const expertCostDraftClaim3: object = {
+  id: expertCostDraftClaim3Id.toString(),
+  costType: "EXPERT_COST",
+  lineItems: [
+    {
+      id: lineItemId.toString(),
+      title: "Line item 1",
+      category: "Disbursement",
+      date: "2025-03-18",
+      evidenceItems: [],
+      feeEarnerName: "Joe Bloggs",
+      vatApplicable: true,
+      actualNetValue: 19.99,
+    }
+  ],
+  evidence: [],
+};
+
 const nonExpertDisbursementDraftClaim1: object = {
   id: nonExpertDisbursementDraftClaim1Id.toString(),
   costType: "NON_EXPERT_DISBURSEMENT",
@@ -156,6 +178,8 @@ export function createApiHandlers(uploadGate?: Gate): HttpHandler[] {
           return HttpResponse.json(expertCostDraftClaim1);
         case expertCostDraftClaim2Id.toString():
           return HttpResponse.json(expertCostDraftClaim2);
+        case expertCostDraftClaim3Id.toString():
+          return HttpResponse.json(expertCostDraftClaim3);
         case nonExpertDisbursementDraftClaim1Id.toString():
           return HttpResponse.json(nonExpertDisbursementDraftClaim1);
         default:
