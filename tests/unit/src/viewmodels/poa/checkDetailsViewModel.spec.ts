@@ -86,7 +86,7 @@ describe("CheckDetailsViewModel constructor()", () => {
     expect(
       vm.profitCostDetailsSummaryList?.rows[0].actions?.items[0].href,
     ).to.equal(
-      `/claims/${claimId.toString()}/poa/profit-cost-details#courtTypeChoice`,
+      `/claims/${claimId.toString()}/poa/profit-cost-details?mode=change#courtTypeChoice`,
     );
 
     expect(vm.profitCostDetailsSummaryList?.rows[1].key.text).to.deep.equal({
@@ -104,7 +104,7 @@ describe("CheckDetailsViewModel constructor()", () => {
     expect(
       vm.profitCostDetailsSummaryList?.rows[1].actions?.items[0].href,
     ).to.equal(
-      `/claims/${claimId.toString()}/poa/profit-cost-details#clientStatusChoice`,
+      `/claims/${claimId.toString()}/poa/profit-cost-details?mode=change#clientStatusChoice`,
     );
 
     expect(vm.profitCostDetailsSummaryList?.rows[2].key.text).to.deep.equal({
@@ -122,7 +122,7 @@ describe("CheckDetailsViewModel constructor()", () => {
     expect(
       vm.profitCostDetailsSummaryList?.rows[2].actions?.items[0].href,
     ).to.equal(
-      `/claims/${claimId.toString()}/poa/profit-cost-details#firstSolicitorChoice`,
+      `/claims/${claimId.toString()}/poa/profit-cost-details?mode=change#firstSolicitorChoice`,
     );
 
     expect(vm.profitCostDetailsSummaryList?.rows[3].key.text).to.deep.equal({
@@ -140,7 +140,7 @@ describe("CheckDetailsViewModel constructor()", () => {
     expect(
       vm.profitCostDetailsSummaryList?.rows[3].actions?.items[0].href,
     ).to.equal(
-      `/claims/${claimId.toString()}/poa/profit-cost-details#transferOfSolicitorChoice`,
+      `/claims/${claimId.toString()}/poa/profit-cost-details?mode=change#transferOfSolicitorChoice`,
     );
 
     expect(vm.profitCostDetailsSummaryList?.rows[4].key.text).to.deep.equal({
@@ -157,7 +157,7 @@ describe("CheckDetailsViewModel constructor()", () => {
     ).to.deep.equal({ key: "common.change" });
     expect(
       vm.profitCostDetailsSummaryList?.rows[4].actions?.items[0].href,
-    ).to.equal(`/claims/${claimId.toString()}/poa/how-many-clients-retained`);
+    ).to.equal(`/claims/${claimId.toString()}/poa/how-many-clients-retained?mode=change`);
 
     expect(vm.profitCostDetailsSummaryList?.rows[5].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.clientsStart",
@@ -174,7 +174,7 @@ describe("CheckDetailsViewModel constructor()", () => {
     expect(
       vm.profitCostDetailsSummaryList?.rows[5].actions?.items[0].href,
     ).to.equal(
-      `/claims/${claimId.toString()}/poa/number-of-clients-start-of-case`,
+      `/claims/${claimId.toString()}/poa/number-of-clients-start-of-case?mode=change`,
     );
 
     expect(vm.profitCostDetailsSummaryList?.rows[6].key.text).to.deep.equal({
@@ -191,7 +191,7 @@ describe("CheckDetailsViewModel constructor()", () => {
     ).to.deep.equal({ key: "common.change" });
     expect(
       vm.profitCostDetailsSummaryList?.rows[6].actions?.items[0].href,
-    ).to.equal(`/claims/${claimId.toString()}/poa/multiple-client-hearings`);
+    ).to.equal(`/claims/${claimId.toString()}/poa/multiple-client-hearings?mode=change`);
 
     expect(vm.profitCostDetailsSummaryList?.rows[7].key.text).to.deep.equal({
       key: "pages.poa.checkYourDetails.cya.profitCostDetails.escapedStandardFixedFee",
@@ -207,7 +207,7 @@ describe("CheckDetailsViewModel constructor()", () => {
     ).to.deep.equal({ key: "common.change" });
     expect(
       vm.profitCostDetailsSummaryList?.rows[7].actions?.items[0].href,
-    ).to.equal(`/claims/${claimId.toString()}/poa/escaping-standard-fixed-fee`);
+    ).to.equal(`/claims/${claimId.toString()}/poa/escaping-standard-fixed-fee?mode=change`);
   });
 
   it("builds the profit cost bill line summary list", () => {
@@ -225,7 +225,7 @@ describe("CheckDetailsViewModel constructor()", () => {
       vm.lineItemSummaryLists[0].card?.actions?.items[0].text,
     ).to.deep.equal({ key: "common.change" });
     expect(vm.lineItemSummaryLists[0].card?.actions?.items[0].href).to.equal(
-      `/claims/${claimId.toString()}/poa/cpgfs-profit-cost-bill-line`,
+      `/claims/${claimId.toString()}/poa/cpgfs-profit-cost-bill-line?mode=change`,
     );
     expect(vm.lineItemSummaryLists[0].attributes.id).to.equal(
       "profit-cost-bill-line-rows",
@@ -287,7 +287,7 @@ describe("CheckDetailsViewModel constructor()", () => {
       key: "common.change",
     });
     expect(vm.evidenceSummaryList.card?.actions?.items[0].href).to.equal(
-      `/claims/${claimId.toString()}/poa/evidence-upload`,
+      `/claims/${claimId.toString()}/poa/evidence-upload?mode=change`,
     );
 
     expect(vm.evidenceSummaryList.rows[0].key.text).to.equal("evidence1.pdf");
@@ -319,13 +319,13 @@ describe("CheckDetailsViewModel constructor()", () => {
       key: "common.delete",
     });
     expect(firstSummaryList.card?.actions?.items[0].href).to.equal(
-      `/claims/${claimId.toString()}/poa/disbursement-details/019fae76-e8a7-73bc-af8d-990543ec4a65/remove`,
+      `/claims/${claimId.toString()}/poa/disbursement-details/019fae76-e8a7-73bc-af8d-990543ec4a65/remove?mode=change`,
     );
     expect(firstSummaryList.card?.actions?.items[1].text).to.deep.equal({
       key: "common.change",
     });
     expect(firstSummaryList.card?.actions?.items[1].href).to.equal(
-      `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=019fae76-e8a7-73bc-af8d-990543ec4a65`,
+      `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=019fae76-e8a7-73bc-af8d-990543ec4a65&mode=change`,
     );
 
     expect(firstSummaryList.attributes.id).to.equal(
@@ -373,13 +373,13 @@ describe("CheckDetailsViewModel constructor()", () => {
       key: "common.delete",
     });
     expect(secondSummaryList.card?.actions?.items[0].href).to.equal(
-      `/claims/${claimId.toString()}/poa/disbursement-details/019fae77-87c3-734c-a38d-54624d48d7e5/remove`,
+      `/claims/${claimId.toString()}/poa/disbursement-details/019fae77-87c3-734c-a38d-54624d48d7e5/remove?mode=change`,
     );
     expect(secondSummaryList.card?.actions?.items[1].text).to.deep.equal({
       key: "common.change",
     });
     expect(secondSummaryList.card?.actions?.items[1].href).to.equal(
-      `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=019fae77-87c3-734c-a38d-54624d48d7e5`,
+      `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=019fae77-87c3-734c-a38d-54624d48d7e5&mode=change`,
     );
 
     expect(secondSummaryList.attributes.id).to.equal(
@@ -437,13 +437,13 @@ describe("CheckDetailsViewModel constructor()", () => {
       key: "common.delete",
     });
     expect(firstSummaryList.card?.actions?.items[0].href).to.equal(
-      `/claims/${claimId.toString()}/poa/disbursement-details/019fae76-e8a7-73bc-af8d-990543ec4a65/remove`,
+      `/claims/${claimId.toString()}/poa/disbursement-details/019fae76-e8a7-73bc-af8d-990543ec4a65/remove?mode=change`,
     );
     expect(firstSummaryList.card?.actions?.items[1].text).to.deep.equal({
       key: "common.change",
     });
     expect(firstSummaryList.card?.actions?.items[1].href).to.equal(
-      `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=019fae76-e8a7-73bc-af8d-990543ec4a65`,
+      `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=019fae76-e8a7-73bc-af8d-990543ec4a65&mode=change`,
     );
 
     expect(firstSummaryList.attributes.id).to.equal(
@@ -491,13 +491,13 @@ describe("CheckDetailsViewModel constructor()", () => {
       key: "common.delete",
     });
     expect(secondSummaryList.card?.actions?.items[0].href).to.equal(
-      `/claims/${claimId.toString()}/poa/disbursement-details/019fae77-87c3-734c-a38d-54624d48d7e5/remove`,
+      `/claims/${claimId.toString()}/poa/disbursement-details/019fae77-87c3-734c-a38d-54624d48d7e5/remove?mode=change`,
     );
     expect(secondSummaryList.card?.actions?.items[1].text).to.deep.equal({
       key: "common.change",
     });
     expect(secondSummaryList.card?.actions?.items[1].href).to.equal(
-      `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=019fae77-87c3-734c-a38d-54624d48d7e5`,
+      `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=019fae77-87c3-734c-a38d-54624d48d7e5&mode=change`,
     );
 
     expect(secondSummaryList.attributes.id).to.equal(
