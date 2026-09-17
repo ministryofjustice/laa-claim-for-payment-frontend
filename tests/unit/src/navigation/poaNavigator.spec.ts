@@ -19,7 +19,7 @@ describe("poaNavigator", () => {
 
   describe("normal mode navigation", () => {
     const mode: Mode = "normal";
-    
+
     describe("redirectFromCostType", () => {
       const claim = new Claim({
         id: claimId,
@@ -50,7 +50,7 @@ describe("poaNavigator", () => {
       });
       const navigator = new PoaNavigator(claim, mode);
 
-      it("redirects to 'how many clients retained' when yes selected", () => {
+      it("redirects to 'how many clients retained' when yes selected for 'transfer of solicitor'", () => {
         const value: ProfitCostDetails = {
           courtType: CourtType.COUNTY_COURT,
           clientStatus: ClientPartyStatus.CHILD,
@@ -61,7 +61,7 @@ describe("poaNavigator", () => {
         expect(result).to.equal("/claims/foo/poa/how-many-clients-retained");
       });
 
-      it("redirects to 'number of clients at start of case' when no selected", () => {
+      it("redirects to 'number of clients at start of case' when no selected for 'transfer of solicitor'", () => {
         const value: ProfitCostDetails = {
           courtType: CourtType.COUNTY_COURT,
           clientStatus: ClientPartyStatus.CHILD,
@@ -132,8 +132,13 @@ describe("poaNavigator", () => {
       const navigator = new PoaNavigator(claim, mode);
 
       it("redirects to 'profit cost bill line'", () => {
-        const result = navigator.redirectFromEscapingStandardFixedFee();
-        expect(result).to.equal("/claims/foo/poa/cpgfs-profit-cost-bill-line");
+        for (const bool of [true, false]) {
+          const result = navigator.redirectFromEscapingStandardFixedFee(bool);
+          expect(result).to.equal(
+            "/claims/foo/poa/cpgfs-profit-cost-bill-line",
+            `Test failed for ${bool}`,
+          );
+        }
       });
     });
 
@@ -286,6 +291,269 @@ describe("poaNavigator", () => {
       it("redirects to 'add another disbursement'", () => {
         const result = navigator.redirectFromRemoveDisbursement();
         expect(result).to.equal("/claims/foo/poa/disbursement-details/add");
+      });
+    });
+  });
+
+  describe("change mode navigation", () => {
+    const mode: Mode = "change";
+
+    describe("redirectFromCostType", () => {
+      it(`redirects to 'check details' when answer doesn't change`, () => {
+        for (const costType of Object.values(CostType)) {
+          const claim = new Claim({
+            id: claimId,
+            costType: costType,
+          });
+          const navigator = new PoaNavigator(claim, mode);
+          const result = navigator.redirectFromCostType(costType);
+          expect(result).to.equal(
+            "/claims/foo/poa/check-details",
+            `Test failed for ${costType}`,
+          );
+        }
+      });
+    });
+
+    describe("redirectFromProfitCostDetails", () => {
+      it("redirects to 'how many clients retained' when no changes to yes for 'transfer of solicitor'", () => {
+        const claim = new Claim({
+          id: claimId,
+          transferOfSolicitorFlag: false,
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const value: ProfitCostDetails = {
+          courtType: CourtType.COUNTY_COURT,
+          clientStatus: ClientPartyStatus.CHILD,
+          firstSolicitor: true,
+          transferOfSolicitor: true,
+        };
+        const result = navigator.redirectFromProfitCostDetails(value);
+        expect(result).to.equal(
+          "/claims/foo/poa/how-many-clients-retained?mode=change",
+        );
+      });
+
+      it("redirects to 'check details' when answer doesn't change for 'transfer of solicitor'", () => {
+        for (const bool of [true, false]) {
+          const claim = new Claim({
+            id: claimId,
+            transferOfSolicitorFlag: bool,
+          });
+          const navigator = new PoaNavigator(claim, mode);
+          const value: ProfitCostDetails = {
+            courtType: CourtType.COUNTY_COURT,
+            clientStatus: ClientPartyStatus.CHILD,
+            firstSolicitor: true,
+            transferOfSolicitor: bool,
+          };
+          const result = navigator.redirectFromProfitCostDetails(value);
+          expect(result).to.equal(
+            "/claims/foo/poa/check-details",
+            `Test failed for ${bool}`,
+          );
+        }
+      });
+    });
+
+    describe("redirectFromHowManyClientsRetained", () => {
+      it("redirects to 'number of clients at start of case' when 1 changes to 0", () => {
+        const claim = new Claim({
+          id: claimId,
+          clientsRetainedCount: Count.ONE,
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromHowManyClientsRetained(Count.ZERO);
+        expect(result).to.equal(
+          "/claims/foo/poa/number-of-clients-start-of-case?mode=change",
+        );
+      });
+
+      it("redirects to 'number of clients at start of case' when 2+ changes to 0", () => {
+        const claim = new Claim({
+          id: claimId,
+          clientsRetainedCount: Count.TWO_OR_MORE,
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromHowManyClientsRetained(Count.ZERO);
+        expect(result).to.equal(
+          "/claims/foo/poa/number-of-clients-start-of-case?mode=change",
+        );
+      });
+
+      it("redirects to 'check details' when answer changes to 1", () => {
+        for (const count of Object.values(Count)) {
+          const claim = new Claim({
+            id: claimId,
+            clientsRetainedCount: count,
+          });
+          const navigator = new PoaNavigator(claim, mode);
+          const result = navigator.redirectFromHowManyClientsRetained(
+            Count.ONE,
+          );
+          expect(result).to.equal(
+            "/claims/foo/poa/check-details",
+            `Test failed for ${count}`,
+          );
+        }
+      });
+
+      it("redirects to 'check details' when answer changes to 2+", () => {
+        for (const count of Object.values(Count)) {
+          const claim = new Claim({
+            id: claimId,
+            clientsRetainedCount: count,
+          });
+          const navigator = new PoaNavigator(claim, mode);
+          const result = navigator.redirectFromHowManyClientsRetained(
+            Count.TWO_OR_MORE,
+          );
+          expect(result).to.equal(
+            "/claims/foo/poa/check-details",
+            `Test failed for ${count}`,
+          );
+        }
+      });
+
+      it("redirects to 'check details' when answer changes from 0", () => {
+        for (const count of Object.values(Count)) {
+          const claim = new Claim({
+            id: claimId,
+            clientsRetainedCount: Count.ZERO,
+          });
+          const navigator = new PoaNavigator(claim, mode);
+          const result = navigator.redirectFromHowManyClientsRetained(count);
+          expect(result).to.equal(
+            "/claims/foo/poa/check-details",
+            `Test failed for ${count}`,
+          );
+        }
+      });
+    });
+
+    describe("redirectFromNumberOfClientStartOfCase", () => {
+      const claim = new Claim({
+        id: claimId,
+      });
+      const navigator = new PoaNavigator(claim, mode);
+
+      it("redirects to 'check details'", () => {
+        const result = navigator.redirectFromNumberOfClientStartOfCase();
+        expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+    });
+
+    describe("redirectFromMultipleClientHearings", () => {
+      const claim = new Claim({
+        id: claimId,
+      });
+      const navigator = new PoaNavigator(claim, mode);
+
+      it("redirects to 'check details'", () => {
+        const result = navigator.redirectFromMultipleClientHearings();
+        expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+    });
+
+    describe("redirectFromEscapingStandardFixedFee", () => {
+      it("redirects to 'evidence upload' when answer changes from no to yes", () => {
+        const claim = new Claim({
+          id: claimId,
+          escaped: false,
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromEscapingStandardFixedFee(true);
+        expect(result).to.equal("/claims/foo/poa/evidence-upload?mode=change");
+      });
+
+      it("redirects to 'check details' when answer changes from yes to no", () => {
+        const claim = new Claim({
+          id: claimId,
+          escaped: true,
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromEscapingStandardFixedFee(false);
+        expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+
+      it("redirects to 'check details' when answer doesn't change", () => {
+        for (const bool of [true, false]) {
+          const claim = new Claim({
+            id: claimId,
+            escaped: bool,
+          });
+          const navigator = new PoaNavigator(claim, mode);
+          const result = navigator.redirectFromEscapingStandardFixedFee(bool);
+          expect(result).to.equal(
+            "/claims/foo/poa/check-details",
+            `Test failed for ${bool}`,
+          );
+        }
+      });
+    });
+
+    describe("redirectFromProfitCostBillLine", () => {
+      const claim = new Claim({
+        id: claimId,
+      });
+      const navigator = new PoaNavigator(claim, mode);
+
+      it("redirects to 'check details'", () => {
+        const result = navigator.redirectFromProfitCostBillLine();
+        expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+    });
+
+    describe("redirectFromEvidenceUpload", () => {
+      const claim = new Claim({
+        id: claimId,
+      });
+      const navigator = new PoaNavigator(claim, mode);
+
+      it("redirects to 'check details'", () => {
+        const result = navigator.redirectFromEvidenceUpload();
+        expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+    });
+
+    describe("redirectFromAddAnotherDisbursement", () => {
+      const claim = new Claim({
+        id: claimId,
+      });
+      const navigator = new PoaNavigator(claim, mode);
+
+      it("redirects to 'check details'", () => {
+        for (const bool of [true, false]) {
+          const result = navigator.redirectFromAddAnotherDisbursement(bool);
+          expect(result).to.equal(
+            "/claims/foo/poa/check-details",
+            `Test failed for ${bool}`,
+          );
+        }
+      });
+    });
+
+    describe("redirectFromDisbursementDetails", () => {
+      const claim = new Claim({
+        id: claimId,
+      });
+      const navigator = new PoaNavigator(claim, mode);
+
+      it("redirects to 'check details'", () => {
+        const result = navigator.redirectFromDisbursementDetails();
+        expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+    });
+
+    describe("redirectFromRemoveDisbursement", () => {
+      const claim = new Claim({
+        id: claimId,
+      });
+      const navigator = new PoaNavigator(claim, mode);
+
+      it("redirects to 'check details'", () => {
+        const result = navigator.redirectFromRemoveDisbursement();
+        expect(result).to.equal("/claims/foo/poa/check-details");
       });
     });
   });

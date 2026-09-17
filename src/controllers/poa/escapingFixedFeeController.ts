@@ -74,7 +74,7 @@ export async function submitEscapingFixedFee(
     );
 
     const navigator = new PoaNavigator(claim, getMode(req));
-    const url = navigator.redirectFromEscapingStandardFixedFee();
+    const url = navigator.redirectFromEscapingStandardFixedFee(form.getValue());
     res.redirect(url);
   } catch (error) {
     const processedError = processError(

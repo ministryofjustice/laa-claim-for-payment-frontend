@@ -97,7 +97,7 @@ describe("escapingFixedFeeController", () => {
       ),
     ).to.be.true;
 
-    expect(redirectFromEscapingStandardFixedFeeStub.calledOnce).to.be.true;
+    expect(redirectFromEscapingStandardFixedFeeStub.calledOnceWith(true)).to.be.true;
     expect(redirectStub.calledWith(redirect)).to.be.true;
   });
 

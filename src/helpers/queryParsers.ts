@@ -1,4 +1,4 @@
-import { Mode } from "#routes/helper.js";
+import type { Mode } from "#routes/helper.js";
 import type { Request } from "express";
 
 /**
@@ -49,6 +49,12 @@ export function isEnumValue<T extends Record<string, string>>(
   return Object.values(enumObject).includes(value as T[keyof T]);
 }
 
+/**
+ * Retrieve mode query value from request
+ *
+ * @param {Request} req Express request object
+ * @returns {Mode} the mode (defaults to "normal")
+ */
 export function getMode(req: Request): Mode {
   return req.query.mode === "change" ? "change" : "normal";
 }
