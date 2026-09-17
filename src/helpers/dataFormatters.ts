@@ -52,6 +52,20 @@ export function formatMoney(value: number): string {
 }
 
 /**
+ * Format claimed amount for display in table cells and UI components
+ * @param {number} value optional value representing the claimed amount
+ * @returns {string} Transformed currency value with 0dp if whole number
+ */
+export function formatMoneyWhole(value: number): string {
+  return new Intl.NumberFormat("en-GB", {
+    style: "currency",
+    currency: "GBP",
+    minimumFractionDigits: Number.isInteger(value) ? 0 : 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+/**
  * Format optional string as a string
  * @param {string | undefined} value Optional string to format
  * @returns {string} String value or empty if undefined

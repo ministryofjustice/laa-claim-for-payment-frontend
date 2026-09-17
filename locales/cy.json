@@ -533,6 +533,10 @@
     },
     "poaEvidenceUpload": {
       "title": "Upload POA evidence",
+      "alert": {
+        "title": "Evidence is not required for disbursements under {amount}",
+        "text": "Delete any uploaded documents that are no longer relevant."
+      },
       "examples": "Examples of evidence include: disbursement quotes with example rates, profit costs incurred to date, attendance notes.",
       "namingFiles": {
         "title": "Naming files",

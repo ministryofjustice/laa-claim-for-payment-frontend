@@ -11,7 +11,8 @@ import { DeleteFileRequest } from "#src/types/requests.js";
 import { TFunction } from "#node_modules/i18next/index.js";
 import { deleteEvidenceFileFromClaim } from "#src/controllers/claims/ajaxFileUploadController.js";
 import { uploadService } from "#src/services/uploadService.js";
-import { Claim, ClaimStatus } from "#src/types/Claim.js";
+import { Category, Claim, ClaimStatus } from "#src/types/Claim.js";
+import { LocalDate } from "#src/types/date.js";
 import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 describe("poaEvidenceUploadController", () => {
@@ -24,6 +25,7 @@ describe("poaEvidenceUploadController", () => {
   let redirectFromEvidenceUploadStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
+  const lineItemId = new V7Generator().generate();
   const evidenceId = new V7Generator().generate();
 
   const mockT: TFunction = ((key: string) => key) as TFunction;
@@ -130,6 +132,18 @@ describe("poaEvidenceUploadController", () => {
         axiosMiddleware: {} as any,
         claim: new Claim({
           id: claimId.toString(),
+          lineItems: [
+            {
+              id: lineItemId.toString(),
+              title: "Line item = threshold",
+              category: Category.DISBURSEMENT,
+              date: new LocalDate(29, 7, 2026),
+              actualNetValue: 20,
+              vatApplicable: false,
+              feeEarnerName: "John Smith",
+              evidenceItems: [],
+            },
+          ],
           evidence: [],
         }),
       };

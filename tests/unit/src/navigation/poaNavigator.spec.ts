@@ -1,4 +1,5 @@
 import {
+  Category,
   Claim,
   ClientPartyStatus,
   CostType,
@@ -8,10 +9,13 @@ import {
 import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 import { expect } from "chai";
 import { ProfitCostDetails } from "#src/types/poa.js";
+import { LocalDate } from "#src/types/date.js";
 
 describe("poaNavigator", () => {
   const claimId = "foo";
-  
+  const lineItemId = "bar";
+  const evidenceId = "baz";
+
   describe("redirectFromCostType", () => {
     const claim = new Claim({
       id: claimId,
@@ -173,19 +177,87 @@ describe("poaNavigator", () => {
   });
 
   describe("redirectFromAddAnotherDisbursement", () => {
-    const claim = new Claim({
-      id: claimId,
-    });
-    const navigator = new PoaNavigator(claim);
-
     it("redirects to 'disbursement details' when yes selected", () => {
+      const claim = new Claim({
+        id: claimId,
+      });
+      const navigator = new PoaNavigator(claim);
       const result = navigator.redirectFromAddAnotherDisbursement(true);
       expect(result).to.equal("/claims/foo/poa/disbursement-details");
     });
 
-    it("redirects to 'evidence upload' when no selected", () => {
+    it("redirects to 'evidence upload' when no selected and a line item has a net value of >= 20", () => {
+      const claim = new Claim({
+        id: claimId,
+        costType: CostType.EXPERT_COST,
+        lineItems: [
+          {
+            id: lineItemId,
+            title: "Line item >= threshold",
+            category: Category.DISBURSEMENT,
+            date: new LocalDate(29, 7, 2026),
+            actualNetValue: 20,
+            vatApplicable: false,
+            feeEarnerName: "John Smith",
+            evidenceItems: [],
+          },
+        ],
+      });
+      const navigator = new PoaNavigator(claim);
       const result = navigator.redirectFromAddAnotherDisbursement(false);
       expect(result).to.equal("/claims/foo/poa/evidence-upload");
+    });
+
+    it("redirects to 'evidence upload' when no selected and no line item has a net value of >= 20 and I have already uploaded evidence", () => {
+      const claim = new Claim({
+        id: claimId,
+        costType: CostType.EXPERT_COST,
+        lineItems: [
+          {
+            id: lineItemId.toString(),
+            title: "Line item < threshold",
+            category: Category.DISBURSEMENT,
+            date: new LocalDate(29, 7, 2026),
+            actualNetValue: 19.99,
+            vatApplicable: false,
+            feeEarnerName: "John Smith",
+            evidenceItems: [],
+          },
+        ],
+        evidence: [
+          {
+            id: evidenceId.toString(),
+            fileKey: "test.pdf",
+            fileSize: 123456,
+            submittedOn: "2026-06-17T14:34:01.226855Z",
+          },
+        ],
+      });
+      const navigator = new PoaNavigator(claim);
+      const result = navigator.redirectFromAddAnotherDisbursement(false);
+      expect(result).to.equal("/claims/foo/poa/evidence-upload");
+    });
+
+    it("redirects to 'check details' when no selected and no line item has a net value of >= 20 and I have not already uploaded evidence", () => {
+      const claim = new Claim({
+        id: claimId,
+        costType: CostType.EXPERT_COST,
+        lineItems: [
+          {
+            id: lineItemId.toString(),
+            title: "Line item < threshold",
+            category: Category.DISBURSEMENT,
+            date: new LocalDate(29, 7, 2026),
+            actualNetValue: 19.99,
+            vatApplicable: false,
+            feeEarnerName: "John Smith",
+            evidenceItems: [],
+          },
+        ],
+      });
+      const navigator = new PoaNavigator(claim);
+      const result = navigator.redirectFromAddAnotherDisbursement(false);
+      expect(result).to.equal("/claims/foo/poa/check-details");
     });
   });
 

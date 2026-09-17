@@ -108,13 +108,18 @@ export class PoaNavigator {
     // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
     const { escapedFlag: escaped } = this.claim;
 
-    const route =
-      escaped === true
-        ? ROUTES.POA.EVIDENCE_UPLOAD
-        : escaped === false
-          ? ROUTES.POA.CHECK_DETAILS
-          : ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE;
+    const getRoute: () => string = () => {
+      switch (escaped) {
+        case true:
+          return ROUTES.POA.EVIDENCE_UPLOAD;
+        case false:
+          return ROUTES.POA.CHECK_DETAILS;
+        default:
+          return ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE;
+      }
+    }
 
+    const route = getRoute();
     return buildRoute(route, { claimId: this.claimId });
   }
 
@@ -136,10 +141,17 @@ export class PoaNavigator {
    * @returns {string} URL to redirect to
    */
   redirectFromAddAnotherDisbursement(value: boolean): string {
-    const route = value
-      ? ROUTES.POA.DISBURSEMENTS.DETAILS
-      : ROUTES.POA.EVIDENCE_UPLOAD;
+    const getRoute: () => string = () => {
+      if (value) {
+        return ROUTES.POA.DISBURSEMENTS.DETAILS;
+      } else if (this.claim.requiresEvidence || this.claim.hasEvidence) {
+        return ROUTES.POA.EVIDENCE_UPLOAD;
+      } else {
+        return ROUTES.POA.CHECK_DETAILS;
+      }
+    }
 
+    const route = getRoute();
     return buildRoute(route, { claimId: this.claimId });
   }
 

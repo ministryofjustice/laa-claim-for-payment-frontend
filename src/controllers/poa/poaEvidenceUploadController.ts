@@ -20,13 +20,12 @@ export function poaEvidenceUploadPage(
 ): void {
   try {
     const claim = requireClaim(req);
-    const { id: claimId } = claim;
 
     const form = new UploadForm(buildField());
     form.fill(claim.evidence);
 
     const vm = new PoaEvidenceUploadViewModel({
-      claimId,
+      claim,
       form,
     });
 
@@ -53,14 +52,13 @@ export function submitPoaEvidenceUpload(
 ): void {
   try {
     const claim = requireClaim(req);
-    const { id: claimId } = claim;
 
     const form = new UploadForm(buildField());
-    form.validate(claim.evidence);
+    form.validate(claim);
 
     if (form.isNotValid()) {
       const vm = new PoaEvidenceUploadViewModel({
-        claimId,
+        claim,
         form,
       });
 
