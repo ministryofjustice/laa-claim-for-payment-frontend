@@ -9,6 +9,7 @@ import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 import createHttpError from "http-errors";
 import { requireClaim, requireDisbursementCostType } from "#src/helpers/claimGuards.js";
 import { PoaNavigator } from "#src/navigation/poaNavigator.js";
+import { getMode } from "#src/helpers/queryParsers.js";
 
 /**
  * get confirm remove expert line item page
@@ -96,7 +97,7 @@ export async function submitRemoveExpertLineItem(
       }
     }
 
-    const navigator = new PoaNavigator(claim);
+    const navigator = new PoaNavigator(claim, getMode(req));
     const url = navigator.redirectFromRemoveDisbursement();
     res.redirect(url);
   } catch (error) {

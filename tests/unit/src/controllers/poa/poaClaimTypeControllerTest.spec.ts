@@ -139,6 +139,7 @@ describe("poaClaimTypeController", () => {
       body: {
         poaClaimType: "PROFIT_COST",
       },
+      query: {},
     };
 
     setCostTypeStub.resolves({

@@ -84,6 +84,7 @@ describe("Profit cost details controller", () => {
         ["firstSolicitorChoice"]: "yes",
         ["transferOfSolicitorChoice"]: "yes",
       },
+      query: {},
     };
 
     updateClaimStub.resolves({

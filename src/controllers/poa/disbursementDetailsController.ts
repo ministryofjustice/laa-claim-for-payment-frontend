@@ -12,6 +12,7 @@ import type { LineItemForm } from "#src/types/poa.js";
 import createHttpError from "http-errors";
 import { requireClaim, requireDisbursementCostType } from "#src/helpers/claimGuards.js";
 import { PoaNavigator } from "#src/navigation/poaNavigator.js";
+import { getMode } from "#src/helpers/queryParsers.js";
 
 /**
  * Display POA expert cost details page.
@@ -114,7 +115,7 @@ export async function submitDisbursementDetails(
       );
     }
 
-    const navigator = new PoaNavigator(claim);
+    const navigator = new PoaNavigator(claim, getMode(req));
     const url = navigator.redirectFromDisbursementDetails();
     res.redirect(url);
   } catch (error) {

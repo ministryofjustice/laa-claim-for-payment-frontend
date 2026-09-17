@@ -11,6 +11,7 @@ import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 import { requireClaim, requireDisbursementCostType } from "#src/helpers/claimGuards.js";
 import { PoaNavigator } from "#src/navigation/poaNavigator.js";
+import { getMode } from "#src/helpers/queryParsers.js";
 
 /**
  * get add another expert cost view
@@ -84,7 +85,7 @@ export function submitAddAnotherDisbursement(
       return;
     }
 
-    const navigator = new PoaNavigator(claim);
+    const navigator = new PoaNavigator(claim, getMode(req));
     const url = navigator.redirectFromAddAnotherDisbursement(form.getValue());
     res.redirect(url);
   } catch (error) {

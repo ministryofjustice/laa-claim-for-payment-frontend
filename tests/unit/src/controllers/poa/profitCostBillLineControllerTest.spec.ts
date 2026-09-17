@@ -202,6 +202,7 @@ describe("profitCostBillLineController", () => {
         vatApplies: "yes",
         feeEarnerName: "John Smith",
       },
+      query: {},
     } as unknown as Request;
 
     createLineItemStub.resolves({

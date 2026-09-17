@@ -1,3 +1,6 @@
+import { Mode } from "#routes/helper.js";
+import type { Request } from "express";
+
 /**
  * Query parameter parser helpers
  *
@@ -44,4 +47,8 @@ export function isEnumValue<T extends Record<string, string>>(
 ): value is T[keyof T] {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- ignore
   return Object.values(enumObject).includes(value as T[keyof T]);
+}
+
+export function getMode(req: Request): Mode {
+  return req.query.mode === "change" ? "change" : "normal";
 }

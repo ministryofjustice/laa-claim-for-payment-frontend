@@ -76,6 +76,7 @@ describe("escapingFixedFeeController", () => {
       body: {
         escapingFixedFee: "yes",
       },
+      query: {},
     } as unknown as Request;
 
     setEscapedFlagStub.resolves({

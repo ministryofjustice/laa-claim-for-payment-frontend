@@ -176,6 +176,7 @@ describe("removeDisbursementController", () => {
       body: {
         confirmRemoveExpertLineItem: "yes",
       },
+      query: {},
     } as unknown as Request;
 
     deleteLineItemStub.resolves({
@@ -212,6 +213,7 @@ describe("removeDisbursementController", () => {
       body: {
         confirmRemoveExpertLineItem: "no",
       },
+      query: {},
     } as unknown as Request;
 
     redirectFromRemoveDisbursementStub.returns(redirect);

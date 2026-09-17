@@ -101,6 +101,7 @@ describe("numberOfClientsStartOfCaseController", () => {
       body: {
         numberOfClientsStartOfCase: "ZERO",
       },
+      query: {},
     } as unknown as Request;
 
     updateClaimStub.resolves({

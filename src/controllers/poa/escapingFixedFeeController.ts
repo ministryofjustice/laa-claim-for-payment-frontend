@@ -6,6 +6,7 @@ import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 import { requireClaim } from "#src/helpers/claimGuards.js";
 import { PoaNavigator } from "#src/navigation/poaNavigator.js";
+import { getMode } from "#src/helpers/queryParsers.js";
 
 /**
  * get how many clients retained view
@@ -72,7 +73,7 @@ export async function submitEscapingFixedFee(
       form.getValue(),
     );
 
-    const navigator = new PoaNavigator(claim);
+    const navigator = new PoaNavigator(claim, getMode(req));
     const url = navigator.redirectFromEscapingStandardFixedFee();
     res.redirect(url);
   } catch (error) {

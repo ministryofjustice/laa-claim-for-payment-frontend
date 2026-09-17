@@ -11,7 +11,7 @@ interface RadioQuestionControllerParams<ChoiceType extends string> {
   buildField: () => RadioField<ChoiceType, ChoiceType>;
   renderErrorContext: string;
   submitErrorContext: string;
-  getRedirectUrl: (claim: Claim, selectedChoice: ChoiceType) => string;
+  getRedirectUrl: (req: Request, claim: Claim, selectedChoice: ChoiceType) => string;
   getValue: (claim: Claim) => ChoiceType | null | undefined;
   setValue: (claim: Claim, selectedChoice: ChoiceType) => Claim;
 }
@@ -74,7 +74,7 @@ export function createRadioQuestionController<ChoiceType extends string>({
           setValue(claim, form.getValue()),
         );
 
-        res.redirect(getRedirectUrl(claim, form.getValue()));
+        res.redirect(getRedirectUrl(req, claim, form.getValue()));
       } catch (error) {
         next(processError(error, submitErrorContext));
       }

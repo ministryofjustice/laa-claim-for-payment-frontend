@@ -169,6 +169,7 @@ describe("addAnotherDisbursementController", () => {
       body: {
         addAnother: "yes",
       },
+      query: {},
     } as unknown as Request;
 
     redirectFromAddAnotherDisbursementStub.returns(redirect);

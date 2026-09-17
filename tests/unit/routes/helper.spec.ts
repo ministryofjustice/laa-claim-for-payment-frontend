@@ -1,4 +1,4 @@
-import { buildRoute } from "#routes/helper.js";
+import { buildChangeRoute, buildRoute } from "#routes/helper.js";
 import { expect } from "chai";
 
 describe("helper", () => {
@@ -47,6 +47,14 @@ describe("helper", () => {
       const route = "/foo/:param";
       const result = buildRoute(route, { param: "bar" }, { key: "value" });
       expect(result).to.equal("/foo/bar?key=value");
+    });
+  });
+
+  describe("buildChangeRoute", () => {
+    it("constructs a route with change query parameter", () => {
+      const route = "/foo";
+      const result = buildChangeRoute(route, {}, { key: "value" });
+      expect(result).to.equal("/foo?key=value&mode=change");
     });
   });
 });

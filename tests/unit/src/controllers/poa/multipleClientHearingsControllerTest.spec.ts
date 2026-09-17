@@ -73,6 +73,7 @@ describe("multipleClientHearingsController", () => {
       body: {
         multipleClientHearings: "yes",
       },
+      query: {},
     } as unknown as Request;
 
     updateClaimStub.resolves({

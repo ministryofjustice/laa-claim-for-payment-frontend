@@ -79,6 +79,7 @@ describe("howManyClientsRetainedController", () => {
       body: {
         howManyClientsRetained: "ZERO",
       },
+      query: {},
     } as unknown as Request;
 
     updateClaimStub.resolves({

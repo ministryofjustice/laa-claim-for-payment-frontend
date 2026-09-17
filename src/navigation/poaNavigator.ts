@@ -1,5 +1,5 @@
 import { type Claim, CostType, Count } from "#src/types/Claim.js";
-import { buildRoute, ROUTES } from "#routes/helper.js";
+import { buildRoute, Mode, ROUTES } from "#routes/helper.js";
 import type { ProfitCostDetails } from "#src/types/poa.js";
 
 /**
@@ -8,16 +8,19 @@ import type { ProfitCostDetails } from "#src/types/poa.js";
 export class PoaNavigator {
   private readonly claim: Claim;
   private readonly claimId: string;
+  private readonly mode: Mode;
 
   /**
    * Constructs a navigator for the POA journey
    *
    * @param {Claim} claim claim
+   * @param {Mode} mode navigation mode
    */
-  constructor(claim: Claim) {
+  constructor(claim: Claim, mode: Mode) {
     this.claim = claim;
     const { id: claimId } = claim;
     this.claimId = claimId;
+    this.mode = mode;
   }
 
   /**

@@ -117,6 +117,7 @@ describe("poaEvidenceUploadController", () => {
             },
           ],
         }),
+        query: {},
       };
 
       redirectFromEvidenceUploadStub.returns(redirect);

@@ -5,6 +5,7 @@ import { UploadField } from "#src/helpers/fields.js";
 import { UploadForm } from "#src/helpers/fileUploadValidation.js";
 import { requireClaim } from "#src/helpers/claimGuards.js";
 import { PoaNavigator } from "#src/navigation/poaNavigator.js";
+import { getMode } from "#src/helpers/queryParsers.js";
 
 /**
  * Display POA evidence upload page.
@@ -69,7 +70,7 @@ export function submitPoaEvidenceUpload(
       return;
     }
 
-    const navigator = new PoaNavigator(claim);
+    const navigator = new PoaNavigator(claim, getMode(req));
     const url = navigator.redirectFromEvidenceUpload();
     res.redirect(url);
   } catch (error) {

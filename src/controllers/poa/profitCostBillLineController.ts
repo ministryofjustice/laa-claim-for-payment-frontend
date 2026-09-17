@@ -12,6 +12,7 @@ import { CostType } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
 import { requireClaim } from "#src/helpers/claimGuards.js";
 import { PoaNavigator } from "#src/navigation/poaNavigator.js";
+import { getMode } from "#src/helpers/queryParsers.js";
 
 /**
  * Display POA CPGFS profit cost bill line page.
@@ -117,7 +118,7 @@ export async function submitProfitCostBillLine(
       );
     }
 
-    const navigator = new PoaNavigator(claim);
+    const navigator = new PoaNavigator(claim, getMode(req));
     const url = navigator.redirectFromProfitCostBillLine();
     res.redirect(url);
   } catch (error) {

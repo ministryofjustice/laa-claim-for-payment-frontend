@@ -6,6 +6,7 @@ import { ProfitCostDetailsForm, type ProfitCostDetailsRequestBody } from "#src/h
 import { claimService } from "#src/services/claimService.js";
 import { requireClaim } from "#src/helpers/claimGuards.js";
 import { PoaNavigator } from "#src/navigation/poaNavigator.js";
+import { getMode } from "#src/helpers/queryParsers.js";
 
 /**
  * Profit cost details journey view
@@ -84,7 +85,7 @@ export async function submitProfitCostDetails(
       claim.setProfitCostDetails(form.getValue()),
     );
 
-    const navigator = new PoaNavigator(claim);
+    const navigator = new PoaNavigator(claim, getMode(req));
     const url = navigator.redirectFromProfitCostDetails(form.getValue());
     res.redirect(url);
   } catch (error) {
