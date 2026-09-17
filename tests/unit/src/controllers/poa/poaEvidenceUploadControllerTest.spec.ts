@@ -6,7 +6,6 @@ import {
   poaEvidenceUploadPage,
   submitPoaEvidenceUpload,
 } from "#src/controllers/poa/poaEvidenceUploadController.js";
-import { buildRoute, ROUTES } from "#routes/helper.js";
 import { V7Generator } from "uuidv7";
 import { DeleteFileRequest } from "#src/types/requests.js";
 import { TFunction } from "#node_modules/i18next/index.js";
@@ -14,13 +13,16 @@ import { deleteEvidenceFileFromClaim } from "#src/controllers/claims/ajaxFileUpl
 import { uploadService } from "#src/services/uploadService.js";
 import { Category, Claim, ClaimStatus } from "#src/types/Claim.js";
 import { LocalDate } from "#src/types/date.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 describe("poaEvidenceUploadController", () => {
   let res: any;
   let next: any;
 
   let renderStub: sinon.SinonStub;
+  let redirectStub: sinon.SinonStub;
   let deleteEvidenceFromClaimStub: sinon.SinonStub;
+  let redirectFromEvidenceUploadStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
   const lineItemId = new V7Generator().generate();
@@ -30,12 +32,13 @@ describe("poaEvidenceUploadController", () => {
 
   beforeEach(() => {
     renderStub = sinon.stub();
+    redirectStub = sinon.stub();
 
     res = {
       render: renderStub,
       status: sinon.stub().returnsThis(),
       json: sinon.stub(),
-      redirect: sinon.spy(),
+      redirect: redirectStub,
       locals: {
         csrfToken: "test-csrf-token",
       },
@@ -46,6 +49,11 @@ describe("poaEvidenceUploadController", () => {
     deleteEvidenceFromClaimStub = sinon.stub(
       uploadService,
       "deleteEvidenceFromClaim",
+    );
+
+    redirectFromEvidenceUploadStub = sinon.stub(
+      PoaNavigator.prototype,
+      "redirectFromEvidenceUpload",
     );
   });
 
@@ -94,7 +102,8 @@ describe("poaEvidenceUploadController", () => {
   describe("uploadEvidenceFile", () => {
     let req: Partial<Request>;
 
-    it("redirects to check your details on submit", () => {
+    it("redirects when valid submission", async () => {
+      const redirect = "/next-page";
       req = {
         axiosMiddleware: {} as any,
         claim: new Claim({
@@ -110,15 +119,12 @@ describe("poaEvidenceUploadController", () => {
         }),
       };
 
+      redirectFromEvidenceUploadStub.returns(redirect);
+
       submitPoaEvidenceUpload(req as Request, res, next);
 
-      expect(
-        (res.redirect as sinon.SinonStub).calledWith(
-          buildRoute(ROUTES.POA.CHECK_DETAILS, {
-            claimId: claimId,
-          }),
-        ),
-      ).to.equal(true);
+      expect(redirectFromEvidenceUploadStub.calledOnce).to.be.true;
+      expect(redirectStub.calledWith(redirect)).to.be.true;
     });
 
     it("renders with an error when no evidence has been uploaded", () => {

@@ -1,10 +1,10 @@
-import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processError } from "#src/helpers/index.js";
 import { PoaEvidenceUploadViewModel } from "#src/viewmodels/poa/evidenceUploadViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { UploadField } from "#src/helpers/fields.js";
 import { UploadForm } from "#src/helpers/fileUploadValidation.js";
 import { requireClaim } from "#src/helpers/claimGuards.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 /**
  * Display POA evidence upload page.
@@ -52,7 +52,6 @@ export function submitPoaEvidenceUpload(
 ): void {
   try {
     const claim = requireClaim(req);
-    const { id: claimId } = claim;
 
     const form = new UploadForm(buildField());
     form.validate(claim);
@@ -70,7 +69,9 @@ export function submitPoaEvidenceUpload(
       return;
     }
 
-    res.redirect(buildRoute(ROUTES.POA.CHECK_DETAILS, { claimId }));
+    const navigator = new PoaNavigator(claim);
+    const url = navigator.redirectFromEvidenceUpload();
+    res.redirect(url);
   } catch (error) {
     next(processError(error, "submitting POA evidence upload page"));
   }

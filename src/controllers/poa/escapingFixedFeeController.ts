@@ -1,11 +1,11 @@
 import { RadioQuestionViewModel, type YesNoQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processError } from "#src/helpers/index.js";
-import { buildRoute, ROUTES } from "#routes/helper.js";
 import { draftService } from "#src/services/draftService.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 import { requireClaim } from "#src/helpers/claimGuards.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 /**
  * get how many clients retained view
@@ -72,7 +72,9 @@ export async function submitEscapingFixedFee(
       form.getValue(),
     );
 
-    res.redirect(buildRoute(ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE, { claimId: claim.id }));
+    const navigator = new PoaNavigator(claim);
+    const url = navigator.redirectFromEscapingStandardFixedFee();
+    res.redirect(url);
   } catch (error) {
     const processedError = processError(
       error,

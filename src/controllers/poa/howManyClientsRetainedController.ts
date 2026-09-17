@@ -1,12 +1,12 @@
 import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processError } from "#src/helpers/index.js";
-import { buildRoute, ROUTES } from "#routes/helper.js";
 import { Count } from "#src/types/Claim.js";
 import { claimService } from "#src/services/claimService.js";
 import { RadioField } from "#src/helpers/fields.js";
 import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 import { requireClaim } from "#src/helpers/claimGuards.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 /**
  * get how many clients retained view
@@ -63,24 +63,15 @@ export async function submitHowManyClientsRetained(
     }
 
     const claim = requireClaim(req);
-    const { id: claimId } = claim;
 
     await claimService.updateClaim(
       req.axiosMiddleware,
       claim.setClientsRetainedCount(form.getValue()),
     );
 
-    const redirectByChoice: Record<Count, string> = {
-      [Count.ZERO]: buildRoute(ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE, {
-        claimId,
-      }),
-      [Count.ONE]: buildRoute(ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS, { claimId }),
-      [Count.TWO_OR_MORE]: buildRoute(ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS, {
-        claimId,
-      }),
-    };
-
-    res.redirect(redirectByChoice[form.getValue()]);
+    const navigator = new PoaNavigator(claim);
+    const url = navigator.redirectFromHowManyClientsRetained(form.getValue());
+    res.redirect(url);
   } catch (error) {
     const processedError = processError(error, "submitting how many clients retained page");
     next(processedError);

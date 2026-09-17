@@ -8,19 +8,24 @@ import {
 } from "#src/controllers/poa/howManyClientsRetainedController.js";
 import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { Claim } from "#src/types/Claim.js";
+import { Claim, Count } from "#src/types/Claim.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 describe("howManyClientsRetainedController", () => {
   let res: Response;
   let next: NextFunction;
+  let redirectStub: sinon.SinonStub;
   let updateClaimStub: sinon.SinonStub;
+  let redirectFromHowManyClientsRetainedStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
 
   beforeEach(() => {
+    redirectStub = sinon.stub();
+
     res = {
       render: sinon.stub(),
-      redirect: sinon.stub(),
+      redirect: redirectStub,
       status: sinon.stub().returnsThis(),
       locals: {
         csrfToken: "test-csrf-token",
@@ -30,6 +35,11 @@ describe("howManyClientsRetainedController", () => {
     next = sinon.stub() as unknown as NextFunction;
 
     updateClaimStub = sinon.stub(claimService, "updateClaim");
+
+    redirectFromHowManyClientsRetainedStub = sinon.stub(
+      PoaNavigator.prototype,
+      "redirectFromHowManyClientsRetained",
+    );
   });
 
   afterEach(() => {
@@ -59,7 +69,9 @@ describe("howManyClientsRetainedController", () => {
     expect(renderArgs.vm.radios.name).to.equal("howManyClientsRetained");
   });
 
-  it("redirects to number of clients at start of case when answer is 0", async () => {
+  it("redirects when valid submission", async () => {
+    const redirect = "/next-page";
+
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -74,6 +86,8 @@ describe("howManyClientsRetainedController", () => {
       body: null,
     });
 
+    redirectFromHowManyClientsRetainedStub.returns(redirect);
+
     await submitHowManyClientsRetained(req, res, next);
 
     expect(
@@ -86,49 +100,9 @@ describe("howManyClientsRetainedController", () => {
       ),
     ).to.be.true;
 
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        `/claims/${claimId.toString()}/poa/number-of-clients-start-of-case`,
-      ),
-    ).to.be.true;
-  });
-
-  it("redirects to multiple client hearings when answer is not 0", async () => {
-    const selections: string[] = ["ONE", "TWO_OR_MORE"];
-
-    for (const selection of selections) {
-      const req = {
-        claim: new Claim({
-          id: claimId.toString(),
-        }),
-        body: {
-          howManyClientsRetained: selection,
-        },
-      } as unknown as Request;
-
-      updateClaimStub.resolves({
-        status: "success",
-        body: null,
-      });
-
-      await submitHowManyClientsRetained(req, res, next);
-
-      expect(
-        updateClaimStub.calledWith(
-          req.axiosMiddleware,
-          sinon.match({
-            id: claimId.toString(),
-            clientsRetainedCount: selection,
-          }),
-        ),
-      ).to.be.true;
-
-      expect(
-        (res.redirect as sinon.SinonStub).calledWith(
-          `/claims/${claimId.toString()}/poa/multiple-client-hearings`,
-        ),
-      ).to.be.true;
-    }
+    expect(redirectFromHowManyClientsRetainedStub.calledOnceWith(Count.ZERO)).to
+      .be.true;
+    expect(redirectStub.calledWith(redirect)).to.be.true;
   });
 
   it("re-renders the page with an error when no option is selected", async () => {

@@ -1,7 +1,6 @@
 import { RadioQuestionViewModel, type YesNoQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processApiError, processError } from "#src/helpers/index.js";
-import { buildRoute, ROUTES } from "#routes/helper.js";
 import { UUID } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { type DisbursementCostType, DisbursementCostTypeMessagePrefix } from "#src/types/Claim.js";
@@ -9,6 +8,7 @@ import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 import createHttpError from "http-errors";
 import { requireClaim, requireDisbursementCostType } from "#src/helpers/claimGuards.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 /**
  * get confirm remove expert line item page
@@ -82,8 +82,6 @@ export async function submitRemoveExpertLineItem(
       return;
     }
 
-    const nextPage = buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, { claimId });
-
     if (form.getValue()) {
       const deleted = await claimService.deleteLineItem(
         req.axiosMiddleware,
@@ -91,16 +89,16 @@ export async function submitRemoveExpertLineItem(
         lineItemId.toString(),
       );
 
-      if (deleted.status === "success") {
-        res.redirect(nextPage);
-      } else {
+      if (deleted.status === "error") {
         next(
           processApiError(deleted, "deleting line item for expert cost page"),
         );
       }
-    } else {
-      res.redirect(nextPage)
     }
+
+    const navigator = new PoaNavigator(claim);
+    const url = navigator.redirectFromRemoveDisbursement();
+    res.redirect(url);
   } catch (error) {
     const processedError = processError(
       error,

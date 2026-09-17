@@ -9,19 +9,23 @@ import {
   submitAddAnotherDisbursement,
 } from "#src/controllers/poa/addAnotherDisbursementController.js";
 import { LocalDate } from "#src/types/date.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 describe("addAnotherDisbursementController", () => {
   let res: Response;
   let next: NextFunction;
+  let redirectStub: sinon.SinonStub;
+  let redirectFromAddAnotherDisbursementStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
   const lineItemId = new V7Generator().generate();
-  const evidenceId = new V7Generator().generate();
 
   beforeEach(() => {
+    redirectStub = sinon.stub();
+
     res = {
       render: sinon.stub(),
-      redirect: sinon.stub(),
+      redirect: redirectStub,
       status: sinon.stub().returnsThis(),
       locals: {
         csrfToken: "test-csrf-token",
@@ -29,6 +33,11 @@ describe("addAnotherDisbursementController", () => {
     } as unknown as Response;
 
     next = sinon.stub() as unknown as NextFunction;
+
+    redirectFromAddAnotherDisbursementStub = sinon.stub(
+      PoaNavigator.prototype,
+      "redirectFromAddAnotherDisbursement",
+    );
   });
 
   afterEach(() => {
@@ -150,7 +159,8 @@ describe("addAnotherDisbursementController", () => {
     ).to.equal(true);
   });
 
-  it("redirects to expert cost details when yes selected", () => {
+  it("redirects when valid submission", async () => {
+    const redirect = "/next-page";
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -161,117 +171,13 @@ describe("addAnotherDisbursementController", () => {
       },
     } as unknown as Request;
 
-    submitAddAnotherDisbursement(req, res, next);
-
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        `/claims/${claimId.toString()}/poa/disbursement-details`,
-      ),
-    ).to.equal(true);
-  });
-
-  it("redirects to evidence upload when no selected and a line item has a net value of >= 20", () => {
-    const req = {
-      claim: new Claim({
-        id: claimId.toString(),
-        costType: CostType.EXPERT_COST,
-        lineItems: [
-          {
-            id: lineItemId.toString(),
-            title: "Line item >= threshold",
-            category: Category.DISBURSEMENT,
-            date: new LocalDate(29, 7, 2026),
-            actualNetValue: 20,
-            vatApplicable: false,
-            feeEarnerName: "John Smith",
-            evidenceItems: [],
-          },
-        ],
-      }),
-      body: {
-        addAnother: "no",
-      },
-    } as unknown as Request;
+    redirectFromAddAnotherDisbursementStub.returns(redirect);
 
     submitAddAnotherDisbursement(req, res, next);
 
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        `/claims/${claimId.toString()}/poa/evidence-upload`,
-      ),
-    ).to.equal(true);
-  });
-
-  it("redirects to evidence upload when no selected and no line item has a net value of >= 20 and I have already uploaded evidence", () => {
-    const req = {
-      claim: new Claim({
-        id: claimId.toString(),
-        costType: CostType.EXPERT_COST,
-        lineItems: [
-          {
-            id: lineItemId.toString(),
-            title: "Line item < threshold",
-            category: Category.DISBURSEMENT,
-            date: new LocalDate(29, 7, 2026),
-            actualNetValue: 19.99,
-            vatApplicable: false,
-            feeEarnerName: "John Smith",
-            evidenceItems: [],
-          },
-        ],
-        evidence: [
-          {
-            id: evidenceId.toString(),
-            fileKey: "test.pdf",
-            fileSize: 123456,
-            submittedOn: "2026-06-17T14:34:01.226855Z",
-          },
-        ],
-      }),
-      body: {
-        addAnother: "no",
-      },
-    } as unknown as Request;
-
-    submitAddAnotherDisbursement(req, res, next);
-
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        `/claims/${claimId.toString()}/poa/evidence-upload`,
-      ),
-    ).to.equal(true);
-  });
-
-  it("redirects to CYA when no selected and no line item has a net value of >= 20 and I have not already uploaded evidence", () => {
-    const req = {
-      claim: new Claim({
-        id: claimId.toString(),
-        costType: CostType.EXPERT_COST,
-        lineItems: [
-          {
-            id: lineItemId.toString(),
-            title: "Line item < threshold",
-            category: Category.DISBURSEMENT,
-            date: new LocalDate(29, 7, 2026),
-            actualNetValue: 19.99,
-            vatApplicable: false,
-            feeEarnerName: "John Smith",
-            evidenceItems: [],
-          },
-        ],
-      }),
-      body: {
-        addAnother: "no",
-      },
-    } as unknown as Request;
-
-    submitAddAnotherDisbursement(req, res, next);
-
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        `/claims/${claimId.toString()}/poa/check-details`,
-      ),
-    ).to.equal(true);
+    expect(redirectFromAddAnotherDisbursementStub.calledOnceWith(true)).to.be
+      .true;
+    expect(redirectStub.calledWith(redirect)).to.be.true;
   });
 
   it("rerenders the radio question page with an error when no option is selected", () => {

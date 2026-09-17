@@ -1,4 +1,3 @@
-import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processError } from "#src/helpers/index.js";
 import type { NextFunction, Request, Response } from "express";
 import { DisbursementDetailsViewModel } from "#src/viewmodels/poa/disbursementDetailsViewModel.js";
@@ -12,6 +11,7 @@ import { claimService } from "#src/services/claimService.js";
 import type { LineItemForm } from "#src/types/poa.js";
 import createHttpError from "http-errors";
 import { requireClaim, requireDisbursementCostType } from "#src/helpers/claimGuards.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 /**
  * Display POA expert cost details page.
@@ -114,11 +114,9 @@ export async function submitDisbursementDetails(
       );
     }
 
-    res.redirect(
-      buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, {
-        claimId,
-      }),
-    );
+    const navigator = new PoaNavigator(claim);
+    const url = navigator.redirectFromDisbursementDetails();
+    res.redirect(url);
   } catch (error) {
     next(processError(error, "submitting expert cost details page"));
   }

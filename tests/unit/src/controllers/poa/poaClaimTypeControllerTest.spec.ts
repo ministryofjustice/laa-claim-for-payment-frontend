@@ -7,22 +7,27 @@ import {
   submitPoaClaimType,
 } from "#src/controllers/poa/poaClaimTypeController.js";
 import { V7Generator } from "uuidv7";
-import { Claim } from "#src/types/Claim.js";
+import { Claim, CostType } from "#src/types/Claim.js";
 import { draftService } from "#src/services/draftService.js";
 import config from "#config.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 describe("poaClaimTypeController", () => {
   let req: Partial<Request>;
   let res: Response;
   let next: NextFunction;
+  let redirectStub: sinon.SinonStub;
   let setCostTypeStub: sinon.SinonStub;
+  let redirectFromCostTypeStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
 
   beforeEach(() => {
+    redirectStub = sinon.stub();
+
     res = {
       render: sinon.stub(),
-      redirect: sinon.stub(),
+      redirect: redirectStub,
       status: sinon.stub().returnsThis(),
       locals: {
         csrfToken: "test-csrf-token",
@@ -32,6 +37,11 @@ describe("poaClaimTypeController", () => {
     next = sinon.stub() as unknown as NextFunction;
 
     setCostTypeStub = sinon.stub(draftService, "setCostType");
+
+    redirectFromCostTypeStub = sinon.stub(
+      PoaNavigator.prototype,
+      "redirectFromCostType",
+    );
   });
 
   afterEach(() => {
@@ -118,7 +128,8 @@ describe("poaClaimTypeController", () => {
     ]);
   });
 
-  it("redirects to profit cost details when Profit cost is selected", async () => {
+  it("redirects when valid submission", async () => {
+    const redirect = "/next-page";
     sinon.stub(config.featureFlags, "poaProfitCostEnabled").value(true);
 
     req = {
@@ -135,58 +146,12 @@ describe("poaClaimTypeController", () => {
       body: null,
     });
 
-    await submitPoaClaimType(req as Request, res, next);
-
-    expect((res.redirect as sinon.SinonStub).calledOnce).to.equal(true);
-    expect((res.redirect as sinon.SinonStub).firstCall.args).to.deep.equal([
-      `/claims/${claimId.toString()}/poa/profit-cost-details`,
-    ]);
-  });
-
-  it("redirects to expert cost details when Expert cost is selected", async () => {
-    req = {
-      claim: new Claim({
-        id: claimId.toString(),
-      }),
-      body: {
-        poaClaimType: "EXPERT_COST",
-      },
-    };
-
-    setCostTypeStub.resolves({
-      status: "success",
-      body: null,
-    });
+    redirectFromCostTypeStub.returns(redirect);
 
     await submitPoaClaimType(req as Request, res, next);
 
-    expect((res.redirect as sinon.SinonStub).calledOnce).to.equal(true);
-    expect((res.redirect as sinon.SinonStub).firstCall.args).to.deep.equal([
-      `/claims/${claimId}/poa/disbursement-details/add`,
-    ]);
-  });
-
-  it("redirects to non expert disbursement when Non expert disbursement is selected", async () => {
-    req = {
-      claim: new Claim({
-        id: claimId.toString(),
-      }),
-      body: {
-        poaClaimType: "NON_EXPERT_DISBURSEMENT",
-      },
-    };
-
-    setCostTypeStub.resolves({
-      status: "success",
-      body: null,
-    });
-
-    await submitPoaClaimType(req as Request, res, next);
-
-    expect((res.redirect as sinon.SinonStub).calledOnce).to.equal(true);
-    expect((res.redirect as sinon.SinonStub).firstCall.args).to.deep.equal([
-      `/claims/${claimId}/poa/disbursement-details/add`,
-    ]);
+    expect(redirectFromCostTypeStub.calledOnceWith(CostType.PROFIT_COST)).to.be.true;
+    expect(redirectStub.calledWith(redirect)).to.be.true;
   });
 
   it("rerenders the radio question page with an error when no option is selected", async () => {

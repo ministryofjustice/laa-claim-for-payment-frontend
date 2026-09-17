@@ -1,11 +1,11 @@
 import { RadioQuestionViewModel, type YesNoQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { processError } from "#src/helpers/index.js";
-import { buildRoute, ROUTES } from "#routes/helper.js";
 import { claimService } from "#src/services/claimService.js";
 import { BooleanField } from "#src/helpers/fields.js";
 import { YesNoQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 import { requireClaim } from "#src/helpers/claimGuards.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 /**
  * get how many clients retained view
@@ -71,7 +71,9 @@ export async function submitMultipleClientHearings(
       claim.setMultiClientHearingFlag(form.getValue()),
     );
 
-    res.redirect(buildRoute(ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE, { claimId: claim.id }));
+    const navigator = new PoaNavigator(claim);
+    const url = navigator.redirectFromMultipleClientHearings();
+    res.redirect(url);
   } catch (error) {
     const processedError = processError(
       error,
