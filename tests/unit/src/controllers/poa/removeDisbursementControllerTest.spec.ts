@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { describe, it, beforeEach, afterEach } from "mocha";
+import { afterEach, beforeEach, describe, it } from "mocha";
 import sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
 import { V7Generator } from "uuidv7";
@@ -10,19 +10,24 @@ import {
   CostType,
   DisbursementLineItem,
 } from "#src/types/Claim.js";
-import { confirmRemoveExpertLineItem, submitRemoveExpertLineItem } from "#src/controllers/poa/removeDisbursementController.js";
+import {
+  confirmRemoveExpertLineItem,
+  submitRemoveExpertLineItem,
+} from "#src/controllers/poa/removeDisbursementController.js";
 import { LocalDate } from "#src/types/date.js";
-import { buildRoute, ROUTES } from "#routes/helper.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 describe("removeDisbursementController", () => {
   let res: Response;
   let next: NextFunction;
+  let redirectStub: sinon.SinonStub;
   let deleteLineItemStub: sinon.SinonStub;
+  let redirectFromRemoveDisbursementStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
   const lineItemId = new V7Generator().generate();
 
-  const lineItem: DisbursementLineItem =  {
+  const lineItem: DisbursementLineItem = {
     id: lineItemId.toString(),
     title: "",
     category: Category.BILL_NARRATIVE,
@@ -32,17 +37,19 @@ describe("removeDisbursementController", () => {
     vatApplicable: false,
     actualNetValue: 0,
     netProfitCostAmount: undefined,
-    netAdvocacyCostAmount: undefined
-  }
+    netAdvocacyCostAmount: undefined,
+  };
 
   let axiosMiddleware: any;
 
   beforeEach(() => {
     axiosMiddleware = {};
 
+    redirectStub = sinon.stub();
+
     res = {
       render: sinon.stub(),
-      redirect: sinon.stub(),
+      redirect: redirectStub,
       status: sinon.stub().returnsThis(),
       locals: {
         csrfToken: "test-csrf-token",
@@ -52,6 +59,11 @@ describe("removeDisbursementController", () => {
     next = sinon.stub() as unknown as NextFunction;
 
     deleteLineItemStub = sinon.stub(claimService, "deleteLineItem");
+
+    redirectFromRemoveDisbursementStub = sinon.stub(
+      PoaNavigator.prototype,
+      "redirectFromRemoveDisbursement",
+    );
   });
 
   afterEach(() => {
@@ -63,12 +75,10 @@ describe("removeDisbursementController", () => {
       claim: new Claim({
         id: claimId.toString(),
         costType: CostType.EXPERT_COST,
-        lineItems: [
-          lineItem,
-        ]
+        lineItems: [lineItem],
       }),
       params: {
-        lineItemId: lineItemId.toString()
+        lineItemId: lineItemId.toString(),
       },
     } as unknown as Request;
 
@@ -82,7 +92,9 @@ describe("removeDisbursementController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
-    expect(renderArgs.vm.title.key).to.equal("pages.poa.expertCostDetails.remove.title");
+    expect(renderArgs.vm.title.key).to.equal(
+      "pages.poa.expertCostDetails.remove.title",
+    );
     expect(renderArgs.vm.radios.name).to.equal("confirmRemoveExpertLineItem");
   });
 
@@ -91,12 +103,10 @@ describe("removeDisbursementController", () => {
       claim: new Claim({
         id: claimId.toString(),
         costType: CostType.NON_EXPERT_DISBURSEMENT,
-        lineItems: [
-          lineItem,
-        ]
+        lineItems: [lineItem],
       }),
       params: {
-        lineItemId: lineItemId.toString()
+        lineItemId: lineItemId.toString(),
       },
     } as unknown as Request;
 
@@ -110,7 +120,9 @@ describe("removeDisbursementController", () => {
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
-    expect(renderArgs.vm.title.key).to.equal("pages.poa.nonExpertDisbursementDetails.remove.title");
+    expect(renderArgs.vm.title.key).to.equal(
+      "pages.poa.nonExpertDisbursementDetails.remove.title",
+    );
     expect(renderArgs.vm.radios.name).to.equal("confirmRemoveExpertLineItem");
   });
 
@@ -119,12 +131,10 @@ describe("removeDisbursementController", () => {
       claim: new Claim({
         id: claimId.toString(),
         costType: CostType.PROFIT_COST,
-        lineItems: [
-          lineItem,
-        ]
+        lineItems: [lineItem],
       }),
       params: {
-        lineItemId: lineItemId.toString()
+        lineItemId: lineItemId.toString(),
       },
     } as unknown as Request;
 
@@ -138,12 +148,10 @@ describe("removeDisbursementController", () => {
     const req = {
       claim: new Claim({
         id: claimId.toString(),
-        lineItems: [
-          lineItem,
-        ]
+        lineItems: [lineItem],
       }),
       params: {
-        lineItemId: lineItemId.toString()
+        lineItemId: lineItemId.toString(),
       },
     } as unknown as Request;
 
@@ -153,15 +161,14 @@ describe("removeDisbursementController", () => {
     expect((next as sinon.SinonStub).firstCall.args[0]).to.be.instanceOf(Error);
   });
 
-  it("redirects back to add a line when deleting", async () => {
+  it("redirects when deleting", async () => {
+    const redirect = "/next-page";
     const req = {
       axiosMiddleware,
       claim: new Claim({
         id: claimId.toString(),
         costType: CostType.EXPERT_COST,
-        lineItems: [
-          lineItem,
-        ]
+        lineItems: [lineItem],
       }),
       params: {
         lineItemId: lineItemId.toString(),
@@ -175,6 +182,8 @@ describe("removeDisbursementController", () => {
       status: "success",
     });
 
+    redirectFromRemoveDisbursementStub.returns(redirect);
+
     await submitRemoveExpertLineItem(req, res, next);
 
     expect(
@@ -185,19 +194,17 @@ describe("removeDisbursementController", () => {
       ),
     ).to.equal(true);
 
-    expect((res.redirect as sinon.SinonStub).calledWith(
-      `/claims/${claimId.toString()}/poa/disbursement-details/add`,
-    )).to.equal(true);
+    expect(redirectFromRemoveDisbursementStub.calledOnce).to.be.true;
+    expect(redirectStub.calledWith(redirect)).to.be.true;
   });
 
-  it("redirects back to add a line when NOT deleting", async () => {
+  it("redirects when NOT deleting", async () => {
+    const redirect = "/next-page";
     const req = {
       claim: new Claim({
         id: claimId.toString(),
         costType: CostType.EXPERT_COST,
-        lineItems: [
-          lineItem,
-        ]
+        lineItems: [lineItem],
       }),
       params: {
         lineItemId: lineItemId.toString(),
@@ -207,15 +214,14 @@ describe("removeDisbursementController", () => {
       },
     } as unknown as Request;
 
+    redirectFromRemoveDisbursementStub.returns(redirect);
+
     await submitRemoveExpertLineItem(req, res, next);
 
-    expect(
-      deleteLineItemStub.called,
-    ).to.be.false;
+    expect(deleteLineItemStub.called).to.be.false;
 
-    expect((res.redirect as sinon.SinonStub).calledWith(
-      `/claims/${claimId.toString()}/poa/disbursement-details/add`,
-    )).to.equal(true);
+    expect(redirectFromRemoveDisbursementStub.calledOnce).to.be.true;
+    expect(redirectStub.calledWith(redirect)).to.be.true;
   });
 
   it("rerenders the radio question page with an error when no option is selected", async () => {
@@ -223,9 +229,7 @@ describe("removeDisbursementController", () => {
       claim: new Claim({
         id: claimId.toString(),
         costType: CostType.EXPERT_COST,
-        lineItems: [
-          lineItem,
-        ]
+        lineItems: [lineItem],
       }),
       params: {
         lineItemId: lineItemId.toString(),
@@ -241,5 +245,4 @@ describe("removeDisbursementController", () => {
       "main/radioQuestionPage.njk",
     );
   });
-
 });

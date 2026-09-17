@@ -1,11 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
 import { processError } from "#src/helpers/index.js";
 import { ProfitCostDetailsViewModel } from "#src/viewmodels/poa/profitCostDetailsViewModel.js";
-import { buildRoute, ROUTES } from "#routes/helper.js";
 import { getRequestBody } from "#src/helpers/validation.js";
 import { ProfitCostDetailsForm, type ProfitCostDetailsRequestBody } from "#src/helpers/profitCostDetailsValidation.js";
 import { claimService } from "#src/services/claimService.js";
 import { requireClaim } from "#src/helpers/claimGuards.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 /**
  * Profit cost details journey view
@@ -78,18 +78,15 @@ export async function submitProfitCostDetails(
     }
 
     const claim = requireClaim(req);
-    const { id: claimId } = claim;
 
     await claimService.updateClaim(
       req.axiosMiddleware,
       claim.setProfitCostDetails(form.getValue()),
     );
 
-    const redirectUrl = form.getValue().transferOfSolicitor
-      ? buildRoute(ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED, { claimId })
-      : buildRoute(ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE, { claimId });
-
-    res.redirect(redirectUrl);
+    const navigator = new PoaNavigator(claim);
+    const url = navigator.redirectFromProfitCostDetails(form.getValue());
+    res.redirect(url);
   } catch (error) {
     const processedError = processError(
       error,

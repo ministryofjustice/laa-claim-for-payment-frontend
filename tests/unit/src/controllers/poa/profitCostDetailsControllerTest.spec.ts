@@ -6,10 +6,10 @@ import {
   profitCostDetails,
   submitProfitCostDetails,
 } from "#src/controllers/poa/profitCostDetailsController.js";
-import { buildRoute, ROUTES } from "#routes/helper.js";
 import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
-import { Claim } from "#src/types/Claim.js";
+import { Claim, ClientPartyStatus, CourtType } from "#src/types/Claim.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 describe("Profit cost details controller", () => {
   let req: Partial<Request>;
@@ -19,6 +19,7 @@ describe("Profit cost details controller", () => {
   let statusStub: sinon.SinonStub;
   let redirectStub: sinon.SinonStub;
   let updateClaimStub: sinon.SinonStub;
+  let redirectFromProfitCostDetailsStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
 
@@ -45,6 +46,11 @@ describe("Profit cost details controller", () => {
     next = sinon.stub();
 
     updateClaimStub = sinon.stub(claimService, "updateClaim");
+
+    redirectFromProfitCostDetailsStub = sinon.stub(
+      PoaNavigator.prototype,
+      "redirectFromProfitCostDetails",
+    );
   });
 
   afterEach(() => {
@@ -65,7 +71,9 @@ describe("Profit cost details controller", () => {
       .true;
   });
 
-  it("redirects to HOW_MANY_CLIENTS_RETAINED when transfer of solicitor is 'yes'", async () => {
+  it("redirects when valid submission", async () => {
+    const redirect = "/next-page";
+
     req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -83,6 +91,8 @@ describe("Profit cost details controller", () => {
       body: null,
     });
 
+    redirectFromProfitCostDetailsStub.returns(redirect);
+
     await submitProfitCostDetails(req as Request, res as Response, next);
 
     expect(
@@ -98,55 +108,15 @@ describe("Profit cost details controller", () => {
       ),
     ).to.be.true;
 
-    expect(redirectStub.calledOnce).to.be.true;
-
-    const expectedRoute = buildRoute(ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED, {
-      claimId: claimId,
-    });
-
-    expect(redirectStub.calledWith(expectedRoute)).to.be.true;
-  });
-
-  it("redirects to NUMBER_OF_CLIENTS_START_OF_CASE when transfer of solicitor is 'no'", async () => {
-    req = {
-      claim: new Claim({
-        id: claimId.toString(),
-      }),
-      body: {
-        ["courtTypeChoice"]: "COUNTY_COURT",
-        ["clientStatusChoice"]: "CHILD",
-        ["firstSolicitorChoice"]: "yes",
-        ["transferOfSolicitorChoice"]: "no",
-      },
-    };
-
-    updateClaimStub.resolves({
-      status: "success",
-      body: null,
-    });
-
-    await submitProfitCostDetails(req as Request, res as Response, next);
-
     expect(
-      updateClaimStub.calledWith(
-        req.axiosMiddleware,
-        sinon.match({
-          id: claimId.toString(),
-          courtType: "COUNTY_COURT",
-          clientPartyStatus: "CHILD",
-          firstActingSolicitorFlag: true,
-          transferOfSolicitorFlag: false,
-        }),
-      ),
+      redirectFromProfitCostDetailsStub.calledOnceWith({
+        courtType: CourtType.COUNTY_COURT,
+        clientStatus: ClientPartyStatus.CHILD,
+        firstSolicitor: true,
+        transferOfSolicitor: true,
+      }),
     ).to.be.true;
-
-    expect(redirectStub.calledOnce).to.be.true;
-
-    const expectedRoute = buildRoute(ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE, {
-      claimId: claimId,
-    });
-
-    expect(redirectStub.calledWith(expectedRoute)).to.be.true;
+    expect(redirectStub.calledWith(redirect)).to.be.true;
   });
 
   describe("Court type question", () => {
@@ -161,9 +131,7 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.courtTypeRadios.name).to.equal(
-        "courtTypeChoice",
-      );
+      expect(renderArgs.vm.courtTypeRadios.name).to.equal("courtTypeChoice");
       expect(renderArgs.vm.courtTypeRadios.items).to.have.length(4);
     });
 
@@ -268,7 +236,9 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.firstSolicitorRadios.errorMessage.text).to.deep.equal({
+      expect(
+        renderArgs.vm.firstSolicitorRadios.errorMessage.text,
+      ).to.deep.equal({
         key: "pages.profitCostDetails.firstSolicitor.errors.empty",
       });
     });
@@ -284,7 +254,9 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.firstSolicitorRadios.errorMessage.text).to.deep.equal({
+      expect(
+        renderArgs.vm.firstSolicitorRadios.errorMessage.text,
+      ).to.deep.equal({
         key: "pages.profitCostDetails.firstSolicitor.errors.empty",
       });
     });
@@ -315,7 +287,9 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.transferOfSolicitorRadios.errorMessage.text).to.deep.equal({
+      expect(
+        renderArgs.vm.transferOfSolicitorRadios.errorMessage.text,
+      ).to.deep.equal({
         key: "pages.profitCostDetails.transferOfSolicitor.errors.empty",
       });
     });
@@ -331,7 +305,9 @@ describe("Profit cost details controller", () => {
 
       const renderArgs = renderStub.firstCall.args[1];
 
-      expect(renderArgs.vm.transferOfSolicitorRadios.errorMessage.text).to.deep.equal({
+      expect(
+        renderArgs.vm.transferOfSolicitorRadios.errorMessage.text,
+      ).to.deep.equal({
         key: "pages.profitCostDetails.transferOfSolicitor.errors.empty",
       });
     });

@@ -6,25 +6,29 @@ import {
   profitCostBillLine,
   submitProfitCostBillLine,
 } from "#src/controllers/poa/profitCostBillLineController.js";
-import { buildRoute, ROUTES } from "#routes/helper.js";
 import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { Category, Claim, CostType } from "#src/types/Claim.js";
 import { LocalDate } from "#src/types/date.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 describe("profitCostBillLineController", () => {
   let res: Response;
   let next: NextFunction;
+  let redirectStub: sinon.SinonStub;
   let createLineItemStub: sinon.SinonStub;
   let updateLineItemStub: sinon.SinonStub;
+  let redirectFromProfitCostBillLineStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
   const lineItemId = new V7Generator().generate();
 
   beforeEach(() => {
+    redirectStub = sinon.stub();
+
     res = {
       render: sinon.stub(),
-      redirect: sinon.stub(),
+      redirect: redirectStub,
       status: sinon.stub().returnsThis(),
       locals: {
         csrfToken: "test-csrf-token",
@@ -35,6 +39,11 @@ describe("profitCostBillLineController", () => {
 
     createLineItemStub = sinon.stub(claimService, "addLineItemToClaim");
     updateLineItemStub = sinon.stub(claimService, "updateLineItem");
+
+    redirectFromProfitCostBillLineStub = sinon.stub(
+      PoaNavigator.prototype,
+      "redirectFromProfitCostBillLine",
+    );
   });
 
   afterEach(() => {
@@ -97,8 +106,10 @@ describe("profitCostBillLineController", () => {
     expect(renderArgs.vm.activityDateInput.items[0].value).to.equal(4);
     expect(renderArgs.vm.activityDateInput.items[1].value).to.equal(1);
     expect(renderArgs.vm.activityDateInput.items[2].value).to.equal(2024);
-    expect(renderArgs.vm.actualNetProfitCostExcludingAdvocacyInput.value).to.equal('123.00');
-    expect(renderArgs.vm.actualNetAdvocacyCostsInput.value).to.equal('456.00');
+    expect(
+      renderArgs.vm.actualNetProfitCostExcludingAdvocacyInput.value,
+    ).to.equal("123.00");
+    expect(renderArgs.vm.actualNetAdvocacyCostsInput.value).to.equal("456.00");
     expect(renderArgs.vm.vatApplicableRadios.items[0].checked).to.equal(false);
     expect(renderArgs.vm.vatApplicableRadios.items[1].checked).to.equal(true);
     expect(renderArgs.vm.feeEarnerNameInput.value).to.equal("Joe Bloggs");
@@ -175,7 +186,8 @@ describe("profitCostBillLineController", () => {
     });
   });
 
-  it("redirects to POA evidence upload when escaping standard fixed fee", async () => {
+  it("redirects when valid submission", async () => {
+    const redirect = "/next-page";
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -197,80 +209,12 @@ describe("profitCostBillLineController", () => {
       body: null,
     });
 
-    await submitProfitCostBillLine(req, res, next);
-
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA.EVIDENCE_UPLOAD, {
-          claimId: claimId,
-        }),
-      ),
-    ).to.equal(true);
-  });
-
-  it("redirects to CYA when not escaping standard fixed fee", async () => {
-    const req = {
-      claim: new Claim({
-        id: claimId.toString(),
-        escaped: false,
-      }),
-      body: {
-        activityDateDay: "27",
-        activityDateMonth: "3",
-        activityDateYear: "2007",
-        actualNetProfitCostExcludingAdvocacy: "123.45",
-        actualNetAdvocacyCosts: "156.00",
-        vatApplies: "yes",
-        feeEarnerName: "John Smith",
-      },
-    } as unknown as Request;
-
-    createLineItemStub.resolves({
-      status: "success",
-      body: null,
-    });
+    redirectFromProfitCostBillLineStub.returns(redirect);
 
     await submitProfitCostBillLine(req, res, next);
 
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA.CHECK_DETAILS, {
-          claimId: claimId,
-        }),
-      ),
-    ).to.equal(true);
-  });
-
-  it("redirects to escape yes/no when that question is unanswered", async () => {
-    const req = {
-      claim: new Claim({
-        id: claimId.toString(),
-      }),
-      body: {
-        activityDateDay: "27",
-        activityDateMonth: "3",
-        activityDateYear: "2007",
-        actualNetProfitCostExcludingAdvocacy: "123.45",
-        actualNetAdvocacyCosts: "156.00",
-        vatApplies: "yes",
-        feeEarnerName: "John Smith",
-      },
-    } as unknown as Request;
-
-    createLineItemStub.resolves({
-      status: "success",
-      body: null,
-    });
-
-    await submitProfitCostBillLine(req, res, next);
-
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        buildRoute(ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE, {
-          claimId: claimId,
-        }),
-      ),
-    ).to.equal(true);
+    expect(redirectFromProfitCostBillLineStub.calledOnce).to.be.true;
+    expect(redirectStub.calledWith(redirect)).to.be.true;
   });
 
   it("rerenders with 400 when form is invalid", async () => {

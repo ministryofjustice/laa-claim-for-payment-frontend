@@ -1,4 +1,3 @@
-import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processError } from "#src/helpers/index.js";
 import {
   ProfitCostBillLineForm,
@@ -12,6 +11,7 @@ import { getRequestBody } from "#src/helpers/validation.js";
 import { CostType } from "#src/types/Claim.js";
 import type { LineItemForm } from "#src/types/poa.js";
 import { requireClaim } from "#src/helpers/claimGuards.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 /**
  * Display POA CPGFS profit cost bill line page.
@@ -117,16 +117,9 @@ export async function submitProfitCostBillLine(
       );
     }
 
-    const { escapedFlag: escaped } = claim;
-
-    const route =
-      escaped === true
-        ? ROUTES.POA.EVIDENCE_UPLOAD
-        : escaped === false
-          ? ROUTES.POA.CHECK_DETAILS
-          : ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE;
-
-    res.redirect(buildRoute(route, { claimId }));
+    const navigator = new PoaNavigator(claim);
+    const url = navigator.redirectFromProfitCostBillLine();
+    res.redirect(url);
   } catch (error) {
     next(processError(error, "submitting profit cost bill line page"));
   }

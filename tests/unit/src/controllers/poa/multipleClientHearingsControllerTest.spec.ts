@@ -6,18 +6,23 @@ import { multipleClientHearings, submitMultipleClientHearings } from "#src/contr
 import { V7Generator } from "uuidv7";
 import { claimService } from "#src/services/claimService.js";
 import { Claim } from "#src/types/Claim.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 describe("multipleClientHearingsController", () => {
   let res: Response;
   let next: NextFunction;
+  let redirectStub: sinon.SinonStub;
   let updateClaimStub: sinon.SinonStub;
+  let redirectFromMultipleClientHearingsStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
 
   beforeEach(() => {
+    redirectStub = sinon.stub();
+
     res = {
       render: sinon.stub(),
-      redirect: sinon.stub(),
+      redirect: redirectStub,
       status: sinon.stub().returnsThis(),
       locals: {
         csrfToken: "test-csrf-token",
@@ -27,6 +32,11 @@ describe("multipleClientHearingsController", () => {
     next = sinon.stub() as unknown as NextFunction;
 
     updateClaimStub = sinon.stub(claimService, "updateClaim");
+
+    redirectFromMultipleClientHearingsStub = sinon.stub(
+      PoaNavigator.prototype,
+      "redirectFromMultipleClientHearings",
+    );
   });
 
   afterEach(() => {
@@ -54,7 +64,8 @@ describe("multipleClientHearingsController", () => {
     expect(renderArgs.vm.radios.name).to.equal("multipleClientHearings");
   });
 
-  it("redirects to escaping the standard fixed fee page when multiple client hearings answer is given", async () => {
+  it("redirects when valid submission", async () => {
+    const redirect = "/next-page";
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -69,6 +80,8 @@ describe("multipleClientHearingsController", () => {
       body: null,
     });
 
+    redirectFromMultipleClientHearingsStub.returns(redirect);
+
     await submitMultipleClientHearings(req, res, next);
 
     expect(
@@ -81,9 +94,8 @@ describe("multipleClientHearingsController", () => {
       ),
     ).to.be.true;
 
-    expect((res.redirect as sinon.SinonStub).calledWith(
-      `/claims/${claimId.toString()}/poa/escaping-standard-fixed-fee`,
-    )).to.equal(true);
+    expect(redirectFromMultipleClientHearingsStub.calledOnce).to.be.true;
+    expect(redirectStub.calledWith(redirect)).to.be.true;
   });
 
   it("rerenders the radio question page with an error when no option is selected", async () => {

@@ -1,4 +1,3 @@
-import { buildRoute, ROUTES } from "#routes/helper.js";
 import { processError } from "#src/helpers/index.js";
 import { RadioQuestionViewModel } from "#src/viewmodels/radioQuestionViewModel.js";
 import type { NextFunction, Request, Response } from "express";
@@ -8,6 +7,7 @@ import { RadioField } from "#src/helpers/fields.js";
 import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 import config from "#config.js";
 import { requireClaim } from "#src/helpers/claimGuards.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 /**
  * Display POA claim type page.
@@ -65,33 +65,12 @@ export async function submitPoaClaimType(
     }
 
     const claim = requireClaim(req);
-    const { id: claimId } = claim;
 
-    await draftService.setCostType(
-      req.axiosMiddleware,
-      claim,
-      form.getValue(),
-    );
+    await draftService.setCostType(req.axiosMiddleware, claim, form.getValue());
 
-    const redirectByChoice: Record<CostType, string> = {
-      [CostType.PROFIT_COST]: buildRoute(ROUTES.POA.PROFIT_COST.DETAILS, {
-        claimId,
-      }),
-      [CostType.EXPERT_COST]: buildRoute(
-        ROUTES.POA.DISBURSEMENTS.ADD,
-        {
-          claimId,
-        },
-      ),
-      [CostType.NON_EXPERT_DISBURSEMENT]: buildRoute(
-        ROUTES.POA.DISBURSEMENTS.ADD,
-        {
-          claimId,
-        },
-      ),
-    };
-
-    res.redirect(redirectByChoice[form.getValue()]);
+    const navigator = new PoaNavigator(claim);
+    const url = navigator.redirectFromCostType(form.getValue());
+    res.redirect(url);
   } catch (error) {
     next(processError(error, "submitting POA claim type page"));
   }

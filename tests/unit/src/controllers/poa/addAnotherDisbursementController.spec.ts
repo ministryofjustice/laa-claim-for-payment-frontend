@@ -9,18 +9,23 @@ import {
   submitAddAnotherDisbursement,
 } from "#src/controllers/poa/addAnotherDisbursementController.js";
 import { LocalDate } from "#src/types/date.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 describe("addAnotherDisbursementController", () => {
   let res: Response;
   let next: NextFunction;
+  let redirectStub: sinon.SinonStub;
+  let redirectFromAddAnotherDisbursementStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
   const lineItemId = new V7Generator().generate();
 
   beforeEach(() => {
+    redirectStub = sinon.stub();
+
     res = {
       render: sinon.stub(),
-      redirect: sinon.stub(),
+      redirect: redirectStub,
       status: sinon.stub().returnsThis(),
       locals: {
         csrfToken: "test-csrf-token",
@@ -28,6 +33,11 @@ describe("addAnotherDisbursementController", () => {
     } as unknown as Response;
 
     next = sinon.stub() as unknown as NextFunction;
+
+    redirectFromAddAnotherDisbursementStub = sinon.stub(
+      PoaNavigator.prototype,
+      "redirectFromAddAnotherDisbursement",
+    );
   });
 
   afterEach(() => {
@@ -64,7 +74,9 @@ describe("addAnotherDisbursementController", () => {
     expect(renderArgs.vm.title.key).to.equal(
       "pages.poa.expertCostDetails.addAnother.title.singular",
     );
-    expect(renderArgs.vm.radioQuestionViewModel.radios.name).to.equal("addAnother");
+    expect(renderArgs.vm.radioQuestionViewModel.radios.name).to.equal(
+      "addAnother",
+    );
   });
 
   it("renders the add another non-expert disbursement page", () => {
@@ -97,7 +109,9 @@ describe("addAnotherDisbursementController", () => {
     expect(renderArgs.vm.title.key).to.equal(
       "pages.poa.nonExpertDisbursementDetails.addAnother.title.singular",
     );
-    expect(renderArgs.vm.radioQuestionViewModel.radios.name).to.equal("addAnother");
+    expect(renderArgs.vm.radioQuestionViewModel.radios.name).to.equal(
+      "addAnother",
+    );
   });
 
   it("errors when profit cost type", () => {
@@ -145,7 +159,8 @@ describe("addAnotherDisbursementController", () => {
     ).to.equal(true);
   });
 
-  it("redirects to expert cost details when yes selected", () => {
+  it("redirects when valid submission", async () => {
+    const redirect = "/next-page";
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -156,33 +171,13 @@ describe("addAnotherDisbursementController", () => {
       },
     } as unknown as Request;
 
-    submitAddAnotherDisbursement(req, res, next);
-
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        `/claims/${claimId.toString()}/poa/disbursement-details`,
-      ),
-    ).to.equal(true);
-  });
-
-  it("redirects to evidence upload when no selected", () => {
-    const req = {
-      claim: new Claim({
-        id: claimId.toString(),
-        costType: CostType.EXPERT_COST,
-      }),
-      body: {
-        addAnother: "no",
-      },
-    } as unknown as Request;
+    redirectFromAddAnotherDisbursementStub.returns(redirect);
 
     submitAddAnotherDisbursement(req, res, next);
 
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        `/claims/${claimId.toString()}/poa/evidence-upload`,
-      ),
-    ).to.equal(true);
+    expect(redirectFromAddAnotherDisbursementStub.calledOnceWith(true)).to.be
+      .true;
+    expect(redirectStub.calledWith(redirect)).to.be.true;
   });
 
   it("rerenders the radio question page with an error when no option is selected", () => {

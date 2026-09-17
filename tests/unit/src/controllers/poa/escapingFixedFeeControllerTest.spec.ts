@@ -9,18 +9,23 @@ import {
 import { V7Generator } from "uuidv7";
 import { Claim } from "#src/types/Claim.js";
 import { draftService } from "#src/services/draftService.js";
+import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
 describe("escapingFixedFeeController", () => {
   let res: Response;
   let next: NextFunction;
+  let redirectStub: sinon.SinonStub;
   let setEscapedFlagStub: sinon.SinonStub;
+  let redirectFromEscapingStandardFixedFeeStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
 
   beforeEach(() => {
+    redirectStub = sinon.stub();
+
     res = {
       render: sinon.stub(),
-      redirect: sinon.stub(),
+      redirect: redirectStub,
       status: sinon.stub().returnsThis(),
       locals: {
         csrfToken: "test-csrf-token",
@@ -30,6 +35,11 @@ describe("escapingFixedFeeController", () => {
     next = sinon.stub() as unknown as NextFunction;
 
     setEscapedFlagStub = sinon.stub(draftService, "setEscapedFlag");
+
+    redirectFromEscapingStandardFixedFeeStub = sinon.stub(
+      PoaNavigator.prototype,
+      "redirectFromEscapingStandardFixedFee",
+    );
   });
 
   afterEach(() => {
@@ -57,7 +67,8 @@ describe("escapingFixedFeeController", () => {
     expect(renderArgs.vm.radios.name).to.equal("escapingFixedFee");
   });
 
-  it("redirects to CPGFS profit cost bill line page when escaping fixed fee answer is given", async () => {
+  it("redirects when valid submission", async () => {
+    const redirect = "/next-page";
     const req = {
       claim: new Claim({
         id: claimId.toString(),
@@ -72,6 +83,8 @@ describe("escapingFixedFeeController", () => {
       body: null,
     });
 
+    redirectFromEscapingStandardFixedFeeStub.returns(redirect);
+
     await submitEscapingFixedFee(req, res, next);
 
     expect(
@@ -83,11 +96,8 @@ describe("escapingFixedFeeController", () => {
       ),
     ).to.be.true;
 
-    expect(
-      (res.redirect as sinon.SinonStub).calledWith(
-        `/claims/${claimId.toString()}/poa/cpgfs-profit-cost-bill-line`,
-      ),
-    ).to.equal(true);
+    expect(redirectFromEscapingStandardFixedFeeStub.calledOnce).to.be.true;
+    expect(redirectStub.calledWith(redirect)).to.be.true;
   });
 
   it("rerenders the radio question page with an error when no option is selected", async () => {
