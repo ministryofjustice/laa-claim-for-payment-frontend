@@ -8,9 +8,7 @@ import {
 import type { ProfitCostDetails } from "#src/types/poa.js";
 
 /**
- * POA navigator.
- * Ensure the unmutated claim is used when constructing the navigator.
- * This allows the previous value to be compared to the new (form) value.
+ *
  */
 export class PoaNavigator {
   private readonly claim: Claim;
