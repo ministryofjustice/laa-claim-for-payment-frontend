@@ -298,28 +298,86 @@ describe("poaNavigator", () => {
   describe("change mode navigation", () => {
     const mode: Mode = "change";
 
+    const completedProfitCostClaim = new Claim({
+      id: claimId,
+      costType: CostType.PROFIT_COST,
+      courtType: CourtType.COUNTY_COURT,
+      clientPartyStatus: ClientPartyStatus.CHILD,
+      firstActingSolicitorFlag: true,
+      transferOfSolicitorFlag: false,
+      clientsStartCount: Count.ONE,
+      multiClientHearingFlag: true,
+      escaped: false,
+      lineItems: [
+        {
+          id: lineItemId,
+          title: "Line item",
+          category: Category.DISBURSEMENT,
+          date: new LocalDate(18, 3, 2025),
+          evidenceItems: [],
+          feeEarnerName: "Joe Bloggs",
+          vatApplicable: true,
+          actualNetValue: 123,
+        },
+      ],
+    });
+
+    const completedDisbursementClaim = new Claim({
+      id: claimId,
+      costType: CostType.EXPERT_COST,
+      lineItems: [
+        {
+          id: lineItemId,
+          title: "Line item",
+          category: Category.DISBURSEMENT,
+          date: new LocalDate(29, 7, 2026),
+          actualNetValue: 20,
+          vatApplicable: false,
+          feeEarnerName: "John Smith",
+          evidenceItems: [],
+        },
+      ],
+      evidence: [
+        {
+          id: evidenceId,
+          fileKey: "test.pdf",
+          fileSize: 123456,
+          submittedOn: "2026-06-17T14:34:01.226855Z",
+        },
+      ],
+    });
+
+    const completedDisbursementClaimWithNoEvidence = new Claim({
+      id: claimId,
+      costType: CostType.NON_EXPERT_DISBURSEMENT,
+      lineItems: [
+        {
+          id: lineItemId,
+          title: "Line item",
+          category: Category.DISBURSEMENT,
+          date: new LocalDate(29, 7, 2026),
+          actualNetValue: 19,
+          vatApplicable: false,
+          feeEarnerName: "John Smith",
+          evidenceItems: [],
+        },
+      ],
+    });
+
     describe("redirectFromCostType", () => {
-      it(`redirects to 'check details' when answer doesn't change`, () => {
-        for (const costType of Object.values(CostType)) {
-          const claim = new Claim({
-            id: claimId,
-            costType: costType,
-          });
-          const navigator = new PoaNavigator(claim, mode);
-          const result = navigator.redirectFromCostType(costType);
-          expect(result).to.equal(
-            "/claims/foo/poa/check-details",
-            `Test failed for ${costType}`,
-          );
-        }
+      it(`redirects to 'check details' when answer remains profit cost`, () => {
+        const navigator = new PoaNavigator(completedProfitCostClaim, mode);
+        const result = navigator.redirectFromCostType(CostType.PROFIT_COST);
+        expect(result).to.equal("/claims/foo/poa/check-details");
       });
     });
 
     describe("redirectFromProfitCostDetails", () => {
       it("redirects to 'how many clients retained' when no changes to yes for 'transfer of solicitor'", () => {
         const claim = new Claim({
-          id: claimId,
+          ...completedProfitCostClaim.value,
           transferOfSolicitorFlag: false,
+          clientsRetainedCount: undefined,
         });
         const navigator = new PoaNavigator(claim, mode);
         const value: ProfitCostDetails = {
@@ -336,7 +394,7 @@ describe("poaNavigator", () => {
 
       it("redirects to 'check details' when no changes to yes for 'transfer of solicitor' and 'how many clients retained' is already answered", () => {
         const claim = new Claim({
-          id: claimId,
+          ...completedProfitCostClaim.value,
           transferOfSolicitorFlag: false,
           clientsRetainedCount: Count.ZERO,
         });
@@ -348,17 +406,16 @@ describe("poaNavigator", () => {
           transferOfSolicitor: true,
         };
         const result = navigator.redirectFromProfitCostDetails(value);
-        expect(result).to.equal(
-          "/claims/foo/poa/check-details",
-        );
+        expect(result).to.equal("/claims/foo/poa/check-details");
       });
     });
 
     describe("redirectFromHowManyClientsRetained", () => {
       it("redirects to 'number of clients at start of case' when 1 changes to 0", () => {
         const claim = new Claim({
-          id: claimId,
+          ...completedProfitCostClaim.value,
           clientsRetainedCount: Count.ONE,
+          clientsStartCount: undefined,
         });
         const navigator = new PoaNavigator(claim, mode);
         const result = navigator.redirectFromHowManyClientsRetained(Count.ZERO);
@@ -369,8 +426,9 @@ describe("poaNavigator", () => {
 
       it("redirects to 'number of clients at start of case' when 2+ changes to 0", () => {
         const claim = new Claim({
-          id: claimId,
+          ...completedProfitCostClaim.value,
           clientsRetainedCount: Count.TWO_OR_MORE,
+          clientsStartCount: undefined,
         });
         const navigator = new PoaNavigator(claim, mode);
         const result = navigator.redirectFromHowManyClientsRetained(Count.ZERO);
@@ -382,7 +440,7 @@ describe("poaNavigator", () => {
       it("redirects to 'check details' when answer changes to 1", () => {
         for (const count of Object.values(Count)) {
           const claim = new Claim({
-            id: claimId,
+            ...completedProfitCostClaim.value,
             clientsRetainedCount: count,
           });
           const navigator = new PoaNavigator(claim, mode);
@@ -399,7 +457,7 @@ describe("poaNavigator", () => {
       it("redirects to 'check details' when answer changes to 2+", () => {
         for (const count of Object.values(Count)) {
           const claim = new Claim({
-            id: claimId,
+            ...completedProfitCostClaim.value,
             clientsRetainedCount: count,
           });
           const navigator = new PoaNavigator(claim, mode);
@@ -416,11 +474,13 @@ describe("poaNavigator", () => {
       it("redirects to 'check details' when answer changes to 0 and 'number of clients at start of case' is already answered", () => {
         for (const count of Object.values(Count)) {
           const claim = new Claim({
-            id: claimId,
+            ...completedProfitCostClaim.value,
             clientsStartCount: count,
           });
           const navigator = new PoaNavigator(claim, mode);
-          const result = navigator.redirectFromHowManyClientsRetained(Count.ZERO);
+          const result = navigator.redirectFromHowManyClientsRetained(
+            Count.ZERO,
+          );
           expect(result).to.equal(
             "/claims/foo/poa/check-details",
             `Test failed for ${count}`,
@@ -430,10 +490,7 @@ describe("poaNavigator", () => {
     });
 
     describe("redirectFromNumberOfClientStartOfCase", () => {
-      const claim = new Claim({
-        id: claimId,
-      });
-      const navigator = new PoaNavigator(claim, mode);
+      const navigator = new PoaNavigator(completedProfitCostClaim, mode);
 
       it("redirects to 'check details'", () => {
         const result = navigator.redirectFromNumberOfClientStartOfCase();
@@ -442,10 +499,7 @@ describe("poaNavigator", () => {
     });
 
     describe("redirectFromMultipleClientHearings", () => {
-      const claim = new Claim({
-        id: claimId,
-      });
-      const navigator = new PoaNavigator(claim, mode);
+      const navigator = new PoaNavigator(completedProfitCostClaim, mode);
 
       it("redirects to 'check details'", () => {
         const result = navigator.redirectFromMultipleClientHearings();
@@ -456,8 +510,9 @@ describe("poaNavigator", () => {
     describe("redirectFromEscapingStandardFixedFee", () => {
       it("redirects to 'evidence upload' when answer changes from no to yes", () => {
         const claim = new Claim({
-          id: claimId,
+          ...completedProfitCostClaim.value,
           escaped: false,
+          evidence: [],
         });
         const navigator = new PoaNavigator(claim, mode);
         const result = navigator.redirectFromEscapingStandardFixedFee(true);
@@ -466,8 +521,9 @@ describe("poaNavigator", () => {
 
       it("redirects to 'check details' when answer changes from yes to no", () => {
         const claim = new Claim({
-          id: claimId,
+          ...completedProfitCostClaim.value,
           escaped: true,
+          evidence: [],
         });
         const navigator = new PoaNavigator(claim, mode);
         const result = navigator.redirectFromEscapingStandardFixedFee(false);
@@ -476,7 +532,7 @@ describe("poaNavigator", () => {
 
       it("redirects to 'check details' when answer changes from no to yes and evidence already provided", () => {
         const claim = new Claim({
-          id: claimId,
+          ...completedProfitCostClaim.value,
           escaped: false,
           evidence: [
             {
@@ -485,7 +541,7 @@ describe("poaNavigator", () => {
               fileSize: 123456,
               submittedOn: "2026-06-17T14:34:01.226855Z",
             },
-          ]
+          ],
         });
         const navigator = new PoaNavigator(claim, mode);
         const result = navigator.redirectFromEscapingStandardFixedFee(true);
@@ -494,10 +550,7 @@ describe("poaNavigator", () => {
     });
 
     describe("redirectFromProfitCostBillLine", () => {
-      const claim = new Claim({
-        id: claimId,
-      });
-      const navigator = new PoaNavigator(claim, mode);
+      const navigator = new PoaNavigator(completedProfitCostClaim, mode);
 
       it("redirects to 'check details'", () => {
         const result = navigator.redirectFromProfitCostBillLine();
@@ -506,10 +559,7 @@ describe("poaNavigator", () => {
     });
 
     describe("redirectFromEvidenceUpload", () => {
-      const claim = new Claim({
-        id: claimId,
-      });
-      const navigator = new PoaNavigator(claim, mode);
+      const navigator = new PoaNavigator(completedProfitCostClaim, mode);
 
       it("redirects to 'check details'", () => {
         const result = navigator.redirectFromEvidenceUpload();
@@ -518,27 +568,21 @@ describe("poaNavigator", () => {
     });
 
     describe("redirectFromAddAnotherDisbursement", () => {
-      const claim = new Claim({
-        id: claimId,
-      });
-      const navigator = new PoaNavigator(claim, mode);
+      const navigator = new PoaNavigator(completedDisbursementClaim, mode);
 
-      it("redirects to 'check details'", () => {
-        for (const bool of [true, false]) {
-          const result = navigator.redirectFromAddAnotherDisbursement(bool);
-          expect(result).to.equal(
-            "/claims/foo/poa/check-details",
-            `Test failed for ${bool}`,
-          );
-        }
+      it("redirects to 'disbursement details' when yes selected", () => {
+        const result = navigator.redirectFromAddAnotherDisbursement(true);
+        expect(result).to.equal("/claims/foo/poa/disbursement-details?mode=change");
+      });
+
+      it("redirects to 'check details' when no selected", () => {
+        const result = navigator.redirectFromAddAnotherDisbursement(false);
+        expect(result).to.equal("/claims/foo/poa/check-details");
       });
     });
 
     describe("redirectFromDisbursementDetails", () => {
-      const claim = new Claim({
-        id: claimId,
-      });
-      const navigator = new PoaNavigator(claim, mode);
+      const navigator = new PoaNavigator(completedDisbursementClaim, mode);
 
       it("redirects to 'check details'", () => {
         const result = navigator.redirectFromDisbursementDetails();
@@ -547,10 +591,7 @@ describe("poaNavigator", () => {
     });
 
     describe("redirectFromRemoveDisbursement", () => {
-      const claim = new Claim({
-        id: claimId,
-      });
-      const navigator = new PoaNavigator(claim, mode);
+      const navigator = new PoaNavigator(completedDisbursementClaim, mode);
 
       it("redirects to 'check details'", () => {
         const result = navigator.redirectFromRemoveDisbursement();

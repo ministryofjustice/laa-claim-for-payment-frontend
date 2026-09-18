@@ -69,13 +69,12 @@ export function createRadioQuestionController<ChoiceType extends string>({
 
         const claim = requireClaim(req);
 
-        const url = getRedirectUrl(req, claim, form.getValue());
-
         await claimService.updateClaim(
           req.axiosMiddleware,
           setValue(claim, form.getValue()),
         );
 
+        const url = getRedirectUrl(req, claim, form.getValue());
         res.redirect(url);
       } catch (error) {
         next(processError(error, submitErrorContext));

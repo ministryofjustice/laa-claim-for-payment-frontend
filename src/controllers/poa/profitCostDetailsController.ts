@@ -79,14 +79,14 @@ export async function submitProfitCostDetails(
     }
 
     const claim = requireClaim(req);
-    const navigator = new PoaNavigator(claim, getMode(req));
-    const url = navigator.redirectFromProfitCostDetails(form.getValue());
 
     await claimService.updateClaim(
       req.axiosMiddleware,
       claim.setProfitCostDetails(form.getValue()),
     );
 
+    const navigator = new PoaNavigator(claim, getMode(req));
+    const url = navigator.redirectFromProfitCostDetails(form.getValue());
     res.redirect(url);
   } catch (error) {
     const processedError = processError(

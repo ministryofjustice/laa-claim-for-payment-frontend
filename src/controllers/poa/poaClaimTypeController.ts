@@ -66,11 +66,11 @@ export async function submitPoaClaimType(
     }
 
     const claim = requireClaim(req);
-    const navigator = new PoaNavigator(claim, getMode(req));
-    const url = navigator.redirectFromCostType(form.getValue());
 
     await draftService.setCostType(req.axiosMiddleware, claim, form.getValue());
 
+    const navigator = new PoaNavigator(claim, getMode(req));
+    const url = navigator.redirectFromCostType(form.getValue());
     res.redirect(url);
   } catch (error) {
     next(processError(error, "submitting POA claim type page"));
