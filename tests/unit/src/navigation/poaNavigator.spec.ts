@@ -347,23 +347,6 @@ describe("poaNavigator", () => {
       ],
     });
 
-    const completedDisbursementClaimWithNoEvidence = new Claim({
-      id: claimId,
-      costType: CostType.NON_EXPERT_DISBURSEMENT,
-      lineItems: [
-        {
-          id: lineItemId,
-          title: "Line item",
-          category: Category.DISBURSEMENT,
-          date: new LocalDate(29, 7, 2026),
-          actualNetValue: 19,
-          vatApplicable: false,
-          feeEarnerName: "John Smith",
-          evidenceItems: [],
-        },
-      ],
-    });
-
     describe("redirectFromCostType", () => {
       it(`redirects to 'check details' when answer remains profit cost`, () => {
         const navigator = new PoaNavigator(completedProfitCostClaim, mode);
