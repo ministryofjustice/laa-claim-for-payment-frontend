@@ -1,6 +1,7 @@
 import { type Claim, CostType, Count } from "#src/types/Claim.js";
-import { buildRoute, ROUTES } from "#routes/helper.js";
-import type { ProfitCostDetails } from "#src/types/poa.js";
+import { buildModeRoute, buildRoute, type Mode, ROUTES } from "#routes/helper.js";
+import type { DisbursementDetails, ProfitCostDetails } from "#src/types/poa.js";
+import config from "#config.js";
 
 /**
  *
@@ -8,16 +9,19 @@ import type { ProfitCostDetails } from "#src/types/poa.js";
 export class PoaNavigator {
   private readonly claim: Claim;
   private readonly claimId: string;
+  private readonly mode: Mode;
 
   /**
    * Constructs a navigator for the POA journey
    *
    * @param {Claim} claim claim
+   * @param {Mode} mode navigation mode
    */
-  constructor(claim: Claim) {
+  constructor(claim: Claim, mode: Mode) {
     this.claim = claim;
     const { id: claimId } = claim;
     this.claimId = claimId;
+    this.mode = mode;
   }
 
   /**
@@ -27,13 +31,18 @@ export class PoaNavigator {
    * @returns {string} URL to redirect to
    */
   redirectFromCostType(value: CostType): string {
-    const route: Record<CostType, string> = {
-      [CostType.PROFIT_COST]: ROUTES.POA.PROFIT_COST.DETAILS,
-      [CostType.EXPERT_COST]: ROUTES.POA.DISBURSEMENTS.ADD,
-      [CostType.NON_EXPERT_DISBURSEMENT]: ROUTES.POA.DISBURSEMENTS.ADD,
-    };
+    if (value === CostType.PROFIT_COST) {
+      return this.redirectToProfitCostDetails();
+    }
+    return this.redirectToAddAnotherDisbursement(!this.claim.hasLineItems);
+  }
 
-    return buildRoute(route[value], { claimId: this.claimId });
+  private redirectToProfitCostDetails(): string {
+    if (this.mode === "normal" || this.claim.profitCostDetails == null) {
+      return this.buildRoute(ROUTES.POA.PROFIT_COST.DETAILS);
+    }
+
+    return this.redirectFromProfitCostDetails(this.claim.profitCostDetails);
   }
 
   /**
@@ -43,11 +52,20 @@ export class PoaNavigator {
    * @returns {string} URL to redirect to
    */
   redirectFromProfitCostDetails(value: ProfitCostDetails): string {
-    const route = value.transferOfSolicitor
-      ? ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED
-      : ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE;
+    if (value.transferOfSolicitor) {
+      return this.redirectToHowManyClientsRetained();
+    }
+    return this.redirectToNumberOfClientStartOfCase();
+  }
 
-    return buildRoute(route, { claimId: this.claimId });
+  private redirectToHowManyClientsRetained(): string {
+    if (this.mode === "normal" || this.claim.clientsRetainedCount == null) {
+      return this.buildRoute(ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED);
+    }
+
+    return this.redirectFromHowManyClientsRetained(
+      this.claim.clientsRetainedCount,
+    );
   }
 
   /**
@@ -57,13 +75,20 @@ export class PoaNavigator {
    * @returns {string} URL to redirect to
    */
   redirectFromHowManyClientsRetained(value: Count): string {
-    const route: Record<Count, string> = {
-      [Count.ZERO]: ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE,
-      [Count.ONE]: ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS,
-      [Count.TWO_OR_MORE]: ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS,
-    };
+    if (value === Count.ZERO) {
+      return this.redirectToNumberOfClientStartOfCase();
+    }
+    return this.redirectToMultipleClientHearings();
+  }
 
-    return buildRoute(route[value], { claimId: this.claimId });
+  private redirectToNumberOfClientStartOfCase(): string {
+    if (this.mode === "normal" || this.claim.clientsStartCount == null) {
+      return this.buildRoute(
+        ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE,
+      );
+    }
+
+    return this.redirectFromNumberOfClientStartOfCase();
   }
 
   /**
@@ -72,9 +97,15 @@ export class PoaNavigator {
    * @returns {string} URL to redirect to
    */
   redirectFromNumberOfClientStartOfCase(): string {
-    return buildRoute(ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS, {
-      claimId: this.claimId,
-    });
+    return this.redirectToMultipleClientHearings();
+  }
+
+  private redirectToMultipleClientHearings(): string {
+    if (this.mode === "normal" || this.claim.multiClientHearingFlag == null) {
+      return this.buildRoute(ROUTES.POA.PROFIT_COST.MULTIPLE_CLIENT_HEARINGS);
+    }
+
+    return this.redirectFromMultipleClientHearings();
   }
 
   /**
@@ -83,20 +114,39 @@ export class PoaNavigator {
    * @returns {string} URL to redirect to
    */
   redirectFromMultipleClientHearings(): string {
-    return buildRoute(ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE, {
-      claimId: this.claimId,
-    });
+    return this.redirectToEscapingStandardFixedFee();
+  }
+
+  private redirectToEscapingStandardFixedFee(): string {
+    if (this.mode === "normal" || this.claim.escapedFlag == null) {
+      return this.buildRoute(ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE);
+    }
+
+    return this.redirectFromEscapingStandardFixedFee(this.claim.escapedFlag);
   }
 
   /**
    * Get URL to redirect to from escaping standard fixed fee page
    *
+   * @param {boolean} value escaped value
    * @returns {string} URL to redirect to
    */
-  redirectFromEscapingStandardFixedFee(): string {
-    return buildRoute(ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE, {
-      claimId: this.claimId,
-    });
+  redirectFromEscapingStandardFixedFee(value: boolean): string {
+    if (this.mode === "change") {
+      if (value) {
+        return this.redirectToEvidenceUpload();
+      }
+      return this.redirectToCheckDetails();
+    }
+    return this.redirectToProfitCostBillLine();
+  }
+
+  private redirectToProfitCostBillLine(): string {
+    if (this.mode === "normal" || this.claim.profitCostLineItem == null) {
+      return this.buildRoute(ROUTES.POA.PROFIT_COST.CPGFS_BILL_LINE);
+    }
+
+    return this.redirectFromProfitCostBillLine();
   }
 
   /**
@@ -108,19 +158,22 @@ export class PoaNavigator {
     // eslint-disable-next-line @typescript-eslint/prefer-destructuring -- ignore
     const { escapedFlag: escaped } = this.claim;
 
-    const getRoute: () => string = () => {
-      switch (escaped) {
-        case true:
-          return ROUTES.POA.EVIDENCE_UPLOAD;
-        case false:
-          return ROUTES.POA.CHECK_DETAILS;
-        default:
-          return ROUTES.POA.PROFIT_COST.ESCAPING_FIXED_FEE;
-      }
+    switch (escaped) {
+      case true:
+        return this.redirectToEvidenceUpload();
+      case false:
+        return this.redirectToCheckDetails();
+      default:
+        return this.redirectToEscapingStandardFixedFee();
+    }
+  }
+
+  private redirectToEvidenceUpload(): string {
+    if (this.mode === "normal" || !this.claim.hasEvidence) {
+      return this.buildRoute(ROUTES.POA.EVIDENCE_UPLOAD);
     }
 
-    const route = getRoute();
-    return buildRoute(route, { claimId: this.claimId });
+    return this.redirectFromEvidenceUpload();
   }
 
   /**
@@ -129,51 +182,70 @@ export class PoaNavigator {
    * @returns {string} URL to redirect to
    */
   redirectFromEvidenceUpload(): string {
-    return buildRoute(ROUTES.POA.CHECK_DETAILS, {
-      claimId: this.claimId,
-    });
+    return this.redirectToCheckDetails();
+  }
+
+  private redirectToAddAnotherDisbursement(noLineItems: boolean): string {
+    if (this.mode === "normal" || noLineItems) {
+      return this.buildRoute(ROUTES.POA.DISBURSEMENTS.ADD);
+    }
+
+    return this.redirectFromAddAnotherDisbursement(false);
   }
 
   /**
    * Get URL to redirect to from add another disbursement page
    *
-   * @param {boolean} value boolean value
+   * @param {boolean} value add another value
    * @returns {string} URL to redirect to
    */
   redirectFromAddAnotherDisbursement(value: boolean): string {
-    const getRoute: () => string = () => {
-      if (value) {
-        return ROUTES.POA.DISBURSEMENTS.DETAILS;
-      } else if (this.claim.requiresEvidence || this.claim.hasEvidence) {
-        return ROUTES.POA.EVIDENCE_UPLOAD;
-      } else {
-        return ROUTES.POA.CHECK_DETAILS;
-      }
+    if (value) {
+      return this.redirectToDisbursementDetails();
     }
+    if (this.claim.requiresEvidence || this.claim.hasEvidence) {
+      return this.redirectToEvidenceUpload();
+    }
+    return this.redirectToCheckDetails();
+  }
 
-    const route = getRoute();
-    return buildRoute(route, { claimId: this.claimId });
+  private redirectToDisbursementDetails(): string {
+    return this.buildRoute(ROUTES.POA.DISBURSEMENTS.DETAILS);
   }
 
   /**
    * Get URL to redirect to from disbursement details page
    *
+   * @param {DisbursementDetails} value disbursement details value
    * @returns {string} URL to redirect to
    */
-  redirectFromDisbursementDetails(): string {
-    return buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, {
-      claimId: this.claimId,
-    });
+  redirectFromDisbursementDetails(value: DisbursementDetails): string {
+    if (this.mode === "change") {
+      if (value.actualNetValue >= config.constants.evidenceThresholdInPounds) {
+        return this.redirectToEvidenceUpload();
+      }
+    }
+    return this.redirectToAddAnotherDisbursement(false);
   }
 
   /**
    * Get URL to redirect to from remove disbursement page
    *
+   * @param {boolean} value remove value
    * @returns {string} URL to redirect to
    */
-  redirectFromRemoveDisbursement(): string {
-    return buildRoute(ROUTES.POA.DISBURSEMENTS.ADD, {
+  redirectFromRemoveDisbursement(value: boolean): string {
+    const noLineItems = value && this.claim.lineItems.length <= 1;
+    return this.redirectToAddAnotherDisbursement(noLineItems);
+  }
+
+  private redirectToCheckDetails(): string {
+    return buildRoute(ROUTES.POA.CHECK_DETAILS, {
       claimId: this.claimId,
     });
+  }
+
+  private buildRoute(route: string): string {
+    return buildModeRoute(this.mode, route, { claimId: this.claimId });
   }
 }

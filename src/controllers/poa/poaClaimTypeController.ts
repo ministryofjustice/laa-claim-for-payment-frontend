@@ -8,6 +8,7 @@ import { RadioQuestionForm } from "#src/helpers/radioQuestionValidation.js";
 import config from "#config.js";
 import { requireClaim } from "#src/helpers/claimGuards.js";
 import { PoaNavigator } from "#src/navigation/poaNavigator.js";
+import { getMode } from "#src/helpers/queryParsers.js";
 
 /**
  * Display POA claim type page.
@@ -68,7 +69,7 @@ export async function submitPoaClaimType(
 
     await draftService.setCostType(req.axiosMiddleware, claim, form.getValue());
 
-    const navigator = new PoaNavigator(claim);
+    const navigator = new PoaNavigator(claim, getMode(req));
     const url = navigator.redirectFromCostType(form.getValue());
     res.redirect(url);
   } catch (error) {

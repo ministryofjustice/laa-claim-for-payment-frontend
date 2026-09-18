@@ -2,6 +2,7 @@ import { createRadioQuestionController } from "#src/helpers/radioQuestionControl
 import { Count } from "#src/types/Claim.js";
 import { RadioField } from "#src/helpers/fields.js";
 import { PoaNavigator } from "#src/navigation/poaNavigator.js";
+import { getMode } from "#src/helpers/queryParsers.js";
 
 function buildField(): RadioField<Count, Count> {
   const messagePrefix = "pages.numberOfClientsStartOfCase";
@@ -37,8 +38,8 @@ const controller = createRadioQuestionController({
   buildField: () => buildField(),
   renderErrorContext: "rendering number of clients start of case page",
   submitErrorContext: "submitting number of clients start of case page",
-  getRedirectUrl: (claim) => {
-    const navigator = new PoaNavigator(claim);
+  getRedirectUrl: (req, claim) => {
+    const navigator = new PoaNavigator(claim, getMode(req));
     return navigator.redirectFromNumberOfClientStartOfCase();
   },
   getValue: (claim) => claim.clientsStartCount,

@@ -133,7 +133,6 @@ describe("ClaimResponseSchema", () => {
   });
 
   describe("disbursementCostType", () => {
-
     describe("get", () => {
       it("returns cost when expert cost", () => {
         const claim = new Claim({
@@ -150,7 +149,9 @@ describe("ClaimResponseSchema", () => {
           costType: CostType.NON_EXPERT_DISBURSEMENT,
         });
 
-        expect(claim.disbursementCostType).to.equal(CostType.NON_EXPERT_DISBURSEMENT);
+        expect(claim.disbursementCostType).to.equal(
+          CostType.NON_EXPERT_DISBURSEMENT,
+        );
       });
 
       it("returns undefined when profit cost", () => {
@@ -183,22 +184,70 @@ describe("ClaimResponseSchema", () => {
   });
 
   describe("profit cost details", () => {
-    it("sets", () => {
-      const claim = new Claim({
-        id: id.toString(),
+    describe("gets", () => {
+      it("when values are defined", () => {
+        const claim = new Claim({
+          id: id.toString(),
+          courtType: CourtType.COUNTY_COURT,
+          clientPartyStatus: ClientPartyStatus.CHILD,
+          firstActingSolicitorFlag: true,
+          transferOfSolicitorFlag: false,
+        });
+
+        const result = claim.profitCostDetails;
+
+        expect(result?.courtType).to.equal(CourtType.COUNTY_COURT);
+        expect(result?.clientStatus).to.equal(ClientPartyStatus.CHILD);
+        expect(result?.firstSolicitor).to.equal(true);
+        expect(result?.transferOfSolicitor).to.equal(false);
       });
 
-      claim.setProfitCostDetails({
-        courtType: CourtType.COUNTY_COURT,
-        clientStatus: ClientPartyStatus.CHILD,
-        firstSolicitor: true,
-        transferOfSolicitor: false,
+      it("when values are undefined", () => {
+        const claim = new Claim({
+          id: id.toString(),
+        });
+
+        const result = claim.profitCostDetails;
+
+        expect(result).to.be.undefined;
+      });
+    });
+
+    describe("sets", () => {
+      it("when value is defined", () => {
+        const claim = new Claim({
+          id: id.toString(),
+        });
+
+        claim.setProfitCostDetails({
+          courtType: CourtType.COUNTY_COURT,
+          clientStatus: ClientPartyStatus.CHILD,
+          firstSolicitor: true,
+          transferOfSolicitor: false,
+        });
+
+        expect(claim.value.courtType).to.equal(CourtType.COUNTY_COURT);
+        expect(claim.value.clientPartyStatus).to.equal(ClientPartyStatus.CHILD);
+        expect(claim.value.firstActingSolicitorFlag).to.equal(true);
+        expect(claim.value.transferOfSolicitorFlag).to.equal(false);
       });
 
-      expect(claim.value.courtType).to.equal(CourtType.COUNTY_COURT);
-      expect(claim.value.clientPartyStatus).to.equal(ClientPartyStatus.CHILD);
-      expect(claim.value.firstActingSolicitorFlag).to.equal(true);
-      expect(claim.value.transferOfSolicitorFlag).to.equal(false);
+      it("when value is undefined", () => {
+        const claim = new Claim({
+          id: id.toString(),
+          courtType: CourtType.COUNTY_COURT,
+          clientPartyStatus: ClientPartyStatus.CHILD,
+          firstActingSolicitorFlag: true,
+          transferOfSolicitorFlag: false,
+        });
+
+        claim.setProfitCostDetails(undefined);
+
+        expect(claim.value.courtType).to.be.undefined;
+        expect(claim.value.clientPartyStatus).to.be.undefined;
+        expect(claim.value.firstActingSolicitorFlag).to.be.undefined;
+        expect(claim.value.transferOfSolicitorFlag).to.be.undefined;
+      });
     });
 
     it("resets", () => {

@@ -76,6 +76,7 @@ describe("escapingFixedFeeController", () => {
       body: {
         escapingFixedFee: "yes",
       },
+      query: {},
     } as unknown as Request;
 
     setEscapedFlagStub.resolves({
@@ -96,7 +97,7 @@ describe("escapingFixedFeeController", () => {
       ),
     ).to.be.true;
 
-    expect(redirectFromEscapingStandardFixedFeeStub.calledOnce).to.be.true;
+    expect(redirectFromEscapingStandardFixedFeeStub.calledOnceWith(true)).to.be.true;
     expect(redirectStub.calledWith(redirect)).to.be.true;
   });
 

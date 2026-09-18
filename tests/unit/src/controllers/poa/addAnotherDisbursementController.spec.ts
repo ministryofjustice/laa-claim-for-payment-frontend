@@ -59,6 +59,7 @@ describe("addAnotherDisbursementController", () => {
           },
         ],
       }),
+      query: {},
     } as unknown as Request;
 
     addAnotherDisbursement(req, res, next);
@@ -94,6 +95,7 @@ describe("addAnotherDisbursementController", () => {
           },
         ],
       }),
+      query: {},
     } as unknown as Request;
 
     addAnotherDisbursement(req, res, next);
@@ -148,6 +150,7 @@ describe("addAnotherDisbursementController", () => {
         costType: CostType.EXPERT_COST,
         lineItems: [],
       }),
+      query: {},
     } as unknown as Request;
 
     addAnotherDisbursement(req, res, next);
@@ -169,6 +172,7 @@ describe("addAnotherDisbursementController", () => {
       body: {
         addAnother: "yes",
       },
+      query: {},
     } as unknown as Request;
 
     redirectFromAddAnotherDisbursementStub.returns(redirect);
@@ -187,6 +191,7 @@ describe("addAnotherDisbursementController", () => {
         costType: CostType.EXPERT_COST,
       }),
       body: {},
+      query: {},
     } as unknown as Request;
 
     submitAddAnotherDisbursement(req, res, next);
@@ -207,6 +212,7 @@ describe("addAnotherDisbursementController", () => {
       body: {
         addAnother: "invalid",
       },
+      query: {},
     } as unknown as Request;
 
     submitAddAnotherDisbursement(req, res, next);

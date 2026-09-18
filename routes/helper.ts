@@ -57,6 +57,8 @@ export const ROUTES = {
   },
 } as const;
 
+export type Mode = "normal" | "change";
+
 /**
  * Builds a route by replacing named parameters with encoded values.
  *
@@ -87,6 +89,47 @@ export function buildRoute(
   }
 
   return `${path}?${searchParams.toString()}`;
+}
+
+/**
+ * Builds a change route by replacing named parameters with encoded values.
+ *
+ * @param {string} route The route pattern containing named parameters.
+ * @param {Record<string, string | number>} params The path parameter values to insert into the route.
+ * @param {Record<string, string | number>} query The query parameter values to insert into the route.
+ * @returns {string} The route with parameters replaced.
+ */
+export function buildChangeRoute(
+  route: string,
+  params: Record<string, string | number | UUID>,
+  query?: Record<string, string | number | UUID>,
+): string {
+  const mode: Mode = "change";
+  return buildRoute(route, params, {
+    ...query,
+    mode,
+  });
+}
+
+/**
+ * Builds a route by replacing named parameters with encoded values.
+ *
+ * @param {Mode} mode The navigation mode.
+ * @param {string} route The route pattern containing named parameters.
+ * @param {Record<string, string | number>} params The path parameter values to insert into the route.
+ * @param {Record<string, string | number>} query The query parameter values to insert into the route.
+ * @returns {string} The route with parameters replaced.
+ */
+export function buildModeRoute(
+  mode: Mode,
+  route: string,
+  params: Record<string, string | number | UUID>,
+  query?: Record<string, string | number | UUID>,
+): string {
+  if (mode === "change") {
+    return buildChangeRoute(route, params, query);
+  }
+  return buildRoute(route, params, query);
 }
 
 /**
@@ -135,7 +178,7 @@ export function multerErrorHandler(
 /**
  * Registers the route if enabled
  *
- * @param {boolean} enabled the enebaled flag, provided from config
+ * @param {boolean} enabled the enabled flag, provided from config
  * @param {() => void} register the route to register
  * @returns {void}
  */

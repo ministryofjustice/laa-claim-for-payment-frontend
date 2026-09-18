@@ -347,6 +347,28 @@ export class Claim {
   }
 
   /**
+   * Gets the profit cost details.
+   *
+   * @returns {ProfitCostDetails | undefined} the profit details, or undefined if it doesn't exist.
+   */
+  get profitCostDetails(): ProfitCostDetails | undefined {
+    if (
+      this.courtType != null &&
+      this.clientPartyStatus != null &&
+      this.firstActingSolicitorFlag != null &&
+      this.transferOfSolicitorFlag != null
+    ) {
+      return {
+        courtType: this.courtType,
+        clientStatus: this.clientPartyStatus,
+        firstSolicitor: this.firstActingSolicitorFlag,
+        transferOfSolicitor: this.transferOfSolicitorFlag,
+      };
+    }
+    return undefined;
+  }
+
+  /**
    * Sets the cost type.
    *
    * @param {CostType} value cost type
