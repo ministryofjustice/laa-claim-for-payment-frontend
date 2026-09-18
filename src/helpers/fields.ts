@@ -266,10 +266,12 @@ export class RadioField<TChoice, TValue> extends Field<unknown, TValue> {
   getOptions(): ReadonlyArray<RadioQuestionOptions<TChoice>> {
     const value = this.getValue();
 
-    return this.choices.map((choice) => ({
-      ...choice,
-      checked: this.toValue(choice.value) === value,
-    }));
+    return this.choices
+      .filter((choice) => choice.disabled !== true)
+      .map((choice) => ({
+        ...choice,
+        checked: this.toValue(choice.value) === value,
+      }));
   }
 }
 
@@ -385,7 +387,7 @@ export class MoneyField extends Field<unknown, number> {
 
     if (amount > this.maximum) {
       reject("maximum", {
-        maximum: formatMoney(this.maximum)
+        maximum: formatMoney(this.maximum),
       });
       return;
     }

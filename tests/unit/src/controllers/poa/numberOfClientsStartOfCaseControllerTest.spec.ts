@@ -69,13 +69,6 @@ describe("numberOfClientsStartOfCaseController", () => {
     expect(renderArgs.vm.radios.name).to.equal("numberOfClientsStartOfCase");
     expect(renderArgs.vm.radios.items).to.deep.equal([
       {
-        value: "ZERO",
-        text: {
-          key: "pages.numberOfClientsStartOfCase.ZERO.text",
-        },
-        checked: false,
-      },
-      {
         value: "ONE",
         text: {
           key: "pages.numberOfClientsStartOfCase.ONE.text",

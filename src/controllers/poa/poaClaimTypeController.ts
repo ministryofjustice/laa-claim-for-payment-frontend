@@ -84,16 +84,13 @@ function buildField(): RadioField<CostType, CostType> {
     "poaClaimType",
     "poaClaimType",
     [
-      ...(config.featureFlags.poaProfitCostEnabled
-        ? [
-            {
-              value: CostType.PROFIT_COST,
-              text: {
-                key: "pages.poaClaimType.profitCost.text",
-              },
-            },
-          ]
-        : []),
+      {
+        value: CostType.PROFIT_COST,
+        text: {
+          key: "pages.poaClaimType.profitCost.text",
+        },
+        disabled: !config.featureFlags.poaProfitCostEnabled,
+      },
       {
         value: CostType.EXPERT_COST,
         text: {

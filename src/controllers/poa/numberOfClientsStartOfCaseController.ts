@@ -16,6 +16,7 @@ function buildField(): RadioField<Count, Count> {
         text: {
           key: `${messagePrefix}.ZERO.text`,
         },
+        disabled: true,
       },
       {
         value: Count.ONE,

@@ -64,13 +64,14 @@ describe("poaClaimTypeController", () => {
     expect(renderArgs.csrfToken).to.equal("test-csrf-token");
     expect(renderArgs.vm.title.key).to.equal("pages.poaClaimType.title");
     expect(renderArgs.vm.radios.name).to.equal("poaClaimType");
-    expect(renderArgs.vm.radios.items).to.deep.include.members([
+    expect(renderArgs.vm.radios.items).to.deep.equal([
       {
         value: "PROFIT_COST",
         text: {
           key: "pages.poaClaimType.profitCost.text",
         },
         checked: false,
+        disabled: false,
       },
       {
         value: "EXPERT_COST",
@@ -102,15 +103,7 @@ describe("poaClaimTypeController", () => {
 
     const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
 
-    expect(renderArgs.vm.radios.items).to.not.deep.include({
-      value: "PROFIT_COST",
-      text: {
-        key: "pages.poaClaimType.profitCost.text",
-      },
-      checked: false,
-    });
-
-    expect(renderArgs.vm.radios.items).to.deep.include.members([
+    expect(renderArgs.vm.radios.items).to.deep.equal([
       {
         value: "EXPERT_COST",
         text: {
