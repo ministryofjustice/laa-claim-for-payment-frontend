@@ -1,11 +1,7 @@
 import { type Claim, CostType, Count } from "#src/types/Claim.js";
-import {
-  buildChangeRoute,
-  buildRoute,
-  type Mode,
-  ROUTES,
-} from "#routes/helper.js";
-import type { ProfitCostDetails } from "#src/types/poa.js";
+import { buildModeRoute, buildRoute, type Mode, ROUTES } from "#routes/helper.js";
+import type { DisbursementDetails, ProfitCostDetails } from "#src/types/poa.js";
+import config from "#config.js";
 
 /**
  *
@@ -38,7 +34,7 @@ export class PoaNavigator {
     if (value === CostType.PROFIT_COST) {
       return this.redirectToProfitCostDetails();
     }
-    return this.redirectToAddAnotherDisbursement();
+    return this.redirectToAddAnotherDisbursement(!this.claim.hasLineItems);
   }
 
   private redirectToProfitCostDetails(): string {
@@ -189,8 +185,8 @@ export class PoaNavigator {
     return this.redirectToCheckDetails();
   }
 
-  private redirectToAddAnotherDisbursement(): string {
-    if (this.mode === "normal" || !this.claim.hasLineItems) {
+  private redirectToAddAnotherDisbursement(noLineItems: boolean): string {
+    if (this.mode === "normal" || noLineItems) {
       return this.buildRoute(ROUTES.POA.DISBURSEMENTS.ADD);
     }
 
@@ -220,19 +216,27 @@ export class PoaNavigator {
   /**
    * Get URL to redirect to from disbursement details page
    *
+   * @param {DisbursementDetails} value disbursement details value
    * @returns {string} URL to redirect to
    */
-  redirectFromDisbursementDetails(): string {
-    return this.redirectToAddAnotherDisbursement();
+  redirectFromDisbursementDetails(value: DisbursementDetails): string {
+    if (this.mode === "change") {
+      if (value.actualNetValue >= config.constants.evidenceThresholdInPounds) {
+        return this.redirectToEvidenceUpload();
+      }
+    }
+    return this.redirectToAddAnotherDisbursement(false);
   }
 
   /**
    * Get URL to redirect to from remove disbursement page
    *
+   * @param {boolean} value remove value
    * @returns {string} URL to redirect to
    */
-  redirectFromRemoveDisbursement(): string {
-    return this.redirectToAddAnotherDisbursement();
+  redirectFromRemoveDisbursement(value: boolean): string {
+    const noLineItems = value && this.claim.lineItems.length <= 1;
+    return this.redirectToAddAnotherDisbursement(noLineItems);
   }
 
   private redirectToCheckDetails(): string {
@@ -242,9 +246,6 @@ export class PoaNavigator {
   }
 
   private buildRoute(route: string): string {
-    if (this.mode === "normal") {
-      return buildRoute(route, { claimId: this.claimId });
-    }
-    return buildChangeRoute(route, { claimId: this.claimId });
+    return buildModeRoute(this.mode, route, { claimId: this.claimId });
   }
 }

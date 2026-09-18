@@ -148,6 +148,7 @@ describe("addAnotherDisbursementController", () => {
         costType: CostType.EXPERT_COST,
         lineItems: [],
       }),
+      query: {},
     } as unknown as Request;
 
     addAnotherDisbursement(req, res, next);

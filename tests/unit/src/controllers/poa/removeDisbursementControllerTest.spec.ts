@@ -195,7 +195,7 @@ describe("removeDisbursementController", () => {
       ),
     ).to.equal(true);
 
-    expect(redirectFromRemoveDisbursementStub.calledOnce).to.be.true;
+    expect(redirectFromRemoveDisbursementStub.calledWith(true)).to.be.true;
     expect(redirectStub.calledWith(redirect)).to.be.true;
   });
 
@@ -222,7 +222,7 @@ describe("removeDisbursementController", () => {
 
     expect(deleteLineItemStub.called).to.be.false;
 
-    expect(redirectFromRemoveDisbursementStub.calledOnce).to.be.true;
+    expect(redirectFromRemoveDisbursementStub.calledWith(false)).to.be.true;
     expect(redirectStub.calledWith(redirect)).to.be.true;
   });
 

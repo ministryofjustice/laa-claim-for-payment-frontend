@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { processError } from "#src/helpers/index.js";
-import { buildRoute, ROUTES } from "#routes/helper.js";
+import { buildModeRoute, ROUTES } from "#routes/helper.js";
 import { AddAnotherDisbursementViewModel } from "#src/viewmodels/poa/addAnotherLineItemViewModel.js";
 import {
   type DisbursementCostType,
@@ -31,7 +31,7 @@ export function addAnotherDisbursement(
 
     const lineItems: DisbursementLineItem[] = claim.disbursementLineItems;
     if (lineItems.length === 0) {
-      res.redirect(buildRoute(ROUTES.POA.DISBURSEMENTS.DETAILS, { claimId }));
+      res.redirect(buildModeRoute(getMode(req), ROUTES.POA.DISBURSEMENTS.DETAILS, { claimId }));
     } else {
       const form = new YesNoQuestionForm(buildField(costType));
       res.render("main/poa/addAnotherDisbursementView.njk", {

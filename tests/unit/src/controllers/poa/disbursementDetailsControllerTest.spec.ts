@@ -12,6 +12,7 @@ import { Category, Claim, CostType } from "#src/types/Claim.js";
 import { LocalDate } from "#src/types/date.js";
 import { HttpError } from "http-errors";
 import { PoaNavigator } from "#src/navigation/poaNavigator.js";
+import { DisbursementDetails } from "#src/types/poa.js";
 
 describe("disbursementDetailsController", () => {
   let res: Response;
@@ -304,18 +305,20 @@ describe("disbursementDetailsController", () => {
         lineItemId.toString(),
       );
 
+      const expectedDisbursementDetails: DisbursementDetails = {
+        activityDate: new LocalDate(27, 3, 2007),
+        actualNetValue: 123.45,
+        vatApplies: true,
+        feeEarnerName: "John Smith",
+        description: "Lorem ipsum",
+      };
+
       expect(updateLineItemStub.lastCall.args[3]).to.deep.equal({
         type: input,
-        value: {
-          activityDate: new LocalDate(27, 3, 2007),
-          actualNetValue: 123.45,
-          vatApplies: true,
-          feeEarnerName: "John Smith",
-          description: "Lorem ipsum",
-        },
+        value: expectedDisbursementDetails,
       });
 
-      expect(redirectFromDisbursementDetailsStub.called).to.be.true;
+      expect(redirectFromDisbursementDetailsStub.calledWith(expectedDisbursementDetails)).to.be.true;
       expect(redirectStub.calledWith(redirect)).to.be.true;
     }
   });

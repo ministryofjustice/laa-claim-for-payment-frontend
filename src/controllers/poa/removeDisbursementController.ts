@@ -98,7 +98,7 @@ export async function submitRemoveExpertLineItem(
     }
 
     const navigator = new PoaNavigator(claim, getMode(req));
-    const url = navigator.redirectFromRemoveDisbursement();
+    const url = navigator.redirectFromRemoveDisbursement(form.getValue());
     res.redirect(url);
   } catch (error) {
     const processedError = processError(

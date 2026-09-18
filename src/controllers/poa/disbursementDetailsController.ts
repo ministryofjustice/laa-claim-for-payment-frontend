@@ -116,7 +116,7 @@ export async function submitDisbursementDetails(
     }
 
     const navigator = new PoaNavigator(claim, getMode(req));
-    const url = navigator.redirectFromDisbursementDetails();
+    const url = navigator.redirectFromDisbursementDetails(form.getValue());
     res.redirect(url);
   } catch (error) {
     next(processError(error, "submitting expert cost details page"));

@@ -112,6 +112,27 @@ export function buildChangeRoute(
 }
 
 /**
+ * Builds a route by replacing named parameters with encoded values.
+ *
+ * @param {Mode} mode The navigation mode.
+ * @param {string} route The route pattern containing named parameters.
+ * @param {Record<string, string | number>} params The path parameter values to insert into the route.
+ * @param {Record<string, string | number>} query The query parameter values to insert into the route.
+ * @returns {string} The route with parameters replaced.
+ */
+export function buildModeRoute(
+  mode: Mode,
+  route: string,
+  params: Record<string, string | number | UUID>,
+  query?: Record<string, string | number | UUID>,
+): string {
+  if (mode === "normal") {
+    return buildRoute(route, params, query);
+  }
+  return buildChangeRoute(route, params, query);
+}
+
+/**
  * Handles multer upload validation and file upload errors.
  *
  * @param {Error} error The error thrown by multer or custom upload validation.
