@@ -11,6 +11,7 @@ export interface RadioQuestionOptions<ChoiceType> {
     text: Message;
   };
   checked?: boolean;
+  disabled?: boolean;
 }
 
 export interface RadioQuestionViewModelParams<ChoiceType, ValueType> {

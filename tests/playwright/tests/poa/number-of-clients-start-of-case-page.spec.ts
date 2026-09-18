@@ -19,7 +19,6 @@ test.describe("Number of clients start of case page", () => {
     await expect(numberOfClientsPage.heading).toHaveText(
       "How many clients did you have at the start of the case?",
     );
-    await expect(numberOfClientsPage.zeroRadio).toBeVisible();
     await expect(numberOfClientsPage.oneRadio).toBeVisible();
     await expect(numberOfClientsPage.twoPlusRadio).toBeVisible();
     await expect(numberOfClientsPage.saveAndContinueButton).toBeVisible();
@@ -48,25 +47,6 @@ test.describe("Number of clients start of case page", () => {
     await expect(numberOfClientsPage.inlineError).toBeVisible();
     await expect(numberOfClientsPage.inlineError).toContainText(
       "Select how many clients you had at the start of the case",
-    );
-  });
-
-  test("redirects to multiple client hearings when 0 is selected", async ({
-    page,
-  }) => {
-    const numberOfClientsPage = new NumberOfClientsStartOfCasePage(
-      page,
-      profitCostDraftClaim1Id,
-    );
-
-    await numberOfClientsPage.navigate();
-    await numberOfClientsPage.waitForLoad();
-
-    await numberOfClientsPage.zeroRadio.check();
-    await numberOfClientsPage.saveAndContinueButton.click();
-
-    await expect(page).toHaveURL(
-      new RegExp(`/claims/${profitCostDraftClaim1Id}/poa/multiple-client-hearings$`),
     );
   });
 

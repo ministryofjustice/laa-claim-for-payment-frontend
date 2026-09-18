@@ -20,14 +20,6 @@ export class NumberOfClientsStartOfCasePage extends QuestionPage {
   readonly radio = new RadioInput(this.page, "numberOfClientsStartOfCase");
 
   /**
-   * get the 0 radio
-   * @returns {Locator} The 0 radio
-   */
-  get zeroRadio(): Locator {
-    return this.radio.getRadio("0");
-  }
-
-  /**
    * get the 1 radio
    * @returns {Locator} The 1 radio
    */
