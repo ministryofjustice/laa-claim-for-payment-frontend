@@ -66,6 +66,8 @@ export async function submitEscapingFixedFee(
     }
 
     const claim = requireClaim(req);
+    const navigator = new PoaNavigator(claim, getMode(req));
+    const url = navigator.redirectFromEscapingStandardFixedFee(form.getValue());
 
     await draftService.setEscapedFlag(
       req.axiosMiddleware,
@@ -73,8 +75,6 @@ export async function submitEscapingFixedFee(
       form.getValue(),
     );
 
-    const navigator = new PoaNavigator(claim, getMode(req));
-    const url = navigator.redirectFromEscapingStandardFixedFee(form.getValue());
     res.redirect(url);
   } catch (error) {
     const processedError = processError(
