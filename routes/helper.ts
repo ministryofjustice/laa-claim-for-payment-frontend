@@ -126,10 +126,10 @@ export function buildModeRoute(
   params: Record<string, string | number | UUID>,
   query?: Record<string, string | number | UUID>,
 ): string {
-  if (mode === "normal") {
-    return buildRoute(route, params, query);
+  if (mode === "change") {
+    return buildChangeRoute(route, params, query);
   }
-  return buildChangeRoute(route, params, query);
+  return buildRoute(route, params, query);
 }
 
 /**
