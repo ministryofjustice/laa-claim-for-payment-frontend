@@ -38,6 +38,7 @@ describe("AddAnotherLineItemViewModel", () => {
         claimId: claimId.toString(),
         lineItems,
         form: new YesNoQuestionForm(field),
+        mode: "normal",
       };
 
       const result = new AddAnotherDisbursementViewModel(params);
@@ -126,6 +127,7 @@ describe("AddAnotherLineItemViewModel", () => {
         claimId: claimId.toString(),
         lineItems,
         form: new YesNoQuestionForm(field),
+        mode: "normal",
       };
 
       const result = new AddAnotherDisbursementViewModel(params);
@@ -215,6 +217,46 @@ describe("AddAnotherLineItemViewModel", () => {
         result.lineItemsSummaryList.rows[1].actions?.items[1]
           .visuallyHiddenText!,
         "26 July 2026",
+      );
+    });
+
+    it("when change mode", () => {
+      const lineItems: DisbursementLineItem[] = [
+        {
+          id: lineItem1Id.toString(),
+          title: "Line item 1",
+          category: Category.DISBURSEMENT,
+          date: new LocalDate(18, 3, 2025),
+          evidenceItems: [],
+          feeEarnerName: "Joe Bloggs",
+          vatApplicable: true,
+          actualNetValue: 123,
+          netProfitCostAmount: null,
+          netAdvocacyCostAmount: null,
+        },
+      ];
+
+      const field = new BooleanField("test", "test", "test");
+
+      const params: AddAnotherDisbursementViewModelParams = {
+        claimId: claimId.toString(),
+        lineItems,
+        form: new YesNoQuestionForm(field),
+        mode: "change",
+      };
+
+      const result = new AddAnotherDisbursementViewModel(params);
+
+      expect(
+        result.lineItemsSummaryList.rows[0].actions?.items[0].href,
+      ).to.equal(
+        `/claims/${claimId.toString()}/poa/disbursement-details?lineItemId=${lineItem1Id.toString()}&mode=change`,
+      );
+
+      expect(
+        result.lineItemsSummaryList.rows[0].actions?.items[1].href,
+      ).to.equal(
+        `/claims/${claimId.toString()}/poa/disbursement-details/${lineItem1Id.toString()}/remove?mode=change`,
       );
     });
   });

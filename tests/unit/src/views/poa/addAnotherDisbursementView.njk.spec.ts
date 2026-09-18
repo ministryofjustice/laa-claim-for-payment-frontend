@@ -40,6 +40,7 @@ describe("views/main/poa/addAnotherDisbursementView.njk", () => {
       },
     ],
     form,
+    mode: "normal",
   };
 
   const viewModel = new AddAnotherDisbursementViewModel(params);

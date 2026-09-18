@@ -30,8 +30,9 @@ export function addAnotherDisbursement(
     const costType = requireDisbursementCostType(claim);
 
     const lineItems: DisbursementLineItem[] = claim.disbursementLineItems;
+    const mode = getMode(req);
     if (lineItems.length === 0) {
-      res.redirect(buildModeRoute(getMode(req), ROUTES.POA.DISBURSEMENTS.DETAILS, { claimId }));
+      res.redirect(buildModeRoute(mode, ROUTES.POA.DISBURSEMENTS.DETAILS, { claimId }));
     } else {
       const form = new YesNoQuestionForm(buildField(costType));
       res.render("main/poa/addAnotherDisbursementView.njk", {
@@ -40,6 +41,7 @@ export function addAnotherDisbursement(
           claimId,
           lineItems,
           form,
+          mode,
         }),
       });
     }
@@ -73,6 +75,7 @@ export function submitAddAnotherDisbursement(
     const selectedChoice: unknown = req.body?.[field.name];
     const form = new YesNoQuestionForm(field);
     form.validate(selectedChoice);
+    const mode = getMode(req);
     if (form.isNotValid()) {
       res.status(400).render("main/poa/addAnotherDisbursementView.njk", {
         csrfToken: res.locals.csrfToken,
@@ -80,12 +83,13 @@ export function submitAddAnotherDisbursement(
           claimId,
           lineItems: claim.disbursementLineItems,
           form,
+          mode,
         }),
       });
       return;
     }
 
-    const navigator = new PoaNavigator(claim, getMode(req));
+    const navigator = new PoaNavigator(claim, mode);
     const url = navigator.redirectFromAddAnotherDisbursement(form.getValue());
     res.redirect(url);
   } catch (error) {
