@@ -353,6 +353,26 @@ describe("poaNavigator", () => {
         const result = navigator.redirectFromCostType(CostType.PROFIT_COST);
         expect(result).to.equal("/claims/foo/poa/check-details");
       });
+
+      it(`redirects to 'check details' when answer remains expert cost`, () => {
+        const claim = new Claim({
+          ...completedDisbursementClaim.value,
+          costType: CostType.EXPERT_COST,
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromCostType(CostType.EXPERT_COST);
+        expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+
+      it(`redirects to 'check details' when answer remains non-expert disbursement`, () => {
+        const claim = new Claim({
+          ...completedDisbursementClaim.value,
+          costType: CostType.NON_EXPERT_DISBURSEMENT,
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromCostType(CostType.NON_EXPERT_DISBURSEMENT);
+        expect(result).to.equal("/claims/foo/poa/check-details");
+      });
     });
 
     describe("redirectFromProfitCostDetails", () => {
@@ -390,6 +410,23 @@ describe("poaNavigator", () => {
         };
         const result = navigator.redirectFromProfitCostDetails(value);
         expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+
+      it("redirects to 'how many clients retained' when no changes to yes for 'transfer of solicitor' and 'how many clients retained' is not already answered", () => {
+        const claim = new Claim({
+          ...completedProfitCostClaim.value,
+          transferOfSolicitorFlag: false,
+          clientsRetainedCount: undefined,
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const value: ProfitCostDetails = {
+          courtType: CourtType.COUNTY_COURT,
+          clientStatus: ClientPartyStatus.CHILD,
+          firstSolicitor: true,
+          transferOfSolicitor: true,
+        };
+        const result = navigator.redirectFromProfitCostDetails(value);
+        expect(result).to.equal("/claims/foo/poa/how-many-clients-retained?mode=change");
       });
     });
 
@@ -473,20 +510,38 @@ describe("poaNavigator", () => {
     });
 
     describe("redirectFromNumberOfClientStartOfCase", () => {
-      const navigator = new PoaNavigator(completedProfitCostClaim, mode);
-
       it("redirects to 'check details'", () => {
+        const navigator = new PoaNavigator(completedProfitCostClaim, mode);
         const result = navigator.redirectFromNumberOfClientStartOfCase();
         expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+
+      it("redirects to 'multiple client hearings' when not answered", () => {
+        const claim = new Claim({
+          ...completedProfitCostClaim.value,
+          multiClientHearingFlag: undefined,
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromNumberOfClientStartOfCase();
+        expect(result).to.equal("/claims/foo/poa/multiple-client-hearings?mode=change");
       });
     });
 
     describe("redirectFromMultipleClientHearings", () => {
-      const navigator = new PoaNavigator(completedProfitCostClaim, mode);
-
       it("redirects to 'check details'", () => {
+        const navigator = new PoaNavigator(completedProfitCostClaim, mode);
         const result = navigator.redirectFromMultipleClientHearings();
         expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+
+      it("redirects to 'escaping standard fixed fee' when not answered", () => {
+        const claim = new Claim({
+          ...completedProfitCostClaim.value,
+          escaped: undefined,
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromMultipleClientHearings();
+        expect(result).to.equal("/claims/foo/poa/escaping-standard-fixed-fee?mode=change");
       });
     });
 
@@ -533,11 +588,36 @@ describe("poaNavigator", () => {
     });
 
     describe("redirectFromProfitCostBillLine", () => {
-      const navigator = new PoaNavigator(completedProfitCostClaim, mode);
-
-      it("redirects to 'check details'", () => {
+      it("redirects to 'check details' when escaped is false", () => {
+        const claim = new Claim({
+          ...completedProfitCostClaim.value,
+          escaped: false,
+          evidence: [],
+        });
+        const navigator = new PoaNavigator(claim, mode);
         const result = navigator.redirectFromProfitCostBillLine();
         expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+
+      it("redirects to 'evidence upload' when escaped is true and there's no evidence", () => {
+        const claim = new Claim({
+          ...completedProfitCostClaim.value,
+          escaped: true,
+          evidence: [],
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromProfitCostBillLine();
+        expect(result).to.equal("/claims/foo/poa/evidence-upload?mode=change");
+      });
+
+      it("redirects to 'escaping standard fixed fee' when escaped is undefined", () => {
+        const claim = new Claim({
+          ...completedProfitCostClaim.value,
+          escaped: undefined,
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromProfitCostBillLine();
+        expect(result).to.equal("/claims/foo/poa/escaping-standard-fixed-fee?mode=change");
       });
     });
 
@@ -551,23 +631,65 @@ describe("poaNavigator", () => {
     });
 
     describe("redirectFromAddAnotherDisbursement", () => {
-      const navigator = new PoaNavigator(completedDisbursementClaim, mode);
-
       it("redirects to 'disbursement details' when yes selected", () => {
+        const navigator = new PoaNavigator(completedDisbursementClaim, mode);
         const result = navigator.redirectFromAddAnotherDisbursement(true);
         expect(result).to.equal("/claims/foo/poa/disbursement-details?mode=change");
       });
 
       it("redirects to 'check details' when no selected", () => {
+        const navigator = new PoaNavigator(completedDisbursementClaim, mode);
         const result = navigator.redirectFromAddAnotherDisbursement(false);
         expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+
+      it("redirects to 'evidence upload' when no selected and no evidence", () => {
+        const claim = new Claim({
+          ...completedDisbursementClaim.value,
+          evidence: [],
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromAddAnotherDisbursement(false);
+        expect(result).to.equal("/claims/foo/poa/evidence-upload?mode=change");
       });
     });
 
     describe("redirectFromDisbursementDetails", () => {
       const navigator = new PoaNavigator(completedDisbursementClaim, mode);
 
-      it("redirects to 'check details'", () => {
+      it("redirects to 'check details' when everything else answered", () => {
+        const result = navigator.redirectFromDisbursementDetails();
+        expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+
+      it("redirects to 'evidence upload' when evidence required and no evidence", () => {
+        const claim = new Claim({
+          ...completedDisbursementClaim.value,
+          evidence: [],
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromDisbursementDetails();
+        expect(result).to.equal("/claims/foo/poa/evidence-upload?mode=change");
+      });
+
+      it("redirects to 'check details' when no evidence required and no evidence", () => {
+        const claim = new Claim({
+          ...completedDisbursementClaim.value,
+          lineItems: [
+            {
+              id: lineItemId,
+              title: "Line item",
+              category: Category.DISBURSEMENT,
+              date: new LocalDate(29, 7, 2026),
+              actualNetValue: 19,
+              vatApplicable: false,
+              feeEarnerName: "John Smith",
+              evidenceItems: [],
+            },
+          ],
+          evidence: [],
+        });
+        const navigator = new PoaNavigator(claim, mode);
         const result = navigator.redirectFromDisbursementDetails();
         expect(result).to.equal("/claims/foo/poa/check-details");
       });
@@ -576,9 +698,51 @@ describe("poaNavigator", () => {
     describe("redirectFromRemoveDisbursement", () => {
       const navigator = new PoaNavigator(completedDisbursementClaim, mode);
 
-      it("redirects to 'check details'", () => {
+      it("redirects to 'check details' when everything else answered", () => {
         const result = navigator.redirectFromRemoveDisbursement();
         expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+
+      it("redirects to 'evidence upload' when evidence required and no evidence", () => {
+        const claim = new Claim({
+          ...completedDisbursementClaim.value,
+          evidence: [],
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromRemoveDisbursement();
+        expect(result).to.equal("/claims/foo/poa/evidence-upload?mode=change");
+      });
+
+      it("redirects to 'check details' when no evidence required and no evidence", () => {
+        const claim = new Claim({
+          ...completedDisbursementClaim.value,
+          lineItems: [
+            {
+              id: lineItemId,
+              title: "Line item",
+              category: Category.DISBURSEMENT,
+              date: new LocalDate(29, 7, 2026),
+              actualNetValue: 19,
+              vatApplicable: false,
+              feeEarnerName: "John Smith",
+              evidenceItems: [],
+            },
+          ],
+          evidence: [],
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromRemoveDisbursement();
+        expect(result).to.equal("/claims/foo/poa/check-details");
+      });
+
+      it("redirects to 'add disbursement' when no line items remaining", () => {
+        const claim = new Claim({
+          ...completedDisbursementClaim.value,
+          lineItems: [],
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromRemoveDisbursement();
+        expect(result).to.equal("/claims/foo/poa/disbursement-details/add?mode=change");
       });
     });
   });
