@@ -66,14 +66,14 @@ export async function submitMultipleClientHearings(
     }
 
     const claim = requireClaim(req);
+    const navigator = new PoaNavigator(claim, getMode(req));
+    const url = navigator.redirectFromMultipleClientHearings();
 
     await claimService.updateClaim(
       req.axiosMiddleware,
       claim.setMultiClientHearingFlag(form.getValue()),
     );
 
-    const navigator = new PoaNavigator(claim, getMode(req));
-    const url = navigator.redirectFromMultipleClientHearings();
     res.redirect(url);
   } catch (error) {
     const processedError = processError(

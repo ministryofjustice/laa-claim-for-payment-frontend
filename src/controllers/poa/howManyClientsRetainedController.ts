@@ -24,8 +24,8 @@ export function howManyClientsRetained(
     const claim = requireClaim(req);
 
     const form = new RadioQuestionForm(buildField());
-    if (claim.clientsStartCount != null) {
-      form.fill(claim.clientsStartCount);
+    if (claim.clientsRetainedCount != null) {
+      form.fill(claim.clientsRetainedCount);
     }
     res.render("main/radioQuestionPage.njk", {
       csrfToken: res.locals.csrfToken,
@@ -64,14 +64,14 @@ export async function submitHowManyClientsRetained(
     }
 
     const claim = requireClaim(req);
+    const navigator = new PoaNavigator(claim, getMode(req));
+    const url = navigator.redirectFromHowManyClientsRetained(form.getValue());
 
     await claimService.updateClaim(
       req.axiosMiddleware,
       claim.setClientsRetainedCount(form.getValue()),
     );
 
-    const navigator = new PoaNavigator(claim, getMode(req));
-    const url = navigator.redirectFromHowManyClientsRetained(form.getValue());
     res.redirect(url);
   } catch (error) {
     const processedError = processError(error, "submitting how many clients retained page");

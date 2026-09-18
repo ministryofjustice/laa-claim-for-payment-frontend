@@ -69,6 +69,28 @@ describe("howManyClientsRetainedController", () => {
     expect(renderArgs.vm.radios.name).to.equal("howManyClientsRetained");
   });
 
+  it("renders the prepopulated page", () => {
+    const req = {
+      claim: new Claim({
+        id: claimId.toString(),
+        clientsRetainedCount: Count.ONE,
+      }),
+    } as unknown as Request;
+
+    howManyClientsRetained(req, res, next);
+
+    expect((res.render as sinon.SinonStub).calledOnce).to.be.true;
+    expect((res.render as sinon.SinonStub).firstCall.args[0]).to.equal(
+      "main/radioQuestionPage.njk",
+    );
+
+    const renderArgs = (res.render as sinon.SinonStub).firstCall.args[1];
+
+    expect(renderArgs.vm.radios.items[0].checked).to.equal(false);
+    expect(renderArgs.vm.radios.items[1].checked).to.equal(true);
+    expect(renderArgs.vm.radios.items[2].checked).to.equal(false);
+  });
+
   it("redirects when valid submission", async () => {
     const redirect = "/next-page";
 

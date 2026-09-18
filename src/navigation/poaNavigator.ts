@@ -8,7 +8,9 @@ import {
 import type { ProfitCostDetails } from "#src/types/poa.js";
 
 /**
- *
+ * POA navigator.
+ * Ensure the unmutated claim is used when constructing the navigator.
+ * This allows the previous value to be compared to the new (form) value.
  */
 export class PoaNavigator {
   private readonly claim: Claim;
@@ -55,7 +57,7 @@ export class PoaNavigator {
     if (
       this.mode === "change" &&
       value.transferOfSolicitor &&
-      value.transferOfSolicitor !== this.claim.transferOfSolicitorFlag
+      this.claim.clientsRetainedCount == null
     ) {
       return buildChangeRoute(
         ROUTES.POA.PROFIT_COST.HOW_MANY_CLIENTS_RETAINED,
@@ -83,7 +85,7 @@ export class PoaNavigator {
     if (
       this.mode === "change" &&
       value === Count.ZERO &&
-      value !== this.claim.clientsRetainedCount
+      this.claim.clientsStartCount == null
     ) {
       return buildChangeRoute(
         ROUTES.POA.PROFIT_COST.NUMBER_OF_CLIENTS_START_OF_CASE,
@@ -136,7 +138,11 @@ export class PoaNavigator {
    * @returns {string} URL to redirect to
    */
   redirectFromEscapingStandardFixedFee(value: boolean): string {
-    if (this.mode === "change" && value && value !== this.claim.escapedFlag) {
+    if (
+      this.mode === "change" &&
+      value &&
+      !this.claim.hasEvidence
+    ) {
       return buildChangeRoute(ROUTES.POA.EVIDENCE_UPLOAD, {
         claimId: this.claimId,
       });

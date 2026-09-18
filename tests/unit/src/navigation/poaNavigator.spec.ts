@@ -334,25 +334,23 @@ describe("poaNavigator", () => {
         );
       });
 
-      it("redirects to 'check details' when answer doesn't change for 'transfer of solicitor'", () => {
-        for (const bool of [true, false]) {
-          const claim = new Claim({
-            id: claimId,
-            transferOfSolicitorFlag: bool,
-          });
-          const navigator = new PoaNavigator(claim, mode);
-          const value: ProfitCostDetails = {
-            courtType: CourtType.COUNTY_COURT,
-            clientStatus: ClientPartyStatus.CHILD,
-            firstSolicitor: true,
-            transferOfSolicitor: bool,
-          };
-          const result = navigator.redirectFromProfitCostDetails(value);
-          expect(result).to.equal(
-            "/claims/foo/poa/check-details",
-            `Test failed for ${bool}`,
-          );
-        }
+      it("redirects to 'check details' when no changes to yes for 'transfer of solicitor' and 'how many clients retained' is already answered", () => {
+        const claim = new Claim({
+          id: claimId,
+          transferOfSolicitorFlag: false,
+          clientsRetainedCount: Count.ZERO,
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const value: ProfitCostDetails = {
+          courtType: CourtType.COUNTY_COURT,
+          clientStatus: ClientPartyStatus.CHILD,
+          firstSolicitor: true,
+          transferOfSolicitor: true,
+        };
+        const result = navigator.redirectFromProfitCostDetails(value);
+        expect(result).to.equal(
+          "/claims/foo/poa/check-details",
+        );
       });
     });
 
@@ -415,14 +413,14 @@ describe("poaNavigator", () => {
         }
       });
 
-      it("redirects to 'check details' when answer changes from 0", () => {
+      it("redirects to 'check details' when answer changes to 0 and 'number of clients at start of case' is already answered", () => {
         for (const count of Object.values(Count)) {
           const claim = new Claim({
             id: claimId,
-            clientsRetainedCount: Count.ZERO,
+            clientsStartCount: count,
           });
           const navigator = new PoaNavigator(claim, mode);
-          const result = navigator.redirectFromHowManyClientsRetained(count);
+          const result = navigator.redirectFromHowManyClientsRetained(Count.ZERO);
           expect(result).to.equal(
             "/claims/foo/poa/check-details",
             `Test failed for ${count}`,
@@ -476,19 +474,22 @@ describe("poaNavigator", () => {
         expect(result).to.equal("/claims/foo/poa/check-details");
       });
 
-      it("redirects to 'check details' when answer doesn't change", () => {
-        for (const bool of [true, false]) {
-          const claim = new Claim({
-            id: claimId,
-            escaped: bool,
-          });
-          const navigator = new PoaNavigator(claim, mode);
-          const result = navigator.redirectFromEscapingStandardFixedFee(bool);
-          expect(result).to.equal(
-            "/claims/foo/poa/check-details",
-            `Test failed for ${bool}`,
-          );
-        }
+      it("redirects to 'check details' when answer changes from no to yes and evidence already provided", () => {
+        const claim = new Claim({
+          id: claimId,
+          escaped: false,
+          evidence: [
+            {
+              id: evidenceId.toString(),
+              fileKey: "test.pdf",
+              fileSize: 123456,
+              submittedOn: "2026-06-17T14:34:01.226855Z",
+            },
+          ]
+        });
+        const navigator = new PoaNavigator(claim, mode);
+        const result = navigator.redirectFromEscapingStandardFixedFee(true);
+        expect(result).to.equal("/claims/foo/poa/check-details");
       });
     });
 
