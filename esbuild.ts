@@ -77,6 +77,7 @@ const externalModules: string[] = [
   "redis",
   "connect-redis",
   "express-prom-bundle",
+  "prom-client",
 ];
 
 /**
