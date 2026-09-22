@@ -1,9 +1,10 @@
 import express from "express";
 import { expect } from "chai";
+import { register } from "prom-client";
 import { configureMetrics } from "#utils/prometheusSetup.js";
 
 describe("prometheusSetup", () => {
-  it("exposes HTTP request metrics for the app", async () => {
+  it("records HTTP request metrics without exposing /metrics on the public app", async () => {
     const app = express();
     configureMetrics(app);
 
@@ -23,9 +24,9 @@ describe("prometheusSetup", () => {
       expect(pingResponse.status).to.equal(204);
 
       const metricsResponse = await fetch(`http://localhost:${port}/metrics`);
-      const metricsText = await metricsResponse.text();
+      expect(metricsResponse.status).to.equal(404);
 
-      expect(metricsResponse.status).to.equal(200);
+      const metricsText = await register.metrics();
       expect(metricsText).to.include("http_request_duration_seconds");
     } finally {
       await new Promise<void>((resolve, reject) => {
