@@ -27,6 +27,7 @@ import { requiresAuth } from "#utils/openidSetup.js";
 import { initializeI18nextSync } from "./scripts/helpers/i18nLoader.js";
 import { initRedis } from "#utils/redisClient.js";
 import createHttpError from "http-errors";
+import { register } from "prom-client";
 import { validateLanguage } from "#src/helpers/validateLanguage.js";
 
 const TRUST_FIRST_PROXY = 1;
@@ -43,6 +44,10 @@ const createApp = async (): Promise<express.Application> => {
   initializeI18nextSync();
   
   const app = express();
+
+  // Metrics must be attached before the routes so it captures the public app's request flow.
+  // The /metrics endpoint itself is served from the private management app, not the public port.
+  prometheusSetup(app);
 
   // Set up common middleware for handling cookies, body parsing, etc.
   setupMiddlewares(app);
@@ -193,8 +198,10 @@ const createManagementApp = (): express.Application => {
     app.use(morgan("dev"));
   }
 
-  // Set up metrics
-  prometheusSetup(app);
+  app.get("/metrics", async (_req, res) => {
+    res.set("Content-Type", "text/plain; version=0.7.0; charset=utf-8");
+    res.send(await register.metrics());
+  });
 
   app.use((req, res, next) => {
     res.status(404).send("Page not found");
