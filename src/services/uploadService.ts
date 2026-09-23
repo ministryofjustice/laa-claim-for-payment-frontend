@@ -332,31 +332,10 @@ class UploadService {
             ${file.size}
           </span>
 
-          <strong class="govuk-tag govuk-tag--green">
-            ${t("common.fileUploadStatus.uploaded")}
-          </strong>
+          ${this.tag(t, "green", "common.fileUploadStatus.uploaded")}
         </dd>
 
-        <dd class="govuk-summary-list__actions moj-multi-file-upload__actions">
-          <button
-            type="submit"
-            name="delete"
-            value="${file.id}"
-            class="moj-multi-file-upload__delete govuk-button govuk-button--secondary govuk-!-margin-bottom-0 govuk-visually-hidden"
-          >
-            ${t("common.delete")}
-            <span class="govuk-visually-hidden">
-              ${file.name}
-            </span>
-          </button>
-
-          <a href="#" class="govuk-link moj-multi-file-upload__delete-link">
-            ${t("common.delete")}
-            <span class="govuk-visually-hidden">
-              ${file.name}
-            </span>
-          </a>
-        </dd>
+        ${this.deleteLink(t, file)}
       </div>
     `;
   }
@@ -387,9 +366,7 @@ class UploadService {
             0%
           </span>
 
-          <strong class="govuk-tag govuk-tag--yellow">
-            ${t("common.fileUploadStatus.uploading")}
-          </strong>
+          ${this.tag(t, "yellow", "common.fileUploadStatus.uploading")}
         </dd>
       </div>
     `;
@@ -403,7 +380,7 @@ class UploadService {
    * @param {string} file.message error message
    * @returns {string} HTML
    */
-  static getFailedFileRow(
+  static getUploadFailedFileRow(
     t: TFunction,
     file: {
       name: string;
@@ -421,10 +398,44 @@ class UploadService {
             ${file.message}
           </span>
 
-          <strong class="govuk-tag govuk-tag--red">
-            ${t("common.fileUploadStatus.failed")}
-          </strong>
+          ${this.tag(t, "red", "common.fileUploadStatus.uploadFailed")}
         </dd>
+      </div>
+    `;
+  }
+
+  /**
+   * Get HTML for the summary list row for a failed delete.
+   * @param {TFunction} t translation function
+   * @param {object} file file
+   * @param {string} file.id file ID
+   * @param {string} file.name file name
+   * @param {string} file.message error message
+   * @returns {string} HTML
+   */
+  static getDeleteFailedFileRow(
+    t: TFunction,
+    file: {
+      id: string;
+      name: string;
+      message: string;
+    },
+  ): string {
+    return `
+      <div class="govuk-summary-list__row moj-multi-file-upload__row">
+        <dt class="govuk-summary-list__key moj-multi-file-upload__key">
+          ${file.name}
+        </dt>
+
+        <dd class="govuk-summary-list__value moj-multi-file-upload__value">
+          <span class="moj-multi-file-upload__failed">
+            ${file.message}
+          </span>
+          
+          ${this.tag(t, "orange", "common.fileUploadStatus.deleteFailed")}
+        </dd>
+
+        ${this.deleteLink(t, file)}
       </div>
     `;
   }
@@ -464,9 +475,7 @@ class UploadService {
           <span class="uploaded-file-row">
             <a href="#" class="govuk-link uploaded-file-name">${escapeHtml(file.originalname)}</a>
             <span class="uploaded-file-size">${formatFileSize(file.size)}</span>
-            <strong class="govuk-tag govuk-tag--green">
-              ${t("common.uploadStatus.uploaded")}
-            </strong>
+            ${this.tag(t, "green", "common.uploadStatus.uploaded")}
           </span>`,
       },
       file: {
@@ -485,6 +494,44 @@ class UploadService {
         message: t("multiFileUpload.errors.uploadFailed"),
       },
     };
+  }
+
+  private static tag(
+    t: TFunction,
+    colour: "green" | "yellow" | "red" | "orange",
+    message: string,
+  ): string {
+    return `
+      <strong class="govuk-tag govuk-tag--${colour}">
+        ${t(message)}
+      </strong>`;
+  }
+
+  private static deleteLink(
+    t: TFunction,
+    file: { id: string; name: string },
+  ): string {
+    return `
+      <dd class="govuk-summary-list__actions moj-multi-file-upload__actions">
+        <button
+          type="submit"
+          name="delete"
+          value="${file.id}"
+          class="moj-multi-file-upload__delete govuk-button govuk-button--secondary govuk-!-margin-bottom-0 govuk-visually-hidden"
+        >
+          ${t("common.delete")}
+          <span class="govuk-visually-hidden">
+            ${file.name}
+          </span>
+        </button>
+
+        <a href="#" class="govuk-link moj-multi-file-upload__delete-link">
+          ${t("common.delete")}
+          <span class="govuk-visually-hidden">
+            ${file.name}
+          </span>
+        </a>
+      </dd>`;
   }
 }
 

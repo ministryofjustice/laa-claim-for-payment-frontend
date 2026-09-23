@@ -29,7 +29,8 @@
     "fileUploadStatus": {
       "uploaded": "Uploaded",
       "uploading": "Uploading",
-      "failed": "Failed"
+      "uploadFailed": "Failed",
+      "deleteFailed": "Warning"
     }
   },
   "multiFileUpload": {
@@ -46,7 +47,7 @@
     },
     "errors": {
       "uploadFailed": "Upload failed",
-      "deleteFailed": "Delete failed",
+      "deleteFailed": "Delete failed. Try again.",
       "noFileSelected": "You must upload evidence before you can continue",
       "emptyFile": "The selected file is empty",
       "noFileUploaded": "No file uploaded",

@@ -141,7 +141,7 @@ describe("ajaxFileUploadController", () => {
           messageHtml: "<span>Uploaded</span>",
         },
         file: {
-          id: "019fcb9c-2556-747c-a515-9d67143d5fd9",
+          id: evidenceId.toString(),
           filename: evidenceId.toString(),
           originalname: "evidence.pdf",
           size: "123KB",
@@ -257,7 +257,7 @@ describe("ajaxFileUploadController", () => {
           messageHtml: "<span>Uploaded</span>",
         },
         file: {
-          id: "019fcb9c-2556-747c-a515-9d67143d5fd9",
+          id: evidenceId.toString(),
           filename: evidenceId.toString(),
           originalname: "evidence.pdf",
           size: "123KB",
@@ -584,6 +584,8 @@ describe("ajaxFileUploadController", () => {
     let uploadEvidenceStub: sinon.SinonStub;
 
     describe("uploaded", () => {
+      const status = "uploaded";
+
       beforeEach(() => {
         uploadEvidenceStub = sinon.stub(uploadService, "getUploadedFileRow");
       });
@@ -591,9 +593,9 @@ describe("ajaxFileUploadController", () => {
       it("gets an uploaded row", () => {
         req = {
           query: {
-            status: "success",
+            status,
             fileName: "evidence.pdf",
-            fileId: "019fcb9c-2556-747c-a515-9d67143d5fd9",
+            fileId: evidenceId.toString(),
             fileSize: "123KB",
           },
         };
@@ -612,7 +614,7 @@ describe("ajaxFileUploadController", () => {
       it("fails to get an uploaded row when query params missing", () => {
         req = {
           query: {
-            status: "success",
+            status,
           },
         };
 
@@ -627,6 +629,8 @@ describe("ajaxFileUploadController", () => {
     });
 
     describe("uploading", () => {
+      const status = "uploading";
+
       beforeEach(() => {
         uploadEvidenceStub = sinon.stub(uploadService, "getUploadingFileRow");
       });
@@ -634,7 +638,7 @@ describe("ajaxFileUploadController", () => {
       it("gets an uploading row", () => {
         req = {
           query: {
-            status: "pending",
+            status,
             fileName: "evidence.pdf",
           },
         };
@@ -653,7 +657,7 @@ describe("ajaxFileUploadController", () => {
       it("fails to get an uploading row when query params missing", () => {
         req = {
           query: {
-            status: "pending",
+            status,
           },
         };
 
@@ -667,15 +671,17 @@ describe("ajaxFileUploadController", () => {
       });
     });
 
-    describe("failed", () => {
+    describe("uploadFailed", () => {
+      const status = "uploadFailed";
+
       beforeEach(() => {
-        uploadEvidenceStub = sinon.stub(uploadService, "getFailedFileRow");
+        uploadEvidenceStub = sinon.stub(uploadService, "getUploadFailedFileRow");
       });
 
-      it("gets a failed row", () => {
+      it("gets a failed upload row", () => {
         req = {
           query: {
-            status: "failed",
+            status,
             fileName: "evidence.pdf",
             message: "Upload failed",
           },
@@ -697,10 +703,10 @@ describe("ajaxFileUploadController", () => {
         });
       });
 
-      it("gets a failed row with default message", () => {
+      it("gets a failed upload row with default message", () => {
         req = {
           query: {
-            status: "failed",
+            status,
             fileName: "evidence.pdf",
           },
           t: mockT,
@@ -722,10 +728,88 @@ describe("ajaxFileUploadController", () => {
         });
       });
 
-      it("fails to get a failed row when query params missing", () => {
+      it("fails to get a failed upload row when query params missing", () => {
         req = {
           query: {
-            status: "failed",
+            status,
+          },
+        };
+
+        const dummyHtml = "<div>Something</div>";
+
+        uploadEvidenceStub.returns(dummyHtml);
+
+        getFileRow(req as Request, res, next);
+
+        expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
+      });
+    });
+
+    describe("deleteFailed", () => {
+      const status = "deleteFailed";
+
+      beforeEach(() => {
+        uploadEvidenceStub = sinon.stub(uploadService, "getDeleteFailedFileRow");
+      });
+
+      it("gets a failed delete row", () => {
+        req = {
+          query: {
+            status,
+            fileName: "evidence.pdf",
+            fileId: evidenceId.toString(),
+            message: "Delete failed. Try again.",
+          },
+        };
+
+        const dummyHtml = "<div>Something</div>";
+
+        uploadEvidenceStub.returns(dummyHtml);
+
+        getFileRow(req as Request, res, next);
+
+        expect(uploadEvidenceStub.firstCall.args[1]).to.deep.equal({
+          id: evidenceId.toString(),
+          name: "evidence.pdf",
+          message: "Delete failed. Try again.",
+        });
+
+        expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+          body: dummyHtml,
+        });
+      });
+
+      it("gets a failed delete row with default message", () => {
+        req = {
+          query: {
+            status,
+            fileName: "evidence.pdf",
+            fileId: evidenceId.toString(),
+          },
+          t: mockT,
+        };
+
+        const dummyHtml = "<div>Something</div>";
+
+        uploadEvidenceStub.returns(dummyHtml);
+
+        getFileRow(req as Request, res, next);
+
+        expect(uploadEvidenceStub.firstCall.args[1]).to.deep.equal({
+          id: evidenceId.toString(),
+          name: "evidence.pdf",
+          message: "multiFileUpload.errors.deleteFailed",
+        });
+
+        expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+          body: dummyHtml,
+        });
+      });
+
+      it("fails to get a failed delete row when query params missing", () => {
+        req = {
+          query: {
+            status,
           },
         };
 

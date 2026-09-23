@@ -4,7 +4,7 @@ import type { DeleteFileRequest, MulterRequest } from "#src/types/requests.js";
 import { uploadService } from "#src/services/uploadService.js";
 import { UUID } from "uuidv7";
 import type { AjaxUploadResponse } from "#src/types/api-types.js";
-import { FileUploadStatus } from "#src/models/uploadStatus.js";
+import { FileStatus } from "#src/models/uploadStatus.js";
 import { ClaimStatus } from "#src/types/Claim.js";
 import { hasQueryParams, isEnumValue } from "#src/helpers/queryParsers.js";
 
@@ -294,7 +294,7 @@ export function getFileRow(
     let body = "";
 
     switch (status) {
-      case FileUploadStatus.Pending:
+      case FileStatus.Uploading:
         if (!hasQueryParams(req.query, ["fileName"])) {
           res.status(400);
           return;
@@ -303,28 +303,42 @@ export function getFileRow(
           name: req.query.fileName,
         });
         break;
-      case FileUploadStatus.Success:
+      case FileStatus.Uploaded:
         if (!hasQueryParams(req.query, ["fileName", "fileId", "fileSize"])) {
           res.status(400);
           return;
         }
         body = uploadService.getUploadedFileRow(t, {
-          name: req.query.fileName,
           id: req.query.fileId,
+          name: req.query.fileName,
           size: req.query.fileSize,
         });
         break;
-      case FileUploadStatus.Failed:
+      case FileStatus.UploadFailed:
         if (!hasQueryParams(req.query, ["fileName"])) {
           res.status(400);
           return;
         }
-        body = uploadService.getFailedFileRow(t, {
+        body = uploadService.getUploadFailedFileRow(t, {
           name: req.query.fileName,
           message:
             typeof req.query.message === "string"
               ? req.query.message
               : t("multiFileUpload.errors.uploadFailed"),
+        });
+        break;
+      case FileStatus.DeleteFailed:
+        if (!hasQueryParams(req.query, ["fileName", "fileId"])) {
+          res.status(400);
+          return;
+        }
+        body = uploadService.getDeleteFailedFileRow(t, {
+          id: req.query.fileId,
+          name: req.query.fileName,
+          message:
+            typeof req.query.message === "string"
+              ? req.query.message
+              : t("multiFileUpload.errors.deleteFailed"),
         });
         break;
     }
@@ -339,6 +353,6 @@ function isClaimStatus(value: unknown): value is ClaimStatus {
   return isEnumValue(ClaimStatus, value);
 }
 
-function isFileUploadStatus(value: unknown): value is FileUploadStatus {
-  return isEnumValue(FileUploadStatus, value);
+function isFileUploadStatus(value: unknown): value is FileStatus {
+  return isEnumValue(FileStatus, value);
 }

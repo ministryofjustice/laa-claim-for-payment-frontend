@@ -13,7 +13,7 @@ header support for upload and delete XMLHttpRequests. The upstream component
 is implemented as untyped JavaScript and relies on prototype overrides and
 internal properties, which trigger TypeScript ESLint unsafe-access rules. */
 import { MultiFileUpload } from "@ministryofjustice/frontend";
-import { FileUploadStatus } from "#src/models/uploadStatus.ts";
+import { FileStatus } from "#src/models/uploadStatus.ts";
 
 /**
  * Applies UI changes to the MOJ MultiFileUpload component.
@@ -33,7 +33,7 @@ export function patchMultiFileUpload() {
   MultiFileUpload.prototype.uploadFile = async function (file) {
     this.config.hooks.entryHook(this, file);
 
-    const row = await createRow(FileUploadStatus.Pending, {
+    const row = await createRow(FileStatus.Uploading, {
       fileName: file.name,
     });
 
@@ -43,9 +43,7 @@ export function patchMultiFileUpload() {
 
     list.append(row);
 
-    const progress = row.querySelector(
-      ".moj-multi-file-upload__progress",
-    );
+    const progress = row.querySelector(".moj-multi-file-upload__progress");
 
     const xhr = new XMLHttpRequest();
 
@@ -54,9 +52,7 @@ export function patchMultiFileUpload() {
         return;
       }
 
-      const percentComplete = Math.round(
-        (event.loaded / event.total) * 100,
-      );
+      const percentComplete = Math.round((event.loaded / event.total) * 100);
 
       progress.textContent = `${percentComplete}%`;
     });
@@ -73,7 +69,7 @@ export function patchMultiFileUpload() {
         ) {
           const message = response?.error?.message;
 
-          await replaceRow(row, FileUploadStatus.Failed, {
+          await replaceRow(row, FileStatus.UploadFailed, {
             fileName: file.name,
             message,
           });
@@ -89,24 +85,19 @@ export function patchMultiFileUpload() {
           return;
         }
 
-        await replaceRow(row, FileUploadStatus.Success, {
+        await replaceRow(row, FileStatus.Uploaded, {
           fileId: response.file.id,
           fileName: response.file.originalname,
           fileSize: response.file.size,
         });
 
-        this.config.hooks.exitHook(
-          this,
-          file,
-          xhr,
-          xhr.statusText,
-        );
+        this.config.hooks.exitHook(this, file, xhr, xhr.statusText);
       })();
     });
 
     xhr.addEventListener("error", () => {
       void (async () => {
-        await replaceRow(row, FileUploadStatus.Failed, {
+        await replaceRow(row, FileStatus.UploadFailed, {
           fileName: file.name,
         });
 
@@ -127,6 +118,88 @@ export function patchMultiFileUpload() {
     formData.append("documents", file);
 
     xhr.send(formData);
+  };
+
+  MultiFileUpload.prototype.onFileDeleteClick = function (event) {
+    const button = event.target;
+
+    if (
+      !button ||
+      !(button instanceof HTMLButtonElement) ||
+      !button.classList.contains("moj-multi-file-upload__delete")
+    ) {
+      return;
+    }
+
+    event.preventDefault(); // if user refreshes page and then deletes
+
+    const row = button.closest(".moj-multi-file-upload__row");
+
+    if (!row) {
+      return;
+    }
+
+    const fileId = button.value;
+
+    const fileName = row
+      .querySelector(".uploaded-file-name")
+      .textContent.trim();
+
+    const xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("load", () => {
+      void (async () => {
+        const { response } = xhr;
+
+        if (xhr.status < 200 || xhr.status >= 300) {
+          const message = response?.error?.message;
+
+          await replaceRow(row, FileStatus.DeleteFailed, {
+            fileId,
+            fileName,
+            message,
+          });
+
+          this.config.hooks.errorHook(
+            this,
+            file,
+            xhr,
+            xhr.statusText,
+            new Error(message ?? "Delete failed"),
+          );
+
+          return;
+        }
+
+        const rows = Array.from(
+          this.$feedbackContainer.querySelectorAll(
+            ".moj-multi-file-upload__row",
+          ),
+        );
+
+        if (rows.length === 1) {
+          this.$feedbackContainer.classList.add("moj-hidden");
+        }
+
+        row.remove();
+
+        this.config.hooks.deleteHook(this, undefined, xhr, xhr.statusText);
+      })();
+    });
+
+    xhr.open("POST", this.config.deleteUrl);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    if (this.config.csrfToken) {
+      xhr.setRequestHeader(this.config.csrfHeaderName, this.config.csrfToken);
+    }
+
+    xhr.responseType = "json";
+
+    xhr.send(
+      JSON.stringify({
+        [button.name]: button.value,
+      }),
+    );
   };
 
   async function createRow(status, params = {}) {
@@ -155,9 +228,7 @@ export function patchMultiFileUpload() {
       ...params,
     });
 
-    const response = await fetch(
-      `/evidence-upload/ajax-get-file-row?${query}`,
-    );
+    const response = await fetch(`/evidence-upload/ajax-get-file-row?${query}`);
 
     if (!response.ok) {
       throw new Error("Unable to load file row");
@@ -173,22 +244,23 @@ export function patchMultiFileUpload() {
       return;
     }
 
-    const heading = container.querySelector('h2');
+    const heading = container.querySelector("h2");
     if (!heading) {
       return;
     }
 
-    const id = 'uploaded-files-description';
+    const id = "uploaded-files-description";
 
     let description = document.getElementById(id);
 
     if (!description) {
-      description = document.createElement('p');
+      description = document.createElement("p");
       description.id = id;
-      description.className = 'govuk-body';
-      description.textContent = 'Select the file name to open a copy in a new tab.';
+      description.className = "govuk-body";
+      description.textContent =
+        "Select the file name to open a copy in a new tab.";
 
-      heading.insertAdjacentElement('afterend', description);
+      heading.insertAdjacentElement("afterend", description);
     }
   }
 
@@ -214,9 +286,7 @@ export function patchMultiFileUpload() {
 
   function setupDeleteLinks(container) {
     container.addEventListener("click", (event) => {
-      const link = event.target.closest(
-        ".moj-multi-file-upload__delete-link",
-      );
+      const link = event.target.closest(".moj-multi-file-upload__delete-link");
 
       if (!link) {
         return;
@@ -230,9 +300,7 @@ export function patchMultiFileUpload() {
         return;
       }
 
-      const deleteButton = row.querySelector(
-        ".moj-multi-file-upload__delete",
-      );
+      const deleteButton = row.querySelector(".moj-multi-file-upload__delete");
 
       if (!deleteButton) {
         return;
@@ -243,18 +311,14 @@ export function patchMultiFileUpload() {
   }
 
   async function convertExistingRows(container) {
-    const rows = container.querySelectorAll(
-      ".moj-multi-file-upload__row",
-    );
+    const rows = container.querySelectorAll(".moj-multi-file-upload__row");
 
     for (const row of rows) {
       if (row.dataset.converted === "true") {
         continue;
       }
 
-      const deleteButton = row.querySelector(
-        ".moj-multi-file-upload__delete",
-      );
+      const deleteButton = row.querySelector(".moj-multi-file-upload__delete");
 
       const fileName = row
         .querySelector(".uploaded-file-name")
@@ -271,7 +335,7 @@ export function patchMultiFileUpload() {
       const fileId = deleteButton.value;
 
       // eslint-disable-next-line no-await-in-loop -- rows are converted sequentially to preserve DOM update order
-      await replaceRow(row, FileUploadStatus.Success, {
+      await replaceRow(row, FileStatus.Uploaded, {
         fileId,
         fileName,
         fileSize,
