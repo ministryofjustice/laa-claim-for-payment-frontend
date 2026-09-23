@@ -46,6 +46,7 @@
     },
     "errors": {
       "uploadFailed": "Upload failed",
+      "deleteFailed": "Delete failed",
       "noFileSelected": "You must upload evidence before you can continue",
       "emptyFile": "The selected file is empty",
       "noFileUploaded": "No file uploaded",

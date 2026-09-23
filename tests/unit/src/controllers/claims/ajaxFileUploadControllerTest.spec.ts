@@ -3,11 +3,13 @@ import { afterEach, beforeEach, describe, it } from "mocha";
 import sinon from "sinon";
 import type { NextFunction, Request, Response } from "express";
 import {
+  deleteEvidenceFileFromClaim,
   getFileRow,
+  unlinkEvidenceFileFromLineItem,
   uploadEvidenceFile,
   uploadEvidenceFileForLineItem,
 } from "#src/controllers/claims/ajaxFileUploadController.js";
-import type { MulterRequest } from "#src/types/requests.js";
+import type { DeleteFileRequest, MulterRequest } from "#src/types/requests.js";
 import { uploadService } from "#src/services/uploadService.js";
 import type { TFunction } from "#node_modules/i18next/index.js";
 import { V7Generator } from "uuidv7";
@@ -163,6 +165,32 @@ describe("ajaxFileUploadController", () => {
       expect((res.status as sinon.SinonStub).called).to.equal(false);
       expect((next as sinon.SinonStub).called).to.equal(false);
     });
+
+    it("returns 500 when upload fails", async () => {
+      const mockApiResponse: AjaxUploadResponse = {
+        status: "error",
+        error: {
+          message: "Upload failed",
+        },
+      };
+
+      uploadEvidenceStub.resolves(mockApiResponse);
+
+      await uploadEvidenceFile(req, res, next);
+
+      expect(uploadEvidenceStub.calledOnce).to.equal(true);
+      expect(uploadEvidenceStub.calledWith(req.axiosMiddleware)).to.equal(true);
+      expect(uploadEvidenceStub.firstCall.args[1]).to.deep.equal(claimId);
+      expect(uploadEvidenceStub.firstCall.args[2]).to.equal(req.file);
+
+      expect((res.json as sinon.SinonStub).calledOnce).to.equal(true);
+      expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal(
+        mockApiResponse,
+      );
+
+      expect((res.status as sinon.SinonStub).calledWith(500)).to.equal(true);
+      expect((next as sinon.SinonStub).called).to.equal(false);
+    });
   });
 
   describe("uploadEvidenceFileForLineItem", () => {
@@ -268,6 +296,287 @@ describe("ajaxFileUploadController", () => {
       expect((res.status as sinon.SinonStub).called).to.equal(false);
       expect((next as sinon.SinonStub).called).to.equal(false);
     });
+
+    it("returns 500 when upload fails", async () => {
+      const mockApiResponse: AjaxUploadResponse = {
+        status: "error",
+        error: {
+          message: "Upload failed",
+        },
+      };
+
+      uploadLineItemEvidenceStub.resolves(mockApiResponse);
+
+      req.file = {
+        filename: evidenceId.toString(),
+        originalname: "evidence.pdf",
+        size: 12345,
+        mimetype: "application/pdf",
+        buffer: Buffer.from("fake pdf content"),
+      } as Express.Multer.File;
+
+      await uploadEvidenceFileForLineItem(req, res, next);
+
+      expect(uploadLineItemEvidenceStub.calledOnce).to.equal(true);
+      expect(
+        uploadLineItemEvidenceStub.calledWith(req.axiosMiddleware),
+      ).to.equal(true);
+      expect(uploadLineItemEvidenceStub.firstCall.args[1]).to.deep.equal(
+        claimId,
+      );
+      expect(uploadLineItemEvidenceStub.firstCall.args[2]).to.deep.equal(
+        lineItemId,
+      );
+      expect(uploadLineItemEvidenceStub.firstCall.args[3]).to.equal(req.file);
+
+      expect((res.json as sinon.SinonStub).calledOnce).to.equal(true);
+      expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal(
+        mockApiResponse,
+      );
+
+      expect((res.status as sinon.SinonStub).calledWith(500)).to.equal(true);
+      expect((next as sinon.SinonStub).called).to.equal(false);
+    });
+  });
+
+  describe("deleteEvidenceFileFromClaim", () => {
+    let req: DeleteFileRequest;
+    let deleteEvidenceFromClaimStub: sinon.SinonStub;
+
+    beforeEach(() => {
+      req = {
+        params: {
+          claimId: claimId.toString(),
+        },
+        body: {
+          delete: evidenceId.toString(),
+        },
+        query: {
+          claimStatus: ClaimStatus.SUBMITTED,
+        },
+        t: mockT,
+      } as unknown as MulterRequest;
+
+      deleteEvidenceFromClaimStub = sinon.stub(
+        uploadService,
+        "deleteEvidenceFromClaim",
+      );
+    });
+
+    it("returns 400 when no file is selected", async () => {
+      req.body.delete = "";
+
+      await deleteEvidenceFileFromClaim(req, res, next);
+
+      expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
+      expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+        status: "error",
+        error: {
+          message: "multiFileUpload.errors.missingFileId",
+        },
+      });
+      expect(deleteEvidenceFromClaimStub.called).to.equal(false);
+      expect((next as sinon.SinonStub).called).to.equal(false);
+    });
+
+    it("returns 400 when claim status is undefined", async () => {
+      req.query = {};
+
+      await deleteEvidenceFileFromClaim(req, res, next);
+
+      expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
+      expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+        status: "error",
+        error: {
+          message: "multiFileUpload.errors.invalidClaimStatus",
+        },
+      });
+      expect(deleteEvidenceFromClaimStub.called).to.equal(false);
+      expect((next as sinon.SinonStub).called).to.equal(false);
+    });
+
+    it("returns 400 when claim status is invalid", async () => {
+      req.query = { claimStatus: "foo" };
+
+      await deleteEvidenceFileFromClaim(req, res, next);
+
+      expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
+      expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+        status: "error",
+        error: {
+          message: "multiFileUpload.errors.invalidClaimStatus",
+        },
+      });
+      expect(deleteEvidenceFromClaimStub.called).to.equal(false);
+      expect((next as sinon.SinonStub).called).to.equal(false);
+    });
+
+    it("returns 200 when deletion succeeds", async () => {
+      const mockApiResponse = {
+        status: "success",
+        body: null,
+      };
+
+      deleteEvidenceFromClaimStub.resolves(mockApiResponse);
+
+      await deleteEvidenceFileFromClaim(req, res, next);
+
+      expect(deleteEvidenceFromClaimStub.calledOnce).to.equal(true);
+      expect(deleteEvidenceFromClaimStub.firstCall.args[1]).to.deep.equal(
+        claimId,
+      );
+      expect(deleteEvidenceFromClaimStub.firstCall.args[2]).to.deep.equal(
+        evidenceId,
+      );
+      expect(deleteEvidenceFromClaimStub.firstCall.args[3]).to.equal(
+        ClaimStatus.SUBMITTED,
+      );
+
+      expect((res.json as sinon.SinonStub).calledOnce).to.equal(true);
+      expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal(
+        mockApiResponse,
+      );
+
+      expect((res.status as sinon.SinonStub).called).to.equal(false);
+      expect((next as sinon.SinonStub).called).to.equal(false);
+    });
+
+    it("returns 500 when deletion fails", async () => {
+      const mockApiResponse = {
+        status: "error",
+        body: {
+          status: 'error',
+          statusCode: 502,
+          message: 'A dependent service returned an error.',
+        },
+      };
+
+      deleteEvidenceFromClaimStub.resolves(mockApiResponse);
+
+      await deleteEvidenceFileFromClaim(req, res, next);
+
+      expect((res.status as sinon.SinonStub).calledWith(500)).to.equal(true);
+      expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+        status: "error",
+        error: {
+          message: "multiFileUpload.errors.deleteFailed",
+        },
+      });
+      expect(deleteEvidenceFromClaimStub.calledOnce).to.equal(true);
+      expect(deleteEvidenceFromClaimStub.firstCall.args[1]).to.deep.equal(
+        claimId,
+      );
+      expect(deleteEvidenceFromClaimStub.firstCall.args[2]).to.deep.equal(
+        evidenceId,
+      );
+      expect(deleteEvidenceFromClaimStub.firstCall.args[3]).to.equal(
+        ClaimStatus.SUBMITTED,
+      );
+      expect((next as sinon.SinonStub).called).to.equal(false);
+    });
+  });
+
+  describe("unlinkEvidenceFileFromLineItem", () => {
+    let req: DeleteFileRequest;
+    let unlinkEvidenceFromLineItemStub: sinon.SinonStub;
+
+    beforeEach(() => {
+      req = {
+        params: {
+          claimId: claimId.toString(),
+          lineItemId: lineItemId.toString(),
+        },
+        body: {
+          delete: evidenceId.toString(),
+        },
+        t: mockT,
+      } as unknown as MulterRequest;
+
+      unlinkEvidenceFromLineItemStub = sinon.stub(
+        uploadService,
+        "unlinkEvidenceFromLineItem",
+      );
+    });
+
+    it("returns 400 when no file is selected", async () => {
+      req.body.delete = "";
+
+      await unlinkEvidenceFileFromLineItem(req, res, next);
+
+      expect((res.status as sinon.SinonStub).calledWith(400)).to.equal(true);
+      expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+        status: "error",
+        error: {
+          message: "multiFileUpload.errors.missingFileId",
+        },
+      });
+      expect(unlinkEvidenceFromLineItemStub.called).to.equal(false);
+      expect((next as sinon.SinonStub).called).to.equal(false);
+    });
+
+    it("returns 200 when deletion succeeds", async () => {
+      const mockApiResponse = {
+        status: "success",
+        body: null,
+      };
+
+      unlinkEvidenceFromLineItemStub.resolves(mockApiResponse);
+
+      await unlinkEvidenceFileFromLineItem(req, res, next);
+
+      expect(unlinkEvidenceFromLineItemStub.calledOnce).to.equal(true);
+      expect(unlinkEvidenceFromLineItemStub.firstCall.args[1]).to.deep.equal(
+        claimId,
+      );
+      expect(unlinkEvidenceFromLineItemStub.firstCall.args[2]).to.deep.equal(
+        lineItemId,
+      );
+      expect(unlinkEvidenceFromLineItemStub.firstCall.args[3]).to.deep.equal(
+        evidenceId,
+      );
+
+      expect((res.json as sinon.SinonStub).calledOnce).to.equal(true);
+      expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal(
+        mockApiResponse,
+      );
+
+      expect((res.status as sinon.SinonStub).called).to.equal(false);
+      expect((next as sinon.SinonStub).called).to.equal(false);
+    });
+
+    it("returns 500 when deletion fails", async () => {
+      const mockApiResponse = {
+        status: "error",
+        body: {
+          status: 'error',
+          statusCode: 502,
+          message: 'A dependent service returned an error.',
+        },
+      };
+
+      unlinkEvidenceFromLineItemStub.resolves(mockApiResponse);
+
+      await unlinkEvidenceFileFromLineItem(req, res, next);
+
+      expect((res.status as sinon.SinonStub).calledWith(500)).to.equal(true);
+      expect((res.json as sinon.SinonStub).firstCall.args[0]).to.deep.equal({
+        status: "error",
+        error: {
+          message: "multiFileUpload.errors.deleteFailed",
+        },
+      });
+      expect(unlinkEvidenceFromLineItemStub.calledOnce).to.equal(true);
+      expect(unlinkEvidenceFromLineItemStub.firstCall.args[1]).to.deep.equal(
+        claimId,
+      );
+      expect(unlinkEvidenceFromLineItemStub.firstCall.args[2]).to.deep.equal(
+        lineItemId,
+      );
+      expect(unlinkEvidenceFromLineItemStub.firstCall.args[3]).to.deep.equal(
+        evidenceId,
+      );
+      expect((next as sinon.SinonStub).called).to.equal(false);
+    });
   });
 
   describe("getFileRow", () => {
@@ -289,7 +598,7 @@ describe("ajaxFileUploadController", () => {
           },
         };
 
-        const dummyHtml = "<div>Something</div>"
+        const dummyHtml = "<div>Something</div>";
 
         uploadEvidenceStub.returns(dummyHtml);
 
@@ -307,7 +616,7 @@ describe("ajaxFileUploadController", () => {
           },
         };
 
-        const dummyHtml = "<div>Something</div>"
+        const dummyHtml = "<div>Something</div>";
 
         uploadEvidenceStub.returns(dummyHtml);
 
@@ -330,7 +639,7 @@ describe("ajaxFileUploadController", () => {
           },
         };
 
-        const dummyHtml = "<div>Something</div>"
+        const dummyHtml = "<div>Something</div>";
 
         uploadEvidenceStub.returns(dummyHtml);
 
@@ -348,7 +657,7 @@ describe("ajaxFileUploadController", () => {
           },
         };
 
-        const dummyHtml = "<div>Something</div>"
+        const dummyHtml = "<div>Something</div>";
 
         uploadEvidenceStub.returns(dummyHtml);
 
@@ -372,7 +681,7 @@ describe("ajaxFileUploadController", () => {
           },
         };
 
-        const dummyHtml = "<div>Something</div>"
+        const dummyHtml = "<div>Something</div>";
 
         uploadEvidenceStub.returns(dummyHtml);
 
@@ -397,7 +706,7 @@ describe("ajaxFileUploadController", () => {
           t: mockT,
         };
 
-        const dummyHtml = "<div>Something</div>"
+        const dummyHtml = "<div>Something</div>";
 
         uploadEvidenceStub.returns(dummyHtml);
 
@@ -420,7 +729,7 @@ describe("ajaxFileUploadController", () => {
           },
         };
 
-        const dummyHtml = "<div>Something</div>"
+        const dummyHtml = "<div>Something</div>";
 
         uploadEvidenceStub.returns(dummyHtml);
 

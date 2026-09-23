@@ -87,6 +87,11 @@ export async function uploadEvidenceFile(
       claimStatus,
     );
 
+    if (response.status === "error") {
+      res.status(500).json(response);
+      return;
+    }
+
     res.json(response);
   } catch (error) {
     next(processError(error, "uploading evidence file"));
@@ -126,6 +131,11 @@ export async function uploadEvidenceFileForLineItem(
       file,
       t,
     );
+
+    if (response.status === "error") {
+      res.status(500).json(response);
+      return;
+    }
 
     res.json(response);
   } catch (error) {
@@ -184,6 +194,17 @@ export async function deleteEvidenceFileFromClaim(
       claimStatus,
     );
 
+    if (response.status === "error") {
+      const response: AjaxUploadResponse = {
+        status: "error",
+        error: {
+          message: t("multiFileUpload.errors.deleteFailed"),
+        },
+      };
+      res.status(500).json(response);
+      return;
+    }
+
     res.json(response);
   } catch (error) {
     next(processError(error, "deleting evidence file from claim"));
@@ -228,6 +249,17 @@ export async function unlinkEvidenceFileFromLineItem(
       UUID.parse(lineItemId),
       UUID.parse(fileId),
     );
+
+    if (response.status === "error") {
+      const response: AjaxUploadResponse = {
+        status: "error",
+        error: {
+          message: t("multiFileUpload.errors.deleteFailed"),
+        },
+      };
+      res.status(500).json(response);
+      return;
+    }
 
     res.json(response);
   } catch (error) {
