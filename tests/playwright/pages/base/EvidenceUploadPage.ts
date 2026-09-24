@@ -4,6 +4,7 @@ import { expect } from "@playwright/test";
 import path from "node:path";
 import os from "node:os";
 import fs from "node:fs";
+import { FileUploadInput } from "#tests/playwright/pages/base/Components.js";
 
 /**
  * Base question page with shared navigation + utilities
@@ -38,6 +39,32 @@ export abstract class EvidenceUploadPage extends BasePage {
   }
 
   /**
+   * get the file upload input
+   * @returns {Locator} The file upload input
+   */
+  get fileUploadInput(): FileUploadInput {
+    return new FileUploadInput(this.page, "documents");
+  }
+
+  /**
+   * upload the given file names
+   * @param {string[]} fileNames the file names to upload
+   * @param {Function} checks checks to perform before releasing gate
+   */
+  async uploadFiles(
+    fileNames: string[],
+    checks?: () => Promise<void>,
+  ): Promise<void> {
+    try {
+      await this.resetGate();
+      await this.fileUploadInput.uploadFiles(fileNames);
+      await checks?.();
+    } finally {
+      await this.releaseGate();
+    }
+  }
+
+  /**
    * click the delete link for a given file name
    * @param {string} fileName the file name to delete
    */
@@ -64,20 +91,20 @@ export abstract class EvidenceUploadPage extends BasePage {
    * @param {string} value The row value
    * @param {string} status The file upload status
    */
-  async checkFileRow(key: string, value: string, status: string): Promise<void> {
+  async checkFileRow(
+    key: string,
+    value: string | RegExp,
+    status: string,
+  ): Promise<void> {
     const row = this.getFileRow(key);
 
-    await expect(
-      row.locator(".moj-multi-file-upload__key")
-    ).toContainText(key);
+    await expect(row.locator(".moj-multi-file-upload__key")).toContainText(key);
 
-    await expect(
-      row.locator(".moj-multi-file-upload__value")
-    ).toContainText(value);
+    await expect(row.locator(".moj-multi-file-upload__value")).toContainText(
+      value,
+    );
 
-    await expect(
-      row.locator(".govuk-tag")
-    ).toHaveText(status);
+    await expect(row.locator(".govuk-tag")).toHaveText(status);
   }
 
   /**

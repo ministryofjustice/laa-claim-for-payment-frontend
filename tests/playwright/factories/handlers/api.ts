@@ -102,7 +102,7 @@ const expertCostDraftClaim2: object = {
       feeEarnerName: "Joe Bloggs",
       vatApplicable: true,
       actualNetValue: 123,
-    }
+    },
   ],
   evidence: [],
 };
@@ -120,7 +120,7 @@ const expertCostDraftClaim3: object = {
       feeEarnerName: "Joe Bloggs",
       vatApplicable: true,
       actualNetValue: 19.99,
-    }
+    },
   ],
   evidence: [],
 };
@@ -280,6 +280,23 @@ export function createApiHandlers(uploadGate?: Gate): HttpHandler[] {
         return HttpResponse.json(null, { status: 204 });
       },
     ),
+
+    http.delete(
+      "/api/v1/claims/:claimId/evidence/:evidenceId",
+      ({ params }) => {
+        const { claimId, evidenceId } = params;
+        if (typeof claimId !== "string" || typeof evidenceId !== "string") {
+          throw new Error("URL missing valid string id params.");
+        }
+        console.log(
+          "🧩 MSW matched: DELETE /api/v1/claims/%s/evidence/%s",
+          claimId,
+          evidenceId,
+        );
+
+        return HttpResponse.json(null, { status: 204 });
+      },
+    ),
   ];
 }
 
@@ -296,7 +313,8 @@ interface Gate {
 export function createGate(): Gate {
   /* eslint-disable-next-line  @typescript-eslint/no-empty-function -- ignore */
   let resolveGate: () => void = () => {};
-  let wait = /* eslint-disable-next-line promise/avoid-new -- ignore */
+  let wait =
+    /* eslint-disable-next-line promise/avoid-new -- ignore */
     new Promise<void>((resolve) => {
       resolveGate = resolve;
     });
@@ -311,7 +329,8 @@ export function createGate(): Gate {
     },
 
     reset() {
-      wait = /* eslint-disable-next-line promise/avoid-new -- ignore */
+      wait =
+        /* eslint-disable-next-line promise/avoid-new -- ignore */
         new Promise<void>((resolve) => {
           resolveGate = resolve;
         });

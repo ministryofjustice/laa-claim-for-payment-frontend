@@ -30,7 +30,7 @@
       "uploaded": "Uploaded",
       "uploading": "Uploading",
       "uploadFailed": "Failed",
-      "deleteFailed": "Warning"
+      "deleteFailed": "Failed to delete"
     }
   },
   "multiFileUpload": {
@@ -47,7 +47,7 @@
     },
     "errors": {
       "uploadFailed": "Upload failed",
-      "deleteFailed": "Delete failed. Try again.",
+      "deleteFailed": "We could not delete the file. Please try again.",
       "noFileSelected": "You must upload evidence before you can continue",
       "emptyFile": "The selected file is empty",
       "noFileUploaded": "No file uploaded",
