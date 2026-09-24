@@ -1,17 +1,13 @@
 import { expect } from "chai";
 import { beforeEach, describe, it } from "mocha";
 import sinon from "sinon";
-import type { NextFunction, Request, Response } from "express";
+import type { Request } from "express";
 import {
   poaEvidenceUploadPage,
   submitPoaEvidenceUpload,
 } from "#src/controllers/poa/poaEvidenceUploadController.js";
 import { V7Generator } from "uuidv7";
-import { DeleteFileRequest } from "#src/types/requests.js";
-import { TFunction } from "#node_modules/i18next/index.js";
-import { deleteEvidenceFileFromClaim } from "#src/controllers/claims/ajaxFileUploadController.js";
-import { uploadService } from "#src/services/uploadService.js";
-import { Category, Claim, ClaimStatus } from "#src/types/Claim.js";
+import { Category, Claim } from "#src/types/Claim.js";
 import { LocalDate } from "#src/types/date.js";
 import { PoaNavigator } from "#src/navigation/poaNavigator.js";
 
@@ -21,14 +17,11 @@ describe("poaEvidenceUploadController", () => {
 
   let renderStub: sinon.SinonStub;
   let redirectStub: sinon.SinonStub;
-  let deleteEvidenceFromClaimStub: sinon.SinonStub;
   let redirectFromEvidenceUploadStub: sinon.SinonStub;
 
   const claimId = new V7Generator().generate();
   const lineItemId = new V7Generator().generate();
   const evidenceId = new V7Generator().generate();
-
-  const mockT: TFunction = ((key: string) => key) as TFunction;
 
   beforeEach(() => {
     renderStub = sinon.stub();
@@ -45,11 +38,6 @@ describe("poaEvidenceUploadController", () => {
     };
 
     next = sinon.stub();
-
-    deleteEvidenceFromClaimStub = sinon.stub(
-      uploadService,
-      "deleteEvidenceFromClaim",
-    );
 
     redirectFromEvidenceUploadStub = sinon.stub(
       PoaNavigator.prototype,
@@ -162,96 +150,6 @@ describe("poaEvidenceUploadController", () => {
       expect(renderArgs.vm.errorSummary.errorList[0].text.key).to.equal(
         "pages.poaEvidenceUpload.errors.empty",
       );
-    });
-  });
-
-  describe("deleteEvidenceFile", () => {
-    let req: DeleteFileRequest;
-
-    beforeEach(() => {
-      req = {
-        params: {
-          claimId: claimId.toString(),
-        },
-        query: {
-          claimStatus: ClaimStatus.DRAFT,
-        },
-        t: mockT,
-      } as unknown as DeleteFileRequest;
-    });
-
-    it("deletes an uploaded file", async () => {
-      const mockApiResponse = {
-        status: "success",
-        body: null,
-      };
-
-      deleteEvidenceFromClaimStub.resolves(mockApiResponse);
-
-      req.body = {
-        delete: evidenceId.toString(),
-        name: "file.pdf",
-      };
-
-      const status = sinon.stub().returnsThis();
-      const json = sinon.stub();
-
-      const res = {
-        status,
-        json,
-      } as unknown as Response;
-
-      const next = sinon.stub();
-
-      await deleteEvidenceFileFromClaim(
-        req,
-        res,
-        next as unknown as NextFunction,
-      );
-
-      expect(deleteEvidenceFromClaimStub.calledOnce).to.equal(true);
-
-      expect(json.calledOnce).to.equal(true);
-
-      const responseBody = json.firstCall.args[0];
-
-      expect(responseBody).to.deep.equal(mockApiResponse);
-
-      expect(status.called).to.equal(false);
-
-      expect(next.called).to.equal(false);
-    });
-
-    it("returns 400 for an empty file ID", async () => {
-      req.body = {
-        delete: "",
-        name: "file.pdf",
-      };
-
-      const status = sinon.stub().returnsThis();
-      const json = sinon.stub();
-
-      const res = {
-        status,
-        json,
-      } as unknown as Response;
-
-      const next = sinon.stub();
-
-      await deleteEvidenceFileFromClaim(
-        req,
-        res,
-        next as unknown as NextFunction,
-      );
-
-      expect(status.calledWith(400)).to.equal(true);
-      expect(json.firstCall.args[0]).to.deep.equal({
-        status: "error",
-        error: {
-          message: "multiFileUpload.errors.missingFileId",
-        },
-      });
-      expect(next.called).to.equal(false);
     });
   });
 });

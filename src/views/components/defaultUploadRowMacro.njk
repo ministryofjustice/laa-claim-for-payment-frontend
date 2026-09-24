@@ -1,0 +1,15 @@
+{% macro defaultUploadRow(t, file) %}
+  <span class="uploaded-file-row">
+    <a href="#" class="govuk-link uploaded-file-name">
+      {{ file.name }}
+    </a>
+
+    <span class="uploaded-file-size govuk-!-margin-left-2">
+      {{ file.size }}
+    </span>
+
+    <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">
+      {{ t("common.uploadStatus.uploaded") }}
+    </strong>
+  </span>
+{% endmacro %}

@@ -3,12 +3,13 @@ import sinon from "sinon";
 import {
   AjaxUploadError,
   AjaxUploadSuccess,
-  ApiError,
+  ApiError, ApiResponse,
 } from "#src/types/api-types.js";
 import { uploadService } from "#src/services/uploadService.js";
 import { V7Generator } from "uuidv7";
 import { ClaimStatus } from "#src/types/Claim.js";
 import { TFunction } from "#node_modules/i18next/index.js";
+import { UploadSuccess } from "#src/generated/claim-api/index.js";
 
 describe("Upload Service", () => {
   afterEach(() => {
@@ -21,8 +22,6 @@ describe("Upload Service", () => {
   const evidence2Id = new V7Generator().generate();
   const evidence3Id = new V7Generator().generate();
 
-  const mockT: TFunction = ((key: string) => key) as TFunction;
-
   describe("uploadEvidence", () => {
     it("returns success", async () => {
       const mockApiResponse = {
@@ -30,7 +29,7 @@ describe("Upload Service", () => {
           type: "success",
           evidenceId: evidence1Id.toString(),
           file: {
-            filename: evidence1Id.toString(),
+            filename: "evidence.pdf",
             originalname: "evidence.pdf",
             filesize: 12345,
           },
@@ -54,60 +53,16 @@ describe("Upload Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         file,
-        mockT,
         ClaimStatus.DRAFT,
         deps as any,
-      )) as AjaxUploadSuccess;
+      )) as ApiResponse<UploadSuccess>;
 
       expect(result.status).to.equal("success");
-      expect(result.file).to.deep.equal({
-        id: evidence1Id.toString(),
-        filename: "evidence.pdf",
-        originalname: "evidence.pdf",
-        size: "12KB",
-      });
-      expect(result.success.messageText).to.equal("multiFileUpload.uploadedMessage");
-      expect(result.success.messageHtml).to.include("evidence.pdf");
-      expect(result.success.messageHtml).to.include("12KB");
-      expect(result.success.messageHtml).to.include("common.uploadStatus.uploaded");
-    });
-
-    it("escapes file names in the success HTML", async () => {
-      const mockApiResponse = {
-        data: {
-          type: "success",
-          evidenceId: evidence1Id.toString(),
-          file: {
-            filename: "<script>.pdf",
-            originalname: "<script>.pdf",
-            filesize: 12345,
-          },
-          message: `File uploaded with ID: ${evidence1Id} and linked to line item: ${lineItemId}`,
-        },
-      };
-
-      const deps = {
-        createClient: sinon.stub().returns({}),
-        uploadClaimEvidence: sinon.stub().resolves(mockApiResponse),
-      };
-
-      const file = {
-        originalname: "<script>.pdf",
-        mimetype: "application/pdf",
-        size: 12345,
-        buffer: Buffer.from("fake pdf content"),
-      } as Express.Multer.File;
-
-      const result = (await uploadService.uploadEvidence(
-        { axiosInstance: {} } as any,
-        claimId,
-        file,
-        mockT,
-        ClaimStatus.SUBMITTED,
-        deps as any,
-      )) as AjaxUploadSuccess;
-
-      expect(result.success.messageHtml).to.include("&lt;script&gt;.pdf");
+      expect(result.body?.type).to.equal("success");
+      expect(result.body?.evidenceId).to.equal(evidence1Id.toString());
+      expect(result.body?.file.filename).to.equal("evidence.pdf",);
+      expect(result.body?.file.originalname).to.equal("evidence.pdf",);
+      expect(result.body?.file.filesize).to.equal(12345);
     });
 
     it("returns error for a non-200 response", async () => {
@@ -140,12 +95,10 @@ describe("Upload Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         file,
-        mockT,
         deps as any,
-      )) as AjaxUploadError;
+      )) as ApiResponse<UploadSuccess>;
 
       expect(result.status).to.equal("error");
-      expect(result.error.message).to.equal("multiFileUpload.errors.uploadFailed");
     });
 
     it("returns error shape when the API call fails", async () => {
@@ -165,12 +118,10 @@ describe("Upload Service", () => {
         { axiosInstance: {} } as any,
         claimId,
         file,
-        mockT,
         deps as any,
-      )) as AjaxUploadError;
+      )) as ApiResponse<UploadSuccess>;
 
       expect(result.status).to.equal("error");
-      expect(result.error.message).to.equal("multiFileUpload.errors.uploadFailed");
     });
   });
 
@@ -258,7 +209,7 @@ describe("Upload Service", () => {
           type: "success",
           evidenceId: evidence3Id.toString(),
           file: {
-            filename: evidence3Id.toString(),
+            filename: "evidence.pdf",
             originalname: "evidence.pdf",
             filesize: 12345,
           },
@@ -286,62 +237,15 @@ describe("Upload Service", () => {
         claimId,
         lineItemId,
         file,
-        mockT,
         deps as any,
-      )) as AjaxUploadSuccess;
+      )) as ApiResponse<UploadSuccess>;
 
       expect(result.status).to.equal("success");
-      expect(result.file).to.deep.equal({
-        id: evidence3Id.toString(),
-        filename: "evidence.pdf",
-        originalname: "evidence.pdf",
-        size: "12KB",
-      });
-      expect(result.success.messageText).to.equal("multiFileUpload.uploadedMessage");
-      expect(result.success.messageHtml).to.include("evidence.pdf");
-      expect(result.success.messageHtml).to.include("12KB");
-      expect(result.success.messageHtml).to.include("common.uploadStatus.uploaded");
-    });
-
-    it("escapes file names in the success HTML", async () => {
-      const mockApiResponse = {
-        data: {
-          type: "success",
-          evidenceId: evidence1Id.toString(),
-          file: {
-            filename: "<script>.pdf",
-            originalname: "<script>.pdf",
-            filesize: 12345,
-          },
-          message: `File uploaded with ID: ${evidence1Id} and linked to line item: ${lineItemId}`,
-        },
-      };
-
-      const deps = {
-        createClient: sinon.stub().returns({}),
-        getClaims: sinon.stub(),
-        getClaim: sinon.stub(),
-        linkEvidenceToLineItem: sinon.stub(),
-        uploadLineItemEvidence: sinon.stub().resolves(mockApiResponse),
-      };
-
-      const file = {
-        originalname: "<script>.pdf",
-        mimetype: "application/pdf",
-        size: 12345,
-        buffer: Buffer.from("fake pdf content"),
-      } as Express.Multer.File;
-
-      const result = (await uploadService.uploadLineItemEvidence(
-        { axiosInstance: {} } as any,
-        claimId,
-        lineItemId,
-        file,
-        mockT,
-        deps as any,
-      )) as AjaxUploadSuccess;
-
-      expect(result.success.messageHtml).to.include("&lt;script&gt;.pdf");
+      expect(result.body?.type).to.equal("success");
+      expect(result.body?.evidenceId).to.equal(evidence3Id.toString());
+      expect(result.body?.file.filename).to.equal("evidence.pdf",);
+      expect(result.body?.file.originalname).to.equal("evidence.pdf",);
+      expect(result.body?.file.filesize).to.equal(12345);
     });
 
     it("returns error for a non-200 response", async () => {
@@ -378,12 +282,10 @@ describe("Upload Service", () => {
         claimId,
         lineItemId,
         file,
-        mockT,
         deps as any,
-      )) as AjaxUploadError;
+      )) as ApiResponse<UploadSuccess>;
 
       expect(result.status).to.equal("error");
-      expect(result.error.message).to.equal("multiFileUpload.errors.uploadFailed");
     });
 
     it("returns error shape when the API call fails", async () => {
@@ -407,12 +309,10 @@ describe("Upload Service", () => {
         claimId,
         lineItemId,
         file,
-        mockT,
         deps as any,
-      )) as AjaxUploadError;
+      )) as ApiResponse<UploadSuccess>;
 
       expect(result.status).to.equal("error");
-      expect(result.error.message).to.equal("multiFileUpload.errors.uploadFailed");
     });
   });
 });

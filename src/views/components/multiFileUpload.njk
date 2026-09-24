@@ -1,6 +1,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
 {% from "moj/components/multi-file-upload/macro.njk" import mojMultiFileUpload %}
+{% from "./defaultUploadRowMacro.njk" import defaultUploadRow %}
 
 {% macro multiFileUpload(t, uploadedFiles, uploadUrl, deleteUrl) %}
 
@@ -29,17 +30,7 @@
     {% set messageHtml %}
       <span class="moj-multi-file-upload__success">
         <span class="uploaded-file-row">
-          <a href="#" class="govuk-link uploaded-file-name">
-            {{ uploadedFile.name }}
-          </a>
-
-          <span class="uploaded-file-size govuk-!-margin-left-2">
-            {{ uploadedFile.size }}
-          </span>
-
-          <strong class="govuk-tag govuk-tag--green govuk-!-margin-left-4">
-            {{ t("common.uploadStatus.uploaded") }}
-          </strong>
+          {{ defaultUploadRow(t, uploadedFile) }}
         </span>
       </span>
     {% endset %}
