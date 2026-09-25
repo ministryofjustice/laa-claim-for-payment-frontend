@@ -3,10 +3,17 @@ import { processError } from "#src/helpers/index.js";
 import type { DeleteFileRequest, MulterRequest } from "#src/types/requests.js";
 import { uploadService } from "#src/services/uploadService.js";
 import { UUID } from "uuidv7";
-import type { AjaxUploadResponse } from "#src/types/api-types.js";
-import { FileUploadStatus } from "#src/models/uploadStatus.js";
+import type {
+  AjaxUploadResponse,
+  AjaxUploadSuccess,
+} from "#src/types/api-types.js";
 import { ClaimStatus } from "#src/types/Claim.js";
-import { hasQueryParams, isEnumValue } from "#src/helpers/queryParsers.js";
+import { isEnumValue } from "#src/helpers/queryParsers.js";
+import nunjucks from "nunjucks";
+import type { TFunction } from "#node_modules/i18next/index.js";
+import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
+import type { ReusableDocument } from "#src/viewmodels/components/taskList.js";
+import type { UploadSuccess } from "#src/generated/claim-api/index.js";
 
 const BAD_REQUEST = 400;
 
@@ -17,24 +24,24 @@ function validateUploadedFile(
   const { file, t } = req;
 
   if (file === undefined) {
-    const response: AjaxUploadResponse = {
+    const body: AjaxUploadResponse = {
       status: "error",
       error: {
         message: t("multiFileUpload.errors.noFileSelected"),
       },
     };
-    res.status(BAD_REQUEST).json(response);
+    res.status(BAD_REQUEST).json(body);
     return undefined;
   }
 
   if (file.size === 0) {
-    const response: AjaxUploadResponse = {
+    const body: AjaxUploadResponse = {
       status: "error",
       error: {
         message: t("multiFileUpload.errors.emptyFile"),
       },
     };
-    res.status(BAD_REQUEST).json(response);
+    res.status(BAD_REQUEST).json(body);
     return undefined;
   }
 
@@ -69,13 +76,13 @@ export async function uploadEvidenceFile(
     }
 
     if (!isClaimStatus(claimStatus)) {
-      const response: AjaxUploadResponse = {
+      const body: AjaxUploadResponse = {
         status: "error",
         error: {
           message: t("multiFileUpload.errors.invalidClaimStatus"),
         },
       };
-      res.status(400).json(response);
+      res.status(400).json(body);
       return;
     }
 
@@ -83,11 +90,23 @@ export async function uploadEvidenceFile(
       axiosMiddleware,
       UUID.parse(claimId),
       file,
-      t,
       claimStatus,
     );
 
-    res.json(response);
+    if (response.status === "error") {
+      const body: AjaxUploadResponse = {
+        status: "error",
+        error: {
+          message: t("multiFileUpload.errors.uploadFailed"),
+        },
+      };
+      res.status(500).json(body);
+      return;
+    }
+
+    const body: AjaxUploadSuccess = getSuccessfulUploadJson(t, response.body, file);
+
+    res.json(body);
   } catch (error) {
     next(processError(error, "uploading evidence file"));
   }
@@ -124,13 +143,51 @@ export async function uploadEvidenceFileForLineItem(
       UUID.parse(claimId),
       UUID.parse(lineItemId),
       file,
-      t,
     );
 
-    res.json(response);
+    if (response.status === "error") {
+      const body: AjaxUploadResponse = {
+        status: "error",
+        error: {
+          message: t("multiFileUpload.errors.uploadFailed"),
+        },
+      };
+      res.status(500).json(body);
+      return;
+    }
+
+    const body: AjaxUploadSuccess = getSuccessfulUploadJson(t, response.body, file);
+
+    res.json(body);
   } catch (error) {
     next(processError(error, "uploading evidence file"));
   }
+}
+
+function getSuccessfulUploadJson(
+  t: TFunction,
+  response: UploadSuccess,
+  file: Express.Multer.File,
+): AjaxUploadSuccess {
+  const document: ReusableDocument = {
+    id: response.evidenceId,
+    name: file.originalname,
+    size: formatFileSize(file.size),
+  };
+  const messageHtml = nunjucks.render("components/defaultUploadRow.njk", {
+    t,
+    file: document,
+  });
+  return {
+    status: "success",
+    success: {
+      messageText: t("multiFileUpload.uploadedMessage", {
+        filename: file.originalname,
+      }),
+      messageHtml,
+    },
+    file: document,
+  };
 }
 
 /**
@@ -184,6 +241,17 @@ export async function deleteEvidenceFileFromClaim(
       claimStatus,
     );
 
+    if (response.status === "error") {
+      const body: AjaxUploadResponse = {
+        status: "error",
+        error: {
+          message: t("multiFileUpload.errors.deleteFailed"),
+        },
+      };
+      res.status(500).json(body);
+      return;
+    }
+
     res.json(response);
   } catch (error) {
     next(processError(error, "deleting evidence file from claim"));
@@ -212,13 +280,13 @@ export async function unlinkEvidenceFileFromLineItem(
     } = req;
 
     if (fileId === "") {
-      const response: AjaxUploadResponse = {
+      const body: AjaxUploadResponse = {
         status: "error",
         error: {
           message: t("multiFileUpload.errors.missingFileId"),
         },
       };
-      res.status(BAD_REQUEST).json(response);
+      res.status(BAD_REQUEST).json(body);
       return;
     }
 
@@ -228,6 +296,17 @@ export async function unlinkEvidenceFileFromLineItem(
       UUID.parse(lineItemId),
       UUID.parse(fileId),
     );
+
+    if (response.status === "error") {
+      const body: AjaxUploadResponse = {
+        status: "error",
+        error: {
+          message: t("multiFileUpload.errors.deleteFailed"),
+        },
+      };
+      res.status(500).json(body);
+      return;
+    }
 
     res.json(response);
   } catch (error) {
@@ -251,53 +330,17 @@ export function getFileRow(
   try {
     const {
       query: { status },
-      t,
     } = req;
 
-    if (!isFileUploadStatus(status)) {
-      res.status(400);
-      return;
-    }
-
-    let body = "";
-
-    switch (status) {
-      case FileUploadStatus.Pending:
-        if (!hasQueryParams(req.query, ["fileName"])) {
-          res.status(400);
-          return;
-        }
-        body = uploadService.getUploadingFileRow(t, {
-          name: req.query.fileName,
-        });
-        break;
-      case FileUploadStatus.Success:
-        if (!hasQueryParams(req.query, ["fileName", "fileId", "fileSize"])) {
-          res.status(400);
-          return;
-        }
-        body = uploadService.getUploadedFileRow(t, {
-          name: req.query.fileName,
-          id: req.query.fileId,
-          size: req.query.fileSize,
-        });
-        break;
-      case FileUploadStatus.Failed:
-        if (!hasQueryParams(req.query, ["fileName"])) {
-          res.status(400);
-          return;
-        }
-        body = uploadService.getFailedFileRow(t, {
-          name: req.query.fileName,
-          message:
-            typeof req.query.message === "string"
-              ? req.query.message
-              : t("multiFileUpload.errors.uploadFailed"),
-        });
-        break;
-    }
-
-    res.json({ body });
+    res.render("components/uploadRow.njk", {
+      status,
+      file: {
+        id: req.query.fileId,
+        name: req.query.fileName,
+        size: req.query.fileSize,
+        message: req.query.message,
+      },
+    });
   } catch (error) {
     next(error);
   }
@@ -305,8 +348,4 @@ export function getFileRow(
 
 function isClaimStatus(value: unknown): value is ClaimStatus {
   return isEnumValue(ClaimStatus, value);
-}
-
-function isFileUploadStatus(value: unknown): value is FileUploadStatus {
-  return isEnumValue(FileUploadStatus, value);
 }

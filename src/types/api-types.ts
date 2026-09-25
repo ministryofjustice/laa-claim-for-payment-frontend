@@ -4,6 +4,7 @@
  * This file contains all TypeScript interfaces and types related to API requests and responses.
  * These types are used across different services and components for consistent API interactions.
  */
+import type { ReusableDocument } from "#src/viewmodels/components/taskList.js";
 
 export interface ApiSuccess<T> {
   status: "success";
@@ -36,14 +37,9 @@ export interface AjaxUploadSuccess {
   status: "success";
   success: {
     messageText: string;
-    messageHtml: string;
+    messageHtml?: string;
   };
-  file: {
-    id: string;
-    filename: string;
-    originalname: string;
-    size: string;
-  };
+  file: ReusableDocument;
 }
 
 export interface AjaxUploadError {

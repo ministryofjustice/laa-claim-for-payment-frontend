@@ -1,22 +1,20 @@
 import { createClient } from "#src/generated/claim-api/client/client.gen.js";
 import {
-  deleteEvidenceFromClaim as deleteEvidenceFromClaimApi,
   deleteAllEvidenceFromClaim as deleteAllEvidenceFromClaimApi,
+  deleteEvidenceFromClaim as deleteEvidenceFromClaimApi,
   linkEvidenceToLineItem as linkEvidenceToLineItemApi,
   unlinkEvidenceFromLineItem as unlinkEvidenceFromLineItemApi,
   uploadClaimEvidence as uploadClaimEvidenceApi,
   uploadLineItemEvidence as uploadLineItemEvidenceApi,
 } from "#src/generated/claim-api/sdk.gen.js";
 import { createApiError } from "#src/helpers/index.js";
-import type { AjaxUploadResponse, ApiResponse } from "#src/types/api-types.js";
+import type { ApiResponse } from "#src/types/api-types.js";
 import type { AxiosInstanceWrapper } from "#src/types/axios-instance-wrapper.js";
 import config from "../../config.js";
-import { escapeHtml } from "#src/helpers/escapehtml.js";
-import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import type { UUID } from "uuidv7";
 import type { Client } from "#src/generated/claim-api/client/index.js";
 import type { ClaimStatus } from "#src/types/Claim.js";
-import type { TFunction } from "#node_modules/i18next/index.js";
+import type { UploadSuccess } from "#src/generated/claim-api/index.js";
 
 interface UploadServiceDeps {
   createClient: typeof createClient;
@@ -91,20 +89,18 @@ class UploadService {
    * @param {AxiosInstanceWrapper} axiosMiddleware - Wrapped Axios client from request middleware.
    * @param {number} claimId - Claim identifier.
    * @param {object} file Uploaded file from multer.
-   * @param {TFunction} t Translation function.
    * @param {ClaimStatus} claimStatus Claim status (DRAFT or SUBMITTED).
    * @param {UploadServiceDeps} deps - Service dependencies used to create the client and call the generated API.
-   * @returns {Promise<AjaxUploadResponse>} Upload response for the multi-file upload component.
+   * @returns {Promise<ApiResponse<UploadSuccess>>} Upload response for the multi-file upload component.
    */
   // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   static async uploadEvidence(
     axiosMiddleware: AxiosInstanceWrapper,
     claimId: UUID,
     file: Express.Multer.File,
-    t: TFunction,
     claimStatus: ClaimStatus,
     deps: UploadServiceDeps = defaultDeps,
-  ): Promise<AjaxUploadResponse> {
+  ): Promise<ApiResponse<UploadSuccess>> {
     try {
       const client = this.createApiClient(axiosMiddleware, deps);
       const response = await deps.uploadClaimEvidence({
@@ -121,12 +117,15 @@ class UploadService {
       });
 
       if (response.data == null || response.data.type === "error") {
-        return this.uploadError(t);
+        return createApiError(new Error("Upload response data is empty"));
       }
 
-      return this.uploadSuccess(file, t, response.data.evidenceId);
-    } catch {
-      return this.uploadError(t);
+      return {
+        body: response.data,
+        status: "success",
+      };
+    } catch (error) {
+      return createApiError(error);
     }
   }
 
@@ -137,9 +136,8 @@ class UploadService {
    * @param {UUID} claimId - Claim identifier.
    * @param {UUID} lineItemId - Line item identifier.
    * @param {object} file Uploaded file from multer.
-   * @param {TFunction} t Translation function.
    * @param {UploadServiceDeps} deps - Service dependencies used to create the client and call the generated API.
-   * @returns {Promise<AjaxUploadResponse>} Upload response for the multi-file upload component.
+   * @returns {Promise<ApiResponse<UploadSuccess>>} Upload response for the multi-file upload component.
    */
   // eslint-disable-next-line @typescript-eslint/max-params -- ignore
   static async uploadLineItemEvidence(
@@ -147,9 +145,8 @@ class UploadService {
     claimId: UUID,
     lineItemId: UUID,
     file: Express.Multer.File,
-    t: TFunction,
     deps: UploadServiceDeps = defaultDeps,
-  ): Promise<AjaxUploadResponse> {
+  ): Promise<ApiResponse<UploadSuccess>> {
     try {
       const client = this.createApiClient(axiosMiddleware, deps);
 
@@ -165,12 +162,15 @@ class UploadService {
       });
 
       if (response.data == null || response.data.type === "error") {
-        return this.uploadError(t);
+        return createApiError(new Error("Upload response data is empty"));
       }
 
-      return this.uploadSuccess(file, t, response.data.evidenceId);
-    } catch {
-      return this.uploadError(t);
+      return {
+        body: response.data,
+        status: "success",
+      };
+    } catch (error) {
+      return createApiError(error);
     }
   }
 
@@ -302,133 +302,6 @@ class UploadService {
     }
   }
 
-  /**
-   * Get HTML for the summary list row for an uploaded file.
-   * @param {TFunction} t translation function
-   * @param {object} file file
-   * @param {string} file.id file ID
-   * @param {string} file.name file name
-   * @param {string} file.size file size (pre-formatted)
-   * @returns {string} HTML
-   */
-  static getUploadedFileRow(
-    t: TFunction,
-    file: {
-      id: string;
-      name: string;
-      size: string;
-    },
-  ): string {
-    return `
-      <div class="govuk-summary-list__row moj-multi-file-upload__row">
-        <dt class="govuk-summary-list__key moj-multi-file-upload__key">
-          <a href="/evidence/${file.id}" class="govuk-link uploaded-file-name">
-            ${file.name}
-          </a>
-        </dt>
-
-        <dd class="govuk-summary-list__value moj-multi-file-upload__value">
-          <span class="uploaded-file-size">
-            ${file.size}
-          </span>
-
-          <strong class="govuk-tag govuk-tag--green">
-            ${t("common.fileUploadStatus.uploaded")}
-          </strong>
-        </dd>
-
-        <dd class="govuk-summary-list__actions moj-multi-file-upload__actions">
-          <button
-            type="submit"
-            name="delete"
-            value="${file.id}"
-            class="moj-multi-file-upload__delete govuk-button govuk-button--secondary govuk-!-margin-bottom-0 govuk-visually-hidden"
-          >
-            ${t("common.delete")}
-            <span class="govuk-visually-hidden">
-              ${file.name}
-            </span>
-          </button>
-
-          <a href="#" class="govuk-link moj-multi-file-upload__delete-link">
-            ${t("common.delete")}
-            <span class="govuk-visually-hidden">
-              ${file.name}
-            </span>
-          </a>
-        </dd>
-      </div>
-    `;
-  }
-
-  /**
-   * Get HTML for the summary list row for an uploading file.
-   * @param {TFunction} t translation function
-   * @param {object} file file
-   * @param {string} file.name file name
-   * @returns {string} HTML
-   */
-  static getUploadingFileRow(
-    t: TFunction,
-    file: {
-      name: string;
-    },
-  ): string {
-    return `
-      <div class="govuk-summary-list__row govuk-summary-list__row--no-actions moj-multi-file-upload__row">
-        <dt class="govuk-summary-list__key moj-multi-file-upload__key">
-          <span class="uploaded-file-name">
-            ${file.name}
-          </span>
-        </dt>
-
-        <dd class="govuk-summary-list__value moj-multi-file-upload__value">
-          <span class="moj-multi-file-upload__progress">
-            0%
-          </span>
-
-          <strong class="govuk-tag govuk-tag--yellow">
-            ${t("common.fileUploadStatus.uploading")}
-          </strong>
-        </dd>
-      </div>
-    `;
-  }
-
-  /**
-   * Get HTML for the summary list row for a failed upload.
-   * @param {TFunction} t translation function
-   * @param {object} file file
-   * @param {string} file.name file name
-   * @param {string} file.message error message
-   * @returns {string} HTML
-   */
-  static getFailedFileRow(
-    t: TFunction,
-    file: {
-      name: string;
-      message: string;
-    },
-  ): string {
-    return `
-      <div class="govuk-summary-list__row govuk-summary-list__row--no-actions moj-multi-file-upload__row">
-        <dt class="govuk-summary-list__key moj-multi-file-upload__key">
-          ${file.name}
-        </dt>
-
-        <dd class="govuk-summary-list__value moj-multi-file-upload__value">
-          <span class="moj-multi-file-upload__failed">
-            ${file.message}
-          </span>
-
-          <strong class="govuk-tag govuk-tag--red">
-            ${t("common.fileUploadStatus.failed")}
-          </strong>
-        </dd>
-      </div>
-    `;
-  }
-
   private static createApiClient(
     axiosMiddleware: AxiosInstanceWrapper,
     deps: UploadServiceDeps,
@@ -447,44 +320,6 @@ class UploadService {
     return new File([arrayBuffer], file.originalname, {
       type: file.mimetype,
     });
-  }
-
-  private static uploadSuccess(
-    file: Express.Multer.File,
-    t: TFunction,
-    evidenceId: string,
-  ): AjaxUploadResponse {
-    return {
-      status: "success",
-      success: {
-        messageText: t("multiFileUpload.uploadedMessage", {
-          filename: file.originalname,
-        }),
-        messageHtml: `
-          <span class="uploaded-file-row">
-            <a href="#" class="govuk-link uploaded-file-name">${escapeHtml(file.originalname)}</a>
-            <span class="uploaded-file-size">${formatFileSize(file.size)}</span>
-            <strong class="govuk-tag govuk-tag--green">
-              ${t("common.uploadStatus.uploaded")}
-            </strong>
-          </span>`,
-      },
-      file: {
-        id: evidenceId,
-        filename: file.originalname,
-        originalname: file.originalname,
-        size: formatFileSize(file.size),
-      },
-    };
-  }
-
-  private static uploadError(t: TFunction): AjaxUploadResponse {
-    return {
-      status: "error",
-      error: {
-        message: t("multiFileUpload.errors.uploadFailed"),
-      },
-    };
   }
 }
 

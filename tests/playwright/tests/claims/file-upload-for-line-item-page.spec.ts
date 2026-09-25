@@ -34,11 +34,7 @@ test("upload a file then delete the file", async ({
     fileUploadForLineItemPage.uploadedFilesHintText,
   ).not.toBeVisible();
 
-  await fileUploadForLineItemPage.resetGate();
-
-  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
-
-  await fileUploadForLineItemPage.releaseGate();
+  await fileUploadForLineItemPage.uploadFiles([filePath]);
 
   await expect(
     fileUploadForLineItemPage.uploadedFilesContainer,
@@ -77,11 +73,7 @@ test("upload a file of invalid type", async ({ page, checkAccessibility }) => {
 
   const filePath = EvidenceUploadPage.createFile(fileName, 1024);
 
-  await fileUploadForLineItemPage.resetGate();
-
-  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
-
-  await fileUploadForLineItemPage.releaseGate();
+  await fileUploadForLineItemPage.uploadFiles([filePath]);
 
   await fileUploadForLineItemPage.checkFileRow(
     fileName,
@@ -107,17 +99,11 @@ test("upload a file of maximum size", async ({ page, checkAccessibility }) => {
   const bytes = 10 * 1024 * 1024;
   const filePath = EvidenceUploadPage.createFile(fileName, bytes);
 
-  await fileUploadForLineItemPage.resetGate();
+  await fileUploadForLineItemPage.uploadFiles([filePath], async () => {
+    await fileUploadForLineItemPage.checkFileRow(fileName, /\d{1,3}%/, "Uploading");
+  });
 
-  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
-
-  await fileUploadForLineItemPage.releaseGate();
-
-  await fileUploadForLineItemPage.checkFileRow(
-    fileName,
-    "10MB",
-    "Uploaded",
-  );
+  await fileUploadForLineItemPage.checkFileRow(fileName, "10MB", "Uploaded");
 
   await checkAccessibility();
 });
@@ -137,11 +123,7 @@ test("upload a file of invalid size", async ({ page, checkAccessibility }) => {
   const bytes = 10 * 1024 * 1024;
   const filePath = EvidenceUploadPage.createFile(fileName, bytes + 1);
 
-  await fileUploadForLineItemPage.resetGate();
-
-  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
-
-  await fileUploadForLineItemPage.releaseGate();
+  await fileUploadForLineItemPage.uploadFiles([filePath]);
 
   await fileUploadForLineItemPage.checkFileRow(
     fileName,
@@ -166,11 +148,7 @@ test("fail to upload a file", async ({ page, checkAccessibility }) => {
 
   const filePath = EvidenceUploadPage.createFile(fileName, 1024);
 
-  await fileUploadForLineItemPage.resetGate();
-
-  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
-
-  await fileUploadForLineItemPage.releaseGate();
+  await fileUploadForLineItemPage.uploadFiles([filePath]);
 
   await fileUploadForLineItemPage.checkFileRow(
     fileName,
@@ -195,11 +173,7 @@ test("upload an empty file", async ({ page, checkAccessibility }) => {
 
   const filePath = EvidenceUploadPage.createFile(fileName, 0);
 
-  await fileUploadForLineItemPage.resetGate();
-
-  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
-
-  await fileUploadForLineItemPage.releaseGate();
+  await fileUploadForLineItemPage.uploadFiles([filePath]);
 
   await fileUploadForLineItemPage.checkFileRow(
     fileName,
@@ -211,7 +185,6 @@ test("upload an empty file", async ({ page, checkAccessibility }) => {
 });
 
 test("upload multiple files", async ({ page, checkAccessibility }) => {
-
   const file1Name = `${crypto.randomUUID()}.pdf`;
   const file2Name = `${crypto.randomUUID()}.pdf`;
 
@@ -227,17 +200,13 @@ test("upload multiple files", async ({ page, checkAccessibility }) => {
   const file1Path = EvidenceUploadPage.createFile(file1Name, 1024);
   const file2Path = EvidenceUploadPage.createFile(file2Name, 2 * 1024);
 
-  await fileUploadForLineItemPage.resetGate();
-
-  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([
-    file1Path,
-    file2Path,
-  ]);
-
-  await fileUploadForLineItemPage.checkFileRow(file1Name, "%", "Uploading");
-  await fileUploadForLineItemPage.checkFileRow(file2Name, "%", "Uploading");
-
-  await fileUploadForLineItemPage.releaseGate();
+  await fileUploadForLineItemPage.uploadFiles(
+    [file1Path, file2Path],
+    async () => {
+      await fileUploadForLineItemPage.checkFileRow(file1Name, /\d{1,3}%/, "Uploading");
+      await fileUploadForLineItemPage.checkFileRow(file2Name, /\d{1,3}%/, "Uploading");
+    },
+  );
 
   await fileUploadForLineItemPage.checkFileRow(file1Name, "1KB", "Uploaded");
   await fileUploadForLineItemPage.checkFileRow(file2Name, "2KB", "Uploaded");

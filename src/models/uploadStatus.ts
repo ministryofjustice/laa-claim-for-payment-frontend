@@ -3,8 +3,9 @@ export enum UploadStatus {
   Uploaded = "uploaded",
 }
 
-export enum FileUploadStatus {
-  Success = "success",
-  Pending = "pending",
-  Failed = "failed",
+export enum FileStatus {
+  Uploaded = "uploaded",
+  Uploading = "uploading",
+  UploadFailed = "uploadFailed",
+  DeleteFailed = "deleteFailed",
 }

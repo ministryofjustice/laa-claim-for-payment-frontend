@@ -1,0 +1,121 @@
+{% if status == "uploaded" %}
+
+  <div class="govuk-summary-list__row moj-multi-file-upload__row">
+    <dt class="govuk-summary-list__key moj-multi-file-upload__key">
+      <a href="/evidence/{{ file.id }}" class="govuk-link uploaded-file-name">
+        {{ file.name }}
+      </a>
+    </dt>
+
+    <dd class="govuk-summary-list__value moj-multi-file-upload__value">
+      <span class="uploaded-file-size">
+        {{ file.size }}
+      </span>
+
+      <strong class="govuk-tag govuk-tag--green">
+        {{ t("common.fileUploadStatus.uploaded") }}
+      </strong>
+    </dd>
+
+    <dd class="govuk-summary-list__actions moj-multi-file-upload__actions">
+      <button
+        type="submit"
+        name="delete"
+        value="{{ file.id }}"
+        class="moj-multi-file-upload__delete govuk-button govuk-button--secondary govuk-!-margin-bottom-0 govuk-visually-hidden"
+      >
+        {{ t("common.delete") }}
+        <span class="govuk-visually-hidden">
+          {{ file.name }}
+        </span>
+      </button>
+
+      <a href="#" class="govuk-link moj-multi-file-upload__delete-link">
+        {{ t("common.delete") }}
+        <span class="govuk-visually-hidden">
+          {{ file.name }}
+        </span>
+      </a>
+    </dd>
+  </div>
+
+{% elif status == "uploading" %}
+
+  <div class="govuk-summary-list__row govuk-summary-list__row--no-actions moj-multi-file-upload__row">
+    <dt class="govuk-summary-list__key moj-multi-file-upload__key">
+      <span class="uploaded-file-name">
+        {{ file.name }}
+      </span>
+    </dt>
+
+    <dd class="govuk-summary-list__value moj-multi-file-upload__value">
+      <span class="moj-multi-file-upload__progress">
+        0%
+      </span>
+
+      <strong class="govuk-tag govuk-tag--yellow">
+        {{ t("common.fileUploadStatus.uploading") }}
+      </strong>
+    </dd>
+  </div>
+
+{% elif status == "uploadFailed" %}
+
+  <div class="govuk-summary-list__row govuk-summary-list__row--no-actions moj-multi-file-upload__row">
+    <dt class="govuk-summary-list__key moj-multi-file-upload__key">
+      {{ file.name }}
+    </dt>
+
+    <dd class="govuk-summary-list__value moj-multi-file-upload__value">
+      <span class="moj-multi-file-upload__failed">
+        {{ file.message }}
+      </span>
+
+      <strong class="govuk-tag govuk-tag--red">
+        {{ t("common.fileUploadStatus.uploadFailed") }}
+      </strong>
+    </dd>
+  </div>
+
+{% elif status == "deleteFailed" %}
+
+  <div class="govuk-summary-list__row moj-multi-file-upload__row">
+     <dt class="govuk-summary-list__key moj-multi-file-upload__key">
+       <a href="/evidence/{{ file.id }}" class="govuk-link uploaded-file-name">
+         {{ file.name }}
+       </a>
+     </dt>
+
+    <dd class="govuk-summary-list__value moj-multi-file-upload__value">
+      <span>
+        {{ file.message }}
+      </span>
+
+      <strong class="govuk-tag govuk-tag--orange">
+        {{ t("common.fileUploadStatus.deleteFailed") }}
+      </strong>
+    </dd>
+
+    <dd class="govuk-summary-list__actions moj-multi-file-upload__actions">
+      <button
+        type="submit"
+        name="delete"
+        value="{{ file.id }}"
+        class="moj-multi-file-upload__delete govuk-button govuk-button--secondary govuk-!-margin-bottom-0 govuk-visually-hidden"
+      >
+        {{ t("common.delete") }}
+        <span class="govuk-visually-hidden">
+          {{ file.name }}
+        </span>
+      </button>
+
+      <a href="#" class="govuk-link moj-multi-file-upload__delete-link">
+        {{ t("common.delete") }}
+        <span class="govuk-visually-hidden">
+          {{ file.name }}
+        </span>
+      </a>
+    </dd>
+  </div>
+
+{% endif %}

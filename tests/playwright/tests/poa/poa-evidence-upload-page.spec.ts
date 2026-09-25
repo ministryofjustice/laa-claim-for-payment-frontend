@@ -25,11 +25,7 @@ test("upload a file then delete the file", async ({
   await expect(poaEvidenceUploadPage.uploadedFilesHeading).not.toBeVisible();
   await expect(poaEvidenceUploadPage.uploadedFilesHintText).not.toBeVisible();
 
-  await poaEvidenceUploadPage.resetGate();
-
-  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([filePath]);
-
-  await poaEvidenceUploadPage.releaseGate();
+  await poaEvidenceUploadPage.uploadFiles([filePath]);
 
   await expect(poaEvidenceUploadPage.uploadedFilesContainer).not.toHaveClass(
     /moj-hidden/,
@@ -60,11 +56,7 @@ test("upload a file of invalid type", async ({ page, checkAccessibility }) => {
 
   const filePath = EvidenceUploadPage.createFile(fileName, 1024);
 
-  await poaEvidenceUploadPage.resetGate();
-
-  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([filePath]);
-
-  await poaEvidenceUploadPage.releaseGate();
+  await poaEvidenceUploadPage.uploadFiles([filePath]);
 
   await poaEvidenceUploadPage.checkFileRow(
     fileName,
@@ -86,11 +78,9 @@ test("upload a file of maximum size", async ({ page, checkAccessibility }) => {
   const bytes = 10 * 1024 * 1024;
   const filePath = EvidenceUploadPage.createFile(fileName, bytes);
 
-  await poaEvidenceUploadPage.resetGate();
-
-  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([filePath]);
-
-  await poaEvidenceUploadPage.releaseGate();
+  await poaEvidenceUploadPage.uploadFiles([filePath], async () => {
+    await poaEvidenceUploadPage.checkFileRow(fileName, /\d{1,3}%/, "Uploading");
+  });
 
   await poaEvidenceUploadPage.checkFileRow(
     fileName,
@@ -112,11 +102,7 @@ test("upload a file of invalid size", async ({ page, checkAccessibility }) => {
   const bytes = 10 * 1024 * 1024;
   const filePath = EvidenceUploadPage.createFile(fileName, bytes + 1);
 
-  await poaEvidenceUploadPage.resetGate();
-
-  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([filePath]);
-
-  await poaEvidenceUploadPage.releaseGate();
+  await poaEvidenceUploadPage.uploadFiles([filePath]);
 
   await poaEvidenceUploadPage.checkFileRow(
     fileName,
@@ -137,11 +123,7 @@ test("fail to upload a file", async ({ page, checkAccessibility }) => {
 
   const filePath = EvidenceUploadPage.createFile(fileName, 1024);
 
-  await poaEvidenceUploadPage.resetGate();
-
-  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([filePath]);
-
-  await poaEvidenceUploadPage.releaseGate();
+  await poaEvidenceUploadPage.uploadFiles([filePath]);
 
   await poaEvidenceUploadPage.checkFileRow(fileName, "Upload failed", "Failed");
 
@@ -158,11 +140,7 @@ test("upload an empty file", async ({ page, checkAccessibility }) => {
 
   const filePath = EvidenceUploadPage.createFile(fileName, 0);
 
-  await poaEvidenceUploadPage.resetGate();
-
-  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([filePath]);
-
-  await poaEvidenceUploadPage.releaseGate();
+  await poaEvidenceUploadPage.uploadFiles([filePath]);
 
   await poaEvidenceUploadPage.checkFileRow(
     fileName,
@@ -185,17 +163,13 @@ test("upload multiple files", async ({ page, checkAccessibility }) => {
   const file1Path = EvidenceUploadPage.createFile(file1Name, 1024);
   const file2Path = EvidenceUploadPage.createFile(file2Name, 2 * 1024);
 
-  await poaEvidenceUploadPage.resetGate();
-
-  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([
+  await poaEvidenceUploadPage.uploadFiles([
     file1Path,
     file2Path,
-  ]);
-
-  await poaEvidenceUploadPage.checkFileRow(file1Name, "%", "Uploading");
-  await poaEvidenceUploadPage.checkFileRow(file2Name, "%", "Uploading");
-
-  await poaEvidenceUploadPage.releaseGate();
+  ], async () => {
+    await poaEvidenceUploadPage.checkFileRow(file1Name, /\d{1,3}%/, "Uploading");
+    await poaEvidenceUploadPage.checkFileRow(file2Name, /\d{1,3}%/, "Uploading");
+  });
 
   await poaEvidenceUploadPage.checkFileRow(file1Name, "1KB", "Uploaded");
   await poaEvidenceUploadPage.checkFileRow(file2Name, "2KB", "Uploaded");
