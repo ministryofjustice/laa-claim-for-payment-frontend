@@ -83,5 +83,6 @@ export interface Config {
   },
   constants: {
     evidenceThresholdInPounds: number;
+    maxEvidenceFileSizeBytes: number;
   }
 }

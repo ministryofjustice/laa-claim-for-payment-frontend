@@ -1,20 +1,19 @@
-import { Category, type Claim, ClaimStatus, type EvidenceItem, type LineItem } from "#src/types/Claim.js";
+import { Category, type Claim, ClaimStatus, type LineItem } from "#src/types/Claim.js";
 import type { Message } from "#src/viewmodels/components/message.js";
-import type { ReusableDocument } from "#src/viewmodels/components/taskList.js";
-import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
 import { formatDateReadable } from "#src/helpers/index.js";
 import { buildRoute, ROUTES } from "#routes/helper.js";
+import { EvidenceUploadViewModel } from "#src/viewmodels/evidenceUploadViewModel.js";
+import type { ErrorSummary } from "#src/viewmodels/components/errorSummary.js";
 
 /**
  *
  */
-export class FileUploadForLineItemViewModel {
+export class FileUploadForLineItemViewModel extends EvidenceUploadViewModel {
   readonly title: string | Message;
   readonly saveAndContinueHref: string;
   readonly uploadUrl: string;
   readonly deleteUrl: string;
-  readonly reusableDocuments: ReusableDocument[];
-  readonly uploadedFiles: ReusableDocument[];
+  readonly errorSummary?: ErrorSummary;
 
   /**
    * Creates a view model containing the summary rows derived from the claim data
@@ -25,6 +24,8 @@ export class FileUploadForLineItemViewModel {
     claim: Claim,
     lineItem: LineItem,
   ) {
+    super(claim.evidence, lineItem.evidenceItems);
+
     this.uploadUrl = buildRoute(
       ROUTES.LINE_ITEM_UPLOAD.AJAX_UPLOAD,
       {
@@ -52,31 +53,7 @@ export class FileUploadForLineItemViewModel {
       },
     );
 
-    const existingIds = new Set(lineItem.evidenceItems);
-
-    this.reusableDocuments =
-      claim.evidence
-        .filter((evidence) => !existingIds.has(evidence.id))
-        .map((evidence) =>
-          FileUploadForLineItemViewModel.buildReusableDocument(evidence),
-        );
-
-    this.uploadedFiles =
-      claim.evidence
-        .filter((evidence) => existingIds.has(evidence.id))
-        .map((evidence) =>
-          FileUploadForLineItemViewModel.buildReusableDocument(evidence),
-        );
-  }
-
-  private static buildReusableDocument(
-    evidence: EvidenceItem,
-  ): ReusableDocument {
-    return {
-      id: evidence.id,
-      name: evidence.fileKey,
-      size: formatFileSize(evidence.fileSize),
-    };
+    this.errorSummary = undefined;
   }
 
   private static buildTitle(lineItem: LineItem): string | Message {

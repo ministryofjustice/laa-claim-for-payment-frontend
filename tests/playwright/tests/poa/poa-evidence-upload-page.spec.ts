@@ -10,14 +10,17 @@ test("upload a file then delete the file", async ({
   page,
   checkAccessibility,
 }) => {
-  const fileName = `${crypto.randomUUID()}.pdf`;
-
   const poaEvidenceUploadPage = new PoaEvidenceUploadPage(page, claim1Id);
 
   await poaEvidenceUploadPage.navigate();
   await poaEvidenceUploadPage.waitForLoad();
 
-  const filePath = EvidenceUploadPage.createFile(fileName, 1024);
+  const [file] = EvidenceUploadPage.createFiles([
+    {
+      type: "pdf",
+      size: 1024,
+    },
+  ]);
 
   await expect(poaEvidenceUploadPage.uploadedFilesContainer).toHaveClass(
     /moj-hidden/,
@@ -25,11 +28,7 @@ test("upload a file then delete the file", async ({
   await expect(poaEvidenceUploadPage.uploadedFilesHeading).not.toBeVisible();
   await expect(poaEvidenceUploadPage.uploadedFilesHintText).not.toBeVisible();
 
-  await poaEvidenceUploadPage.resetGate();
-
-  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([filePath]);
-
-  await poaEvidenceUploadPage.releaseGate();
+  await poaEvidenceUploadPage.uploadFiles([file.path]);
 
   await expect(poaEvidenceUploadPage.uploadedFilesContainer).not.toHaveClass(
     /moj-hidden/,
@@ -37,9 +36,9 @@ test("upload a file then delete the file", async ({
   await expect(poaEvidenceUploadPage.uploadedFilesHeading).toBeVisible();
   await expect(poaEvidenceUploadPage.uploadedFilesHintText).toBeVisible();
 
-  await poaEvidenceUploadPage.checkFileRow(fileName, "1KB", "Uploaded");
+  await poaEvidenceUploadPage.checkFileRow(file.name, "1KB", "Uploaded");
 
-  await poaEvidenceUploadPage.deleteFile(fileName);
+  await poaEvidenceUploadPage.deleteFile(file.name);
 
   await expect(poaEvidenceUploadPage.uploadedFilesContainer).toHaveClass(
     /moj-hidden/,
@@ -51,23 +50,26 @@ test("upload a file then delete the file", async ({
 });
 
 test("upload a file of invalid type", async ({ page, checkAccessibility }) => {
-  const fileName = `${crypto.randomUUID()}.mov`;
-
   const poaEvidenceUploadPage = new PoaEvidenceUploadPage(page, claim1Id);
 
   await poaEvidenceUploadPage.navigate();
   await poaEvidenceUploadPage.waitForLoad();
 
-  const filePath = EvidenceUploadPage.createFile(fileName, 1024);
+  const [file] = EvidenceUploadPage.createFiles([
+    {
+      type: "mov",
+      size: 1024,
+    },
+  ]);
 
   await poaEvidenceUploadPage.resetGate();
 
-  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([filePath]);
+  await poaEvidenceUploadPage.uploadFiles([file.path]);
 
   await poaEvidenceUploadPage.releaseGate();
 
   await poaEvidenceUploadPage.checkFileRow(
-    fileName,
+    file.name,
     "Only PDF, Word, RTF or TIFF files can be uploaded",
     "Failed",
   );
@@ -76,51 +78,43 @@ test("upload a file of invalid type", async ({ page, checkAccessibility }) => {
 });
 
 test("upload a file of maximum size", async ({ page, checkAccessibility }) => {
-  const fileName = `${crypto.randomUUID()}.pdf`;
-
   const poaEvidenceUploadPage = new PoaEvidenceUploadPage(page, claim1Id);
 
   await poaEvidenceUploadPage.navigate();
   await poaEvidenceUploadPage.waitForLoad();
 
-  const bytes = 10 * 1024 * 1024;
-  const filePath = EvidenceUploadPage.createFile(fileName, bytes);
+  const [file] = EvidenceUploadPage.createFiles([
+    {
+      type: "pdf",
+      size: 500 * 1024,
+    },
+  ]);
 
-  await poaEvidenceUploadPage.resetGate();
+  await poaEvidenceUploadPage.uploadFiles([file.path]);
 
-  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([filePath]);
-
-  await poaEvidenceUploadPage.releaseGate();
-
-  await poaEvidenceUploadPage.checkFileRow(
-    fileName,
-    "10MB",
-    "Uploaded",
-  );
+  await poaEvidenceUploadPage.checkFileRow(file.name, "500KB", "Uploaded");
 
   await checkAccessibility();
 });
 
 test("upload a file of invalid size", async ({ page, checkAccessibility }) => {
-  const fileName = `${crypto.randomUUID()}.pdf`;
-
   const poaEvidenceUploadPage = new PoaEvidenceUploadPage(page, claim1Id);
 
   await poaEvidenceUploadPage.navigate();
   await poaEvidenceUploadPage.waitForLoad();
 
-  const bytes = 10 * 1024 * 1024;
-  const filePath = EvidenceUploadPage.createFile(fileName, bytes + 1);
+  const [file] = EvidenceUploadPage.createFiles([
+    {
+      type: "pdf",
+      size: 500 * 1024 + 1,
+    },
+  ]);
 
-  await poaEvidenceUploadPage.resetGate();
-
-  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([filePath]);
-
-  await poaEvidenceUploadPage.releaseGate();
+  await poaEvidenceUploadPage.uploadFiles([file.path]);
 
   await poaEvidenceUploadPage.checkFileRow(
-    fileName,
-    "File must not be larger than 10MB",
+    file.name,
+    "File must not be larger than 500KB",
     "Failed",
   );
 
@@ -128,44 +122,46 @@ test("upload a file of invalid size", async ({ page, checkAccessibility }) => {
 });
 
 test("fail to upload a file", async ({ page, checkAccessibility }) => {
-  const fileName = `${crypto.randomUUID()}.pdf`;
-
   const poaEvidenceUploadPage = new PoaEvidenceUploadPage(page, claim3Id);
 
   await poaEvidenceUploadPage.navigate();
   await poaEvidenceUploadPage.waitForLoad();
 
-  const filePath = EvidenceUploadPage.createFile(fileName, 1024);
+  const [file] = EvidenceUploadPage.createFiles([
+    {
+      type: "pdf",
+      size: 1024,
+    },
+  ]);
 
-  await poaEvidenceUploadPage.resetGate();
+  await poaEvidenceUploadPage.uploadFiles([file.path]);
 
-  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([filePath]);
-
-  await poaEvidenceUploadPage.releaseGate();
-
-  await poaEvidenceUploadPage.checkFileRow(fileName, "Upload failed", "Failed");
+  await poaEvidenceUploadPage.checkFileRow(
+    file.name,
+    "Upload failed",
+    "Failed",
+  );
 
   await checkAccessibility();
 });
 
 test("upload an empty file", async ({ page, checkAccessibility }) => {
-  const fileName = `${crypto.randomUUID()}.pdf`;
-
   const poaEvidenceUploadPage = new PoaEvidenceUploadPage(page, claim1Id);
 
   await poaEvidenceUploadPage.navigate();
   await poaEvidenceUploadPage.waitForLoad();
 
-  const filePath = EvidenceUploadPage.createFile(fileName, 0);
+  const [file] = EvidenceUploadPage.createFiles([
+    {
+      type: "pdf",
+      size: 0,
+    },
+  ]);
 
-  await poaEvidenceUploadPage.resetGate();
-
-  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([filePath]);
-
-  await poaEvidenceUploadPage.releaseGate();
+  await poaEvidenceUploadPage.uploadFiles([file.path]);
 
   await poaEvidenceUploadPage.checkFileRow(
-    fileName,
+    file.name,
     "The selected file is empty",
     "Failed",
   );
@@ -174,31 +170,36 @@ test("upload an empty file", async ({ page, checkAccessibility }) => {
 });
 
 test("upload multiple files", async ({ page, checkAccessibility }) => {
-  const file1Name = `${crypto.randomUUID()}.pdf`;
-  const file2Name = `${crypto.randomUUID()}.pdf`;
-
   const poaEvidenceUploadPage = new PoaEvidenceUploadPage(page, claim1Id);
 
   await poaEvidenceUploadPage.navigate();
   await poaEvidenceUploadPage.waitForLoad();
 
-  const file1Path = EvidenceUploadPage.createFile(file1Name, 1024);
-  const file2Path = EvidenceUploadPage.createFile(file2Name, 2 * 1024);
+  const [file1, file2] = EvidenceUploadPage.createFiles([
+    {
+      type: "pdf",
+      size: 1024,
+    },
+    {
+      type: "pdf",
+      size: 2 * 1024,
+    },
+  ]);
 
   await poaEvidenceUploadPage.resetGate();
 
-  await poaEvidenceUploadPage.fileUploadInput.uploadFiles([
-    file1Path,
-    file2Path,
-  ]);
-
-  await poaEvidenceUploadPage.checkFileRow(file1Name, "%", "Uploading");
-  await poaEvidenceUploadPage.checkFileRow(file2Name, "%", "Uploading");
+  await poaEvidenceUploadPage.uploadFiles(
+    [file1.path, file2.path],
+    async () => {
+      await poaEvidenceUploadPage.checkFileRow(file1.name, "%", "Uploading");
+      await poaEvidenceUploadPage.checkFileRow(file2.name, "%", "Uploading");
+    },
+  );
 
   await poaEvidenceUploadPage.releaseGate();
 
-  await poaEvidenceUploadPage.checkFileRow(file1Name, "1KB", "Uploaded");
-  await poaEvidenceUploadPage.checkFileRow(file2Name, "2KB", "Uploaded");
+  await poaEvidenceUploadPage.checkFileRow(file1.name, "1KB", "Uploaded");
+  await poaEvidenceUploadPage.checkFileRow(file2.name, "2KB", "Uploaded");
 
   await checkAccessibility();
 });

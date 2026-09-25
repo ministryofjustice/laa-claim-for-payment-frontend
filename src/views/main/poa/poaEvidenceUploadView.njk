@@ -53,7 +53,7 @@
       </h2>
 
       <p class="govuk-body">
-        {{ t("pages.poaEvidenceUpload.uploadFiles.maxSize") }}
+        {{ t("pages.poaEvidenceUpload.uploadFiles.maxSize", { size: vm.maxFileSize }) }}
       </p>
 
       {{ multiFileUpload(t, vm.uploadedFiles, vm.uploadUrl, vm.deleteUrl) }}

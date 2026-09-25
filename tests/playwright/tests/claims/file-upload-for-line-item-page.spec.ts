@@ -11,8 +11,6 @@ test("upload a file then delete the file", async ({
   page,
   checkAccessibility,
 }) => {
-  const fileName = `${crypto.randomUUID()}.pdf`;
-
   const fileUploadForLineItemPage = new FileUploadForLineItemPage(
     page,
     claim1Id,
@@ -22,7 +20,12 @@ test("upload a file then delete the file", async ({
   await fileUploadForLineItemPage.navigate();
   await fileUploadForLineItemPage.waitForLoad();
 
-  const filePath = EvidenceUploadPage.createFile(fileName, 1024);
+  const [file] = EvidenceUploadPage.createFiles([
+    {
+      type: "pdf",
+      size: 1024,
+    },
+  ]);
 
   await expect(fileUploadForLineItemPage.uploadedFilesContainer).toHaveClass(
     /moj-hidden/,
@@ -34,11 +37,7 @@ test("upload a file then delete the file", async ({
     fileUploadForLineItemPage.uploadedFilesHintText,
   ).not.toBeVisible();
 
-  await fileUploadForLineItemPage.resetGate();
-
-  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
-
-  await fileUploadForLineItemPage.releaseGate();
+  await fileUploadForLineItemPage.uploadFiles([file.path]);
 
   await expect(
     fileUploadForLineItemPage.uploadedFilesContainer,
@@ -46,9 +45,9 @@ test("upload a file then delete the file", async ({
   await expect(fileUploadForLineItemPage.uploadedFilesHeading).toBeVisible();
   await expect(fileUploadForLineItemPage.uploadedFilesHintText).toBeVisible();
 
-  await fileUploadForLineItemPage.checkFileRow(fileName, "1KB", "Uploaded");
+  await fileUploadForLineItemPage.checkFileRow(file.name, "1KB", "Uploaded");
 
-  await fileUploadForLineItemPage.deleteFile(fileName);
+  await fileUploadForLineItemPage.deleteFile(file.name);
 
   await expect(fileUploadForLineItemPage.uploadedFilesContainer).toHaveClass(
     /moj-hidden/,
@@ -64,8 +63,6 @@ test("upload a file then delete the file", async ({
 });
 
 test("upload a file of invalid type", async ({ page, checkAccessibility }) => {
-  const fileName = `${crypto.randomUUID()}.mov`;
-
   const fileUploadForLineItemPage = new FileUploadForLineItemPage(
     page,
     claim1Id,
@@ -75,16 +72,17 @@ test("upload a file of invalid type", async ({ page, checkAccessibility }) => {
   await fileUploadForLineItemPage.navigate();
   await fileUploadForLineItemPage.waitForLoad();
 
-  const filePath = EvidenceUploadPage.createFile(fileName, 1024);
+  const [file] = EvidenceUploadPage.createFiles([
+    {
+      type: "mov",
+      size: 1024,
+    },
+  ]);
 
-  await fileUploadForLineItemPage.resetGate();
-
-  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
-
-  await fileUploadForLineItemPage.releaseGate();
+  await fileUploadForLineItemPage.uploadFiles([file.path]);
 
   await fileUploadForLineItemPage.checkFileRow(
-    fileName,
+    file.name,
     "Only PDF, Word, RTF or TIFF files can be uploaded",
     "Failed",
   );
@@ -93,8 +91,6 @@ test("upload a file of invalid type", async ({ page, checkAccessibility }) => {
 });
 
 test("upload a file of maximum size", async ({ page, checkAccessibility }) => {
-  const fileName = `${crypto.randomUUID()}.pdf`;
-
   const fileUploadForLineItemPage = new FileUploadForLineItemPage(
     page,
     claim1Id,
@@ -104,27 +100,21 @@ test("upload a file of maximum size", async ({ page, checkAccessibility }) => {
   await fileUploadForLineItemPage.navigate();
   await fileUploadForLineItemPage.waitForLoad();
 
-  const bytes = 10 * 1024 * 1024;
-  const filePath = EvidenceUploadPage.createFile(fileName, bytes);
+  const [file] = EvidenceUploadPage.createFiles([
+    {
+      type: "pdf",
+      size: 500 * 1024,
+    },
+  ]);
 
-  await fileUploadForLineItemPage.resetGate();
+  await fileUploadForLineItemPage.uploadFiles([file.path]);
 
-  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
-
-  await fileUploadForLineItemPage.releaseGate();
-
-  await fileUploadForLineItemPage.checkFileRow(
-    fileName,
-    "10MB",
-    "Uploaded",
-  );
+  await fileUploadForLineItemPage.checkFileRow(file.name, "500KB", "Uploaded");
 
   await checkAccessibility();
 });
 
 test("upload a file of invalid size", async ({ page, checkAccessibility }) => {
-  const fileName = `${crypto.randomUUID()}.pdf`;
-
   const fileUploadForLineItemPage = new FileUploadForLineItemPage(
     page,
     claim1Id,
@@ -134,18 +124,18 @@ test("upload a file of invalid size", async ({ page, checkAccessibility }) => {
   await fileUploadForLineItemPage.navigate();
   await fileUploadForLineItemPage.waitForLoad();
 
-  const bytes = 10 * 1024 * 1024;
-  const filePath = EvidenceUploadPage.createFile(fileName, bytes + 1);
+  const [file] = EvidenceUploadPage.createFiles([
+    {
+      type: "pdf",
+      size: 500 * 1024 + 1,
+    },
+  ]);
 
-  await fileUploadForLineItemPage.resetGate();
-
-  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
-
-  await fileUploadForLineItemPage.releaseGate();
+  await fileUploadForLineItemPage.uploadFiles([file.path]);
 
   await fileUploadForLineItemPage.checkFileRow(
-    fileName,
-    "File must not be larger than 10MB",
+    file.name,
+    "File must not be larger than 500KB",
     "Failed",
   );
 
@@ -153,8 +143,6 @@ test("upload a file of invalid size", async ({ page, checkAccessibility }) => {
 });
 
 test("fail to upload a file", async ({ page, checkAccessibility }) => {
-  const fileName = `${crypto.randomUUID()}.pdf`;
-
   const fileUploadForLineItemPage = new FileUploadForLineItemPage(
     page,
     claim3Id,
@@ -164,16 +152,17 @@ test("fail to upload a file", async ({ page, checkAccessibility }) => {
   await fileUploadForLineItemPage.navigate();
   await fileUploadForLineItemPage.waitForLoad();
 
-  const filePath = EvidenceUploadPage.createFile(fileName, 1024);
+  const [file] = EvidenceUploadPage.createFiles([
+    {
+      type: "pdf",
+      size: 1024,
+    },
+  ]);
 
-  await fileUploadForLineItemPage.resetGate();
-
-  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
-
-  await fileUploadForLineItemPage.releaseGate();
+  await fileUploadForLineItemPage.uploadFiles([file.path]);
 
   await fileUploadForLineItemPage.checkFileRow(
-    fileName,
+    file.name,
     "Upload failed",
     "Failed",
   );
@@ -182,8 +171,6 @@ test("fail to upload a file", async ({ page, checkAccessibility }) => {
 });
 
 test("upload an empty file", async ({ page, checkAccessibility }) => {
-  const fileName = `${crypto.randomUUID()}.pdf`;
-
   const fileUploadForLineItemPage = new FileUploadForLineItemPage(
     page,
     claim1Id,
@@ -193,16 +180,17 @@ test("upload an empty file", async ({ page, checkAccessibility }) => {
   await fileUploadForLineItemPage.navigate();
   await fileUploadForLineItemPage.waitForLoad();
 
-  const filePath = EvidenceUploadPage.createFile(fileName, 0);
+  const [file] = EvidenceUploadPage.createFiles([
+    {
+      type: "pdf",
+      size: 0,
+    },
+  ]);
 
-  await fileUploadForLineItemPage.resetGate();
-
-  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([filePath]);
-
-  await fileUploadForLineItemPage.releaseGate();
+  await fileUploadForLineItemPage.uploadFiles([file.path]);
 
   await fileUploadForLineItemPage.checkFileRow(
-    fileName,
+    file.name,
     "The selected file is empty",
     "Failed",
   );
@@ -211,10 +199,6 @@ test("upload an empty file", async ({ page, checkAccessibility }) => {
 });
 
 test("upload multiple files", async ({ page, checkAccessibility }) => {
-
-  const file1Name = `${crypto.randomUUID()}.pdf`;
-  const file2Name = `${crypto.randomUUID()}.pdf`;
-
   const fileUploadForLineItemPage = new FileUploadForLineItemPage(
     page,
     claim1Id,
@@ -224,23 +208,35 @@ test("upload multiple files", async ({ page, checkAccessibility }) => {
   await fileUploadForLineItemPage.navigate();
   await fileUploadForLineItemPage.waitForLoad();
 
-  const file1Path = EvidenceUploadPage.createFile(file1Name, 1024);
-  const file2Path = EvidenceUploadPage.createFile(file2Name, 2 * 1024);
-
-  await fileUploadForLineItemPage.resetGate();
-
-  await fileUploadForLineItemPage.fileUploadInput.uploadFiles([
-    file1Path,
-    file2Path,
+  const [file1, file2] = EvidenceUploadPage.createFiles([
+    {
+      type: "pdf",
+      size: 1024,
+    },
+    {
+      type: "pdf",
+      size: 2 * 1024,
+    },
   ]);
 
-  await fileUploadForLineItemPage.checkFileRow(file1Name, "%", "Uploading");
-  await fileUploadForLineItemPage.checkFileRow(file2Name, "%", "Uploading");
+  await fileUploadForLineItemPage.uploadFiles(
+    [file1.path, file2.path],
+    async () => {
+      await fileUploadForLineItemPage.checkFileRow(
+        file1.name,
+        "%",
+        "Uploading",
+      );
+      await fileUploadForLineItemPage.checkFileRow(
+        file2.name,
+        "%",
+        "Uploading",
+      );
+    },
+  );
 
-  await fileUploadForLineItemPage.releaseGate();
-
-  await fileUploadForLineItemPage.checkFileRow(file1Name, "1KB", "Uploaded");
-  await fileUploadForLineItemPage.checkFileRow(file2Name, "2KB", "Uploaded");
+  await fileUploadForLineItemPage.checkFileRow(file1.name, "1KB", "Uploaded");
+  await fileUploadForLineItemPage.checkFileRow(file2.name, "2KB", "Uploaded");
 
   await checkAccessibility();
 });

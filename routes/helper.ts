@@ -4,6 +4,8 @@ import multer from "multer";
 import type { MulterRequest } from "#src/types/requests.js";
 import type { UUID } from "uuidv7";
 import type { AjaxUploadError } from "#src/types/api-types.js";
+import { formatFileSize } from "#src/helpers/fileSizeFormatter.js";
+import config from "#config.js";
 
 export const ROUTES = {
   INDEX: "/",
@@ -29,28 +31,22 @@ export const ROUTES = {
       HOW_MANY_CLIENTS_RETAINED:
         "/claims/:claimId/poa/how-many-clients-retained",
       DETAILS: "/claims/:claimId/poa/profit-cost-details",
-      MULTIPLE_CLIENT_HEARINGS:
-        "/claims/:claimId/poa/multiple-client-hearings",
-      ESCAPING_FIXED_FEE:
-        "/claims/:claimId/poa/escaping-standard-fixed-fee",
+      MULTIPLE_CLIENT_HEARINGS: "/claims/:claimId/poa/multiple-client-hearings",
+      ESCAPING_FIXED_FEE: "/claims/:claimId/poa/escaping-standard-fixed-fee",
       NUMBER_OF_CLIENTS_START_OF_CASE:
         "/claims/:claimId/poa/number-of-clients-start-of-case",
-      CPGFS_BILL_LINE:
-        "/claims/:claimId/poa/cpgfs-profit-cost-bill-line",
+      CPGFS_BILL_LINE: "/claims/:claimId/poa/cpgfs-profit-cost-bill-line",
     },
 
     DISBURSEMENTS: {
       DETAILS: "/claims/:claimId/poa/disbursement-details",
       ADD: "/claims/:claimId/poa/disbursement-details/add",
-      REMOVE:
-        "/claims/:claimId/poa/disbursement-details/:lineItemId/remove",
+      REMOVE: "/claims/:claimId/poa/disbursement-details/:lineItemId/remove",
     },
 
     EVIDENCE_UPLOAD: "/claims/:claimId/poa/evidence-upload",
-    AJAX_UPLOAD_EVIDENCE:
-      "/claims/:claimId/poa/evidence-upload/ajax-upload",
-    AJAX_DELETE_EVIDENCE:
-      "/claims/:claimId/poa/evidence-upload/ajax-delete",
+    AJAX_UPLOAD_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-upload",
+    AJAX_DELETE_EVIDENCE: "/claims/:claimId/poa/evidence-upload/ajax-delete",
 
     CHECK_DETAILS: "/claims/:claimId/poa/check-details",
     SUBMISSION_SUCCESSFUL: "/claims/:claimId/poa-submitted",
@@ -153,7 +149,9 @@ export function multerErrorHandler(
       error: {
         message:
           error.code === "LIMIT_FILE_SIZE"
-            ? req.t("multiFileUpload.errors.fileTooLarge")
+            ? req.t("multiFileUpload.errors.fileTooLarge", {
+                size: formatFileSize(config.constants.maxEvidenceFileSizeBytes),
+              })
             : error.message,
       },
     };
@@ -182,10 +180,7 @@ export function multerErrorHandler(
  * @param {() => void} register the route to register
  * @returns {void}
  */
-export function registerIf(
-  enabled: boolean,
-  register: () => void,
-): void {
+export function registerIf(enabled: boolean, register: () => void): void {
   if (enabled) {
     register();
   }
