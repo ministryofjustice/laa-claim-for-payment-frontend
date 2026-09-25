@@ -1,16 +1,19 @@
 import type { Application, NextFunction, Request, Response } from "express";
 import { Histogram, register } from "@prometheus-io/client";
 
+const registeredRequestDuration = register.getSingleMetric(
+  "http_request_duration_seconds",
+);
+
 const requestDuration =
-  (register.getSingleMetric("http_request_duration_seconds") as
-    | Histogram<"status_code" | "method">
-    | undefined) ??
-  new Histogram({
-    name: "http_request_duration_seconds",
-    help: "duration histogram of http responses labelled with: status_code, method",
-    labelNames: ["status_code", "method"],
-    buckets: [0.003, 0.03, 0.1, 0.3, 1.5, 10],
-  });
+  registeredRequestDuration instanceof Histogram
+    ? registeredRequestDuration
+    : new Histogram({
+        name: "http_request_duration_seconds",
+        help: "duration histogram of http responses labelled with: status_code, method",
+        labelNames: ["status_code", "method"],
+        buckets: [0.003, 0.03, 0.1, 0.3, 1.5, 10],
+      });
 
 /**
  * Sets up Prometheus metrics for the main application without exposing /metrics on the public
