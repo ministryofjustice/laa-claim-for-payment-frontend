@@ -1,6 +1,6 @@
 import express from "express";
 import { expect } from "chai";
-import { register } from "prom-client";
+import { register } from "@prometheus-io/client";
 import { configureMetrics } from "#utils/prometheusSetup.js";
 
 describe("prometheusSetup", () => {
