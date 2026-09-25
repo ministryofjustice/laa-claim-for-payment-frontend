@@ -27,7 +27,7 @@ import { requiresAuth } from "#utils/openidSetup.js";
 import { initializeI18nextSync } from "./scripts/helpers/i18nLoader.js";
 import { initRedis } from "#utils/redisClient.js";
 import createHttpError from "http-errors";
-import { register } from "prom-client";
+import { register } from "@prometheus-io/client";
 import { validateLanguage } from "#src/helpers/validateLanguage.js";
 
 const TRUST_FIRST_PROXY = 1;

@@ -76,8 +76,7 @@ const externalModules: string[] = [
   "*.node",
   "redis",
   "connect-redis",
-  "express-prom-bundle",
-  "prom-client",
+  "@prometheus-io/client",
 ];
 
 /**
