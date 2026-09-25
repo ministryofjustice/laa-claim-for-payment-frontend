@@ -44,7 +44,8 @@ for (const [costType, prefix] of categories) {
       ["", "empty"],
       ["abc", "invalid"],
       ["-10", "negative"],
-      ["10.123", "pence"],
+      ["10.123", "tooManyDecimals"],
+      ["10.", "tooFewDecimals"]
     ]) {
       it(`reports ${reason} with the correct field and message prefix`, () => {
         const form = new DisbursementDetailsForm(costType);

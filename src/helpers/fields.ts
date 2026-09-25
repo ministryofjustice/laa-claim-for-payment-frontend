@@ -330,7 +330,7 @@ export class MoneyField extends Field<unknown, number> {
     const stringValue = getStringValue(value);
 
     const reject = (
-      reason: "empty" | "invalid" | "negative" | "pence" | "maximum",
+      reason: "empty" | "invalid" | "negative" | "tooManyDecimals" | "tooFewDecimals" | "maximum",
       args?: Message["args"],
     ): void => {
       this.error(
@@ -359,7 +359,7 @@ export class MoneyField extends Field<unknown, number> {
 
     // Validate comma grouping before removing commas.
     // Accept 1234.50 or 1,234.50, but reject 1,23.50.
-    const amountPattern = /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/u;
+    const amountPattern = /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d*)?$/u;
 
     if (!amountPattern.test(cleaned)) {
       reject("invalid");
@@ -373,8 +373,13 @@ export class MoneyField extends Field<unknown, number> {
 
     const normalised = cleaned.replace(/,/gu, "");
 
+    if (normalised.endsWith(".")) {
+      reject("tooFewDecimals");
+      return;
+    }
+
     if (!/^\d+(?:\.\d{1,2})?$/u.test(normalised)) {
-      reject("pence");
+      reject("tooManyDecimals");
       return;
     }
 
