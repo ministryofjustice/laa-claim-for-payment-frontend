@@ -66,7 +66,7 @@ export abstract class EvidenceUploadPage extends BasePage {
   ): Promise<void> {
     try {
       await this.resetGate();
-      await this.fileUploadInput.input.setInputFiles(filePaths);
+      await this.fileUploadInput.uploadFiles(filePaths);
       if (checks != null) {
         await checks();
       }
