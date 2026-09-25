@@ -4,12 +4,6 @@ const TRY_ZER0 = 0;
 const TRY_ONCE = 1;
 const TRY_TWICE = 2;
 
-export const PLAYWRIGHT_TEST_ENV = {
-  BASE_URL: process.env.BASE_URL ?? 'http://localhost:3000',
-  API_URL:'http://localhost:8080/',
-  MANAGEMENT_PORT: '2999'
-};
-
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -39,7 +33,9 @@ export default defineConfig({
     timeout: 60000,
     env: {
       ...process.env,
-      ...PLAYWRIGHT_TEST_ENV,
+      BASE_URL: process.env.BASE_URL ?? 'http://localhost:3000',
+      API_URL:'http://localhost:8080/',
+      MANAGEMENT_PORT: '2999',
       //TODO: for now disable auth for e2e tests
       AUTH_ENABLED: 'false',
       REDIS_DISABLED: 'false',
@@ -47,6 +43,7 @@ export default defineConfig({
       SESSION_COOKIE_SECURE: 'false',
       POA_PROFIT_COST_ENABLED: "true",
       LINE_ITEM_UPLOAD_ENABLED: "true",
+      MAX_EVIDENCE_FILE_SIZE_BYTES: "512000", //500KB
     },
   },
 });

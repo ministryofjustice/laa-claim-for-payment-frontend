@@ -97,6 +97,9 @@ const config: Config = {
     evidenceThresholdInPounds: Number(
       process.env.EVIDENCE_THRESHOLD_IN_POUNDS ?? 20,
     ),
+    maxEvidenceFileSizeBytes: Number(
+      process.env.MAX_EVIDENCE_FILE_SIZE_BYTES ?? 10 * 1024 * 1024,
+    ),
   },
 };
 

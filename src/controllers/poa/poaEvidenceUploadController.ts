@@ -1,5 +1,5 @@
 import { processError } from "#src/helpers/index.js";
-import { PoaEvidenceUploadViewModel } from "#src/viewmodels/poa/evidenceUploadViewModel.js";
+import { PoaEvidenceUploadViewModel } from "#src/viewmodels/poa/poaEvidenceUploadViewModel.js";
 import type { NextFunction, Request, Response } from "express";
 import { UploadField } from "#src/helpers/fields.js";
 import { UploadForm } from "#src/helpers/fileUploadValidation.js";

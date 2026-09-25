@@ -128,9 +128,9 @@ export class FileUploadInput {
 
   /**
    * upload a file or files
-   * @param {string[]} fileNames the files to upload
+   * @param {string[]} filePaths the files to upload
    */
-  async uploadFiles(fileNames: string[]): Promise<void> {
-    await this.input.setInputFiles(fileNames);
+  async uploadFiles(filePaths: string[]): Promise<void> {
+    await this.input.setInputFiles(filePaths);
   }
 }

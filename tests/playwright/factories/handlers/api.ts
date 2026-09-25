@@ -280,6 +280,26 @@ export function createApiHandlers(uploadGate?: Gate): HttpHandler[] {
         return HttpResponse.json(null, { status: 204 });
       },
     ),
+
+    http.delete(
+      "/api/v1/claims/:claimId/evidence/:evidenceId",
+      ({ params }) => {
+        const { claimId, evidenceId } = params;
+        if (
+          typeof claimId !== "string" ||
+          typeof evidenceId !== "string"
+        ) {
+          throw new Error("URL missing valid string id params.");
+        }
+        console.log(
+          "🧩 MSW matched: DELETE /api/v1/claims/%s/evidence/%s",
+          claimId,
+          evidenceId,
+        );
+
+        return HttpResponse.json(null, { status: 204 });
+      },
+    ),
   ];
 }
 

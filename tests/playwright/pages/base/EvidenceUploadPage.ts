@@ -4,11 +4,14 @@ import { expect } from "@playwright/test";
 import path from "node:path";
 import os from "node:os";
 import fs from "node:fs";
+import { FileUploadInput } from "#tests/playwright/pages/base/Components.js";
 
 /**
  * Base question page with shared navigation + utilities
  */
 export abstract class EvidenceUploadPage extends BasePage {
+  readonly fileUploadInput = new FileUploadInput(this.page, "documents");
+
   /**
    * get the uploaded files container
    * @returns {Locator} The uploaded files container
@@ -38,6 +41,41 @@ export abstract class EvidenceUploadPage extends BasePage {
   }
 
   /**
+   * create files for given type and size
+   * @param {Array} files the files to create
+   * @returns {Array} the names and paths of the created files
+   */
+  static createFiles(
+    files: Array<{ type: string; size: number }>,
+  ): Array<{ name: string; path: string }> {
+    return files.map((file) => {
+      const name = `${crypto.randomUUID()}.${file.type}`;
+      const path = EvidenceUploadPage.createFile(name, file.size);
+      return { name, path };
+    });
+  }
+
+  /**
+   * upload a file or files
+   * @param {string[]} filePaths the files to upload
+   * @param {Function} checks checks to do before gate released
+   */
+  async uploadFiles(
+    filePaths: string[],
+    checks?: () => Promise<void>,
+  ): Promise<void> {
+    try {
+      await this.resetGate();
+      await this.fileUploadInput.uploadFiles(filePaths);
+      if (checks != null) {
+        await checks();
+      }
+    } finally {
+      await this.releaseGate();
+    }
+  }
+
+  /**
    * click the delete link for a given file name
    * @param {string} fileName the file name to delete
    */
@@ -64,20 +102,20 @@ export abstract class EvidenceUploadPage extends BasePage {
    * @param {string} value The row value
    * @param {string} status The file upload status
    */
-  async checkFileRow(key: string, value: string, status: string): Promise<void> {
+  async checkFileRow(
+    key: string,
+    value: string,
+    status: string,
+  ): Promise<void> {
     const row = this.getFileRow(key);
 
-    await expect(
-      row.locator(".moj-multi-file-upload__key")
-    ).toContainText(key);
+    await expect(row.locator(".moj-multi-file-upload__key")).toContainText(key);
 
-    await expect(
-      row.locator(".moj-multi-file-upload__value")
-    ).toContainText(value);
+    await expect(row.locator(".moj-multi-file-upload__value")).toContainText(
+      value,
+    );
 
-    await expect(
-      row.locator(".govuk-tag")
-    ).toHaveText(status);
+    await expect(row.locator(".govuk-tag")).toHaveText(status);
   }
 
   /**
@@ -86,7 +124,7 @@ export abstract class EvidenceUploadPage extends BasePage {
    * @param {number} sizeInBytes file size in bytes
    * @returns {string} the path to the created file
    */
-  static createFile(name: string, sizeInBytes: number): string {
+  private static createFile(name: string, sizeInBytes: number): string {
     const filePath = path.join(os.tmpdir(), name);
     const buffer = Buffer.alloc(sizeInBytes);
     fs.writeFileSync(filePath, buffer);

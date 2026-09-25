@@ -61,6 +61,7 @@ jobs:
           AUTH_ENABLED: "false" # Disable auth for testing
           REDIS_DISABLED: "false"
           REDIS_URL: "redis://localhost:6379"
+          MAX_EVIDENCE_FILE_SIZE_BYTES: "512000" #500KB
       - name: Upload trace artifacts
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f #v7.0.0

@@ -20,15 +20,8 @@
   </h2>
 
   <p class="govuk-body">
-    {{ t('pages.fileUploadForLineItem.uploadFiles.maxSize') }}
+    {{ t('pages.fileUploadForLineItem.uploadFiles.maxSize', { size: vm.maxFileSize }) }}
   </p>
-
-  {% if errorSummary.items.length %}
-    {{ govukErrorSummary({
-      titleText: t('common.errorSummaryTitle'),
-      errorList: errorSummary.items
-    }) }}
-  {% endif %}
 
   {{ multiFileUpload(t, vm.uploadedFiles, vm.uploadUrl, vm.deleteUrl) }}
 {% endmacro %}

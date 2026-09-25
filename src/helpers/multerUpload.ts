@@ -1,7 +1,6 @@
 import createHttpError from "http-errors";
 import multer from "multer";
-
-const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
+import config from "#config.js";
 
 const ALLOWED_MIME_TYPES = new Set([
   "application/pdf",
@@ -26,7 +25,7 @@ export function isAllowedEvidenceMimeType(mimeType: string): boolean {
 export const evidenceUpload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: MAX_FILE_SIZE_BYTES,
+    fileSize: config.constants.maxEvidenceFileSizeBytes,
   },
   fileFilter: (_req, file, callback) => {
     if (!isAllowedEvidenceMimeType(file.mimetype)) {
