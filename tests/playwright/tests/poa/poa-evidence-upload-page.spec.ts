@@ -68,7 +68,7 @@ test("upload a file of invalid type", async ({ page, checkAccessibility }) => {
 
   await poaEvidenceUploadPage.checkFileRow(
     fileName,
-    "Only PDF, Word, RTF or TIFF files can be uploaded",
+    "The selected file must be a PDF, DOC, DOCX, RTF or TIFF",
     "Failed",
   );
 

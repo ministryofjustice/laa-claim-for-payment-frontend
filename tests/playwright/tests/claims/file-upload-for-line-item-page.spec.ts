@@ -85,7 +85,7 @@ test("upload a file of invalid type", async ({ page, checkAccessibility }) => {
 
   await fileUploadForLineItemPage.checkFileRow(
     fileName,
-    "Only PDF, Word, RTF or TIFF files can be uploaded",
+    "The selected file must be a PDF, DOC, DOCX, RTF or TIFF",
     "Failed",
   );
 
@@ -201,7 +201,7 @@ test("upload an empty file", async ({ page, checkAccessibility }) => {
 
   await fileUploadForLineItemPage.releaseGate();
 
-  await fileUploadForLineItemPage.checkFileRow(
+  await fileUploadForLineItemPage.checkFileRow( 
     fileName,
     "The selected file is empty",
     "Failed",
